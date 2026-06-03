@@ -1,0 +1,7 @@
+# Stage 0/1 minimal research dependencies
+# Keep this light until the data source is selected.
+
+pandas>=2.0
+numpy>=1.24
+requests>=2.31
+python-dateutil>=2.8

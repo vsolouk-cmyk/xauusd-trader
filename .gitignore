@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Secrets and local config
+.env
+.env.*
+*.key
+*.pem
+secrets/
+credentials/
+
+# Runtime/output data
+data/raw/*
+!data/raw/.gitkeep
+
+data/normalized/*
+!data/normalized/.gitkeep
+
+data/reports/*
+!data/reports/.gitkeep
+
+data/logs/*
+!data/logs/.gitkeep
+
+# Notebook checkpoints
+.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
+
+# Temporary files
+tmp/
+*.tmp
+*.log

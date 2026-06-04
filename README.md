@@ -4,7 +4,7 @@ Commercial XAUUSD/gold trading research pipeline.
 
 ## Current stage
 
-Stage 2B: baseline validation with non-overlapping trades.
+Stage 2C: robustness diagnostics after non-overlap baseline validation.
 
 Telegram notification is enabled for pipeline reports only.
 
@@ -26,6 +26,8 @@ No ML. No trading bot. No paper order. No live order.
 - Net USD: raw price movement minus assumed trading cost.
 - Overlapping trades: trades whose holding periods overlap.
 - Non-overlap filter: accepts a new trade only after the previous trade has exited.
+- Outlier: an unusually large result that can dominate totals.
+- Profit factor: gross wins divided by gross losses.
 
 ## Current data source decision
 
@@ -33,29 +35,14 @@ Use Twelve Data REST for Stage 0/1/2 because it is faster and cleaner than broke
 
 OANDA is paused. MT5/broker feed validation comes later.
 
-## Local Stage 2B validation
+## Local Stage 2C sequence
 
 ```bash
 cd ~/Desktop/xauusd-trader
 export TWELVEDATA_API_KEY='PASTE_KEY_HERE'
 python3 -m app.xauusd_stage1_snapshot --outputsize 5000
 python3 -m app.xauusd_stage2b_validate_baselines
-```
-
-If 5000 fails because of API limits:
-
-```bash
-python3 -m app.xauusd_stage1_snapshot --outputsize 1000
-python3 -m app.xauusd_stage2b_validate_baselines
-```
-
-## Optional local Telegram test
-
-```bash
-cd ~/Desktop/xauusd-trader
-export TELEGRAM_BOT_TOKEN='PASTE_BOT_TOKEN'
-export TELEGRAM_CHAT_ID='PASTE_CHAT_ID'
-python3 -m app.telegram_notify --status local-test
+python3 -m app.xauusd_stage2c_robustness
 ```
 
 ## GitHub Actions secrets
@@ -69,7 +56,7 @@ TELEGRAM_CHAT_ID
 Then run manually from GitHub UI:
 
 ```text
-XAUUSD Stage 2B Baseline Validation
+XAUUSD Stage 2C Robustness Diagnostics
 ```
 
 Inputs:
@@ -82,6 +69,6 @@ include_run_link: false
 
 ## Hard rule
 
-If simple baselines do not survive non-overlap validation after assumed costs, do not proceed to ML.
+If a baseline does not survive Stage 2C outlier/split/month/cost diagnostics, do not proceed to ML.
 
 Telegram messages are reports only, not signals.

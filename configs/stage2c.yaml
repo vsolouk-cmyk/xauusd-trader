@@ -1,0 +1,22 @@
+# Stage 2C robustness diagnostics.
+# Goal: detect whether a Stage 2B robust candidate is actually stable or only outlier-driven.
+
+report_dir: data/reports
+trades_glob: data/reports/stage2b_trades/stage2b_nonoverlap_trades_*.csv
+stage2b_summary_glob: data/reports/stage2b_validation_summary_*.json
+
+decision:
+  min_trades: 50
+  require_positive_total_after_remove_top_1: true
+  require_positive_total_after_remove_top_5: true
+  require_positive_second_half: true
+  require_positive_without_best_month: true
+  require_positive_cost_x2: true
+  require_profit_factor_min: 1.05
+
+cost_stress:
+  multipliers:
+    - 1.0
+    - 1.5
+    - 2.0
+    - 3.0

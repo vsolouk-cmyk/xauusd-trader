@@ -6,6 +6,8 @@ Commercial XAUUSD/gold trading research pipeline.
 
 Stage 2A: simple baseline lab after Stage 1 data quality passed.
 
+Telegram notification is enabled for pipeline reports only.
+
 No ML. No trading bot. No paper order. No live order.
 
 ## First definitions
@@ -22,6 +24,7 @@ No ML. No trading bot. No paper order. No live order.
 - SMA: simple moving average.
 - Drawdown: decline from the previous cumulative peak.
 - Net USD: raw price movement minus assumed trading cost.
+- Telegram notification: a short pipeline status report, not a trading signal.
 
 ## Current data source decision
 
@@ -44,12 +47,21 @@ cd ~/Desktop/xauusd-trader
 python3 -m app.xauusd_baseline_lab
 ```
 
-## GitHub Actions
+## Optional local Telegram test
 
-Add repository secret:
+```bash
+cd ~/Desktop/xauusd-trader
+export TELEGRAM_BOT_TOKEN='PASTE_BOT_TOKEN'
+export TELEGRAM_CHAT_ID='PASTE_CHAT_ID'
+python3 -m app.telegram_notify --status local-test
+```
+
+## GitHub Actions secrets
 
 ```text
 TWELVEDATA_API_KEY
+TELEGRAM_BOT_TOKEN
+TELEGRAM_CHAT_ID
 ```
 
 Then run manually from GitHub UI:
@@ -68,3 +80,5 @@ outputsize: 500
 ## Hard rule
 
 If simple baselines are poor after assumed costs, do not proceed to ML.
+
+Telegram messages are reports only, not signals.

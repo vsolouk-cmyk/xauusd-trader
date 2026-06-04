@@ -18,6 +18,8 @@ jobs:
 
     env:
       TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
     steps:
       - name: Checkout
@@ -41,7 +43,15 @@ jobs:
         run: |
           python -m app.xauusd_baseline_lab
 
+      - name: Send Telegram notification
+        if: always()
+        env:
+          WORKFLOW_STATUS: ${{ job.status }}
+        run: |
+          python -m app.telegram_notify --status "${WORKFLOW_STATUS}"
+
       - name: Upload Stage 2A artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: xauusd-stage2a-baseline-lab-${{ github.run_number }}
@@ -51,4 +61,4 @@ jobs:
             data/reports/*.json
             data/reports/*.md
             data/reports/baseline_trades/*.csv
-          if-no-files-found: error
+          if-no-files-found: warn

@@ -21,6 +21,18 @@ data/reports/*
 !data/store/.gitkeep
 !data/store/xauusd.sqlite
 !data/store/manifest.json
+!data/store/backfill_manifest.json
+
+# Second-source store can be intentionally tracked after import
+!data/second_source/
+!data/second_source/.gitkeep
+!data/second_source/second_source.sqlite
+!data/second_source/manifest.json
+
+# Forward shadow log is intentionally tracked for scheduled continuity
+!data/shadow/
+!data/shadow/.gitkeep
+!data/shadow/forward_shadow.sqlite
 
 # System files
 .DS_Store

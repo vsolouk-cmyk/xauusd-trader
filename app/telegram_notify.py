@@ -17,6 +17,8 @@ def load_json(path: Path) -> Dict[str, Any]:
 
 def latest_summary() -> Optional[Path]:
     patterns = [
+        "data/reports/stage3d_forward_shadow_summary_*.json",
+        "data/reports/stage3c_overlap_diagnostics_summary_*.json",
         "data/reports/stage3a_second_source_summary_*.json",
         "data/reports/stage2k_walkforward_summary_*.json",
         "data/reports/stage2j_candidate_stability_summary_*.json",
@@ -48,26 +50,61 @@ def fmt_pct(value: Any) -> str:
         return "n/a"
 
 
-def stage3a_top(summary: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-    sources = summary.get("sources", {})
-    secondary = sources.get("secondary", {})
-    primary = sources.get("primary", {})
-    chosen = secondary if secondary.get("available") else primary
-    if not chosen.get("available"):
-        return None
-    analysis = chosen.get("analysis", {})
-    return {
-        "source": "secondary" if secondary.get("available") else "primary",
-        "base": analysis.get("base", {}),
-        "folds": analysis.get("folds", {}),
-        "monthly": analysis.get("monthly", {}),
-        "candidate": analysis.get("candidate", {}),
-    }
+def build_stage3d_message(summary: Dict[str, Any], status: str) -> list[str]:
+    decision = summary.get("decision", {}) or {}
+    metrics = summary.get("closed_metrics", {}) or {}
+    state = summary.get("shadow_state", {}) or {}
+    opened = summary.get("opened_this_run")
+    latest_signal = summary.get("latest_signal")
+
+    lines = [
+        "XAUUSD Research Update",
+        f"Stage: {summary.get('stage')}",
+        f"Workflow status: {status}",
+        f"Decision: {decision.get('status')}",
+        f"Reason: {decision.get('reason')}",
+        "",
+        "Forward shadow snapshot:",
+        f"- candidate: {summary.get('candidate', {}).get('variant')}",
+        f"- latest bar: {summary.get('market', {}).get('latest_bar_time_utc')}",
+        f"- open trades: {state.get('open_count')}",
+        f"- closed trades: {state.get('closed_count')}",
+        f"- total net: {fmt_float(metrics.get('total_net_usd'))}",
+        f"- PF: {fmt_float(metrics.get('profit_factor'), 3)}",
+        f"- win rate: {fmt_pct(metrics.get('win_rate'))}",
+        f"- last 20 net: {fmt_float(metrics.get('last_20_net_usd'))}",
+    ]
+
+    if opened:
+        lines += [
+            "",
+            "Opened shadow signal:",
+            f"- direction: {opened.get('direction_label')}",
+            f"- entry time: {opened.get('entry_time_utc')}",
+            f"- planned exit: {opened.get('planned_exit_time_utc')}",
+            f"- entry price: {fmt_float(opened.get('entry_price'))}",
+        ]
+    elif latest_signal:
+        lines += [
+            "",
+            "Signal observed but not opened:",
+            f"- direction: {latest_signal.get('direction_label')}",
+            f"- reason: {latest_signal.get('reason')}",
+        ]
+
+    return lines
 
 
 def best_item(summary: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    if summary.get("stage") == "stage3d_forward_shadow":
+        return None
     if summary.get("stage") == "stage3a_second_source_validation":
-        return stage3a_top(summary)
+        sources = summary.get("sources", {})
+        secondary = sources.get("secondary", {})
+        primary = sources.get("primary", {})
+        chosen = secondary if secondary.get("available") else primary
+        if chosen.get("available"):
+            return {"source": "secondary" if secondary.get("available") else "primary", "base": chosen.get("analysis", {}).get("base", {})}
     if summary.get("stage") == "stage2k_walkforward_validation":
         top = summary.get("top_analyses", []) or summary.get("pass_candidates", []) or []
         return top[0] if top else None
@@ -81,54 +118,41 @@ def best_item(summary: Dict[str, Any]) -> Optional[Dict[str, Any]]:
 
 
 def build_message(summary: Optional[Dict[str, Any]], status: str, run_url: str = "", include_run_link: bool = False) -> str:
-    lines = ["XAUUSD Research Update"]
+    if summary and summary.get("stage") == "stage3d_forward_shadow":
+        lines = build_stage3d_message(summary, status)
+    else:
+        lines = ["XAUUSD Research Update"]
 
-    if summary:
-        stage = summary.get("stage", "n/a")
-        decision = summary.get("decision", {}) or {}
-        lines.append(f"Stage: {stage}")
-        lines.append(f"Workflow status: {status}")
-        lines.append(f"Decision: {decision.get('status', 'n/a')}")
-        lines.append(f"Reason: {decision.get('reason', 'n/a')}")
+        if summary:
+            stage = summary.get("stage", "n/a")
+            decision = summary.get("decision", {}) or {}
+            lines.append(f"Stage: {stage}")
+            lines.append(f"Workflow status: {status}")
+            lines.append(f"Decision: {decision.get('status', 'n/a')}")
+            lines.append(f"Reason: {decision.get('reason', 'n/a')}")
 
-        for key in ["stable_candidate_count", "walkforward_pass_count", "robust_candidate_count", "candidate_count"]:
-            if key in decision:
-                lines.append(f"{key}: {decision.get(key)}")
+            for key in ["stable_candidate_count", "walkforward_pass_count", "robust_candidate_count", "candidate_count"]:
+                if key in decision:
+                    lines.append(f"{key}: {decision.get(key)}")
 
-        item = best_item(summary)
-        if item:
-            lines.append("")
-            lines.append("Top snapshot:")
-
-            if summary.get("stage") == "stage3a_second_source_validation":
-                candidate = item.get("candidate", {})
-                base = item.get("base", {})
-                lines.append(f"- source: {item.get('source')}")
-                lines.append(f"- family/name: {candidate.get('family', summary.get('candidate', {}).get('family', 'n/a'))}")
-                lines.append(f"- variant: {candidate.get('variant', summary.get('candidate', {}).get('variant', 'n/a'))}")
-                lines.append(f"- trades: {base.get('trade_count', 'n/a')}")
-                lines.append(f"- total net: {fmt_float(base.get('total_net_usd'))}")
-                lines.append(f"- PF: {fmt_float(base.get('profit_factor'), 3)}")
-                lines.append(f"- win rate: {fmt_pct(base.get('win_rate'))}")
-            else:
-                lines.append(f"- family/name: {item.get('family', item.get('baseline', 'n/a'))}")
-                if item.get("variant"):
-                    lines.append(f"- variant: {item.get('variant')}")
+            item = best_item(summary)
+            if item:
+                lines.append("")
+                lines.append("Top snapshot:")
                 base = item.get("base", {}) or {}
                 if base:
+                    lines.append(f"- source: {item.get('source', 'n/a')}")
                     lines.append(f"- trades: {base.get('trade_count', 'n/a')}")
                     lines.append(f"- win rate: {fmt_pct(base.get('win_rate'))}")
                     lines.append(f"- total net: {fmt_float(base.get('total_net_usd'))}")
                     lines.append(f"- PF: {fmt_float(base.get('profit_factor'), 3)}")
-
-    else:
-        lines.append("Stage: unknown")
-        lines.append(f"Workflow status: {status}")
-        lines.append("Summary file: not found")
+        else:
+            lines.append("Stage: unknown")
+            lines.append(f"Workflow status: {status}")
+            lines.append("Summary file: not found")
 
     lines.append("")
     lines.append("Warning: diagnostic only. No ML, no paper-order, no live decision.")
-    lines.append("Current limitation: Twelve Data has no broker bid/ask spread in this pipeline.")
 
     if bool(run_url) and (include_run_link or str(status).lower() != "success"):
         lines.append("")

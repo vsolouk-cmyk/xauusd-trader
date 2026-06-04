@@ -1,0 +1,41 @@
+# Stage 3D forward-shadow configuration.
+# Goal: log future candidate signals and outcomes without placing any order.
+#
+# This is NOT ML.
+# This is NOT paper-order.
+# This is NOT live trading.
+
+candidate:
+  family: sma_trend_1h
+  variant: sma10_h12_dist10_cool1
+  interval: 1h
+  sma_window: 10
+  horizon_bars: 12
+  min_distance_usd: 10.0
+  cooldown_bars: 1
+
+data:
+  primary_db_path: data/store/xauusd.sqlite
+  secondary_db_path: data/second_source/second_source.sqlite
+  use_secondary_for_report_only: true
+
+shadow:
+  db_path: data/shadow/forward_shadow.sqlite
+  source_name: twelvedata_primary
+  allow_new_entries: true
+  max_open_trades: 1
+
+cost_model:
+  assumed_spread_usd: 0.30
+  assumed_slippage_usd: 0.05
+  total_roundtrip_cost_usd: 0.35
+
+kill_switch:
+  min_closed_trades_for_eval: 20
+  stop_if_total_net_below_usd: -500.0
+  stop_if_profit_factor_below_after_min_trades: 0.95
+  stop_if_last_20_net_below_usd: -350.0
+  stop_if_short_total_below_usd: -350.0
+  stop_if_long_total_below_usd: -350.0
+
+report_dir: data/reports

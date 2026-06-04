@@ -1,0 +1,24 @@
+# Stage 2K walk-forward / rolling validation for Stage 2J stable candidates.
+
+data_db: data/store/xauusd.sqlite
+report_dir: data/reports
+stage2j_summary_glob: data/reports/stage2j_candidate_stability_summary_*.json
+
+selection:
+  max_candidates: 5
+
+folds:
+  count: 5
+  min_trades_per_fold: 20
+  min_positive_fold_ratio: 0.60
+  require_last_fold_positive: true
+
+rolling:
+  window_trades: 25
+  max_negative_window_ratio: 0.45
+
+decision:
+  require_cost_x4_positive: true
+  require_long_short_not_both_negative: true
+  require_last_50_positive: true
+  require_last_100_positive: false

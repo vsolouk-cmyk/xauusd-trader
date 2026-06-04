@@ -17,6 +17,7 @@ def load_json(path: Path) -> Dict[str, Any]:
 
 def latest_summary() -> Optional[Path]:
     patterns = [
+        "data/reports/stage2k_walkforward_summary_*.json",
         "data/reports/stage2j_candidate_stability_summary_*.json",
         "data/reports/stage2d_grid_summary_*.json",
         "data/reports/stage2c_robustness_summary_*.json",
@@ -50,18 +51,19 @@ def fmt_pct(value: Any) -> str:
 
 
 def best_item(summary: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    if summary.get("stage") == "stage2k_walkforward_validation":
+        analyses = summary.get("analyses", []) or []
+        passed = [x for x in analyses if x.get("walkforward_pass")]
+        pool = passed or analyses
+        if not pool:
+            return None
+        return sorted(pool, key=lambda x: float(x.get("base", {}).get("total_net_usd", -10**18)), reverse=True)[0]
     if summary.get("stage") == "stage2j_candidate_stability_analysis":
         top = summary.get("top_analyses", []) or []
         return top[0] if top else None
     if summary.get("stage") == "stage2d_baseline_grid_lab":
         top = summary.get("top_variants", []) or []
         return top[0] if top else None
-    analyses = summary.get("analyses", []) or []
-    if analyses:
-        return sorted(analyses, key=lambda x: float(x.get("base", {}).get("total_net_usd", -10**18)), reverse=True)[0]
-    items = summary.get("summaries", []) or []
-    if items:
-        return sorted(items, key=lambda x: float(x.get("total_net_usd", -10**18) or -10**18), reverse=True)[0]
     return None
 
 
@@ -76,7 +78,7 @@ def build_message(summary: Optional[Dict[str, Any]], status: str, run_url: str =
         lines.append(f"Decision: {decision.get('status', 'n/a')}")
         lines.append(f"Reason: {decision.get('reason', 'n/a')}")
 
-        for key in ["stable_candidate_count", "robust_after_stage2c_count", "robust_candidate_count", "candidate_count"]:
+        for key in ["walkforward_pass_count", "stable_candidate_count", "robust_after_stage2c_count", "robust_candidate_count", "candidate_count"]:
             if key in decision:
                 lines.append(f"{key}: {decision.get(key)}")
 
@@ -91,22 +93,25 @@ def build_message(summary: Optional[Dict[str, Any]], status: str, run_url: str =
             base = item.get("base", {}) or {}
             if base:
                 lines.append(f"- trades: {base.get('trade_count', 'n/a')}")
-                if "stable_candidate" in item:
+                if "walkforward_pass" in item:
+                    lines.append(f"- walk-forward: {item.get('walkforward_pass')}")
+                elif "stable_candidate" in item:
                     lines.append(f"- stable: {item.get('stable_candidate')}")
                 elif "robust_grid_candidate" in item:
                     lines.append(f"- robust: {item.get('robust_grid_candidate')}")
                 lines.append(f"- win rate: {fmt_pct(base.get('win_rate'))}")
                 lines.append(f"- total net: {fmt_float(base.get('total_net_usd'))}")
                 lines.append(f"- PF: {fmt_float(base.get('profit_factor'), 3)}")
-                if "thirds" in item:
-                    last = (item.get("thirds", {}) or {}).get("last_third", {}) or {}
-                    lines.append(f"- last third: {fmt_float(last.get('total_net_usd'))}")
-                if "monthly" in item:
-                    monthly = item.get("monthly", {}) or {}
-                    lines.append(f"- positive months: {fmt_pct(monthly.get('positive_month_ratio'))}")
-            else:
-                lines.append(f"- trades: {item.get('trade_count', 'n/a')}")
-                lines.append(f"- total net USD: {fmt_float(item.get('total_net_usd'))}")
+                if "folds" in item:
+                    folds = item.get("folds", {}) or {}
+                    lines.append(f"- fold +ratio: {fmt_pct(folds.get('positive_fold_ratio'))}")
+                    last = folds.get("last_fold", {}) or {}
+                    lines.append(f"- last fold: {fmt_float(last.get('total_net_usd'))}")
+                if "rolling" in item:
+                    roll = item.get("rolling", {}) or {}
+                    lines.append(f"- neg rolling windows: {fmt_pct(roll.get('negative_window_ratio'))}")
+                if "last_50" in item:
+                    lines.append(f"- last 50: {fmt_float((item.get('last_50') or {}).get('total_net_usd'))}")
 
     else:
         lines.append("Stage: unknown")

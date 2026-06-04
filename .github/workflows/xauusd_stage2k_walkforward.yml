@@ -1,0 +1,85 @@
+name: XAUUSD Stage 2K Walk-Forward Validation
+
+on:
+  workflow_dispatch:
+    inputs:
+      include_run_link:
+        description: "Include GitHub run link in Telegram success messages"
+        required: true
+        default: "false"
+  workflow_run:
+    workflows: ["XAUUSD Persistent Data Store Refresh"]
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+concurrency:
+  group: xauusd-stage2k-walkforward
+  cancel-in-progress: true
+
+jobs:
+  stage2k-walkforward:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      TELEGRAM_INCLUDE_RUN_LINK: ${{ github.event.inputs.include_run_link || 'false' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify SQLite store exists
+        run: |
+          test -f data/store/xauusd.sqlite
+          test -f data/store/manifest.json
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install -r requirements.txt
+
+      - name: Run Stage 2D fast grid lab
+        run: |
+          python -m app.xauusd_stage2d_grid_lab --data-db data/store/xauusd.sqlite
+
+      - name: Run Stage 2J candidate stability analysis
+        run: |
+          python -m app.xauusd_stage2j_candidate_analysis --data-db data/store/xauusd.sqlite
+
+      - name: Run Stage 2K walk-forward validation
+        run: |
+          python -m app.xauusd_stage2k_walkforward --data-db data/store/xauusd.sqlite
+
+      - name: Send Telegram notification
+        if: always()
+        env:
+          WORKFLOW_STATUS: ${{ job.status }}
+        run: |
+          python -m app.telegram_notify --status "${WORKFLOW_STATUS}"
+
+      - name: Upload Stage 2K slim artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xauusd-stage2k-walkforward-${{ github.run_number }}
+          path: |
+            data/store/manifest.json
+            data/reports/stage2d_grid_summary_*.json
+            data/reports/stage2d_grid_summary_*.md
+            data/reports/stage2d_grid_evaluations_*.csv
+            data/reports/stage2j_candidate_stability_summary_*.json
+            data/reports/stage2j_candidate_stability_summary_*.md
+            data/reports/stage2k_walkforward_summary_*.json
+            data/reports/stage2k_walkforward_summary_*.md
+          if-no-files-found: warn

@@ -4,7 +4,7 @@ Commercial XAUUSD/gold trading research pipeline.
 
 ## Current stage
 
-Stage 2D: baseline grid lab after Stage 2C rejected the previous candidate.
+Stage 2D: baseline grid lab with cache-aware data collection and slim artifacts.
 
 Telegram notification is enabled for pipeline reports only.
 
@@ -30,6 +30,7 @@ No ML. No trading bot. No paper order. No live order.
 - Profit factor: gross wins divided by gross losses.
 - Grid lab: controlled testing of simple baseline parameter combinations.
 - Train/test split: first time segment for initial evaluation, later time segment for validation.
+- Cache: reuse of saved local/GitHub data files to avoid repeated provider calls.
 
 ## Current data source decision
 
@@ -39,10 +40,19 @@ OANDA is paused. MT5/broker feed validation comes later.
 
 ## Local Stage 2D sequence
 
+Reuse cached data if available:
+
 ```bash
 cd ~/Desktop/xauusd-trader
 export TWELVEDATA_API_KEY='PASTE_KEY_HERE'
 python3 -m app.xauusd_stage1_snapshot --outputsize 5000
+python3 -m app.xauusd_stage2d_grid_lab
+```
+
+Force fresh provider data:
+
+```bash
+python3 -m app.xauusd_stage1_snapshot --outputsize 5000 --force-refresh
 python3 -m app.xauusd_stage2d_grid_lab
 ```
 
@@ -65,6 +75,7 @@ Inputs:
 ```text
 intervals: 1min,5min,15min,1h
 outputsize: 5000
+force_refresh: false
 include_run_link: false
 ```
 

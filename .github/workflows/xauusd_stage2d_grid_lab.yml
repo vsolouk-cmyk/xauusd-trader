@@ -11,6 +11,10 @@ on:
         description: "Candles per interval. Use 5000 if your Twelve Data plan allows it."
         required: true
         default: "5000"
+      force_refresh:
+        description: "Fetch fresh Twelve Data candles instead of reusing restored cache"
+        required: true
+        default: "false"
       include_run_link:
         description: "Include GitHub run link in Telegram success messages"
         required: true
@@ -30,6 +34,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Restore XAUUSD data cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/raw
+            data/normalized
+          key: xauusd-data-${{ github.workflow }}-${{ github.event.inputs.outputsize }}-${{ github.run_id }}
+          restore-keys: |
+            xauusd-data-${{ github.workflow }}-${{ github.event.inputs.outputsize }}-
+            xauusd-data-
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -40,9 +55,13 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
 
-      - name: Run Stage 1 larger snapshot
+      - name: Run Stage 1 cache-aware snapshot
         run: |
-          python -m app.xauusd_stage1_snapshot --intervals "${{ github.event.inputs.intervals }}" --outputsize "${{ github.event.inputs.outputsize }}"
+          if [ "${{ github.event.inputs.force_refresh }}" = "true" ]; then
+            python -m app.xauusd_stage1_snapshot --intervals "${{ github.event.inputs.intervals }}" --outputsize "${{ github.event.inputs.outputsize }}" --force-refresh
+          else
+            python -m app.xauusd_stage1_snapshot --intervals "${{ github.event.inputs.intervals }}" --outputsize "${{ github.event.inputs.outputsize }}"
+          fi
 
       - name: Run Stage 2D baseline grid lab
         run: |
@@ -55,15 +74,16 @@ jobs:
         run: |
           python -m app.telegram_notify --status "${WORKFLOW_STATUS}"
 
-      - name: Upload Stage 2D artifacts
+      - name: Upload Stage 2D slim artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: xauusd-stage2d-grid-lab-${{ github.run_number }}
+          name: xauusd-stage2d-grid-lab-slim-${{ github.run_number }}
           path: |
-            data/raw/*.json
-            data/normalized/*.csv
-            data/reports/*.json
-            data/reports/*.md
-            data/reports/stage2d_trades/*.csv
+            data/reports/quality_*.json
+            data/reports/stage1_snapshot_summary_*.json
+            data/reports/stage1_snapshot_summary_*.md
+            data/reports/stage2d_grid_summary_*.json
+            data/reports/stage2d_grid_summary_*.md
+            data/reports/stage2d_grid_evaluations_*.csv
           if-no-files-found: warn

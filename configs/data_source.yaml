@@ -1,4 +1,4 @@
-# Stage 0 data-source configuration.
+# Stage 0/1 data-source configuration.
 # Current primary provider: Twelve Data REST.
 #
 # Required secret/environment variable:
@@ -10,23 +10,28 @@ provider: twelvedata
 
 symbol: XAU/USD
 
-# Twelve Data intervals.
-# Start with small outputsize until API key and symbol access are confirmed.
 intervals:
   - 1min
   - 5min
   - 15min
   - 1h
 
-outputsize: 500
+outputsize: 5000
 timezone: UTC
 
 raw_dir: data/raw
 normalized_dir: data/normalized
 report_dir: data/reports
 
-# No bid/ask from Twelve Data in this stage.
-# Later MT5/broker feed must validate actual spread.
+# Cache policy:
+# - Local runs reuse latest normalized CSV if it has enough rows and is not too old.
+# - GitHub Actions restores data/raw and data/normalized via actions/cache, then this script decides whether to reuse.
+# - Use --force-refresh when you explicitly need fresh provider data.
+cache:
+  enabled: true
+  max_age_minutes: 720
+  min_rows_policy: requested_outputsize
+
 cost_model:
   spread_available: false
   assumed_spread_usd: 0.30

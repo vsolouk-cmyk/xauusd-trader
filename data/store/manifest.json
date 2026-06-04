@@ -1,7 +1,7 @@
 {
   "db_path": "data/store/xauusd.sqlite",
-  "fetched_any": false,
-  "generated_at_utc": "2026-06-04T12:04:23.839043+00:00",
+  "fetched_any": true,
+  "generated_at_utc": "2026-06-04T15:40:16.628862+00:00",
   "intervals": [
     "1min",
     "5min",
@@ -12,40 +12,56 @@
   "ok": true,
   "results": [
     {
-      "action": "skip_fresh",
-      "age_minutes": 41.39601038333333,
-      "end_utc": "2026-06-04T11:23:00+00:00",
+      "action": "refresh",
+      "age_minutes_before_refresh": 257.2657012833333,
+      "api_rows": 277,
+      "end_utc": "2026-06-04T15:38:00+00:00",
       "interval": "1min",
-      "new_rows": 0,
-      "rows": 5206,
-      "start_utc": "2026-05-31T20:38:00+00:00"
+      "net_new_rows": 255,
+      "requested_outputsize": 277,
+      "rows": 5461,
+      "start_utc": "2026-05-31T20:38:00+00:00",
+      "strictly_new_rows": 255,
+      "trimmed_rows": 0
     },
     {
-      "action": "skip_fresh",
-      "age_minutes": 44.3960407,
-      "end_utc": "2026-06-04T11:20:00+00:00",
+      "action": "refresh",
+      "age_minutes_before_refresh": 260.27038665,
+      "api_rows": 72,
+      "end_utc": "2026-06-04T15:35:00+00:00",
       "interval": "5min",
-      "new_rows": 0,
-      "rows": 5041,
-      "start_utc": "2026-05-17T23:20:00+00:00"
+      "net_new_rows": 51,
+      "requested_outputsize": 72,
+      "rows": 5092,
+      "start_utc": "2026-05-17T23:20:00+00:00",
+      "strictly_new_rows": 51,
+      "trimmed_rows": 0
     },
     {
-      "action": "skip_fresh",
-      "age_minutes": 49.39608871666667,
-      "end_utc": "2026-06-04T11:15:00+00:00",
+      "action": "refresh",
+      "age_minutes_before_refresh": 265.2723848833333,
+      "api_rows": 50,
+      "end_utc": "2026-06-04T15:30:00+00:00",
       "interval": "15min",
-      "new_rows": 0,
-      "rows": 13650,
-      "start_utc": "2026-01-13T06:00:00+00:00"
+      "net_new_rows": 17,
+      "requested_outputsize": 50,
+      "rows": 13667,
+      "start_utc": "2026-01-13T06:00:00+00:00",
+      "strictly_new_rows": 17,
+      "trimmed_rows": 0
     },
     {
-      "action": "skip_fresh",
-      "age_minutes": 64.39617603333333,
-      "end_utc": "2026-06-04T11:00:00+00:00",
+      "action": "refresh",
+      "age_minutes_before_refresh": 280.27436313333334,
+      "api_rows": 50,
+      "end_utc": "2026-06-04T15:00:00+00:00",
       "interval": "1h",
-      "new_rows": 0,
-      "rows": 25749,
-      "start_utc": "2022-05-27T13:00:00+00:00"
+      "net_new_rows": 4,
+      "requested_outputsize": 50,
+      "rows": 25753,
+      "start_utc": "2022-05-27T13:00:00+00:00",
+      "strictly_new_rows": 4,
+      "trimmed_rows": 0
     }
   ],
   "stage": "persistent_sqlite_store_refresh",

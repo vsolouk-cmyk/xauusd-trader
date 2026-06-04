@@ -6,6 +6,9 @@ data_dir: data/normalized
 report_dir: data/reports
 trades_dir: data/reports/stage2d_trades
 
+output:
+  save_full_trades: false
+
 cost_model:
   assumed_spread_usd: 0.30
   assumed_slippage_usd: 0.05

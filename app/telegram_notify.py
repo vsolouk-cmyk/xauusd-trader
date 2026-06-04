@@ -68,6 +68,13 @@ def best_item(summary: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     return sorted(pool, key=lambda x: float(x.get("total_net_usd", -10**18) or -10**18), reverse=True)[0]
 
 
+def add_decision_counts(lines: list[str], decision: Dict[str, Any]) -> None:
+    # Keep order stable and avoid duplicate labels.
+    for key in ["robust_candidate_count", "robust_after_stage2c_count", "candidate_count"]:
+        if key in decision:
+            lines.append(f"{key}: {decision.get(key)}")
+
+
 def build_message(summary: Optional[Dict[str, Any]], status: str, run_url: str = "", include_run_link: bool = False) -> str:
     lines = ["XAUUSD Research Update"]
 
@@ -78,10 +85,11 @@ def build_message(summary: Optional[Dict[str, Any]], status: str, run_url: str =
         lines.append(f"Workflow status: {status}")
         lines.append(f"Decision: {decision.get('status', 'n/a')}")
         lines.append(f"Reason: {decision.get('reason', 'n/a')}")
+        add_decision_counts(lines, decision)
 
-        for key in ["robust_candidate_count", "robust_after_stage2c_count", "robust_candidate_count", "candidate_count"]:
-            if key in decision:
-                lines.append(f"{key}: {decision.get(key)}")
+        runtime = summary.get("runtime_seconds")
+        if runtime is not None:
+            lines.append(f"runtime_seconds: {fmt_float(runtime, 3)}")
 
         item = best_item(summary)
         if item:
@@ -106,7 +114,6 @@ def build_message(summary: Optional[Dict[str, Any]], status: str, run_url: str =
                 lines.append(f"- robust/candidate: {item.get('robust_candidate', item.get('candidate', 'n/a'))}")
                 lines.append(f"- win rate: {fmt_pct(item.get('win_rate'))}")
                 lines.append(f"- total net USD: {fmt_float(item.get('total_net_usd'))}")
-
     else:
         lines.append("Stage: unknown")
         lines.append(f"Workflow status: {status}")
@@ -162,7 +169,12 @@ def main() -> int:
     run_url = f"https://github.com/{repo}/actions/runs/{run_id}" if repo and run_id else ""
 
     env_include_link = os.getenv("TELEGRAM_INCLUDE_RUN_LINK", "").strip().lower() in {"1", "true", "yes", "on"}
-    text = build_message(summary=summary, status=args.status, run_url=run_url, include_run_link=bool(args.include_run_link or env_include_link))
+    text = build_message(
+        summary=summary,
+        status=args.status,
+        run_url=run_url,
+        include_run_link=bool(args.include_run_link or env_include_link),
+    )
 
     result = send_telegram(token=token, chat_id=chat_id, text=text)
     print(json.dumps({"ok": True, "telegram_ok": result.get("ok"), "summary": str(summary_path) if summary_path else None}, indent=2))

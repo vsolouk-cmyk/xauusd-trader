@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import itertools
 import json
+import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -331,9 +332,15 @@ def main() -> int:
     parser.add_argument("--data-dir", default=None)
     parser.add_argument("--data-db", default=None)
     parser.add_argument("--report-dir", default=None)
+    parser.add_argument("--save-full-trades", action="store_true", help="Write full per-trade CSV for debugging. Disabled by default to speed up workflow.")
     args = parser.parse_args()
 
+    t0 = time.perf_counter()
+
     cfg = load_yaml(Path(args.config))
+    output_cfg = cfg.get("output", {}) or {}
+    save_full_trades = bool(args.save_full_trades or output_cfg.get("save_full_trades", False))
+
     data_dir = Path(args.data_dir or cfg.get("data_dir", "data/normalized"))
     data_db = args.data_db if args.data_db is not None else cfg.get("data_db")
     report_dir = Path(args.report_dir or cfg.get("report_dir", "data/reports"))
@@ -368,7 +375,8 @@ def main() -> int:
             trades = trades_from_signals(accepted, df, cost_usd)
             trades = [Trade(**{**t.__dict__, "variant": f"{t.variant}_cool{cooldown}"}) for t in trades]
             if trades:
-                all_trades.extend(trades)
+                if save_full_trades:
+                    all_trades.extend(trades)
                 evaluations.append(evaluate_variant("sma_trend_1h", trades[0].variant, trades, train_fraction, decision_cfg))
 
     f = families.get("session_momentum_15min", {})
@@ -381,7 +389,8 @@ def main() -> int:
             trades = trades_from_signals(accepted, df, cost_usd)
             trades = [Trade(**{**t.__dict__, "variant": f"{t.variant}_cool{cooldown}"}) for t in trades]
             if trades:
-                all_trades.extend(trades)
+                if save_full_trades:
+                    all_trades.extend(trades)
                 evaluations.append(evaluate_variant("session_momentum_15min", trades[0].variant, trades, train_fraction, decision_cfg))
 
     f = families.get("range_expansion_15min", {})
@@ -394,7 +403,8 @@ def main() -> int:
             trades = trades_from_signals(accepted, df, cost_usd)
             trades = [Trade(**{**t.__dict__, "variant": f"{t.variant}_cool{cooldown}"}) for t in trades]
             if trades:
-                all_trades.extend(trades)
+                if save_full_trades:
+                    all_trades.extend(trades)
                 evaluations.append(evaluate_variant("range_expansion_15min", trades[0].variant, trades, train_fraction, decision_cfg))
 
     robust = [e for e in evaluations if e["robust_grid_candidate"]]
@@ -409,8 +419,12 @@ def main() -> int:
     summary_json = report_dir / f"stage2d_grid_summary_{stamp}.json"
     summary_md = report_dir / f"stage2d_grid_summary_{stamp}.md"
 
-    # Keep local full trades for debugging, but workflows upload only slim reports.
-    pd.DataFrame([trade_to_dict(t) for t in all_trades]).to_csv(trades_csv, index=False)
+    # Full per-trade CSV is expensive and usually unnecessary.
+    # Keep it opt-in for debugging; routine workflows use evaluations + summary only.
+    trades_csv_value = None
+    if save_full_trades:
+        pd.DataFrame([trade_to_dict(t) for t in all_trades]).to_csv(trades_csv, index=False)
+        trades_csv_value = str(trades_csv)
 
     eval_rows = []
     for e in evaluations:
@@ -447,14 +461,16 @@ def main() -> int:
         "variant_count": int(len(evaluations)),
         "robust_candidates": robust[:20],
         "top_variants": top,
-        "trades_csv": str(trades_csv),
+        "trades_csv": trades_csv_value,
         "evaluations_csv": str(eval_csv),
+        "runtime_seconds": round(time.perf_counter() - t0, 3),
+        "save_full_trades": save_full_trades,
     }
 
     write_json(summary_json, payload)
     write_markdown(summary_md, payload)
 
-    print(json.dumps({"ok": True, "decision": payload["decision"], "summary_json": str(summary_json), "summary_md": str(summary_md), "trades_csv": str(trades_csv), "evaluations_csv": str(eval_csv), "variant_count": len(evaluations)}, indent=2))
+    print(json.dumps({"ok": True, "decision": payload["decision"], "summary_json": str(summary_json), "summary_md": str(summary_md), "trades_csv": trades_csv_value, "evaluations_csv": str(eval_csv), "variant_count": len(evaluations), "runtime_seconds": payload["runtime_seconds"], "save_full_trades": save_full_trades}, indent=2))
     return 0
 
 

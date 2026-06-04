@@ -3,34 +3,40 @@ name: XAUUSD Stage 2D Baseline Grid Lab
 on:
   workflow_dispatch:
     inputs:
-      refresh_store:
-        description: "Refresh persistent store before running grid lab"
-        required: true
-        default: "true"
-      force_refresh:
-        description: "Force provider refresh even if store is fresh"
-        required: true
-        default: "false"
       include_run_link:
         description: "Include GitHub run link in Telegram success messages"
         required: true
         default: "false"
+  workflow_run:
+    workflows: ["XAUUSD Persistent Data Store Refresh"]
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+concurrency:
+  group: xauusd-stage2d-grid-lab
+  cancel-in-progress: true
 
 jobs:
   stage2d-grid-lab:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     env:
-      TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-      TELEGRAM_INCLUDE_RUN_LINK: ${{ github.event.inputs.include_run_link }}
+      TELEGRAM_INCLUDE_RUN_LINK: ${{ github.event.inputs.include_run_link || 'false' }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+
+      - name: Verify SQLite store exists
+        run: |
+          test -f data/store/xauusd.sqlite
+          test -f data/store/manifest.json
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -42,18 +48,9 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
 
-      - name: Optional store refresh
-        if: ${{ github.event.inputs.refresh_store == 'true' }}
+      - name: Run Stage 2D baseline grid lab from SQLite store
         run: |
-          if [ "${{ github.event.inputs.force_refresh }}" = "true" ]; then
-            python -m app.xauusd_store_refresh --force-refresh
-          else
-            python -m app.xauusd_store_refresh
-          fi
-
-      - name: Run Stage 2D baseline grid lab
-        run: |
-          python -m app.xauusd_stage2d_grid_lab
+          python -m app.xauusd_stage2d_grid_lab --data-db data/store/xauusd.sqlite
 
       - name: Send Telegram notification
         if: always()
@@ -67,24 +64,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: xauusd-stage2d-grid-lab-slim-${{ github.run_number }}
-          retention-days: 7
           path: |
             data/store/manifest.json
             data/reports/stage2d_grid_summary_*.json
             data/reports/stage2d_grid_summary_*.md
             data/reports/stage2d_grid_evaluations_*.csv
           if-no-files-found: warn
-
-      - name: Commit store updates from manual run
-        if: ${{ github.event.inputs.refresh_store == 'true' }}
-        run: |
-          if git diff --quiet -- data/store; then
-            echo "No store changes to commit."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/store
-          git commit -m "Update XAUUSD persistent data store"
-          git pull --rebase
-          git push

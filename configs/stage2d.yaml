@@ -1,8 +1,8 @@
 # Stage 2D baseline grid lab.
-# Goal: test whether any simple baseline family remains viable under time split, outlier removal, and cost stress.
+# SQLite store is now the primary data source.
 
-# After Stage 2F, Stage 2D should read from persistent store, not one-off normalized snapshots.
-data_dir: data/store
+data_db: data/store/xauusd.sqlite
+data_dir: data/normalized
 report_dir: data/reports
 trades_dir: data/reports/stage2d_trades
 

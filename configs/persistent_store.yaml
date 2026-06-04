@@ -1,6 +1,8 @@
-# Persistent rolling data store for XAUUSD.
-# This is the primary Stage 2 data input after Stage 2F.
+# Persistent SQLite data store for XAUUSD.
+# SQLite = small local SQL database stored as one file.
+# Each timeframe is stored in a separate table.
 
+provider: twelvedata
 symbol: XAU/USD
 timezone: UTC
 
@@ -10,20 +12,13 @@ intervals:
   - 15min
   - 1h
 
-store_dir: data/store
+db_path: data/store/xauusd.sqlite
 manifest_path: data/store/manifest.json
 
-# First build or forced rebuild.
-bootstrap_outputsize: 5000
-
-# Incremental refresh. For a 1-2 hour cadence this is enough for all active intervals.
-incremental_outputsize: 500
-
-# Keep repo size controlled. Increase later only if needed.
-max_rows_per_interval: 20000
-
-# Refresh only if latest stored candle is older than this.
-max_staleness_minutes: 90
-
-# Re-request a few bars before the last stored timestamp and deduplicate.
-overlap_bars: 3
+refresh:
+  stale_after_minutes: 90
+  initial_outputsize: 5000
+  min_incremental_outputsize: 50
+  max_incremental_outputsize: 500
+  overlap_bars: 20
+  max_rows_per_interval: 20000

@@ -37,7 +37,7 @@ class TwelveDataClient:
 
     def get(self, endpoint: str, params: Dict[str, Any]) -> Dict[str, Any]:
         url = f"{self.config.base_url}/{endpoint.lstrip('/')}"
-        request_params = {k: v for k, v in dict(params).items() if v is not None}
+        request_params = dict(params)
         request_params["apikey"] = self.api_key
 
         last_error: Optional[BaseException] = None
@@ -85,14 +85,17 @@ class TwelveDataClient:
         if outputsize < 1:
             raise ValueError("outputsize must be positive.")
 
-        params = {
+        params: Dict[str, Any] = {
             "symbol": symbol,
             "interval": interval,
             "outputsize": int(outputsize),
             "timezone": timezone,
             "order": order,
             "format": "JSON",
-            "start_date": start_date,
-            "end_date": end_date,
         }
+        if start_date:
+            params["start_date"] = start_date
+        if end_date:
+            params["end_date"] = end_date
+
         return self.get("time_series", params=params)

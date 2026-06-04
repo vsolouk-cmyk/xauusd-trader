@@ -1,50 +1,26 @@
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-.coverage
-htmlcov/
+*.pyo
 
-# Virtual environments
+# Local environment
+.env
 .venv/
 venv/
-env/
 
-# OS/editor
-.DS_Store
-.vscode/
-.idea/
-*.swp
-
-# Secrets and local config
-.env
-.env.*
-*.key
-*.pem
-secrets/
-credentials/
-
-# Runtime/output data
+# Raw/transient data
 data/raw/*
 !data/raw/.gitkeep
-
 data/normalized/*
 !data/normalized/.gitkeep
-
 data/reports/*
 !data/reports/.gitkeep
 
-data/logs/*
-!data/logs/.gitkeep
+# Persistent store is intentionally tracked for GitHub Actions continuity
+!data/store/
+!data/store/.gitkeep
+!data/store/xauusd.sqlite
+!data/store/manifest.json
 
-# Notebook checkpoints
-.ipynb_checkpoints/
-notebooks/.ipynb_checkpoints/
-
-# Temporary files
-tmp/
-*.tmp
-*.log
+# System files
+.DS_Store

@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import time
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List
 
@@ -11,7 +11,7 @@ import pandas as pd
 import yaml
 
 from app.providers.twelvedata_client import TwelveDataClient
-from app.xauusd_sqlite_store import connect, ensure_schema, interval_stats, latest_time, optimize, trim_interval, upsert_candles
+from app.xauusd_sqlite_store import connect, ensure_schema, interval_stats, optimize, trim_interval, upsert_candles
 
 
 def load_yaml(path: Path) -> Dict[str, Any]:
@@ -81,8 +81,53 @@ def earliest_time(con, interval: str) -> pd.Timestamp | None:
 
 
 def fmt_dt(ts: pd.Timestamp) -> str:
-    # Twelve Data accepts "YYYY-MM-DD HH:MM:SS".
     return ts.tz_convert("UTC").strftime("%Y-%m-%d %H:%M:%S")
+
+
+def build_primary_store_manifest(
+    con,
+    db_path: Path,
+    symbol: str,
+    store_intervals: list[str],
+    max_rows: int,
+    source_stage: str,
+) -> Dict[str, Any]:
+    results = []
+    for interval in store_intervals:
+        try:
+            stats = interval_stats(con, interval)
+            results.append(
+                {
+                    "interval": interval,
+                    "action": "store_state",
+                    "rows": stats.get("rows", 0),
+                    "start_utc": stats.get("start_utc"),
+                    "end_utc": stats.get("end_utc"),
+                    "new_rows": None,
+                }
+            )
+        except Exception as exc:
+            results.append(
+                {
+                    "interval": interval,
+                    "action": "store_state_error",
+                    "error": str(exc),
+                    "rows": 0,
+                    "start_utc": None,
+                    "end_utc": None,
+                    "new_rows": None,
+                }
+            )
+
+    return {
+        "ok": True,
+        "stage": source_stage,
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "db_path": str(db_path),
+        "symbol": symbol,
+        "max_rows_per_interval": max_rows,
+        "results": results,
+    }
 
 
 def main() -> int:
@@ -97,19 +142,22 @@ def main() -> int:
     symbol = cfg.get("symbol", "XAU/USD")
     timezone_name = cfg.get("timezone", "UTC")
     db_path = Path(cfg.get("db_path", "data/store/xauusd.sqlite"))
-    manifest_path = Path(cfg.get("manifest_path", "data/store/backfill_manifest.json"))
+
+    backfill_manifest_path = Path(cfg.get("manifest_path", "data/store/backfill_manifest.json"))
+    store_manifest_path = Path(cfg.get("store_manifest_path", "data/store/manifest.json"))
 
     backfill_cfg = cfg.get("backfill", {}) or {}
     outputsize = int(backfill_cfg.get("outputsize", 5000))
     sleep_seconds = float(backfill_cfg.get("sleep_seconds_between_requests", 8))
     requests_per_interval = int(args.requests_per_interval or backfill_cfg.get("requests_per_interval", 1))
     chunk_days = backfill_cfg.get("chunk_days", {}) or {}
-    max_rows = int(backfill_cfg.get("max_rows_per_interval", 20000))
+    max_rows = int(backfill_cfg.get("max_rows_per_interval", 60000))
 
-    intervals = [x.strip() for x in args.intervals.split(",")] if args.intervals else list(cfg.get("intervals", ["15min", "1h"]))
+    intervals = [x.strip() for x in args.intervals.split(",")] if args.intervals else list(cfg.get("intervals", ["1h"]))
+    store_intervals = list(cfg.get("store_intervals", ["1min", "5min", "15min", "1h"]))
 
     con = connect(db_path)
-    ensure_schema(con, intervals)
+    ensure_schema(con, sorted(set(intervals + store_intervals)))
     client = TwelveDataClient()
 
     results = []
@@ -140,7 +188,7 @@ def main() -> int:
                 )
                 requested_range = {"mode": "latest_seed"}
             else:
-                days = int(chunk_days.get(interval, 45))
+                days = int(chunk_days.get(interval, 180 if interval == "1h" else 45))
                 end_ts = start - pd.Timedelta(seconds=1)
                 start_ts = start - pd.Timedelta(days=days)
 
@@ -182,7 +230,6 @@ def main() -> int:
                 }
             )
 
-            # If API returned no useful rows, do not hammer earlier ranges.
             if df.empty or inserted == 0:
                 break
 
@@ -195,9 +242,8 @@ def main() -> int:
             time.sleep(sleep_seconds)
 
     optimize(con)
-    con.close()
 
-    manifest = {
+    backfill_manifest = {
         "ok": True,
         "stage": "historical_sqlite_backfill",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
@@ -209,8 +255,22 @@ def main() -> int:
         "max_rows_per_interval": max_rows,
         "results": results,
     }
-    write_json(manifest_path, manifest)
-    print(json.dumps(manifest, indent=2))
+
+    primary_manifest = build_primary_store_manifest(
+        con=con,
+        db_path=db_path,
+        symbol=symbol,
+        store_intervals=store_intervals,
+        max_rows=max_rows,
+        source_stage="store_state_after_backfill",
+    )
+
+    con.close()
+
+    write_json(backfill_manifest_path, backfill_manifest)
+    write_json(store_manifest_path, primary_manifest)
+
+    print(json.dumps(backfill_manifest, indent=2))
     return 0
 
 

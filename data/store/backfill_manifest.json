@@ -1,6 +1,6 @@
 {
   "db_path": "data/store/xauusd.sqlite",
-  "generated_at_utc": "2026-06-04T09:10:48.205398+00:00",
+  "generated_at_utc": "2026-06-04T09:23:31.616646+00:00",
   "intervals": [
     "1h"
   ],
@@ -16,25 +16,25 @@
           "after": {
             "end_utc": "2026-06-04T07:00:00+00:00",
             "interval": "1h",
-            "rows": 17177,
-            "start_utc": "2023-11-09T23:00:00+00:00"
+            "rows": 20000,
+            "start_utc": "2023-05-22T13:00:00+00:00"
           },
-          "api_rows": 2833,
+          "api_rows": 2946,
           "before": {
             "end_utc": "2026-06-04T07:00:00+00:00",
             "interval": "1h",
-            "rows": 14344,
-            "start_utc": "2024-05-07T23:00:00+00:00"
+            "rows": 17177,
+            "start_utc": "2023-11-09T23:00:00+00:00"
           },
-          "net_new_rows": 2833,
+          "net_new_rows": 2946,
           "request_no": 1,
           "requested_range": {
             "chunk_days": 180,
-            "end_date": "2024-05-07 22:59:59",
+            "end_date": "2023-11-09 22:59:59",
             "mode": "older_chunk",
-            "start_date": "2023-11-09 23:00:00"
+            "start_date": "2023-05-13 23:00:00"
           },
-          "trimmed_rows": 0
+          "trimmed_rows": 123
         }
       ]
     }

@@ -21,4 +21,7 @@ refresh:
   min_incremental_outputsize: 50
   max_incremental_outputsize: 500
   overlap_bars: 20
-  max_rows_per_interval: 20000
+
+  # Raised from 20000 because Stage 2L backfill reached the previous cap.
+  # If this remains too low, routine refresh can trim historical backfill.
+  max_rows_per_interval: 60000

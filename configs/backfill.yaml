@@ -10,10 +10,9 @@ timezone: UTC
 db_path: data/store/xauusd.sqlite
 manifest_path: data/store/backfill_manifest.json
 
-# Stage 2D/2J/2K currently use 1h and 15min only.
-# Therefore backfill these first. Add 5min/1min later only if a candidate needs them.
+# Current validated candidate family uses 1h.
+# 15min remains available, but do not backfill it unless a 15min candidate becomes relevant.
 intervals:
-  - 15min
   - 1h
 
 backfill:
@@ -34,5 +33,6 @@ backfill:
     5min: 14
     1min: 3
 
-  # Keep DB bounded while allowing deeper validation.
-  max_rows_per_interval: 20000
+  # Raised from 20000 after backfill reached the cap.
+  # 60000 one-hour candles covers roughly 6+ years while keeping SQLite manageable.
+  max_rows_per_interval: 60000

@@ -1,0 +1,22 @@
+# Stage 2J candidate stability analysis.
+# Goal: analyze robust Stage 2D candidates over time, months, outliers, and cost stress.
+
+data_db: data/store/xauusd.sqlite
+report_dir: data/reports
+stage2d_summary_glob: data/reports/stage2d_grid_summary_*.json
+stage2d_evaluations_glob: data/reports/stage2d_grid_evaluations_*.csv
+
+selection:
+  max_candidates: 15
+  only_robust_stage2d: true
+  sort_by: total_net_usd
+
+decision:
+  min_trades: 100
+  min_months: 4
+  min_positive_month_ratio: 0.60
+  require_all_time_thirds_positive: true
+  require_remove_top_10_positive: true
+  require_cost_x3_positive: true
+  require_profit_factor_min: 1.15
+  max_dd_to_total_net_ratio: 0.80

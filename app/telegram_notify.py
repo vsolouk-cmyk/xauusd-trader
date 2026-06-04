@@ -17,6 +17,7 @@ def load_json(path: Path) -> Dict[str, Any]:
 
 def latest_summary() -> Optional[Path]:
     patterns = [
+        "data/reports/stage2j_candidate_stability_summary_*.json",
         "data/reports/stage2d_grid_summary_*.json",
         "data/reports/stage2c_robustness_summary_*.json",
         "data/reports/stage2b_validation_summary_*.json",
@@ -49,30 +50,19 @@ def fmt_pct(value: Any) -> str:
 
 
 def best_item(summary: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    if summary.get("stage") == "stage2j_candidate_stability_analysis":
+        top = summary.get("top_analyses", []) or []
+        return top[0] if top else None
     if summary.get("stage") == "stage2d_baseline_grid_lab":
         top = summary.get("top_variants", []) or []
         return top[0] if top else None
-
     analyses = summary.get("analyses", []) or []
     if analyses:
-        robust = [x for x in analyses if x.get("decision", {}).get("robust_after_stage2c")]
-        pool = robust or analyses
-        return sorted(pool, key=lambda x: float(x.get("base", {}).get("total_net_usd", -10**18)), reverse=True)[0]
-
+        return sorted(analyses, key=lambda x: float(x.get("base", {}).get("total_net_usd", -10**18)), reverse=True)[0]
     items = summary.get("summaries", []) or []
-    if not items:
-        return None
-    robust = [x for x in items if x.get("robust_candidate")]
-    candidates = [x for x in items if x.get("candidate")]
-    pool = robust or candidates or items
-    return sorted(pool, key=lambda x: float(x.get("total_net_usd", -10**18) or -10**18), reverse=True)[0]
-
-
-def add_decision_counts(lines: list[str], decision: Dict[str, Any]) -> None:
-    # Keep order stable and avoid duplicate labels.
-    for key in ["robust_candidate_count", "robust_after_stage2c_count", "candidate_count"]:
-        if key in decision:
-            lines.append(f"{key}: {decision.get(key)}")
+    if items:
+        return sorted(items, key=lambda x: float(x.get("total_net_usd", -10**18) or -10**18), reverse=True)[0]
+    return None
 
 
 def build_message(summary: Optional[Dict[str, Any]], status: str, run_url: str = "", include_run_link: bool = False) -> str:
@@ -85,11 +75,10 @@ def build_message(summary: Optional[Dict[str, Any]], status: str, run_url: str =
         lines.append(f"Workflow status: {status}")
         lines.append(f"Decision: {decision.get('status', 'n/a')}")
         lines.append(f"Reason: {decision.get('reason', 'n/a')}")
-        add_decision_counts(lines, decision)
 
-        runtime = summary.get("runtime_seconds")
-        if runtime is not None:
-            lines.append(f"runtime_seconds: {fmt_float(runtime, 3)}")
+        for key in ["stable_candidate_count", "robust_after_stage2c_count", "robust_candidate_count", "candidate_count"]:
+            if key in decision:
+                lines.append(f"{key}: {decision.get(key)}")
 
         item = best_item(summary)
         if item:
@@ -99,21 +88,26 @@ def build_message(summary: Optional[Dict[str, Any]], status: str, run_url: str =
             if item.get("variant"):
                 lines.append(f"- variant: {item.get('variant')}")
 
-            if "base" in item:
-                base = item.get("base", {}) or {}
-                train = item.get("train", {}) or {}
-                test = item.get("test", {}) or {}
+            base = item.get("base", {}) or {}
+            if base:
                 lines.append(f"- trades: {base.get('trade_count', 'n/a')}")
-                lines.append(f"- robust: {item.get('robust_grid_candidate', item.get('decision', {}).get('robust_after_stage2c', 'n/a'))}")
+                if "stable_candidate" in item:
+                    lines.append(f"- stable: {item.get('stable_candidate')}")
+                elif "robust_grid_candidate" in item:
+                    lines.append(f"- robust: {item.get('robust_grid_candidate')}")
                 lines.append(f"- win rate: {fmt_pct(base.get('win_rate'))}")
                 lines.append(f"- total net: {fmt_float(base.get('total_net_usd'))}")
-                lines.append(f"- train/test: {fmt_float(train.get('total_net_usd'))} / {fmt_float(test.get('total_net_usd'))}")
                 lines.append(f"- PF: {fmt_float(base.get('profit_factor'), 3)}")
+                if "thirds" in item:
+                    last = (item.get("thirds", {}) or {}).get("last_third", {}) or {}
+                    lines.append(f"- last third: {fmt_float(last.get('total_net_usd'))}")
+                if "monthly" in item:
+                    monthly = item.get("monthly", {}) or {}
+                    lines.append(f"- positive months: {fmt_pct(monthly.get('positive_month_ratio'))}")
             else:
                 lines.append(f"- trades: {item.get('trade_count', 'n/a')}")
-                lines.append(f"- robust/candidate: {item.get('robust_candidate', item.get('candidate', 'n/a'))}")
-                lines.append(f"- win rate: {fmt_pct(item.get('win_rate'))}")
                 lines.append(f"- total net USD: {fmt_float(item.get('total_net_usd'))}")
+
     else:
         lines.append("Stage: unknown")
         lines.append(f"Workflow status: {status}")
@@ -169,12 +163,7 @@ def main() -> int:
     run_url = f"https://github.com/{repo}/actions/runs/{run_id}" if repo and run_id else ""
 
     env_include_link = os.getenv("TELEGRAM_INCLUDE_RUN_LINK", "").strip().lower() in {"1", "true", "yes", "on"}
-    text = build_message(
-        summary=summary,
-        status=args.status,
-        run_url=run_url,
-        include_run_link=bool(args.include_run_link or env_include_link),
-    )
+    text = build_message(summary=summary, status=args.status, run_url=run_url, include_run_link=bool(args.include_run_link or env_include_link))
 
     result = send_telegram(token=token, chat_id=chat_id, text=text)
     print(json.dumps({"ok": True, "telegram_ok": result.get("ok"), "summary": str(summary_path) if summary_path else None}, indent=2))

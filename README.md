@@ -4,7 +4,7 @@ Commercial XAUUSD/gold trading research pipeline.
 
 ## Current stage
 
-Stage 2D: fast vectorized baseline grid lab using a persistent SQLite data store.
+Stage 2J: candidate stability analysis after fast Stage 2D grid lab.
 
 Telegram notification is enabled for pipeline reports only.
 
@@ -15,38 +15,18 @@ No ML. No trading bot. No paper order. No live order.
 - XAUUSD: spot gold quoted in US dollars.
 - SQLite: a small SQL database stored as a single local file.
 - Workflow chain: one GitHub Actions workflow starts after another workflow completes.
-- `workflow_run`: GitHub Actions event that runs a workflow after another named workflow completes.
 - Baseline: a simple rule-based strategy used as the minimum benchmark before ML.
 - Grid lab: controlled testing of simple baseline parameter combinations.
-- Vectorized calculation: operating on arrays instead of slow row-by-row Python objects.
+- Candidate stability: checking that a baseline works across time segments, not just one lucky region.
+- Positive month ratio: fraction of months with positive net performance.
+- Cost x3: performance after tripling assumed transaction cost.
 
-## Current data architecture
-
-Persistent database:
-
-```text
-data/store/xauusd.sqlite
-data/store/manifest.json
-```
-
-## Local refresh
+## Local sequence
 
 ```bash
 cd ~/Desktop/xauusd-trader
-export TWELVEDATA_API_KEY='PASTE_KEY_HERE'
-python3 -m app.xauusd_store_refresh
-```
-
-## Local fast Stage 2D
-
-```bash
 python3 -m app.xauusd_stage2d_grid_lab --data-db data/store/xauusd.sqlite
-```
-
-For debug with full trades:
-
-```bash
-python3 -m app.xauusd_stage2d_grid_lab --data-db data/store/xauusd.sqlite --save-full-trades
+python3 -m app.xauusd_stage2j_candidate_analysis --data-db data/store/xauusd.sqlite
 ```
 
 ## GitHub workflow order
@@ -57,10 +37,10 @@ Run manually or let schedule run:
 XAUUSD Persistent Data Store Refresh
 ```
 
-After it completes successfully, GitHub automatically triggers:
+After it completes successfully, GitHub automatically triggers the active analysis workflow:
 
 ```text
-XAUUSD Stage 2D Baseline Grid Lab
+XAUUSD Stage 2J Candidate Stability Analysis
 ```
 
 ## GitHub Actions secrets
@@ -71,14 +51,8 @@ TELEGRAM_BOT_TOKEN
 TELEGRAM_CHAT_ID
 ```
 
-## Required GitHub setting
-
-```text
-Settings → Actions → General → Workflow permissions → Read and write permissions
-```
-
 ## Hard rule
 
-If no simple baseline variant survives Stage 2D, do not proceed to ML.
+If a candidate does not survive Stage 2J, do not proceed to ML or paper-order.
 
 Telegram messages are reports only, not signals.

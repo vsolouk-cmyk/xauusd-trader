@@ -1,15 +1,70 @@
 {
-  "ok": true,
-  "stage": "empty_sqlite_store_initialized",
-  "generated_at_utc": "2026-06-04T07:57:15.295933+00:00",
   "db_path": "data/store/xauusd.sqlite",
-  "symbol": "XAU/USD",
+  "fetched_any": true,
+  "generated_at_utc": "2026-06-04T07:58:53.516415+00:00",
   "intervals": [
     "1min",
     "5min",
     "15min",
     "1h"
   ],
-  "fetched_any": false,
-  "note": "Empty SQLite store initialized only to unblock repository push. Data refresh workflow will populate it."
+  "max_rows_per_interval": 20000,
+  "ok": true,
+  "results": [
+    {
+      "action": "refresh",
+      "age_minutes_before_refresh": null,
+      "api_rows": 5000,
+      "end_utc": "2026-06-04T07:57:00+00:00",
+      "interval": "1min",
+      "net_new_rows": 5000,
+      "requested_outputsize": 5000,
+      "rows": 5000,
+      "start_utc": "2026-05-31T20:38:00+00:00",
+      "strictly_new_rows": 5000,
+      "trimmed_rows": 0
+    },
+    {
+      "action": "refresh",
+      "age_minutes_before_refresh": null,
+      "api_rows": 5000,
+      "end_utc": "2026-06-04T07:55:00+00:00",
+      "interval": "5min",
+      "net_new_rows": 5000,
+      "requested_outputsize": 5000,
+      "rows": 5000,
+      "start_utc": "2026-05-17T23:20:00+00:00",
+      "strictly_new_rows": 5000,
+      "trimmed_rows": 0
+    },
+    {
+      "action": "refresh",
+      "age_minutes_before_refresh": null,
+      "api_rows": 5000,
+      "end_utc": "2026-06-04T07:45:00+00:00",
+      "interval": "15min",
+      "net_new_rows": 5000,
+      "requested_outputsize": 5000,
+      "rows": 5000,
+      "start_utc": "2026-04-13T06:00:00+00:00",
+      "strictly_new_rows": 5000,
+      "trimmed_rows": 0
+    },
+    {
+      "action": "refresh",
+      "age_minutes_before_refresh": null,
+      "api_rows": 5000,
+      "end_utc": "2026-06-04T07:00:00+00:00",
+      "interval": "1h",
+      "net_new_rows": 5000,
+      "requested_outputsize": 5000,
+      "rows": 5000,
+      "start_utc": "2025-10-28T05:00:00+00:00",
+      "strictly_new_rows": 5000,
+      "trimmed_rows": 0
+    }
+  ],
+  "stage": "persistent_sqlite_store_refresh",
+  "stale_after_minutes": 90,
+  "symbol": "XAU/USD"
 }

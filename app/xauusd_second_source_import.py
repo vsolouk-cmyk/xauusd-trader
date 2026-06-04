@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict
@@ -11,17 +12,40 @@ import pandas as pd
 from app.xauusd_sqlite_store import connect, ensure_schema, interval_stats, optimize, upsert_candles
 
 
+def clean_col_name(col: object) -> str:
+    text = str(col).strip()
+    text = text.replace("\ufeff", "")
+    text = text.strip("<>").strip()
+    text = re.sub(r"\s+", "_", text)
+    return text.lower()
+
+
+def read_flexible_csv(csv_path: Path) -> pd.DataFrame:
+    # sep=None with python engine auto-detects comma, tab, semicolon, etc.
+    # MT5 exports commonly use tab-separated columns:
+    # <DATE>\t<TIME>\t<OPEN>\t<HIGH>\t<LOW>\t<CLOSE>\t<TICKVOL>\t<VOL>\t<SPREAD>
+    return pd.read_csv(csv_path, sep=None, engine="python")
+
+
 def normalize_columns(df: pd.DataFrame, symbol: str, interval: str, provider: str) -> pd.DataFrame:
+    work = df.copy()
+    work.columns = [clean_col_name(c) for c in work.columns]
+
+    # MT5 often exports separate DATE and TIME columns. Combine them first.
+    if "time_utc" not in work.columns and "datetime" not in work.columns and "timestamp" not in work.columns:
+        if "date" in work.columns and "time" in work.columns:
+            work["time_utc"] = work["date"].astype(str).str.strip() + " " + work["time"].astype(str).str.strip()
+
     rename_map = {}
-    lower = {str(c).lower().strip(): c for c in df.columns}
+    lower = {str(c).lower().strip(): c for c in work.columns}
 
     candidates = {
-        "time_utc": ["time_utc", "datetime", "date", "time", "timestamp"],
+        "time_utc": ["time_utc", "datetime", "date_time", "timestamp", "time"],
         "open": ["open", "o"],
         "high": ["high", "h"],
         "low": ["low", "l"],
         "close": ["close", "c"],
-        "volume": ["volume", "vol", "tick_volume"],
+        "volume": ["volume", "vol", "tickvol", "tick_volume"],
     }
 
     for target, names in candidates.items():
@@ -30,16 +54,24 @@ def normalize_columns(df: pd.DataFrame, symbol: str, interval: str, provider: st
                 rename_map[lower[name]] = target
                 break
 
-    work = df.rename(columns=rename_map).copy()
+    work = work.rename(columns=rename_map).copy()
 
     required = ["time_utc", "open", "high", "low", "close"]
     missing = [c for c in required if c not in work.columns]
     if missing:
-        raise ValueError(f"CSV missing required columns after normalization: {missing}. Existing columns: {list(df.columns)}")
+        raise ValueError(
+            f"CSV missing required columns after normalization: {missing}. "
+            f"Existing normalized columns: {list(work.columns)}"
+        )
 
-    work["time_utc"] = pd.to_datetime(work["time_utc"], utc=True)
+    # Most MT5 exports are broker-server time, not guaranteed UTC.
+    # For Stage 3A we keep it timezone-aware as UTC for comparison, but provider name should
+    # make the source clear. Later broker-feed validation can explicitly handle server timezone.
+    work["time_utc"] = pd.to_datetime(work["time_utc"], utc=True, errors="coerce")
+
     for col in ["open", "high", "low", "close"]:
         work[col] = pd.to_numeric(work[col], errors="coerce")
+
     if "volume" not in work.columns:
         work["volume"] = 0.0
     work["volume"] = pd.to_numeric(work["volume"], errors="coerce").fillna(0.0)
@@ -79,12 +111,17 @@ def main() -> int:
     parser.add_argument("--manifest", default="data/second_source/manifest.json")
     args = parser.parse_args()
 
-    csv_path = Path(args.csv)
+    csv_path = Path(args.csv).expanduser()
     if not csv_path.exists():
         raise SystemExit(f"CSV not found: {csv_path}")
 
-    raw = pd.read_csv(csv_path)
+    raw = read_flexible_csv(csv_path)
     df = normalize_columns(raw, symbol=args.symbol, interval=args.interval, provider=args.provider)
+
+    if df.empty:
+        raise SystemExit(
+            "No valid rows after CSV normalization. Check delimiter, date/time columns, and OHLC values."
+        )
 
     db_path = Path(args.db)
     con = connect(db_path)
@@ -107,6 +144,7 @@ def main() -> int:
         "normalized_rows": int(len(df)),
         "net_new_rows": int(inserted),
         "stats": stats,
+        "note": "Importer supports MT5 tab-separated exports with <DATE>/<TIME>/<OPEN>/<HIGH>/<LOW>/<CLOSE> headers.",
     }
     write_json(Path(args.manifest), manifest)
     print(json.dumps(manifest, indent=2))

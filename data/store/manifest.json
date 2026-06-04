@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "stage": "empty_sqlite_store_initialized",
+  "generated_at_utc": "2026-06-04T07:57:15.295933+00:00",
+  "db_path": "data/store/xauusd.sqlite",
+  "symbol": "XAU/USD",
+  "intervals": [
+    "1min",
+    "5min",
+    "15min",
+    "1h"
+  ],
+  "fetched_any": false,
+  "note": "Empty SQLite store initialized only to unblock repository push. Data refresh workflow will populate it."
+}

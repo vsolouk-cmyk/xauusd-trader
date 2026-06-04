@@ -37,7 +37,7 @@ class TwelveDataClient:
 
     def get(self, endpoint: str, params: Dict[str, Any]) -> Dict[str, Any]:
         url = f"{self.config.base_url}/{endpoint.lstrip('/')}"
-        request_params = dict(params)
+        request_params = {k: v for k, v in dict(params).items() if v is not None}
         request_params["apikey"] = self.api_key
 
         last_error: Optional[BaseException] = None
@@ -47,7 +47,6 @@ class TwelveDataClient:
 
                 if response.status_code == 200:
                     payload = response.json()
-                    # Twelve Data may return HTTP 200 with {"status":"error", ...}
                     if str(payload.get("status", "")).lower() == "error":
                         raise TwelveDataError(
                             "Twelve Data API error: "
@@ -80,6 +79,8 @@ class TwelveDataClient:
         outputsize: int = 500,
         timezone: str = "UTC",
         order: str = "ASC",
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
     ) -> Dict[str, Any]:
         if outputsize < 1:
             raise ValueError("outputsize must be positive.")
@@ -91,5 +92,7 @@ class TwelveDataClient:
             "timezone": timezone,
             "order": order,
             "format": "JSON",
+            "start_date": start_date,
+            "end_date": end_date,
         }
         return self.get("time_series", params=params)

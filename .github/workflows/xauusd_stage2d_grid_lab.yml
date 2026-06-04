@@ -3,16 +3,12 @@ name: XAUUSD Stage 2D Baseline Grid Lab
 on:
   workflow_dispatch:
     inputs:
-      intervals:
-        description: "Comma-separated intervals collected before grid lab"
+      refresh_store:
+        description: "Refresh persistent store before running grid lab"
         required: true
-        default: "1min,5min,15min,1h"
-      outputsize:
-        description: "Candles per interval. Use 5000 if your Twelve Data plan allows it."
-        required: true
-        default: "5000"
+        default: "true"
       force_refresh:
-        description: "Fetch fresh Twelve Data candles instead of reusing restored cache"
+        description: "Force provider refresh even if store is fresh"
         required: true
         default: "false"
       include_run_link:
@@ -33,17 +29,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Restore XAUUSD data cache
-        uses: actions/cache@v4
         with:
-          path: |
-            data/raw
-            data/normalized
-          key: xauusd-data-${{ github.workflow }}-${{ github.event.inputs.outputsize }}-${{ github.run_id }}
-          restore-keys: |
-            xauusd-data-${{ github.workflow }}-${{ github.event.inputs.outputsize }}-
-            xauusd-data-
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -55,12 +42,13 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
 
-      - name: Run Stage 1 cache-aware snapshot
+      - name: Optional store refresh
+        if: ${{ github.event.inputs.refresh_store == 'true' }}
         run: |
           if [ "${{ github.event.inputs.force_refresh }}" = "true" ]; then
-            python -m app.xauusd_stage1_snapshot --intervals "${{ github.event.inputs.intervals }}" --outputsize "${{ github.event.inputs.outputsize }}" --force-refresh
+            python -m app.xauusd_store_refresh --force-refresh
           else
-            python -m app.xauusd_stage1_snapshot --intervals "${{ github.event.inputs.intervals }}" --outputsize "${{ github.event.inputs.outputsize }}"
+            python -m app.xauusd_store_refresh
           fi
 
       - name: Run Stage 2D baseline grid lab
@@ -79,11 +67,24 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: xauusd-stage2d-grid-lab-slim-${{ github.run_number }}
+          retention-days: 7
           path: |
-            data/reports/quality_*.json
-            data/reports/stage1_snapshot_summary_*.json
-            data/reports/stage1_snapshot_summary_*.md
+            data/store/manifest.json
             data/reports/stage2d_grid_summary_*.json
             data/reports/stage2d_grid_summary_*.md
             data/reports/stage2d_grid_evaluations_*.csv
           if-no-files-found: warn
+
+      - name: Commit store updates from manual run
+        if: ${{ github.event.inputs.refresh_store == 'true' }}
+        run: |
+          if git diff --quiet -- data/store; then
+            echo "No store changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/store
+          git commit -m "Update XAUUSD persistent data store"
+          git pull --rebase
+          git push

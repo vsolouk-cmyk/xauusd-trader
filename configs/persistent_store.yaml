@@ -1,0 +1,29 @@
+# Persistent rolling data store for XAUUSD.
+# This is the primary Stage 2 data input after Stage 2F.
+
+symbol: XAU/USD
+timezone: UTC
+
+intervals:
+  - 1min
+  - 5min
+  - 15min
+  - 1h
+
+store_dir: data/store
+manifest_path: data/store/manifest.json
+
+# First build or forced rebuild.
+bootstrap_outputsize: 5000
+
+# Incremental refresh. For a 1-2 hour cadence this is enough for all active intervals.
+incremental_outputsize: 500
+
+# Keep repo size controlled. Increase later only if needed.
+max_rows_per_interval: 20000
+
+# Refresh only if latest stored candle is older than this.
+max_staleness_minutes: 90
+
+# Re-request a few bars before the last stored timestamp and deduplicate.
+overlap_bars: 3

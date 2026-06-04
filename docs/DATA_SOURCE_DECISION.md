@@ -1,79 +1,36 @@
 # Data Source Decision
 
-The first technical decision is the data source.
+## Current decision
 
-No collector, baseline, ML, paper-order, or live logic should be built before this decision is explicit.
+Use Twelve Data REST as the primary Stage 0 data source.
 
-## Option A — REST/cloud feed
+## Why OANDA was paused
 
-Best for fast research and GitHub Actions.
+OANDA REST v20 is technically suitable, but it is not a reliable dependency for the current operating constraints because country/entity/API access can block the path.
 
-Pros:
+## Why Twelve Data
 
-- Easier to automate.
-- Compatible with GitHub Actions.
-- Good for continuous collection.
-- Faster to start.
+Twelve Data is a data provider, not a broker. It is simpler for early research and does not require us to solve broker onboarding before we even know whether XAUUSD baselines are promising.
 
-Cons:
+## Critical limitation
 
-- Feed may differ from the future broker/MT5 execution feed.
-- Spread quality depends on provider.
+Twelve Data Stage 0 data is not final execution data. It should be used for:
 
-Best use:
+- data-collection pipeline testing,
+- candle sanity checks,
+- initial baseline feasibility,
+- rough session/regime behavior.
 
-- Initial research and data-quality pipeline.
+It should not be used alone for:
 
-## Option B — MT5 broker feed
+- final spread modeling,
+- paper-order execution realism,
+- live trading decisions.
 
-Best for execution realism.
+## Later validation path
 
-Pros:
+After at least one baseline is positive after conservative assumed costs, validate with:
 
-- Closer to future paper/live execution.
-- Broker spread and candle behavior are realistic for that broker.
-
-Cons:
-
-- Not ideal for GitHub Actions.
-- Usually needs local terminal, VPS, or Windows/MT5 environment.
-- More operational overhead.
-
-Best use:
-
-- Later validation before paper-order/live.
-
-## Option C — Futures reference data
-
-Best for institutional benchmark.
-
-Pros:
-
-- Cleaner benchmark for gold futures structure.
-- Useful for macro/trend validation.
-
-Cons:
-
-- Data access may be difficult or paid.
-- Needs mapping to retail XAUUSD broker feed.
-
-Best use:
-
-- Secondary validation, not the first practical path.
-
-## Recommended initial decision
-
-Start with **REST/cloud feed** if the immediate goal is fast collection and GitHub Actions research.
-
-Keep **MT5 broker feed** as the execution-realistic follow-up.
-
-## Kill-switch for data source
-
-Reject or pause a data source if:
-
-- timestamps are unreliable,
-- unexplained gaps are large,
-- spread is unavailable or unrealistic,
-- symbol pricing is inconsistent,
-- collection fails frequently,
-- the feed cannot support M1/M5/M15/H1 candles reliably.
+1. Dukascopy or another historical reference source if needed.
+2. MT5/broker feed for execution realism.
+3. Broker spread/slippage checks before paper-order.

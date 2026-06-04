@@ -1,0 +1,37 @@
+# Stage 0 data-source configuration.
+# Current primary provider: Twelve Data REST.
+#
+# Required secret/environment variable:
+#   TWELVEDATA_API_KEY
+#
+# This file is safe to commit because it contains no secrets.
+
+provider: twelvedata
+
+symbol: XAU/USD
+
+# Twelve Data intervals.
+# Start with small outputsize until API key and symbol access are confirmed.
+intervals:
+  - 1min
+  - 5min
+  - 15min
+  - 1h
+
+outputsize: 500
+timezone: UTC
+
+raw_dir: data/raw
+normalized_dir: data/normalized
+report_dir: data/reports
+
+# No bid/ask from Twelve Data in this stage.
+# Later MT5/broker feed must validate actual spread.
+cost_model:
+  spread_available: false
+  assumed_spread_usd: 0.30
+  assumed_slippage_usd: 0.05
+
+quality:
+  max_missing_ratio: 0.02
+  max_duplicate_timestamps: 0

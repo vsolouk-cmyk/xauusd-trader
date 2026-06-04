@@ -1,0 +1,56 @@
+name: XAUUSD Stage 0 Twelve Data Check
+
+on:
+  workflow_dispatch:
+    inputs:
+      interval:
+        description: "Twelve Data interval, e.g. 1min, 5min, 15min, 1h"
+        required: true
+        default: "1min"
+      outputsize:
+        description: "Number of candles"
+        required: true
+        default: "500"
+
+jobs:
+  stage0-twelvedata:
+    runs-on: ubuntu-latest
+
+    env:
+      TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Collect Twelve Data candles
+        run: |
+          python -m app.xauusd_collect --interval "${{ github.event.inputs.interval }}" --outputsize "${{ github.event.inputs.outputsize }}"
+
+      - name: Normalize latest raw file
+        run: |
+          python -m app.xauusd_normalize
+
+      - name: Run data quality check
+        run: |
+          python -m app.xauusd_data_quality
+
+      - name: Upload Stage 0 artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: xauusd-stage0-twelvedata-${{ github.run_number }}
+          path: |
+            data/raw/*.json
+            data/normalized/*.csv
+            data/reports/*.json
+          if-no-files-found: error

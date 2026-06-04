@@ -1,13 +1,10 @@
 # Stage 2D baseline grid lab.
-# SQLite store is now the primary data source.
+# SQLite store is the primary data source.
 
 data_db: data/store/xauusd.sqlite
 data_dir: data/normalized
 report_dir: data/reports
 trades_dir: data/reports/stage2d_trades
-
-output:
-  save_full_trades: false
 
 cost_model:
   assumed_spread_usd: 0.30
@@ -25,6 +22,9 @@ decision:
   require_remove_top_5_positive: true
   require_cost_x2_positive: true
   require_profit_factor_min: 1.05
+
+output:
+  save_full_trades: false
 
 families:
   sma_trend_1h:

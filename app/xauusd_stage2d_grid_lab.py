@@ -4,45 +4,15 @@ import argparse
 import itertools
 import json
 import time
-from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
+import numpy as np
 import pandas as pd
 import yaml
 
 from app.xauusd_sqlite_store import connect, read_interval
-
-
-@dataclass(frozen=True)
-class Signal:
-    family: str
-    variant: str
-    interval: str
-    entry_idx: int
-    exit_idx: int
-    direction: int
-    reason: str
-
-
-@dataclass(frozen=True)
-class Trade:
-    family: str
-    variant: str
-    interval: str
-    entry_idx: int
-    exit_idx: int
-    entry_time_utc: str
-    exit_time_utc: str
-    direction: int
-    direction_label: str
-    entry_price: float
-    exit_price: float
-    raw_usd: float
-    cost_usd: float
-    net_usd: float
-    reason: str
 
 
 def load_yaml(path: Path) -> Dict[str, Any]:
@@ -73,6 +43,8 @@ def finalize_df(df: pd.DataFrame) -> pd.DataFrame:
     df["time_utc"] = pd.to_datetime(df["time_utc"], utc=True)
     for col in ["open", "high", "low", "close"]:
         df[col] = pd.to_numeric(df[col], errors="coerce")
+    if "volume" in df.columns:
+        df["volume"] = pd.to_numeric(df["volume"], errors="coerce").fillna(0.0)
     df = df.dropna(subset=["time_utc", "open", "high", "low", "close"])
     df = df.sort_values("time_utc").drop_duplicates(subset=["time_utc"], keep="last").reset_index(drop=True)
     df["date_utc"] = df["time_utc"].dt.date.astype(str)
@@ -100,161 +72,207 @@ def load_interval_df(data_dir: Path, interval: str, db_path: Optional[str] = Non
 
     path = latest_csv_for_interval(data_dir, interval)
     df = pd.read_csv(path)
-    required = {"time_utc", "open", "high", "low", "close", "interval", "provider", "symbol"}
-    missing = required - set(df.columns)
-    if missing:
-        raise ValueError(f"{path} is missing required columns: {sorted(missing)}")
     return str(path), finalize_df(df)
 
 
-def nonoverlap_filter(signals: List[Signal], cooldown_bars: int) -> List[Signal]:
-    accepted: List[Signal] = []
+def nonoverlap_indices(entry_idx: np.ndarray, exit_idx: np.ndarray, cooldown_bars: int) -> np.ndarray:
+    if len(entry_idx) == 0:
+        return np.array([], dtype=int)
+
+    order = np.lexsort((exit_idx, entry_idx))
+    accepted_positions: List[int] = []
     next_allowed = -1
-    for s in sorted(signals, key=lambda x: (x.entry_idx, x.exit_idx)):
-        if s.entry_idx < next_allowed:
+
+    for pos in order:
+        e = int(entry_idx[pos])
+        if e < next_allowed:
             continue
-        accepted.append(s)
-        next_allowed = s.exit_idx + int(cooldown_bars) + 1
-    return accepted
+        accepted_positions.append(int(pos))
+        next_allowed = int(exit_idx[pos]) + int(cooldown_bars) + 1
+
+    return np.array(accepted_positions, dtype=int)
 
 
-def signal_to_trade(s: Signal, df: pd.DataFrame, cost_usd: float) -> Optional[Trade]:
-    if s.entry_idx < 0 or s.exit_idx >= len(df) or s.exit_idx <= s.entry_idx:
-        return None
-    if s.direction not in {-1, 1}:
-        return None
-    entry = float(df.loc[s.entry_idx, "close"])
-    exit_ = float(df.loc[s.exit_idx, "close"])
-    raw = s.direction * (exit_ - entry)
-    net = raw - cost_usd
-    return Trade(
-        family=s.family,
-        variant=s.variant,
-        interval=s.interval,
-        entry_idx=int(s.entry_idx),
-        exit_idx=int(s.exit_idx),
-        entry_time_utc=pd.Timestamp(df.loc[s.entry_idx, "time_utc"]).isoformat(),
-        exit_time_utc=pd.Timestamp(df.loc[s.exit_idx, "time_utc"]).isoformat(),
-        direction=int(s.direction),
-        direction_label="long" if s.direction == 1 else "short",
-        entry_price=entry,
-        exit_price=exit_,
-        raw_usd=float(raw),
-        cost_usd=float(cost_usd),
-        net_usd=float(net),
-        reason=s.reason,
+def make_trade_frame(
+    df: pd.DataFrame,
+    family: str,
+    variant: str,
+    interval: str,
+    entry_idx: np.ndarray,
+    exit_idx: np.ndarray,
+    direction: np.ndarray,
+    reason: str,
+    cost_usd: float,
+    save_full: bool = False,
+) -> tuple[np.ndarray, np.ndarray, Optional[pd.DataFrame]]:
+    if len(entry_idx) == 0:
+        return np.array([], dtype=float), np.array([], dtype=float), None
+
+    close = df["close"].to_numpy(dtype=float)
+    raw = direction.astype(float) * (close[exit_idx] - close[entry_idx])
+    net = raw - float(cost_usd)
+
+    if not save_full:
+        return raw, net, None
+
+    times = df["time_utc"].astype(str).to_numpy()
+    trade_df = pd.DataFrame(
+        {
+            "family": family,
+            "variant": variant,
+            "interval": interval,
+            "entry_idx": entry_idx.astype(int),
+            "exit_idx": exit_idx.astype(int),
+            "entry_time_utc": times[entry_idx],
+            "exit_time_utc": times[exit_idx],
+            "direction": direction.astype(int),
+            "direction_label": np.where(direction > 0, "long", "short"),
+            "entry_price": close[entry_idx],
+            "exit_price": close[exit_idx],
+            "raw_usd": raw,
+            "cost_usd": float(cost_usd),
+            "net_usd": net,
+            "reason": reason,
+        }
     )
+    return raw, net, trade_df
 
 
-def trades_from_signals(signals: List[Signal], df: pd.DataFrame, cost_usd: float) -> List[Trade]:
-    return [t for t in (signal_to_trade(s, df, cost_usd) for s in signals) if t]
+def gen_sma_signal_arrays(
+    df: pd.DataFrame,
+    sma_window: int,
+    horizon: int,
+    min_distance: float,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, str]:
+    close = df["close"]
+    sma = close.rolling(int(sma_window)).mean()
+    diff = close - sma
+
+    valid = diff.notna() & (diff.abs() >= float(min_distance))
+    valid.iloc[-int(horizon):] = False
+
+    entry_idx = np.flatnonzero(valid.to_numpy())
+    exit_idx = entry_idx + int(horizon)
+    direction = np.where(diff.iloc[entry_idx].to_numpy(dtype=float) > 0, 1, -1).astype(int)
+    reason = f"close_vs_sma{sma_window}_dist{min_distance:g}"
+    return entry_idx.astype(int), exit_idx.astype(int), direction, reason
 
 
-def gen_sma_trend(df: pd.DataFrame, interval: str, family: str, sma_window: int, horizon: int, min_distance: float) -> List[Signal]:
-    work = df.copy()
-    work["sma"] = work["close"].rolling(int(sma_window)).mean()
-    signals: List[Signal] = []
-    variant = f"sma{sma_window}_h{horizon}_dist{min_distance:g}"
-    for i in range(len(work) - int(horizon)):
-        sma = work.loc[i, "sma"]
-        if pd.isna(sma):
-            continue
-        diff = float(work.loc[i, "close"] - sma)
-        if abs(diff) < float(min_distance):
-            continue
-        signals.append(Signal(family, variant, interval, int(i), int(i + horizon), 1 if diff > 0 else -1, f"close_sma_diff_{diff:.4f}"))
-    return signals
+def gen_session_momentum_arrays(
+    df: pd.DataFrame,
+    lookback: int,
+    horizon: int,
+    min_move: float,
+    sessions: Iterable[str],
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, str]:
+    close = df["close"]
+    move = close - close.shift(int(lookback))
+    session_ok = df["session_utc"].isin(set(sessions))
+
+    valid = move.notna() & session_ok & (move.abs() >= float(min_move))
+    valid.iloc[-int(horizon):] = False
+
+    entry_idx = np.flatnonzero(valid.to_numpy())
+    exit_idx = entry_idx + int(horizon)
+    direction = np.where(move.iloc[entry_idx].to_numpy(dtype=float) > 0, 1, -1).astype(int)
+    reason = f"lookback_momentum_lb{lookback}_move{min_move:g}"
+    return entry_idx.astype(int), exit_idx.astype(int), direction, reason
 
 
-def gen_session_momentum(df: pd.DataFrame, interval: str, family: str, lookback: int, horizon: int, min_move: float, sessions: Iterable[str]) -> List[Signal]:
-    allowed = set(sessions)
-    work = df.copy()
-    work["lookback_move"] = work["close"] - work["close"].shift(int(lookback))
-    signals: List[Signal] = []
-    variant = f"lb{lookback}_h{horizon}_move{min_move:g}"
-    for i in range(int(lookback), len(work) - int(horizon)):
-        if str(work.loc[i, "session_utc"]) not in allowed:
-            continue
-        move = float(work.loc[i, "lookback_move"])
-        if abs(move) < float(min_move):
-            continue
-        signals.append(Signal(family, variant, interval, int(i), int(i + horizon), 1 if move > 0 else -1, f"lookback_move_{move:.4f}"))
-    return signals
+def gen_range_expansion_arrays(
+    df: pd.DataFrame,
+    avg_range_window: int,
+    multiplier: float,
+    horizon: int,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, str]:
+    bar_range = df["high"] - df["low"]
+    avg_range = bar_range.rolling(int(avg_range_window)).mean()
+    body = df["close"] - df["open"]
+
+    valid = avg_range.notna() & (avg_range > 0) & (bar_range >= float(multiplier) * avg_range) & (body != 0)
+    valid.iloc[-int(horizon):] = False
+
+    entry_idx = np.flatnonzero(valid.to_numpy())
+    exit_idx = entry_idx + int(horizon)
+    direction = np.where(body.iloc[entry_idx].to_numpy(dtype=float) > 0, 1, -1).astype(int)
+    reason = f"range_expansion_w{avg_range_window}_x{multiplier:g}"
+    return entry_idx.astype(int), exit_idx.astype(int), direction, reason
 
 
-def gen_range_expansion(df: pd.DataFrame, interval: str, family: str, avg_range_window: int, multiplier: float, horizon: int) -> List[Signal]:
-    work = df.copy()
-    work["bar_range"] = work["high"] - work["low"]
-    work["avg_range"] = work["bar_range"].rolling(int(avg_range_window)).mean()
-    signals: List[Signal] = []
-    variant = f"range{avg_range_window}_x{multiplier:g}_h{horizon}"
-    for i in range(int(avg_range_window), len(work) - int(horizon)):
-        avg = work.loc[i, "avg_range"]
-        if pd.isna(avg) or avg <= 0:
-            continue
-        rng = float(work.loc[i, "bar_range"])
-        if rng < float(multiplier) * float(avg):
-            continue
-        body = float(work.loc[i, "close"] - work.loc[i, "open"])
-        if body == 0:
-            continue
-        signals.append(Signal(family, variant, interval, int(i), int(i + horizon), 1 if body > 0 else -1, f"range_{rng:.4f}_avg_{float(avg):.4f}"))
-    return signals
-
-
-def max_drawdown(values: List[float]) -> float:
-    if not values:
+def max_drawdown(values: np.ndarray) -> float:
+    if values.size == 0:
         return 0.0
-    equity = pd.Series(values).cumsum()
-    return float((equity - equity.cummax()).min())
+    equity = np.cumsum(values)
+    peak = np.maximum.accumulate(equity)
+    return float(np.min(equity - peak))
 
 
-def profit_factor(values: List[float]) -> Optional[float]:
-    wins = [x for x in values if x > 0]
-    losses = [x for x in values if x <= 0]
-    loss_abs = abs(sum(losses))
-    return None if loss_abs == 0 else float(sum(wins) / loss_abs)
+def profit_factor(values: np.ndarray) -> Optional[float]:
+    if values.size == 0:
+        return None
+    wins = values[values > 0]
+    losses = values[values <= 0]
+    loss_abs = abs(float(np.sum(losses)))
+    if loss_abs == 0:
+        return None
+    return float(np.sum(wins) / loss_abs)
 
 
-def remove_top_k(values: List[float], k: int) -> List[float]:
-    remaining = list(values)
-    for v in sorted(values, reverse=True)[: min(k, len(values))]:
-        for i, x in enumerate(remaining):
-            if x == v:
-                remaining.pop(i)
-                break
-    return remaining
+def remove_top_k(values: np.ndarray, k: int) -> np.ndarray:
+    if values.size == 0 or k <= 0:
+        return values
+    if values.size <= k:
+        return np.array([], dtype=float)
+    remove_idx = np.argpartition(values, -k)[-k:]
+    mask = np.ones(values.size, dtype=bool)
+    mask[remove_idx] = False
+    return values[mask]
 
 
-def metrics(values: List[float]) -> Dict[str, Any]:
-    if not values:
-        return {"trade_count": 0, "total_net_usd": 0.0, "avg_net_usd": 0.0, "median_net_usd": 0.0, "win_rate": 0.0, "max_drawdown_usd": 0.0, "profit_factor": None}
-    s = pd.Series(values, dtype="float64")
+def metrics(values: np.ndarray) -> Dict[str, Any]:
+    values = np.asarray(values, dtype=float)
+    if values.size == 0:
+        return {
+            "trade_count": 0,
+            "total_net_usd": 0.0,
+            "avg_net_usd": 0.0,
+            "median_net_usd": 0.0,
+            "win_rate": 0.0,
+            "max_drawdown_usd": 0.0,
+            "profit_factor": None,
+        }
+
     return {
-        "trade_count": int(len(s)),
-        "total_net_usd": float(s.sum()),
-        "avg_net_usd": float(s.mean()),
-        "median_net_usd": float(s.median()),
-        "win_rate": float((s > 0).mean()),
-        "best_net_usd": float(s.max()),
-        "worst_net_usd": float(s.min()),
-        "max_drawdown_usd": max_drawdown(s.tolist()),
-        "profit_factor": profit_factor(s.tolist()),
+        "trade_count": int(values.size),
+        "total_net_usd": float(np.sum(values)),
+        "avg_net_usd": float(np.mean(values)),
+        "median_net_usd": float(np.median(values)),
+        "win_rate": float(np.mean(values > 0)),
+        "best_net_usd": float(np.max(values)),
+        "worst_net_usd": float(np.min(values)),
+        "max_drawdown_usd": max_drawdown(values),
+        "profit_factor": profit_factor(values),
     }
 
 
-def evaluate_variant(family: str, variant: str, trades: List[Trade], train_fraction: float, decision_cfg: Dict[str, Any]) -> Dict[str, Any]:
-    trades_sorted = sorted(trades, key=lambda t: t.entry_time_utc)
-    values = [t.net_usd for t in trades_sorted]
-    raw = [t.raw_usd for t in trades_sorted]
-    cost = [t.cost_usd for t in trades_sorted]
-    split_idx = int(len(values) * float(train_fraction))
-    train = metrics(values[:split_idx])
-    test = metrics(values[split_idx:])
-    base = metrics(values)
-    remove_top5 = metrics(remove_top_k(values, 5))
-    cost_x2 = metrics([r - c * 2.0 for r, c in zip(raw, cost)])
+def evaluate_variant(
+    family: str,
+    variant: str,
+    raw: np.ndarray,
+    net: np.ndarray,
+    cost_usd: float,
+    train_fraction: float,
+    decision_cfg: Dict[str, Any],
+) -> Dict[str, Any]:
+    split_idx = int(net.size * float(train_fraction))
 
+    base = metrics(net)
+    train = metrics(net[:split_idx])
+    test = metrics(net[split_idx:])
+    remove_top5 = metrics(remove_top_k(net, 5))
+    cost_x2 = metrics(raw - float(cost_usd) * 2.0)
+
+    pf = base.get("profit_factor")
     checks = {
         "min_trades": int(base["trade_count"]) >= int(decision_cfg.get("min_trades", 50)),
         "min_test_trades": int(test["trade_count"]) >= int(decision_cfg.get("min_test_trades", 20)),
@@ -262,14 +280,17 @@ def evaluate_variant(family: str, variant: str, trades: List[Trade], train_fract
         "test_positive": float(test["total_net_usd"]) > 0,
         "remove_top_5_positive": float(remove_top5["total_net_usd"]) > 0,
         "cost_x2_positive": float(cost_x2["total_net_usd"]) > 0,
-        "profit_factor_min": base.get("profit_factor") is not None and float(base["profit_factor"]) >= float(decision_cfg.get("require_profit_factor_min", 1.05)),
+        "profit_factor_min": pf is not None and float(pf) >= float(decision_cfg.get("require_profit_factor_min", 1.05)),
     }
+
     robust = all(checks.values())
+    reason = "robust_grid_candidate" if robust else "failed_checks:" + ",".join(k for k, v in checks.items() if not v)
+
     return {
         "family": family,
         "variant": variant,
         "robust_grid_candidate": bool(robust),
-        "reason": "robust_grid_candidate" if robust else "failed_checks:" + ",".join(k for k, v in checks.items() if not v),
+        "reason": reason,
         "checks": checks,
         "base": base,
         "train": train,
@@ -277,10 +298,6 @@ def evaluate_variant(family: str, variant: str, trades: List[Trade], train_fract
         "remove_top_5": remove_top5,
         "cost_x2": cost_x2,
     }
-
-
-def trade_to_dict(t: Trade) -> Dict[str, Any]:
-    return t.__dict__.copy()
 
 
 def write_json(path: Path, payload: Dict[str, Any]) -> None:
@@ -299,6 +316,7 @@ def write_markdown(path: Path, payload: Dict[str, Any]) -> None:
     lines.append(f"- Decision: `{payload['decision']['status']}`")
     lines.append(f"- Reason: `{payload['decision']['reason']}`")
     lines.append(f"- Data source: `{payload['data_source_mode']}`")
+    lines.append(f"- Runtime seconds: `{payload['runtime_seconds']}`")
     lines.append(f"- Total variants: `{payload['variant_count']}`")
     lines.append(f"- Robust candidates: `{payload['decision']['robust_candidate_count']}`")
     lines.append("")
@@ -327,29 +345,34 @@ def write_markdown(path: Path, payload: Dict[str, Any]) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Stage 2D baseline grid lab with train/test split and robustness checks.")
+    started = time.perf_counter()
+
+    parser = argparse.ArgumentParser(description="Stage 2D fast baseline grid lab with train/test split and robustness checks.")
     parser.add_argument("--config", default="configs/stage2d.yaml")
     parser.add_argument("--data-dir", default=None)
     parser.add_argument("--data-db", default=None)
     parser.add_argument("--report-dir", default=None)
-    parser.add_argument("--save-full-trades", action="store_true", help="Write full per-trade CSV for debugging. Disabled by default to speed up workflow.")
+    parser.add_argument("--save-full-trades", action="store_true")
     args = parser.parse_args()
 
-    t0 = time.perf_counter()
-
     cfg = load_yaml(Path(args.config))
-    output_cfg = cfg.get("output", {}) or {}
-    save_full_trades = bool(args.save_full_trades or output_cfg.get("save_full_trades", False))
-
     data_dir = Path(args.data_dir or cfg.get("data_dir", "data/normalized"))
     data_db = args.data_db if args.data_db is not None else cfg.get("data_db")
     report_dir = Path(args.report_dir or cfg.get("report_dir", "data/reports"))
     trades_dir = Path(cfg.get("trades_dir", "data/reports/stage2d_trades"))
+    output_cfg = cfg.get("output", {}) or {}
+    save_full_trades = bool(args.save_full_trades or output_cfg.get("save_full_trades", False))
+
     report_dir.mkdir(parents=True, exist_ok=True)
     trades_dir.mkdir(parents=True, exist_ok=True)
 
     cost_cfg = cfg.get("cost_model", {}) or {}
-    cost_usd = float(cost_cfg.get("total_roundtrip_cost_usd", float(cost_cfg.get("assumed_spread_usd", 0.30)) + float(cost_cfg.get("assumed_slippage_usd", 0.05))))
+    cost_usd = float(
+        cost_cfg.get(
+            "total_roundtrip_cost_usd",
+            float(cost_cfg.get("assumed_spread_usd", 0.30)) + float(cost_cfg.get("assumed_slippage_usd", 0.05)),
+        )
+    )
     train_fraction = float((cfg.get("split", {}) or {}).get("train_fraction", 0.60))
     decision_cfg = cfg.get("decision", {}) or {}
     families = cfg.get("families", {}) or {}
@@ -362,69 +385,104 @@ def main() -> int:
         data_by_interval[interval] = df
         data_files[interval] = source
 
-    all_trades: List[Trade] = []
+    all_trade_frames: List[pd.DataFrame] = []
     evaluations: List[Dict[str, Any]] = []
 
     f = families.get("sma_trend_1h", {})
     if f.get("enabled", True):
         interval = str(f.get("interval", "1h"))
         df = data_by_interval[interval]
-        for sma_window, horizon, cooldown, min_distance in itertools.product(f.get("sma_windows", [20]), f.get("horizon_bars", [3]), f.get("cooldown_bars", [1]), f.get("min_distance_usd", [0.0])):
-            signals = gen_sma_trend(df, interval, "sma_trend_1h", int(sma_window), int(horizon), float(min_distance))
-            accepted = nonoverlap_filter(signals, int(cooldown))
-            trades = trades_from_signals(accepted, df, cost_usd)
-            trades = [Trade(**{**t.__dict__, "variant": f"{t.variant}_cool{cooldown}"}) for t in trades]
-            if trades:
-                if save_full_trades:
-                    all_trades.extend(trades)
-                evaluations.append(evaluate_variant("sma_trend_1h", trades[0].variant, trades, train_fraction, decision_cfg))
+        family = "sma_trend_1h"
+        for sma_window, horizon, cooldown, min_distance in itertools.product(
+            f.get("sma_windows", [20]),
+            f.get("horizon_bars", [3]),
+            f.get("cooldown_bars", [1]),
+            f.get("min_distance_usd", [0.0]),
+        ):
+            entry, exit_, direction, reason = gen_sma_signal_arrays(df, int(sma_window), int(horizon), float(min_distance))
+            keep = nonoverlap_indices(entry, exit_, int(cooldown))
+            if keep.size == 0:
+                continue
+            entry, exit_, direction = entry[keep], exit_[keep], direction[keep]
+            variant = f"sma{sma_window}_h{horizon}_dist{float(min_distance):g}_cool{cooldown}"
+            raw, net, trade_frame = make_trade_frame(df, family, variant, interval, entry, exit_, direction, reason, cost_usd, save_full_trades)
+            evaluations.append(evaluate_variant(family, variant, raw, net, cost_usd, train_fraction, decision_cfg))
+            if trade_frame is not None:
+                all_trade_frames.append(trade_frame)
 
     f = families.get("session_momentum_15min", {})
     if f.get("enabled", True):
         interval = str(f.get("interval", "15min"))
         df = data_by_interval[interval]
-        for lookback, horizon, cooldown, min_move in itertools.product(f.get("lookback_bars", [1]), f.get("horizon_bars", [4]), f.get("cooldown_bars", [1]), f.get("min_move_usd", [0.0])):
-            signals = gen_session_momentum(df, interval, "session_momentum_15min", int(lookback), int(horizon), float(min_move), f.get("sessions", ["london", "london_ny_overlap", "new_york"]))
-            accepted = nonoverlap_filter(signals, int(cooldown))
-            trades = trades_from_signals(accepted, df, cost_usd)
-            trades = [Trade(**{**t.__dict__, "variant": f"{t.variant}_cool{cooldown}"}) for t in trades]
-            if trades:
-                if save_full_trades:
-                    all_trades.extend(trades)
-                evaluations.append(evaluate_variant("session_momentum_15min", trades[0].variant, trades, train_fraction, decision_cfg))
+        family = "session_momentum_15min"
+        for lookback, horizon, cooldown, min_move in itertools.product(
+            f.get("lookback_bars", [1]),
+            f.get("horizon_bars", [4]),
+            f.get("cooldown_bars", [1]),
+            f.get("min_move_usd", [0.0]),
+        ):
+            entry, exit_, direction, reason = gen_session_momentum_arrays(
+                df,
+                int(lookback),
+                int(horizon),
+                float(min_move),
+                f.get("sessions", ["london", "london_ny_overlap", "new_york"]),
+            )
+            keep = nonoverlap_indices(entry, exit_, int(cooldown))
+            if keep.size == 0:
+                continue
+            entry, exit_, direction = entry[keep], exit_[keep], direction[keep]
+            variant = f"lb{lookback}_h{horizon}_move{float(min_move):g}_cool{cooldown}"
+            raw, net, trade_frame = make_trade_frame(df, family, variant, interval, entry, exit_, direction, reason, cost_usd, save_full_trades)
+            evaluations.append(evaluate_variant(family, variant, raw, net, cost_usd, train_fraction, decision_cfg))
+            if trade_frame is not None:
+                all_trade_frames.append(trade_frame)
 
     f = families.get("range_expansion_15min", {})
     if f.get("enabled", True):
         interval = str(f.get("interval", "15min"))
         df = data_by_interval[interval]
-        for avg_window, multiplier, horizon, cooldown in itertools.product(f.get("avg_range_windows", [20]), f.get("range_multipliers", [1.5]), f.get("horizon_bars", [4]), f.get("cooldown_bars", [1])):
-            signals = gen_range_expansion(df, interval, "range_expansion_15min", int(avg_window), float(multiplier), int(horizon))
-            accepted = nonoverlap_filter(signals, int(cooldown))
-            trades = trades_from_signals(accepted, df, cost_usd)
-            trades = [Trade(**{**t.__dict__, "variant": f"{t.variant}_cool{cooldown}"}) for t in trades]
-            if trades:
-                if save_full_trades:
-                    all_trades.extend(trades)
-                evaluations.append(evaluate_variant("range_expansion_15min", trades[0].variant, trades, train_fraction, decision_cfg))
+        family = "range_expansion_15min"
+        for avg_window, multiplier, horizon, cooldown in itertools.product(
+            f.get("avg_range_windows", [20]),
+            f.get("range_multipliers", [1.5]),
+            f.get("horizon_bars", [4]),
+            f.get("cooldown_bars", [1]),
+        ):
+            entry, exit_, direction, reason = gen_range_expansion_arrays(df, int(avg_window), float(multiplier), int(horizon))
+            keep = nonoverlap_indices(entry, exit_, int(cooldown))
+            if keep.size == 0:
+                continue
+            entry, exit_, direction = entry[keep], exit_[keep], direction[keep]
+            variant = f"range{avg_window}_x{float(multiplier):g}_h{horizon}_cool{cooldown}"
+            raw, net, trade_frame = make_trade_frame(df, family, variant, interval, entry, exit_, direction, reason, cost_usd, save_full_trades)
+            evaluations.append(evaluate_variant(family, variant, raw, net, cost_usd, train_fraction, decision_cfg))
+            if trade_frame is not None:
+                all_trade_frames.append(trade_frame)
 
     robust = [e for e in evaluations if e["robust_grid_candidate"]]
     top = sorted(evaluations, key=lambda x: float(x["base"]["total_net_usd"]), reverse=True)[:20]
 
-    status = "stage2d_robust_grid_candidate_found" if robust else "no_stage2d_robust_grid_candidate"
-    reason = "At least one baseline variant passed train/test, outlier, cost, and PF checks." if robust else "No simple baseline variant passed Stage 2D robustness checks."
+    if robust:
+        status = "stage2d_robust_grid_candidate_found"
+        reason = "At least one baseline variant passed train/test, outlier, cost, and PF checks."
+    else:
+        status = "no_stage2d_robust_grid_candidate"
+        reason = "No simple baseline variant passed Stage 2D robustness checks."
 
     stamp = utc_stamp()
-    trades_csv = trades_dir / f"stage2d_grid_trades_{stamp}.csv"
+    trades_csv = None
+    if save_full_trades:
+        trades_csv_path = trades_dir / f"stage2d_grid_trades_{stamp}.csv"
+        if all_trade_frames:
+            pd.concat(all_trade_frames, ignore_index=True).to_csv(trades_csv_path, index=False)
+        else:
+            pd.DataFrame().to_csv(trades_csv_path, index=False)
+        trades_csv = str(trades_csv_path)
+
     eval_csv = report_dir / f"stage2d_grid_evaluations_{stamp}.csv"
     summary_json = report_dir / f"stage2d_grid_summary_{stamp}.json"
     summary_md = report_dir / f"stage2d_grid_summary_{stamp}.md"
-
-    # Full per-trade CSV is expensive and usually unnecessary.
-    # Keep it opt-in for debugging; routine workflows use evaluations + summary only.
-    trades_csv_value = None
-    if save_full_trades:
-        pd.DataFrame([trade_to_dict(t) for t in all_trades]).to_csv(trades_csv, index=False)
-        trades_csv_value = str(trades_csv)
 
     eval_rows = []
     for e in evaluations:
@@ -448,29 +506,50 @@ def main() -> int:
         )
     pd.DataFrame(eval_rows).to_csv(eval_csv, index=False)
 
+    runtime_seconds = round(time.perf_counter() - started, 3)
     payload = {
         "ok": True,
         "stage": "stage2d_baseline_grid_lab",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "runtime_seconds": runtime_seconds,
+        "implementation": "fast_vectorized",
         "data_source_mode": "sqlite" if data_db else "csv",
         "data_db": data_db,
         "data_files": data_files,
         "cost_model": {**cost_cfg, "effective_roundtrip_cost_usd": cost_usd},
         "decision_config": decision_cfg,
-        "decision": {"status": status, "reason": reason, "robust_candidate_count": int(len(robust))},
+        "decision": {
+            "status": status,
+            "reason": reason,
+            "robust_candidate_count": int(len(robust)),
+        },
         "variant_count": int(len(evaluations)),
+        "save_full_trades": bool(save_full_trades),
         "robust_candidates": robust[:20],
         "top_variants": top,
-        "trades_csv": trades_csv_value,
+        "trades_csv": trades_csv,
         "evaluations_csv": str(eval_csv),
-        "runtime_seconds": round(time.perf_counter() - t0, 3),
-        "save_full_trades": save_full_trades,
     }
 
     write_json(summary_json, payload)
     write_markdown(summary_md, payload)
 
-    print(json.dumps({"ok": True, "decision": payload["decision"], "summary_json": str(summary_json), "summary_md": str(summary_md), "trades_csv": trades_csv_value, "evaluations_csv": str(eval_csv), "variant_count": len(evaluations), "runtime_seconds": payload["runtime_seconds"], "save_full_trades": save_full_trades}, indent=2))
+    print(
+        json.dumps(
+            {
+                "ok": True,
+                "decision": payload["decision"],
+                "summary_json": str(summary_json),
+                "summary_md": str(summary_md),
+                "trades_csv": trades_csv,
+                "evaluations_csv": str(eval_csv),
+                "variant_count": len(evaluations),
+                "runtime_seconds": runtime_seconds,
+                "implementation": "fast_vectorized",
+            },
+            indent=2,
+        )
+    )
     return 0
 
 

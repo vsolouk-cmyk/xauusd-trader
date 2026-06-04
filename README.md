@@ -4,7 +4,7 @@ Commercial XAUUSD/gold trading research pipeline.
 
 ## Current stage
 
-Stage 2A: simple baseline lab after Stage 1 data quality passed.
+Stage 2B: baseline validation with non-overlapping trades.
 
 Telegram notification is enabled for pipeline reports only.
 
@@ -24,27 +24,29 @@ No ML. No trading bot. No paper order. No live order.
 - SMA: simple moving average.
 - Drawdown: decline from the previous cumulative peak.
 - Net USD: raw price movement minus assumed trading cost.
-- Telegram notification: a short pipeline status report, not a trading signal.
+- Overlapping trades: trades whose holding periods overlap.
+- Non-overlap filter: accepts a new trade only after the previous trade has exited.
 
 ## Current data source decision
 
-Use Twelve Data REST for Stage 0/1/2A because it is faster and cleaner than broker onboarding.
+Use Twelve Data REST for Stage 0/1/2 because it is faster and cleaner than broker onboarding.
 
 OANDA is paused. MT5/broker feed validation comes later.
 
-## Local Stage 1 snapshot
+## Local Stage 2B validation
 
 ```bash
 cd ~/Desktop/xauusd-trader
 export TWELVEDATA_API_KEY='PASTE_KEY_HERE'
-python3 -m app.xauusd_stage1_snapshot --outputsize 500
+python3 -m app.xauusd_stage1_snapshot --outputsize 5000
+python3 -m app.xauusd_stage2b_validate_baselines
 ```
 
-## Local Stage 2A baseline lab
+If 5000 fails because of API limits:
 
 ```bash
-cd ~/Desktop/xauusd-trader
-python3 -m app.xauusd_baseline_lab
+python3 -m app.xauusd_stage1_snapshot --outputsize 1000
+python3 -m app.xauusd_stage2b_validate_baselines
 ```
 
 ## Optional local Telegram test
@@ -67,18 +69,19 @@ TELEGRAM_CHAT_ID
 Then run manually from GitHub UI:
 
 ```text
-XAUUSD Stage 2A Baseline Lab
+XAUUSD Stage 2B Baseline Validation
 ```
 
 Inputs:
 
 ```text
 intervals: 1min,5min,15min,1h
-outputsize: 500
+outputsize: 5000
+include_run_link: false
 ```
 
 ## Hard rule
 
-If simple baselines are poor after assumed costs, do not proceed to ML.
+If simple baselines do not survive non-overlap validation after assumed costs, do not proceed to ML.
 
 Telegram messages are reports only, not signals.

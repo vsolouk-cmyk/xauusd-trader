@@ -1,0 +1,63 @@
+# Stage 2B baseline validation configuration.
+# Goal: reduce false optimism from overlapping trades and test larger data if available.
+
+data_dir: data/normalized
+report_dir: data/reports
+trades_dir: data/reports/stage2b_trades
+
+cost_model:
+  assumed_spread_usd: 0.30
+  assumed_slippage_usd: 0.05
+  total_roundtrip_cost_usd: 0.35
+
+decision:
+  min_nonoverlap_trades: 30
+  require_positive_avg_net_usd: true
+  require_positive_total_net_usd: true
+  max_allowed_drawdown_to_total_net_ratio: 2.0
+
+baselines:
+  higher_timeframe_sma20_trend_nonoverlap:
+    enabled: true
+    interval: 1h
+    sma_window: 20
+    horizon_bars: 3
+    cooldown_bars: 1
+
+  session_momentum_15min_nonoverlap:
+    enabled: true
+    interval: 15min
+    horizon_bars: 4
+    cooldown_bars: 1
+    sessions:
+      - london
+      - london_ny_overlap
+      - new_york
+
+  atr_range_expansion_15min_nonoverlap:
+    enabled: true
+    interval: 15min
+    atr_window: 20
+    range_multiplier: 1.5
+    horizon_bars: 4
+    cooldown_bars: 1
+
+  asia_range_breakout_5min_daily:
+    enabled: true
+    interval: 5min
+    asia_start_hour_utc: 0
+    asia_end_hour_utc: 7
+    trade_start_hour_utc: 7
+    trade_end_hour_utc: 13
+    horizon_bars: 12
+    max_trades_per_day: 1
+
+  london_open_breakout_5min_daily:
+    enabled: true
+    interval: 5min
+    open_start_hour_utc: 7
+    open_end_hour_utc: 8
+    trade_start_hour_utc: 8
+    trade_end_hour_utc: 13
+    horizon_bars: 12
+    max_trades_per_day: 1

@@ -1,6 +1,6 @@
 {
   "db_path": "data/store/xauusd.sqlite",
-  "generated_at_utc": "2026-06-04T08:54:53.774342+00:00",
+  "generated_at_utc": "2026-06-04T09:01:08.181128+00:00",
   "intervals": [
     "15min",
     "1h"
@@ -17,23 +17,23 @@
           "after": {
             "end_utc": "2026-06-04T07:45:00+00:00",
             "interval": "15min",
-            "rows": 9316,
-            "start_utc": "2026-02-27T06:00:00+00:00"
+            "rows": 13636,
+            "start_utc": "2026-01-13T06:00:00+00:00"
           },
-          "api_rows": 4316,
+          "api_rows": 4320,
           "before": {
             "end_utc": "2026-06-04T07:45:00+00:00",
             "interval": "15min",
-            "rows": 5000,
-            "start_utc": "2026-04-13T06:00:00+00:00"
+            "rows": 9316,
+            "start_utc": "2026-02-27T06:00:00+00:00"
           },
-          "net_new_rows": 4316,
+          "net_new_rows": 4320,
           "request_no": 1,
           "requested_range": {
             "chunk_days": 45,
-            "end_date": "2026-04-13 05:59:59",
+            "end_date": "2026-02-27 05:59:59",
             "mode": "older_chunk",
-            "start_date": "2026-02-27 06:00:00"
+            "start_date": "2026-01-13 06:00:00"
           },
           "trimmed_rows": 0
         }
@@ -47,23 +47,23 @@
           "after": {
             "end_utc": "2026-06-04T07:00:00+00:00",
             "interval": "1h",
-            "rows": 8556,
-            "start_utc": "2025-05-01T05:00:00+00:00"
+            "rows": 11417,
+            "start_utc": "2024-11-03T23:00:00+00:00"
           },
-          "api_rows": 3556,
+          "api_rows": 2861,
           "before": {
             "end_utc": "2026-06-04T07:00:00+00:00",
             "interval": "1h",
-            "rows": 5000,
-            "start_utc": "2025-10-28T05:00:00+00:00"
+            "rows": 8556,
+            "start_utc": "2025-05-01T05:00:00+00:00"
           },
-          "net_new_rows": 3556,
+          "net_new_rows": 2861,
           "request_no": 1,
           "requested_range": {
             "chunk_days": 180,
-            "end_date": "2025-10-28 04:59:59",
+            "end_date": "2025-05-01 04:59:59",
             "mode": "older_chunk",
-            "start_date": "2025-05-01 05:00:00"
+            "start_date": "2024-11-02 05:00:00"
           },
           "trimmed_rows": 0
         }

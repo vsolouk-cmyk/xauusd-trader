@@ -4,7 +4,7 @@ Commercial XAUUSD/gold trading research pipeline.
 
 ## Current stage
 
-Stage 2K: walk-forward validation after Stage 2J candidate stability analysis.
+Stage 2L: manual historical backfill validation after Stage 2K passed.
 
 Telegram notification is enabled for pipeline reports only.
 
@@ -14,46 +14,60 @@ No ML. No trading bot. No paper order. No live order.
 
 - XAUUSD: spot gold quoted in US dollars.
 - SQLite: a small SQL database stored as a single local file.
+- Backfill: adding older historical data that was not previously stored.
+- Workflow chain: one GitHub Actions workflow starts after another workflow completes.
 - Baseline: a simple rule-based strategy used as the minimum benchmark before ML.
-- Candidate stability: checking that a baseline works across time segments, not just one lucky region.
-- Walk-forward validation: testing performance as time moves forward.
-- Fold: one chronological segment of trades.
-- Rolling window: a moving block of consecutive trades.
-- Tail performance: recent trades, such as the last 50 trades.
+- Walk-forward validation: testing candidate behavior over chronological segments.
 
-## Local sequence
+## Current data architecture
 
-```bash
-cd ~/Desktop/xauusd-trader
-python3 -m app.xauusd_stage2d_grid_lab --data-db data/store/xauusd.sqlite
-python3 -m app.xauusd_stage2j_candidate_analysis --data-db data/store/xauusd.sqlite
-python3 -m app.xauusd_stage2k_walkforward --data-db data/store/xauusd.sqlite
+Persistent database:
+
+```text
+data/store/xauusd.sqlite
+data/store/manifest.json
 ```
 
-## GitHub workflow order
-
-Run manually or let schedule run:
+## Routine workflow
 
 ```text
 XAUUSD Persistent Data Store Refresh
 ```
 
-After it completes successfully, GitHub automatically triggers the active validation workflow:
+This keeps recent data fresh.
+
+## Manual backfill workflow
 
 ```text
-XAUUSD Stage 2K Walk-Forward Validation
+XAUUSD Stage 2L Backfill Validation
 ```
 
-## GitHub Actions secrets
+Recommended first inputs:
 
 ```text
-TWELVEDATA_API_KEY
-TELEGRAM_BOT_TOKEN
-TELEGRAM_CHAT_ID
+intervals: 15min,1h
+requests_per_interval: 1
+include_run_link: false
+```
+
+## Local backfill
+
+```bash
+cd ~/Desktop/xauusd-trader
+export TWELVEDATA_API_KEY='PASTE_KEY_HERE'
+python3 -m app.xauusd_store_backfill --intervals 15min,1h --requests-per-interval 1
+```
+
+Then rerun validation:
+
+```bash
+python3 -m app.xauusd_stage2d_grid_lab --data-db data/store/xauusd.sqlite
+python3 -m app.xauusd_stage2j_candidate_analysis --data-db data/store/xauusd.sqlite
+python3 -m app.xauusd_stage2k_walkforward --data-db data/store/xauusd.sqlite
 ```
 
 ## Hard rule
 
-If a candidate does not survive Stage 2K, do not proceed to ML or paper-order.
+Passing Stage 2K/2L still does not authorize ML, paper-order, or live trading.
 
-Telegram messages are reports only, not signals.
+Next gate after repeated backfill passes is second-source validation / broker-feed validation.

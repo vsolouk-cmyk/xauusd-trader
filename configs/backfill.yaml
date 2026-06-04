@@ -1,0 +1,38 @@
+# Stage 2L historical backfill configuration.
+# Goal: deepen SQLite history before trusting Stage 2D/2J/2K candidates.
+#
+# This is intentionally manual, not scheduled, because backfill consumes API credits.
+
+provider: twelvedata
+symbol: XAU/USD
+timezone: UTC
+
+db_path: data/store/xauusd.sqlite
+manifest_path: data/store/backfill_manifest.json
+
+# Stage 2D/2J/2K currently use 1h and 15min only.
+# Therefore backfill these first. Add 5min/1min later only if a candidate needs them.
+intervals:
+  - 15min
+  - 1h
+
+backfill:
+  # One request per interval per run by default.
+  # This avoids burning Twelve Data credits and stays friendly to free/basic limits.
+  requests_per_interval: 1
+
+  # Sleep between API calls to reduce rate-limit risk.
+  sleep_seconds_between_requests: 8
+
+  # Twelve Data max is often up to 5000 for time_series. Keep conservative.
+  outputsize: 5000
+
+  # Approximate chunk sizes designed to stay within 5000 candles.
+  chunk_days:
+    15min: 45
+    1h: 180
+    5min: 14
+    1min: 3
+
+  # Keep DB bounded while allowing deeper validation.
+  max_rows_per_interval: 20000

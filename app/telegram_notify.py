@@ -17,12 +17,10 @@ def load_json(path: Path) -> Dict[str, Any]:
 
 def latest_summary() -> Optional[Path]:
     patterns = [
+        "data/reports/stage3a_second_source_summary_*.json",
         "data/reports/stage2k_walkforward_summary_*.json",
         "data/reports/stage2j_candidate_stability_summary_*.json",
         "data/reports/stage2d_grid_summary_*.json",
-        "data/reports/stage2c_robustness_summary_*.json",
-        "data/reports/stage2b_validation_summary_*.json",
-        "data/reports/stage2a_baseline_summary_*.json",
     ]
     candidates = []
     for pattern in patterns:
@@ -50,14 +48,29 @@ def fmt_pct(value: Any) -> str:
         return "n/a"
 
 
+def stage3a_top(summary: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    sources = summary.get("sources", {})
+    secondary = sources.get("secondary", {})
+    primary = sources.get("primary", {})
+    chosen = secondary if secondary.get("available") else primary
+    if not chosen.get("available"):
+        return None
+    analysis = chosen.get("analysis", {})
+    return {
+        "source": "secondary" if secondary.get("available") else "primary",
+        "base": analysis.get("base", {}),
+        "folds": analysis.get("folds", {}),
+        "monthly": analysis.get("monthly", {}),
+        "candidate": analysis.get("candidate", {}),
+    }
+
+
 def best_item(summary: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    if summary.get("stage") == "stage3a_second_source_validation":
+        return stage3a_top(summary)
     if summary.get("stage") == "stage2k_walkforward_validation":
-        analyses = summary.get("analyses", []) or []
-        passed = [x for x in analyses if x.get("walkforward_pass")]
-        pool = passed or analyses
-        if not pool:
-            return None
-        return sorted(pool, key=lambda x: float(x.get("base", {}).get("total_net_usd", -10**18)), reverse=True)[0]
+        top = summary.get("top_analyses", []) or summary.get("pass_candidates", []) or []
+        return top[0] if top else None
     if summary.get("stage") == "stage2j_candidate_stability_analysis":
         top = summary.get("top_analyses", []) or []
         return top[0] if top else None
@@ -78,7 +91,7 @@ def build_message(summary: Optional[Dict[str, Any]], status: str, run_url: str =
         lines.append(f"Decision: {decision.get('status', 'n/a')}")
         lines.append(f"Reason: {decision.get('reason', 'n/a')}")
 
-        for key in ["walkforward_pass_count", "stable_candidate_count", "robust_after_stage2c_count", "robust_candidate_count", "candidate_count"]:
+        for key in ["stable_candidate_count", "walkforward_pass_count", "robust_candidate_count", "candidate_count"]:
             if key in decision:
                 lines.append(f"{key}: {decision.get(key)}")
 
@@ -86,32 +99,27 @@ def build_message(summary: Optional[Dict[str, Any]], status: str, run_url: str =
         if item:
             lines.append("")
             lines.append("Top snapshot:")
-            lines.append(f"- family/name: {item.get('family', item.get('baseline', 'n/a'))}")
-            if item.get("variant"):
-                lines.append(f"- variant: {item.get('variant')}")
 
-            base = item.get("base", {}) or {}
-            if base:
+            if summary.get("stage") == "stage3a_second_source_validation":
+                candidate = item.get("candidate", {})
+                base = item.get("base", {})
+                lines.append(f"- source: {item.get('source')}")
+                lines.append(f"- family/name: {candidate.get('family', summary.get('candidate', {}).get('family', 'n/a'))}")
+                lines.append(f"- variant: {candidate.get('variant', summary.get('candidate', {}).get('variant', 'n/a'))}")
                 lines.append(f"- trades: {base.get('trade_count', 'n/a')}")
-                if "walkforward_pass" in item:
-                    lines.append(f"- walk-forward: {item.get('walkforward_pass')}")
-                elif "stable_candidate" in item:
-                    lines.append(f"- stable: {item.get('stable_candidate')}")
-                elif "robust_grid_candidate" in item:
-                    lines.append(f"- robust: {item.get('robust_grid_candidate')}")
-                lines.append(f"- win rate: {fmt_pct(base.get('win_rate'))}")
                 lines.append(f"- total net: {fmt_float(base.get('total_net_usd'))}")
                 lines.append(f"- PF: {fmt_float(base.get('profit_factor'), 3)}")
-                if "folds" in item:
-                    folds = item.get("folds", {}) or {}
-                    lines.append(f"- fold +ratio: {fmt_pct(folds.get('positive_fold_ratio'))}")
-                    last = folds.get("last_fold", {}) or {}
-                    lines.append(f"- last fold: {fmt_float(last.get('total_net_usd'))}")
-                if "rolling" in item:
-                    roll = item.get("rolling", {}) or {}
-                    lines.append(f"- neg rolling windows: {fmt_pct(roll.get('negative_window_ratio'))}")
-                if "last_50" in item:
-                    lines.append(f"- last 50: {fmt_float((item.get('last_50') or {}).get('total_net_usd'))}")
+                lines.append(f"- win rate: {fmt_pct(base.get('win_rate'))}")
+            else:
+                lines.append(f"- family/name: {item.get('family', item.get('baseline', 'n/a'))}")
+                if item.get("variant"):
+                    lines.append(f"- variant: {item.get('variant')}")
+                base = item.get("base", {}) or {}
+                if base:
+                    lines.append(f"- trades: {base.get('trade_count', 'n/a')}")
+                    lines.append(f"- win rate: {fmt_pct(base.get('win_rate'))}")
+                    lines.append(f"- total net: {fmt_float(base.get('total_net_usd'))}")
+                    lines.append(f"- PF: {fmt_float(base.get('profit_factor'), 3)}")
 
     else:
         lines.append("Stage: unknown")

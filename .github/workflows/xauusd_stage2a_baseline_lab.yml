@@ -1,0 +1,54 @@
+name: XAUUSD Stage 2A Baseline Lab
+
+on:
+  workflow_dispatch:
+    inputs:
+      intervals:
+        description: "Comma-separated intervals collected before baseline lab"
+        required: true
+        default: "1min,5min,15min,1h"
+      outputsize:
+        description: "Candles per interval"
+        required: true
+        default: "500"
+
+jobs:
+  stage2a-baseline-lab:
+    runs-on: ubuntu-latest
+
+    env:
+      TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Run Stage 1 snapshot first
+        run: |
+          python -m app.xauusd_stage1_snapshot --intervals "${{ github.event.inputs.intervals }}" --outputsize "${{ github.event.inputs.outputsize }}"
+
+      - name: Run Stage 2A baseline lab
+        run: |
+          python -m app.xauusd_baseline_lab
+
+      - name: Upload Stage 2A artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: xauusd-stage2a-baseline-lab-${{ github.run_number }}
+          path: |
+            data/raw/*.json
+            data/normalized/*.csv
+            data/reports/*.json
+            data/reports/*.md
+            data/reports/baseline_trades/*.csv
+          if-no-files-found: error

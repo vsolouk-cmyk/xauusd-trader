@@ -4,7 +4,7 @@ Commercial XAUUSD/gold trading research pipeline.
 
 ## Current stage
 
-Stage 0/1: Twelve Data REST collection and data quality.
+Stage 2A: simple baseline lab after Stage 1 data quality passed.
 
 No ML. No trading bot. No paper order. No live order.
 
@@ -17,22 +17,31 @@ No ML. No trading bot. No paper order. No live order.
 - Baseline: a simple rule-based strategy used as the minimum benchmark before ML.
 - Forward shadow: logging future signals without placing orders.
 - Data provider: a service that gives market data but is not necessarily the broker used for execution.
+- Snapshot: a saved batch of market data and reports at one point in time.
+- Interval/timeframe: candle duration, such as 1 minute or 1 hour.
+- SMA: simple moving average.
+- Drawdown: decline from the previous cumulative peak.
+- Net USD: raw price movement minus assumed trading cost.
 
 ## Current data source decision
 
-Use Twelve Data REST for Stage 0 because it is faster and cleaner than broker onboarding.
+Use Twelve Data REST for Stage 0/1/2A because it is faster and cleaner than broker onboarding.
 
 OANDA is paused. MT5/broker feed validation comes later.
 
-## Local smoke test
+## Local Stage 1 snapshot
 
 ```bash
 cd ~/Desktop/xauusd-trader
-python3 -m pip install -r requirements.txt
 export TWELVEDATA_API_KEY='PASTE_KEY_HERE'
-python3 -m app.xauusd_collect --interval 1min --outputsize 100
-python3 -m app.xauusd_normalize
-python3 -m app.xauusd_data_quality
+python3 -m app.xauusd_stage1_snapshot --outputsize 500
+```
+
+## Local Stage 2A baseline lab
+
+```bash
+cd ~/Desktop/xauusd-trader
+python3 -m app.xauusd_baseline_lab
 ```
 
 ## GitHub Actions
@@ -46,9 +55,16 @@ TWELVEDATA_API_KEY
 Then run manually from GitHub UI:
 
 ```text
-XAUUSD Stage 0 Twelve Data Check
+XAUUSD Stage 2A Baseline Lab
+```
+
+Inputs:
+
+```text
+intervals: 1min,5min,15min,1h
+outputsize: 500
 ```
 
 ## Hard rule
 
-If data quality is poor, stop before baseline testing.
+If simple baselines are poor after assumed costs, do not proceed to ML.

@@ -4,13 +4,13 @@ Commercial XAUUSD/gold trading research pipeline.
 
 ## Current stage
 
-Stage 2C: robustness diagnostics after non-overlap baseline validation.
+Stage 2D: baseline grid lab after Stage 2C rejected the previous candidate.
 
 Telegram notification is enabled for pipeline reports only.
 
 No ML. No trading bot. No paper order. No live order.
 
-## First definitions
+## Key definitions
 
 - XAUUSD: spot gold quoted in US dollars.
 - Candle: one OHLC bar for a fixed time period.
@@ -28,6 +28,8 @@ No ML. No trading bot. No paper order. No live order.
 - Non-overlap filter: accepts a new trade only after the previous trade has exited.
 - Outlier: an unusually large result that can dominate totals.
 - Profit factor: gross wins divided by gross losses.
+- Grid lab: controlled testing of simple baseline parameter combinations.
+- Train/test split: first time segment for initial evaluation, later time segment for validation.
 
 ## Current data source decision
 
@@ -35,14 +37,13 @@ Use Twelve Data REST for Stage 0/1/2 because it is faster and cleaner than broke
 
 OANDA is paused. MT5/broker feed validation comes later.
 
-## Local Stage 2C sequence
+## Local Stage 2D sequence
 
 ```bash
 cd ~/Desktop/xauusd-trader
 export TWELVEDATA_API_KEY='PASTE_KEY_HERE'
 python3 -m app.xauusd_stage1_snapshot --outputsize 5000
-python3 -m app.xauusd_stage2b_validate_baselines
-python3 -m app.xauusd_stage2c_robustness
+python3 -m app.xauusd_stage2d_grid_lab
 ```
 
 ## GitHub Actions secrets
@@ -56,7 +57,7 @@ TELEGRAM_CHAT_ID
 Then run manually from GitHub UI:
 
 ```text
-XAUUSD Stage 2C Robustness Diagnostics
+XAUUSD Stage 2D Baseline Grid Lab
 ```
 
 Inputs:
@@ -69,6 +70,6 @@ include_run_link: false
 
 ## Hard rule
 
-If a baseline does not survive Stage 2C outlier/split/month/cost diagnostics, do not proceed to ML.
+If no simple baseline variant survives Stage 2D, do not proceed to ML.
 
 Telegram messages are reports only, not signals.

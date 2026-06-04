@@ -1,0 +1,69 @@
+name: XAUUSD Stage 2D Baseline Grid Lab
+
+on:
+  workflow_dispatch:
+    inputs:
+      intervals:
+        description: "Comma-separated intervals collected before grid lab"
+        required: true
+        default: "1min,5min,15min,1h"
+      outputsize:
+        description: "Candles per interval. Use 5000 if your Twelve Data plan allows it."
+        required: true
+        default: "5000"
+      include_run_link:
+        description: "Include GitHub run link in Telegram success messages"
+        required: true
+        default: "false"
+
+jobs:
+  stage2d-grid-lab:
+    runs-on: ubuntu-latest
+
+    env:
+      TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      TELEGRAM_INCLUDE_RUN_LINK: ${{ github.event.inputs.include_run_link }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Run Stage 1 larger snapshot
+        run: |
+          python -m app.xauusd_stage1_snapshot --intervals "${{ github.event.inputs.intervals }}" --outputsize "${{ github.event.inputs.outputsize }}"
+
+      - name: Run Stage 2D baseline grid lab
+        run: |
+          python -m app.xauusd_stage2d_grid_lab
+
+      - name: Send Telegram notification
+        if: always()
+        env:
+          WORKFLOW_STATUS: ${{ job.status }}
+        run: |
+          python -m app.telegram_notify --status "${WORKFLOW_STATUS}"
+
+      - name: Upload Stage 2D artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xauusd-stage2d-grid-lab-${{ github.run_number }}
+          path: |
+            data/raw/*.json
+            data/normalized/*.csv
+            data/reports/*.json
+            data/reports/*.md
+            data/reports/stage2d_trades/*.csv
+          if-no-files-found: warn

@@ -17,6 +17,7 @@ def load_json(path: Path) -> Dict[str, Any]:
 
 def latest_summary() -> Optional[Path]:
     patterns = [
+        "data/reports/stage2d_grid_summary_*.json",
         "data/reports/stage2c_robustness_summary_*.json",
         "data/reports/stage2b_validation_summary_*.json",
         "data/reports/stage2a_baseline_summary_*.json",
@@ -47,7 +48,11 @@ def fmt_pct(value: Any) -> str:
         return "n/a"
 
 
-def best_baseline(summary: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+def best_item(summary: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    if summary.get("stage") == "stage2d_baseline_grid_lab":
+        top = summary.get("top_variants", []) or []
+        return top[0] if top else None
+
     analyses = summary.get("analyses", []) or []
     if analyses:
         robust = [x for x in analyses if x.get("decision", {}).get("robust_after_stage2c")]
@@ -74,37 +79,33 @@ def build_message(summary: Optional[Dict[str, Any]], status: str, run_url: str =
         lines.append(f"Decision: {decision.get('status', 'n/a')}")
         lines.append(f"Reason: {decision.get('reason', 'n/a')}")
 
-        for key in ["robust_after_stage2c_count", "robust_candidate_count", "candidate_count"]:
+        for key in ["robust_candidate_count", "robust_after_stage2c_count", "robust_candidate_count", "candidate_count"]:
             if key in decision:
                 lines.append(f"{key}: {decision.get(key)}")
 
-        top = best_baseline(summary)
-        if top:
+        item = best_item(summary)
+        if item:
             lines.append("")
-            lines.append("Top baseline snapshot:")
-            lines.append(f"- name: {top.get('baseline', 'n/a')}")
+            lines.append("Top snapshot:")
+            lines.append(f"- family/name: {item.get('family', item.get('baseline', 'n/a'))}")
+            if item.get("variant"):
+                lines.append(f"- variant: {item.get('variant')}")
 
-            if "base" in top:
-                base = top.get("base", {}) or {}
-                remove1 = top.get("remove_top_1", {}) or {}
-                remove5 = top.get("remove_top_5", {}) or {}
-                second = (top.get("split", {}) or {}).get("second_half", {}) or {}
+            if "base" in item:
+                base = item.get("base", {}) or {}
+                train = item.get("train", {}) or {}
+                test = item.get("test", {}) or {}
                 lines.append(f"- trades: {base.get('trade_count', 'n/a')}")
-                lines.append(f"- stage2c robust: {top.get('decision', {}).get('robust_after_stage2c', 'n/a')}")
+                lines.append(f"- robust: {item.get('robust_grid_candidate', item.get('decision', {}).get('robust_after_stage2c', 'n/a'))}")
                 lines.append(f"- win rate: {fmt_pct(base.get('win_rate'))}")
-                lines.append(f"- avg net USD: {fmt_float(base.get('avg_net_usd'))}")
-                lines.append(f"- total net USD: {fmt_float(base.get('total_net_usd'))}")
+                lines.append(f"- total net: {fmt_float(base.get('total_net_usd'))}")
+                lines.append(f"- train/test: {fmt_float(train.get('total_net_usd'))} / {fmt_float(test.get('total_net_usd'))}")
                 lines.append(f"- PF: {fmt_float(base.get('profit_factor'), 3)}")
-                lines.append(f"- remove top1 total: {fmt_float(remove1.get('total_net_usd'))}")
-                lines.append(f"- remove top5 total: {fmt_float(remove5.get('total_net_usd'))}")
-                lines.append(f"- second half total: {fmt_float(second.get('total_net_usd'))}")
             else:
-                lines.append(f"- trades: {top.get('trade_count', 'n/a')}")
-                lines.append(f"- robust/candidate: {top.get('robust_candidate', top.get('candidate', 'n/a'))}")
-                lines.append(f"- win rate: {fmt_pct(top.get('win_rate'))}")
-                lines.append(f"- avg net USD: {fmt_float(top.get('avg_net_usd'))}")
-                lines.append(f"- total net USD: {fmt_float(top.get('total_net_usd'))}")
-                lines.append(f"- max DD USD: {fmt_float(top.get('max_drawdown_usd'))}")
+                lines.append(f"- trades: {item.get('trade_count', 'n/a')}")
+                lines.append(f"- robust/candidate: {item.get('robust_candidate', item.get('candidate', 'n/a'))}")
+                lines.append(f"- win rate: {fmt_pct(item.get('win_rate'))}")
+                lines.append(f"- total net USD: {fmt_float(item.get('total_net_usd'))}")
 
     else:
         lines.append("Stage: unknown")
@@ -115,8 +116,7 @@ def build_message(summary: Optional[Dict[str, Any]], status: str, run_url: str =
     lines.append("Warning: diagnostic only. No ML, no paper-order, no live decision.")
     lines.append("Current limitation: Twelve Data has no broker bid/ask spread in this pipeline.")
 
-    should_include_link = bool(run_url) and (include_run_link or str(status).lower() != "success")
-    if should_include_link:
+    if bool(run_url) and (include_run_link or str(status).lower() != "success"):
         lines.append("")
         lines.append(f"Run: {run_url}")
 

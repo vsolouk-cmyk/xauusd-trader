@@ -1,0 +1,57 @@
+# Stage 4D exact selected-scenario replay.
+# Goal: exact trade-level replay for the locked Stage 4C scenario.
+#
+# This is NOT ML.
+# This is NOT paper-order.
+# This is NOT live trading.
+
+candidate:
+  family: sma_trend_1h
+  variant: sma10_h12_dist10_cool1
+  signal_interval: 1h
+  path_interval: 1min
+  sma_window: 10
+  horizon_bars: 12
+  min_distance_usd: 10.0
+  cooldown_bars: 1
+
+selected_scenario:
+  name: long_tp24_sl15
+  side_filter: long
+  take_profit_usd: 24.0
+  stop_loss_usd: 15.0
+
+reference_scenario:
+  name: long_time_exit
+  side_filter: long
+  take_profit_usd: null
+  stop_loss_usd: null
+
+data:
+  mt5_db_path: data/second_source/second_source.sqlite
+
+execution:
+  entry_model: next_h1_open_via_m1
+  time_exit_model: m1_close_at_or_after_horizon
+  same_m1_bar_conflict_policy: conservative_sl_first
+
+cost_model:
+  total_roundtrip_cost_usd: 0.35
+  cost_multipliers: [1, 2, 3, 4]
+
+thresholds:
+  min_trades: 100
+  min_profit_factor: 1.25
+  min_median_net_usd: 0.0
+  min_positive_fold_ratio: 0.8
+  max_ambiguous_exit_ratio: 0.05
+  min_cost_x2_total_net_usd: 0.0
+  min_cost_x3_total_net_usd: 0.0
+  require_drawdown_better_than_reference: true
+  require_recent_half_positive: true
+
+output:
+  save_selected_trades_csv: true
+  save_reference_trades_csv: true
+
+report_dir: data/reports

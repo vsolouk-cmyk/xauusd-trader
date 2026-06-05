@@ -4,7 +4,7 @@ Commercial XAUUSD/gold trading research pipeline.
 
 ## Current stage
 
-Stage 4C: selected scenario validation.
+Stage 4D: exact selected-scenario replay.
 
 No ML. No trading bot. No paper order. No live order.
 
@@ -30,6 +30,12 @@ Stage 4C:
 python3 -m app.xauusd_stage4c_selected_scenario_validate
 ```
 
+Stage 4D:
+
+```bash
+python3 -m app.xauusd_stage4d_exact_selected_replay
+```
+
 ## Local-only data
 
 Do not commit:
@@ -42,4 +48,4 @@ data/reports/
 
 ## Hard rule
 
-Stage 4C does not authorize demo, paper-order, or live trading.
+Stage 4D does not authorize demo, paper-order, or live trading.

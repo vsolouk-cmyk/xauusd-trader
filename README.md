@@ -4,52 +4,42 @@ Commercial XAUUSD/gold trading research pipeline.
 
 ## Current stage
 
-Stage 4A: MT5 M1/H1 execution replay for the fixed XAUUSD candidate.
+Stage 4C: selected scenario validation.
 
 No ML. No trading bot. No paper order. No live order.
 
-## Fixed candidate
+## Selected scenario
 
 ```text
-sma10_h12_dist10_cool1
+long-only
+TP = 24 USD
+SL = 15 USD
 ```
 
-## Required MT5 imports
+## Local commands
 
-H1:
+Stage 4B:
 
 ```bash
-python3 -m app.xauusd_second_source_import \
-  --csv ~/Downloads/xauusd_1h_mt5.csv \
-  --db data/second_source/second_source.sqlite \
-  --interval 1h \
-  --provider mt5
+python3 -m app.xauusd_stage4b_tpsl_scenario_lab
 ```
 
-M1:
+Stage 4C:
 
 ```bash
-python3 -m app.xauusd_second_source_import \
-  --csv ~/Downloads/xauusd_1m_mt5.csv \
-  --db data/second_source/second_source.sqlite \
-  --interval 1min \
-  --provider mt5
+python3 -m app.xauusd_stage4c_selected_scenario_validate
 ```
 
-## Local Stage 4A
+## Local-only data
 
-```bash
-python3 -m app.xauusd_stage4a_execution_replay
-```
-
-## GitHub workflow
+Do not commit:
 
 ```text
-XAUUSD Stage 4A Execution Replay
+data/second_source/second_source.sqlite
+data/second_source/manifest.json
+data/reports/
 ```
 
 ## Hard rule
 
-Stage 4A is diagnostic only.
-
-It does not authorize demo, paper-order, or live trading.
+Stage 4C does not authorize demo, paper-order, or live trading.

@@ -1,0 +1,59 @@
+# Locked XAUUSD Strategy Candidate v1
+# Generated after Stage 4E session-filter validation.
+#
+# This file is an operating specification for demo-design only.
+# It does NOT authorize live trading.
+
+strategy_id: xauusd_long_tp24_sl15_no_london_v1
+
+symbol:
+  canonical: XAUUSD
+  notes:
+    - Broker symbol may differ, e.g. XAUUSD, XAUUSDm, XAUUSD., GOLD.
+    - Exact symbol must be confirmed inside MT5 before demo testing.
+
+signal:
+  timeframe: H1
+  direction: long_only
+  sma_window: 10
+  min_distance_usd: 10.0
+  rule: "After a closed H1 candle, if close - SMA10 >= 10 USD, generate a long signal."
+
+execution:
+  entry: "Next H1 open after signal candle close."
+  take_profit_usd: 24.0
+  stop_loss_usd: 15.0
+  time_exit_h1_bars: 12
+  conflict_policy: "If TP and SL are both detected in the same M1 candle during replay, assume SL first."
+
+allowed_sessions_utc:
+  asia:
+    start_hour: 0
+    end_hour: 7
+  london_ny_overlap:
+    start_hour: 13
+    end_hour: 17
+  new_york:
+    start_hour: 17
+    end_hour: 22
+  other:
+    start_hour: 22
+    end_hour: 24
+
+blocked_sessions_utc:
+  london:
+    start_hour: 7
+    end_hour: 13
+
+risk_status:
+  live_trading_authorized: false
+  paper_order_authorized: false
+  demo_design_authorized: true
+  demo_execution_authorized: false
+  reason: "Stage 4E passed, but demo EA/dry-run gates and broker execution checks are not built yet."
+
+known_limitations:
+  - MT5 data ends at 2025-11-20 in the current source.
+  - Current validation uses assumed cost, not measured broker bid/ask spread.
+  - Demo/live broker execution may differ from M1 replay.
+  - Positive year ratio for no_london is 0.75, so one year remains weak.

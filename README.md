@@ -4,7 +4,7 @@ Commercial XAUUSD/gold trading research pipeline.
 
 ## Current stage
 
-Stage 3E: forward-shadow scanner for the fixed XAUUSD baseline candidate.
+Stage 4A: MT5 M1/H1 execution replay for the fixed XAUUSD candidate.
 
 No ML. No trading bot. No paper order. No live order.
 
@@ -14,45 +14,42 @@ No ML. No trading bot. No paper order. No live order.
 sma10_h12_dist10_cool1
 ```
 
-## Current stores
+## Required MT5 imports
 
-Primary market data:
-
-```text
-data/store/xauusd.sqlite
-```
-
-Forward shadow log:
-
-```text
-data/shadow/forward_shadow.sqlite
-```
-
-## Why Stage 3E exists
-
-GitHub Actions cadence can be irregular. Checking only the latest candle can miss signals.
-
-Stage 3E scans every new candle since the last processed candle.
-
-## Local command
+H1:
 
 ```bash
-cd ~/Desktop/xauusd-trader
-python3 -m app.xauusd_forward_shadow
+python3 -m app.xauusd_second_source_import \
+  --csv ~/Downloads/xauusd_1h_mt5.csv \
+  --db data/second_source/second_source.sqlite \
+  --interval 1h \
+  --provider mt5
+```
+
+M1:
+
+```bash
+python3 -m app.xauusd_second_source_import \
+  --csv ~/Downloads/xauusd_1m_mt5.csv \
+  --db data/second_source/second_source.sqlite \
+  --interval 1min \
+  --provider mt5
+```
+
+## Local Stage 4A
+
+```bash
+python3 -m app.xauusd_stage4a_execution_replay
 ```
 
 ## GitHub workflow
 
-Run manually:
-
 ```text
-XAUUSD Stage 3D Forward Shadow
+XAUUSD Stage 4A Execution Replay
 ```
-
-The workflow name stays the same, but the module now runs Stage 3E scanning logic.
 
 ## Hard rule
 
-Forward shadow only records hypothetical signals and outcomes.
+Stage 4A is diagnostic only.
 
-It does not authorize ML, paper-order, or live trading.
+It does not authorize demo, paper-order, or live trading.

@@ -36,3 +36,9 @@ data/reports/*
 
 # System files
 .DS_Store
+
+# Large local MT5 / execution-replay data: keep local only
+data/second_source/second_source.sqlite
+data/reports/
+data/reports/*
+data/shadow/forward_shadow.sqlite

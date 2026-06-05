@@ -1,7 +1,7 @@
 {
   "db_path": "data/store/xauusd.sqlite",
   "fetched_any": true,
-  "generated_at_utc": "2026-06-05T04:45:43.072588+00:00",
+  "generated_at_utc": "2026-06-05T05:45:43.199808+00:00",
   "intervals": [
     "1min",
     "5min",
@@ -12,55 +12,43 @@
   "ok": true,
   "results": [
     {
-      "action": "refresh",
-      "age_minutes_before_refresh": 311.7121142,
-      "api_rows": 331,
+      "action": "skip_fresh",
+      "age_minutes": 61.71713283333334,
       "end_utc": "2026-06-05T04:44:00+00:00",
       "interval": "1min",
-      "net_new_rows": 310,
-      "requested_outputsize": 331,
+      "new_rows": 0,
       "rows": 6247,
-      "start_utc": "2026-05-31T20:38:00+00:00",
-      "strictly_new_rows": 310,
-      "trimmed_rows": 0
+      "start_utc": "2026-05-31T20:38:00+00:00"
     },
     {
-      "action": "refresh",
-      "age_minutes_before_refresh": 315.7142477833333,
-      "api_rows": 83,
+      "action": "skip_fresh",
+      "age_minutes": 65.71717243333333,
       "end_utc": "2026-06-05T04:40:00+00:00",
       "interval": "5min",
-      "net_new_rows": 62,
-      "requested_outputsize": 83,
+      "new_rows": 0,
       "rows": 5249,
-      "start_utc": "2026-05-17T23:20:00+00:00",
-      "strictly_new_rows": 62,
-      "trimmed_rows": 0
+      "start_utc": "2026-05-17T23:20:00+00:00"
     },
     {
-      "action": "refresh",
-      "age_minutes_before_refresh": 315.71507006666667,
-      "api_rows": 50,
+      "action": "skip_fresh",
+      "age_minutes": 75.71724181666667,
       "end_utc": "2026-06-05T04:30:00+00:00",
       "interval": "15min",
-      "net_new_rows": 20,
-      "requested_outputsize": 50,
+      "new_rows": 0,
       "rows": 13719,
-      "start_utc": "2026-01-13T06:00:00+00:00",
-      "strictly_new_rows": 20,
-      "trimmed_rows": 0
+      "start_utc": "2026-01-13T06:00:00+00:00"
     },
     {
       "action": "refresh",
-      "age_minutes_before_refresh": 345.71596615,
+      "age_minutes_before_refresh": 105.71738611666666,
       "api_rows": 50,
-      "end_utc": "2026-06-05T04:00:00+00:00",
+      "end_utc": "2026-06-05T05:00:00+00:00",
       "interval": "1h",
-      "net_new_rows": 5,
+      "net_new_rows": 1,
       "requested_outputsize": 50,
-      "rows": 25766,
+      "rows": 25767,
       "start_utc": "2022-05-27T13:00:00+00:00",
-      "strictly_new_rows": 5,
+      "strictly_new_rows": 1,
       "trimmed_rows": 0
     }
   ],

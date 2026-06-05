@@ -4,7 +4,7 @@ Commercial XAUUSD/gold trading research pipeline.
 
 ## Current stage
 
-Stage 3D: forward shadow for the fixed XAUUSD baseline candidate.
+Stage 3E: forward-shadow scanner for the fixed XAUUSD baseline candidate.
 
 No ML. No trading bot. No paper order. No live order.
 
@@ -28,7 +28,13 @@ Forward shadow log:
 data/shadow/forward_shadow.sqlite
 ```
 
-## Local Stage 3D
+## Why Stage 3E exists
+
+GitHub Actions cadence can be irregular. Checking only the latest candle can miss signals.
+
+Stage 3E scans every new candle since the last processed candle.
+
+## Local command
 
 ```bash
 cd ~/Desktop/xauusd-trader
@@ -43,11 +49,7 @@ Run manually:
 XAUUSD Stage 3D Forward Shadow
 ```
 
-It also runs after:
-
-```text
-XAUUSD Persistent Data Store Refresh
-```
+The workflow name stays the same, but the module now runs Stage 3E scanning logic.
 
 ## Hard rule
 

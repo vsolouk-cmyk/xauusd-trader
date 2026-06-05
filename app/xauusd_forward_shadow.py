@@ -69,9 +69,37 @@ def ensure_shadow_schema(con: sqlite3.Connection) -> None:
         )
         """
     )
+    con.execute(
+        """
+        CREATE TABLE IF NOT EXISTS shadow_metadata (
+            key TEXT PRIMARY KEY,
+            value TEXT NOT NULL,
+            updated_at_utc TEXT NOT NULL
+        )
+        """
+    )
     con.execute("CREATE INDEX IF NOT EXISTS idx_shadow_status ON shadow_trades(status)")
     con.execute("CREATE INDEX IF NOT EXISTS idx_shadow_entry_time ON shadow_trades(entry_time_utc)")
     con.execute("CREATE INDEX IF NOT EXISTS idx_shadow_exit_time ON shadow_trades(exit_time_utc)")
+    con.commit()
+
+
+def get_meta(con: sqlite3.Connection, key: str) -> Optional[str]:
+    row = con.execute("SELECT value FROM shadow_metadata WHERE key=?", (key,)).fetchone()
+    return None if row is None else str(row[0])
+
+
+def set_meta(con: sqlite3.Connection, key: str, value: str) -> None:
+    con.execute(
+        """
+        INSERT INTO shadow_metadata(key, value, updated_at_utc)
+        VALUES (?, ?, ?)
+        ON CONFLICT(key) DO UPDATE SET
+            value=excluded.value,
+            updated_at_utc=excluded.updated_at_utc
+        """,
+        (key, value, utc_now_iso()),
+    )
     con.commit()
 
 
@@ -86,42 +114,43 @@ def load_market_df(db_path: str, interval: str) -> pd.DataFrame:
     return finalize_df(df)
 
 
-def latest_candidate_signal(df: pd.DataFrame, candidate: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+def prepare_candidate_columns(df: pd.DataFrame, candidate: Dict[str, Any]) -> pd.DataFrame:
+    work = df.copy()
     sma_window = int(candidate.get("sma_window", 10))
+    work["candidate_sma"] = work["close"].rolling(sma_window).mean()
+    work["candidate_diff"] = work["close"] - work["candidate_sma"]
+    return work
+
+
+def candidate_signal_at(df: pd.DataFrame, idx: int, candidate: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     horizon_bars = int(candidate.get("horizon_bars", 12))
     min_distance = float(candidate.get("min_distance_usd", 10.0))
 
-    if len(df) < sma_window + horizon_bars + 2:
+    if idx < 0 or idx >= len(df):
         return None
 
-    work = df.copy()
-    work["sma"] = work["close"].rolling(sma_window).mean()
-
-    idx = len(work) - 1
-    sma = work.loc[idx, "sma"]
+    sma = df.loc[idx, "candidate_sma"]
     if pd.isna(sma):
         return None
 
-    close = float(work.loc[idx, "close"])
-    diff = close - float(sma)
+    close = float(df.loc[idx, "close"])
+    diff = float(df.loc[idx, "candidate_diff"])
 
     if abs(diff) < min_distance:
         return None
 
     direction = 1 if diff > 0 else -1
-    planned_exit_idx = idx + horizon_bars
 
-    # We know future exit time spacing from the current interval only approximately.
-    # For H1, use last timestamps if possible; otherwise fall back to 1 hour.
-    if len(work) >= 2:
-        step = work.loc[idx, "time_utc"] - work.loc[idx - 1, "time_utc"]
+    if idx >= 1:
+        step = df.loc[idx, "time_utc"] - df.loc[idx - 1, "time_utc"]
     else:
         step = pd.Timedelta(hours=1)
-    planned_exit_time = work.loc[idx, "time_utc"] + step * horizon_bars
+
+    planned_exit_time = df.loc[idx, "time_utc"] + step * horizon_bars
 
     return {
         "entry_idx": int(idx),
-        "entry_time_utc": work.loc[idx, "time_utc"].isoformat(),
+        "entry_time_utc": df.loc[idx, "time_utc"].isoformat(),
         "planned_exit_time_utc": planned_exit_time.isoformat(),
         "direction": int(direction),
         "direction_label": "long" if direction > 0 else "short",
@@ -146,6 +175,21 @@ def trade_exists(con: sqlite3.Connection, trade_id: str) -> bool:
     return row is not None
 
 
+def latest_trade_event_time(con: sqlite3.Connection) -> Optional[pd.Timestamp]:
+    row = con.execute(
+        """
+        SELECT MAX(event_time) FROM (
+            SELECT MAX(entry_time_utc) AS event_time FROM shadow_trades
+            UNION ALL
+            SELECT MAX(exit_time_utc) AS event_time FROM shadow_trades WHERE exit_time_utc IS NOT NULL
+        )
+        """
+    ).fetchone()
+    if not row or not row[0]:
+        return None
+    return pd.to_datetime(row[0], utc=True)
+
+
 def latest_closed_exit_time(con: sqlite3.Connection) -> Optional[pd.Timestamp]:
     row = con.execute("SELECT MAX(exit_time_utc) FROM shadow_trades WHERE status='closed'").fetchone()
     if not row or not row[0]:
@@ -153,34 +197,42 @@ def latest_closed_exit_time(con: sqlite3.Connection) -> Optional[pd.Timestamp]:
     return pd.to_datetime(row[0], utc=True)
 
 
+def interval_delta(interval: str, bars: int) -> pd.Timedelta:
+    if interval == "1h":
+        return pd.Timedelta(hours=int(bars))
+    if interval == "15min":
+        return pd.Timedelta(minutes=15 * int(bars))
+    if interval == "5min":
+        return pd.Timedelta(minutes=5 * int(bars))
+    if interval == "1min":
+        return pd.Timedelta(minutes=int(bars))
+    return pd.Timedelta(hours=int(bars))
+
+
 def should_respect_cooldown(con: sqlite3.Connection, entry_time: pd.Timestamp, interval: str, cooldown_bars: int) -> bool:
     last_exit = latest_closed_exit_time(con)
     if last_exit is None:
         return False
-
-    if interval == "1h":
-        cooldown_delta = pd.Timedelta(hours=int(cooldown_bars))
-    elif interval == "15min":
-        cooldown_delta = pd.Timedelta(minutes=15 * int(cooldown_bars))
-    elif interval == "5min":
-        cooldown_delta = pd.Timedelta(minutes=5 * int(cooldown_bars))
-    else:
-        cooldown_delta = pd.Timedelta(hours=int(cooldown_bars))
-
-    return entry_time <= last_exit + cooldown_delta
+    return entry_time <= last_exit + interval_delta(interval, cooldown_bars)
 
 
-def close_due_trades(con: sqlite3.Connection, market_df: pd.DataFrame, cost_usd: float) -> list[Dict[str, Any]]:
+def close_due_trades_until(
+    con: sqlite3.Connection,
+    market_df: pd.DataFrame,
+    current_time: pd.Timestamp,
+    cost_usd: float,
+) -> list[Dict[str, Any]]:
     due_closed = []
-    if market_df.empty:
+    available_market = market_df[market_df["time_utc"] <= current_time].copy()
+    if available_market.empty:
         return due_closed
-
-    market = market_df.copy()
-    market["time_utc"] = pd.to_datetime(market["time_utc"], utc=True)
 
     for row in open_trades(con):
         planned = pd.to_datetime(row["planned_exit_time_utc"], utc=True)
-        available = market[market["time_utc"] >= planned]
+        if planned > current_time:
+            continue
+
+        available = available_market[available_market["time_utc"] >= planned]
         if available.empty:
             continue
 
@@ -297,6 +349,71 @@ def maybe_open_signal(
     }
 
 
+def initial_last_processed_time(con: sqlite3.Connection, market_df: pd.DataFrame) -> pd.Timestamp:
+    meta = get_meta(con, "last_processed_bar_time_utc")
+    if meta:
+        return pd.to_datetime(meta, utc=True)
+
+    trade_event = latest_trade_event_time(con)
+    if trade_event is not None:
+        return trade_event
+
+    # First ever shadow run: do not backfill historical shadow trades.
+    # Start from the latest available bar and wait for future bars.
+    return pd.to_datetime(market_df["time_utc"].iloc[-1], utc=True)
+
+
+def run_scan(con: sqlite3.Connection, market_df: pd.DataFrame, cfg: Dict[str, Any], cost_usd: float) -> Dict[str, Any]:
+    candidate = cfg.get("candidate", {}) or {}
+    interval = str(candidate.get("interval", "1h"))
+
+    last_processed = initial_last_processed_time(con, market_df)
+    scan_df = market_df[market_df["time_utc"] > last_processed].copy().reset_index(drop=False)
+
+    closed_all: list[Dict[str, Any]] = []
+    opened_all: list[Dict[str, Any]] = []
+    signals_seen: list[Dict[str, Any]] = []
+
+    if scan_df.empty:
+        # Still try to close an open trade if current market already passed its planned exit.
+        current_time = pd.to_datetime(market_df["time_utc"].iloc[-1], utc=True)
+        closed_all.extend(close_due_trades_until(con, market_df, current_time, cost_usd))
+        set_meta(con, "last_processed_bar_time_utc", current_time.isoformat())
+        return {
+            "last_processed_before": last_processed.isoformat(),
+            "last_processed_after": current_time.isoformat(),
+            "scanned_bars": 0,
+            "closed": closed_all,
+            "opened": opened_all,
+            "signals_seen": signals_seen,
+        }
+
+    for _, row in scan_df.iterrows():
+        original_idx = int(row["index"])
+        bar_time = pd.to_datetime(row["time_utc"], utc=True)
+
+        closed = close_due_trades_until(con, market_df, bar_time, cost_usd)
+        closed_all.extend(closed)
+
+        signal = candidate_signal_at(market_df, original_idx, candidate)
+        if signal is not None:
+            signals_seen.append(signal)
+            opened = maybe_open_signal(con, signal, cfg, cost_usd=cost_usd)
+            if opened is not None:
+                opened_all.append(opened)
+
+        set_meta(con, "last_processed_bar_time_utc", bar_time.isoformat())
+
+    return {
+        "last_processed_before": last_processed.isoformat(),
+        "last_processed_after": pd.to_datetime(scan_df["time_utc"].iloc[-1], utc=True).isoformat(),
+        "scanned_bars": int(len(scan_df)),
+        "closed": closed_all,
+        "opened": opened_all,
+        "signals_seen": signals_seen,
+    }
+
+
 def profit_factor(values: np.ndarray) -> Optional[float]:
     if values.size == 0:
         return None
@@ -380,7 +497,7 @@ def kill_switch_status(metrics: Dict[str, Any], cfg: Dict[str, Any]) -> Dict[str
 
 def write_markdown(path: Path, payload: Dict[str, Any]) -> None:
     lines = []
-    lines.append("# XAUUSD Stage 3D Forward Shadow")
+    lines.append("# XAUUSD Stage 3E Forward Shadow Scan")
     lines.append("")
     lines.append(f"- Generated at UTC: `{payload['generated_at_utc']}`")
     lines.append(f"- Decision: `{payload['decision']['status']}`")
@@ -394,8 +511,10 @@ def write_markdown(path: Path, payload: Dict[str, Any]) -> None:
     lines.append("## This run")
     lines.append("")
     lines.append(f"- latest bar: `{payload['market']['latest_bar_time_utc']}`")
+    lines.append(f"- scanned bars: `{payload['scan']['scanned_bars']}`")
+    lines.append(f"- signals seen: `{len(payload['scan']['signals_seen'])}`")
     lines.append(f"- closed this run: `{len(payload['closed_this_run'])}`")
-    lines.append(f"- opened this run: `{1 if payload.get('opened_this_run') else 0}`")
+    lines.append(f"- opened this run: `{len(payload['opened_this_run'])}`")
     lines.append(f"- open trades: `{payload['shadow_state']['open_count']}`")
     lines.append(f"- closed trades: `{payload['shadow_state']['closed_count']}`")
     lines.append("")
@@ -409,7 +528,7 @@ def write_markdown(path: Path, payload: Dict[str, Any]) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Stage 3D forward-shadow runner. Logs candidate signals; places no orders.")
+    parser = argparse.ArgumentParser(description="Stage 3E forward-shadow scanner. Logs candidate signals over missed bars; places no orders.")
     parser.add_argument("--config", default="configs/stage3d.yaml")
     parser.add_argument("--primary-db", default=None)
     parser.add_argument("--shadow-db", default=None)
@@ -430,36 +549,39 @@ def main() -> int:
     cost_usd = float(cost_cfg.get("total_roundtrip_cost_usd", 0.35))
 
     market_df = load_market_df(primary_db, interval)
+    market_df = prepare_candidate_columns(market_df, candidate)
     latest_bar_time = market_df["time_utc"].iloc[-1].isoformat()
 
     shadow_con = connect_shadow_db(shadow_db)
     ensure_shadow_schema(shadow_con)
 
-    closed_this_run = close_due_trades(shadow_con, market_df, cost_usd=cost_usd)
-    signal = latest_candidate_signal(market_df, candidate)
-    opened_this_run = maybe_open_signal(shadow_con, signal, cfg, cost_usd=cost_usd)
+    scan = run_scan(shadow_con, market_df, cfg, cost_usd=cost_usd)
 
     open_count = len(open_trades(shadow_con))
     closed_df = closed_trades_df(shadow_con)
     metrics = closed_metrics(closed_df)
     ks_status = kill_switch_status(metrics, cfg)
 
+    opened = scan["opened"]
+    closed = scan["closed"]
+    signals_seen = scan["signals_seen"]
+
     if ks_status["status"] == "kill_switch_triggered":
         decision_status = "forward_shadow_kill_switch_triggered"
-    elif opened_this_run:
+    elif opened:
         decision_status = "forward_shadow_opened_signal"
-    elif closed_this_run:
+    elif closed:
         decision_status = "forward_shadow_closed_trade"
-    elif signal is not None:
+    elif signals_seen:
         decision_status = "forward_shadow_signal_seen_but_not_opened"
     else:
         decision_status = "forward_shadow_no_signal"
 
-    reason = ks_status["reason"] if ks_status["status"] == "kill_switch_triggered" else "Forward shadow run completed; no orders placed."
+    reason = ks_status["reason"] if ks_status["status"] == "kill_switch_triggered" else "Forward shadow scan completed; no orders placed."
 
     payload = {
         "ok": True,
-        "stage": "stage3d_forward_shadow",
+        "stage": "stage3e_forward_shadow_scan",
         "generated_at_utc": utc_now_iso(),
         "candidate": {
             "family": candidate.get("family"),
@@ -472,9 +594,10 @@ def main() -> int:
             "rows": int(len(market_df)),
         },
         "shadow_db": shadow_db,
-        "closed_this_run": closed_this_run,
-        "opened_this_run": opened_this_run,
-        "latest_signal": signal,
+        "scan": scan,
+        "closed_this_run": closed,
+        "opened_this_run": opened,
+        "latest_signal": signals_seen[-1] if signals_seen else None,
         "shadow_state": {
             "open_count": int(open_count),
             "closed_count": int(len(closed_df)),
@@ -507,8 +630,10 @@ def main() -> int:
                 "summary_json": str(summary_json),
                 "summary_md": str(summary_md),
                 "shadow_db": shadow_db,
-                "opened": bool(opened_this_run),
-                "closed_count_this_run": len(closed_this_run),
+                "scanned_bars": scan["scanned_bars"],
+                "signals_seen": len(signals_seen),
+                "opened_count": len(opened),
+                "closed_count_this_run": len(closed),
                 "open_count": open_count,
                 "closed_count": len(closed_df),
             },

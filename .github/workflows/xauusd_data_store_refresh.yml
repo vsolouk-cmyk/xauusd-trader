@@ -12,7 +12,7 @@ on:
         required: true
         default: "false"
   schedule:
-    - cron: "17 */2 * * 1-5"
+    - cron: "17 * * * 1-5"
 
 permissions:
   contents: write

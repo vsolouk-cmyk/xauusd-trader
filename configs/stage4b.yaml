@@ -1,0 +1,61 @@
+# Stage 4B QUICK TP/SL and side-filter scenario lab.
+# Local-first. Uses MT5 H1 signals and M1 path data.
+#
+# This quick grid is intentionally small because the first full grid was too slow
+# on the 2015 MacBook.
+#
+# This is NOT ML.
+# This is NOT paper-order.
+# This is NOT live trading.
+
+candidate:
+  family: sma_trend_1h
+  variant: sma10_h12_dist10_cool1
+  signal_interval: 1h
+  path_interval: 1min
+  sma_window: 10
+  horizon_bars: 12
+  min_distance_usd: 10.0
+  cooldown_bars: 1
+
+data:
+  mt5_db_path: data/second_source/second_source.sqlite
+
+execution:
+  entry_model: next_h1_open_via_m1
+  time_exit_model: m1_close_at_or_after_horizon
+  same_m1_bar_conflict_policy: conservative_sl_first
+
+cost_model:
+  assumed_spread_usd: 0.30
+  assumed_slippage_usd: 0.05
+  total_roundtrip_cost_usd: 0.35
+
+scenario_grid:
+  sides:
+    - long
+    - both
+
+  take_profit_usd:
+    - null
+    - 18
+    - 24
+
+  stop_loss_usd:
+    - null
+    - 12
+    - 15
+
+filters:
+  min_trades: 100
+  min_profit_factor: 1.25
+  min_median_net_usd: 0.0
+  min_positive_fold_ratio: 0.8
+  max_ambiguous_exit_ratio: 0.05
+
+output:
+  save_all_scenarios_csv: true
+  save_best_trades_csv: false
+  top_n: 12
+
+report_dir: data/reports

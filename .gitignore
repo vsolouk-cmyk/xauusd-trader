@@ -42,3 +42,11 @@ data/second_source/second_source.sqlite
 data/reports/
 data/reports/*
 data/shadow/forward_shadow.sqlite
+
+# Local MT5 second-source data: do not commit
+data/second_source/second_source.sqlite
+data/second_source/manifest.json
+
+# Local execution replay reports
+data/reports/
+data/reports/*

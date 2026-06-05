@@ -1,0 +1,69 @@
+# Stage 4E session-filter validation.
+# Goal: test whether the selected long TP/SL scenario improves after excluding weak sessions.
+#
+# This is NOT ML.
+# This is NOT paper-order.
+# This is NOT live trading.
+
+candidate:
+  family: sma_trend_1h
+  variant: sma10_h12_dist10_cool1
+  signal_interval: 1h
+  path_interval: 1min
+  sma_window: 10
+  horizon_bars: 12
+  min_distance_usd: 10.0
+  cooldown_bars: 1
+
+selected_scenario:
+  side_filter: long
+  take_profit_usd: 24.0
+  stop_loss_usd: 15.0
+
+data:
+  mt5_db_path: data/second_source/second_source.sqlite
+
+cost_model:
+  total_roundtrip_cost_usd: 0.35
+  cost_multipliers: [1, 2, 3, 4]
+
+session_sets:
+  baseline_all:
+    - asia
+    - london
+    - london_ny_overlap
+    - new_york
+    - other
+
+  no_london:
+    - asia
+    - london_ny_overlap
+    - new_york
+    - other
+
+  liquid_core:
+    - london_ny_overlap
+    - new_york
+
+  asia_ny:
+    - asia
+    - new_york
+
+  ny_only:
+    - new_york
+
+thresholds:
+  min_trades: 100
+  min_profit_factor: 1.30
+  min_median_net_usd: 0.0
+  min_positive_fold_ratio: 0.8
+  min_positive_year_ratio: 0.75
+  max_ambiguous_exit_ratio: 0.05
+  min_cost_x3_total_net_usd: 0.0
+  require_recent_half_positive: true
+
+output:
+  top_n: 10
+  save_scenarios_csv: true
+
+report_dir: data/reports

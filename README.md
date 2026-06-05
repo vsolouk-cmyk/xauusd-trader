@@ -4,7 +4,7 @@ Commercial XAUUSD/gold trading research pipeline.
 
 ## Current stage
 
-Stage 4D: exact selected-scenario replay.
+Stage 4E: session-filter validation for selected long TP/SL scenario.
 
 No ML. No trading bot. No paper order. No live order.
 
@@ -18,22 +18,16 @@ SL = 15 USD
 
 ## Local commands
 
-Stage 4B:
-
-```bash
-python3 -m app.xauusd_stage4b_tpsl_scenario_lab
-```
-
-Stage 4C:
-
-```bash
-python3 -m app.xauusd_stage4c_selected_scenario_validate
-```
-
 Stage 4D:
 
 ```bash
 python3 -m app.xauusd_stage4d_exact_selected_replay
+```
+
+Stage 4E:
+
+```bash
+python3 -m app.xauusd_stage4e_session_filter_validate
 ```
 
 ## Local-only data
@@ -45,7 +39,3 @@ data/second_source/second_source.sqlite
 data/second_source/manifest.json
 data/reports/
 ```
-
-## Hard rule
-
-Stage 4D does not authorize demo, paper-order, or live trading.

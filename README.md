@@ -4,9 +4,9 @@ Commercial XAUUSD/gold trading research pipeline.
 
 ## Current stage
 
-Stage 4F: demo-readiness pack for locked XAUUSD candidate.
+Stage 5A: MT5 dry-run EA design.
 
-No ML. No trading bot. No paper order. No live order.
+No demo order. No paper order. No live order.
 
 ## Locked candidate v1
 
@@ -15,32 +15,17 @@ long-only
 TP = 24 USD
 SL = 15 USD
 blocked session = London 07:00-13:00 UTC
+allowed sessions = Asia, London-NY overlap, New York, Other
 ```
 
-## Local commands
-
-Stage 4E:
-
-```bash
-python3 -m app.xauusd_stage4e_session_filter_validate
-```
-
-Stage 4F:
-
-```bash
-python3 -m app.xauusd_stage4f_demo_readiness_pack
-```
-
-## Local-only data
-
-Do not commit:
+## Stage 5A EA
 
 ```text
-data/second_source/second_source.sqlite
-data/second_source/manifest.json
-data/reports/
+mql5/Experts/XAUUSD/XAUUSD_DryRun_v1.mq5
 ```
+
+This EA logs signals only.
 
 ## Hard rule
 
-Stage 4F authorizes demo-design only, not demo execution, paper-order, or live trading.
+Stage 5A does not authorize demo execution, paper-order, or live trading.

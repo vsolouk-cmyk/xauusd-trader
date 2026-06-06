@@ -1,0 +1,55 @@
+# Stage 5A MT5 dry-run EA configuration.
+# This stage designs an MT5 Expert Advisor that logs signals only.
+#
+# No order placement.
+# No demo execution authorization yet.
+# No paper-order.
+# No live trading.
+
+strategy_id: xauusd_long_tp24_sl15_no_london_v1
+
+mt5:
+  ea_filename: XAUUSD_DryRun_v1.mq5
+  expected_folder: MQL5/Experts/XAUUSD/
+  mode: dry_run_log_only
+
+symbol:
+  default: XAUUSD
+  broker_symbol_must_be_confirmed: true
+  examples:
+    - XAUUSD
+    - XAUUSDm
+    - XAUUSD.
+    - GOLD
+
+signal:
+  timeframe: PERIOD_H1
+  sma_window: 10
+  min_distance_usd: 10.0
+  direction: long_only
+
+execution_model_for_logging:
+  entry_reference: next_h1_open
+  take_profit_usd: 24.0
+  stop_loss_usd: 15.0
+  time_exit_h1_bars: 12
+
+sessions_utc:
+  blocked:
+    london:
+      start_hour: 7
+      end_hour: 13
+  allowed:
+    - asia
+    - london_ny_overlap
+    - new_york
+    - other
+
+safety:
+  order_send_allowed: false
+  trade_functions_allowed: false
+  demo_order_allowed: false
+  live_order_allowed: false
+
+output:
+  mt5_files_log: XAUUSD_DryRun_v1_signals.csv

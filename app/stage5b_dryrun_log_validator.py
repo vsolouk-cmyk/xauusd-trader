@@ -1,422 +1,533 @@
+"""Stage 5B dry-run log validator for XAUUSD MT5 EA logs.
+
+Standard-library only. Validates dry-run/log-only CSV evidence; it does not
+approve demo, paper, or live orders.
 """
-Stage 5B — MT5 dry-run CSV log validator.
-
-Purpose:
-- Find/read the MT5 Common Files CSV produced by XAUUSD_DryRun_v1.
-- Validate headers, parse rows, detect obvious schema/time/session/signal problems.
-- Produce JSON + Markdown reports under data/reports/.
-
-Usage examples:
-  python3 -m app.stage5b_dryrun_log_validator --csv samples/stage5b_mt5_dryrun_sample.csv
-  python3 -m app.stage5b_dryrun_log_validator --search-root "$HOME/Library/Application Support"
-  python3 -m app.stage5b_dryrun_log_validator --search-root "$HOME/.wine"
-
-No external dependencies.
-"""
-
 from __future__ import annotations
 
 import argparse
 import csv
 import json
-import os
+import math
 import re
 from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
+TOOL_VERSION = "v4"
 DEFAULT_LOG_NAME = "XAUUSD_DryRun_v1_signals.csv"
-DEFAULT_REPORT_DIR = Path("data/reports")
-DEFAULT_STRATEGY_JSON = Path("configs/locked_strategy_v1.json")
+DEFAULT_STRATEGY_ID = "xauusd_long_tp24_sl15_no_london_v1"
+REPORT_DIR = Path("data/reports")
+JSON_REPORT = REPORT_DIR / "stage5b_dryrun_log_validator.json"
+MD_REPORT = REPORT_DIR / "stage5b_dryrun_log_validator.md"
 
-RECOMMENDED_COLUMNS = [
-    "timestamp_utc",
+# EA-native columns from XAUUSD_DryRun_v1.mq5 after Stage 5A CSV header fix.
+EA_NATIVE_SIGNAL_ONLY_COLUMNS = {
+    "logged_at_gmt",
     "symbol",
+    "chart_symbol",
     "strategy_id",
-    "ea_version",
-    "chart_timeframe",
-    "signal_timeframe",
-    "closed_h1_time_utc",
-    "close",
+    "signal_closed_h1_time_server",
+    "signal_closed_h1_time_gmt_now",
+    "session_utc",
+    "close_h1",
     "sma10",
     "distance_usd",
-    "session_name",
-    "session_allowed",
-    "signal",
-    "reason",
-]
-
-COLUMN_ALIASES = {
-    "timestamp_utc": {"timestamp_utc", "time_utc", "timestamp", "logged_at_utc", "logged_time_utc", "server_time_utc"},
-    "closed_h1_time_utc": {"closed_h1_time_utc", "h1_time_utc", "bar_time_utc", "signal_bar_time_utc", "closed_bar_time_utc"},
-    "symbol": {"symbol", "resolved_symbol", "mt5_symbol"},
-    "strategy_id": {"strategy_id", "strategy", "strategy_name"},
-    "signal": {"signal", "is_signal", "dry_run_signal", "has_signal"},
-    "reason": {"reason", "message", "status", "event"},
-    "session_name": {"session_name", "session", "market_session"},
-    "session_allowed": {"session_allowed", "allowed_session", "is_session_allowed"},
-    "distance_usd": {"distance_usd", "distance", "close_minus_sma", "close_minus_sma10"},
-    "close": {"close", "h1_close", "closed_h1_close"},
-    "sma10": {"sma10", "sma_10", "sma"},
+    "direction",
+    "planned_entry_model",
+    "tp_usd",
+    "sl_usd",
+    "time_exit_h1_bars",
+    "dry_run_only",
 }
 
-TRUE_VALUES = {"1", "true", "yes", "y", "signal", "logged"}
-FALSE_VALUES = {"0", "false", "no", "n", "none", ""}
-
+CANONICAL_ALIASES = {
+    "timestamp_utc": [
+        "timestamp_utc",
+        "logged_at_utc",
+        "logged_at_gmt",
+        "time_utc",
+        "time_gmt",
+        "created_at_utc",
+    ],
+    "closed_h1_time_utc": [
+        "closed_h1_time_utc",
+        "signal_closed_h1_time_utc",
+        "signal_closed_h1_time_gmt",
+        "signal_closed_h1_time_gmt_now",
+        "signal_closed_h1_time_server",
+    ],
+    "symbol": ["symbol", "broker_symbol", "resolved_symbol"],
+    "strategy_id": ["strategy_id", "strategy", "strategy_name"],
+    # Important: do NOT include dry_run_only. It is a safety flag, not a signal flag.
+    "signal": ["signal", "is_signal", "signal_state", "signal_status", "event_signal"],
+    "reason": ["reason", "status", "event_type", "message", "log_reason"],
+    "session_name": ["session_name", "session", "session_utc", "utc_session"],
+    "session_allowed": ["session_allowed", "allowed_session", "is_session_allowed"],
+    "distance_usd": ["distance_usd", "sma_distance_usd", "distance", "dist_usd"],
+    "close": ["close", "close_h1", "h1_close"],
+    "sma10": ["sma10", "sma_10", "sma10_h1", "h1_sma10"],
+    "take_profit_usd": ["take_profit_usd", "tp_usd", "tp", "take_profit"],
+    "stop_loss_usd": ["stop_loss_usd", "sl_usd", "sl", "stop_loss"],
+    "direction": ["direction", "side", "trade_direction"],
+    "dry_run_only": ["dry_run_only", "dry_run", "log_only"],
+    "time_exit_h1_bars": ["time_exit_h1_bars", "time_exit_bars", "max_hold_h1_bars"],
+}
 
 @dataclass
-class ValidationItem:
+class Check:
+    status: str
     name: str
-    status: str  # PASS / WARN / FAIL
     detail: str
 
 
-def normalize_col(name: str) -> str:
-    return re.sub(r"[^a-z0-9]+", "_", name.strip().lower()).strip("_")
+def _now_utc() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def resolve_columns(fieldnames: list[str]) -> dict[str, str]:
-    normalized = {normalize_col(col): col for col in fieldnames}
-    resolved: dict[str, str] = {}
-    for canonical, aliases in COLUMN_ALIASES.items():
-        for alias in aliases:
-            if normalize_col(alias) in normalized:
-                resolved[canonical] = normalized[normalize_col(alias)]
-                break
-    return resolved
+def _clean_header_cell(value: str) -> str:
+    value = value.replace("\ufeff", "")
+    value = value.replace("�", "")
+    value = value.strip().strip('"').strip("'")
+    return value
 
 
-def parse_bool(value: Any) -> bool | None:
+def _normalize_col(value: str) -> str:
+    value = _clean_header_cell(value)
+    value = value.strip().lower()
+    value = re.sub(r"[^a-z0-9]+", "_", value)
+    value = re.sub(r"_+", "_", value).strip("_")
+    return value
+
+
+def _decode_bytes(raw: bytes) -> Tuple[str, str]:
+    for enc in ("utf-8-sig", "utf-16", "utf-16-le", "utf-16-be", "cp1252", "latin-1"):
+        try:
+            return raw.decode(enc), enc
+        except UnicodeDecodeError:
+            continue
+    return raw.decode("utf-8", errors="replace"), "utf-8-replace"
+
+
+def _detect_delimiter(text: str) -> Tuple[str, str]:
+    sample = "\n".join(text.splitlines()[:5])
+    candidates = [("\t", "TAB"), (",", "COMMA"), (";", "SEMICOLON"), ("|", "PIPE")]
+    counts = [(sample.count(d), d, name) for d, name in candidates]
+    counts.sort(reverse=True, key=lambda x: x[0])
+    if counts and counts[0][0] > 0:
+        return counts[0][1], counts[0][2]
+    try:
+        dialect = csv.Sniffer().sniff(sample)
+        name = {"\t": "TAB", ",": "COMMA", ";": "SEMICOLON", "|": "PIPE"}.get(dialect.delimiter, dialect.delimiter)
+        return dialect.delimiter, name
+    except Exception:
+        return ",", "COMMA_FALLBACK"
+
+
+def _fix_known_header(header: List[str]) -> Tuple[List[str], List[str]]:
+    notes: List[str] = []
+    out: List[str] = []
+    for cell in header:
+        raw = _clean_header_cell(cell)
+        norm = _normalize_col(raw)
+        if norm == "sma10distance_usd":
+            out.extend(["sma10", "distance_usd"])
+            notes.append("Split broken header cell sma10distance_usd into sma10 + distance_usd.")
+        else:
+            out.append(raw)
+    return out, notes
+
+
+def _read_csv(path: Path) -> Tuple[List[str], List[Dict[str, str]], str, str, str, List[str]]:
+    raw = path.read_bytes()
+    text, encoding = _decode_bytes(raw)
+    delimiter, delimiter_name = _detect_delimiter(text)
+    # Drop fully blank lines but preserve row content.
+    lines = [ln for ln in text.splitlines() if ln.strip()]
+    if not lines:
+        return [], [], encoding, delimiter_name, delimiter, []
+    reader = csv.reader(lines, delimiter=delimiter)
+    raw_rows = list(reader)
+    if not raw_rows:
+        return [], [], encoding, delimiter_name, delimiter, []
+    header, notes = _fix_known_header(raw_rows[0])
+    norm_header = [_normalize_col(h) for h in header]
+    rows: List[Dict[str, str]] = []
+    for raw_row in raw_rows[1:]:
+        # If the old broken header had one fewer delimiter than the row, align conservatively.
+        row = list(raw_row)
+        if len(row) < len(norm_header):
+            row += [""] * (len(norm_header) - len(row))
+        if len(row) > len(norm_header):
+            row = row[: len(norm_header)]
+        mapped = {norm_header[i]: (row[i].strip() if i < len(row) else "") for i in range(len(norm_header))}
+        if any(v != "" for v in mapped.values()):
+            rows.append(mapped)
+    return norm_header, rows, encoding, delimiter_name, delimiter, notes
+
+
+def _find_col(columns: Sequence[str], aliases: Sequence[str]) -> Optional[str]:
+    colset = set(columns)
+    for alias in aliases:
+        norm = _normalize_col(alias)
+        if norm in colset:
+            return norm
+    return None
+
+
+def _resolve_columns(columns: Sequence[str]) -> Dict[str, Optional[str]]:
+    return {key: _find_col(columns, aliases) for key, aliases in CANONICAL_ALIASES.items()}
+
+
+def _to_float(value: Any) -> Optional[float]:
     if value is None:
         return None
-    text = str(value).strip().lower()
-    if text in TRUE_VALUES:
+    s = str(value).strip()
+    if not s:
+        return None
+    s = s.replace(",", ".")
+    try:
+        x = float(s)
+        if math.isfinite(x):
+            return x
+    except ValueError:
+        return None
+    return None
+
+
+def _truthy(value: Any) -> Optional[bool]:
+    s = str(value).strip().lower()
+    if s in {"1", "true", "yes", "y", "on"}:
         return True
-    if text in FALSE_VALUES:
+    if s in {"0", "false", "no", "n", "off"}:
         return False
     return None
 
 
-def parse_dt(value: str) -> datetime | None:
-    text = str(value).strip()
-    if not text:
-        return None
-    candidates = [
-        text,
-        text.replace("Z", "+00:00"),
-        text.replace("/", "-"),
-    ]
-    formats = [
-        "%Y-%m-%dT%H:%M:%S%z",
-        "%Y-%m-%dT%H:%M:%S",
-        "%Y-%m-%d %H:%M:%S%z",
-        "%Y-%m-%d %H:%M:%S",
-        "%Y.%m.%d %H:%M:%S",
-        "%Y-%m-%d %H:%M",
-    ]
-    for candidate in candidates:
-        try:
-            dt = datetime.fromisoformat(candidate)
-            if dt.tzinfo is None:
-                dt = dt.replace(tzinfo=timezone.utc)
-            return dt.astimezone(timezone.utc)
-        except ValueError:
-            pass
-        for fmt in formats:
-            try:
-                dt = datetime.strptime(candidate, fmt)
-                if dt.tzinfo is None:
-                    dt = dt.replace(tzinfo=timezone.utc)
-                return dt.astimezone(timezone.utc)
-            except ValueError:
-                continue
-    return None
+def _is_london_session(value: str) -> bool:
+    s = str(value).strip().lower().replace("-", "_").replace(" ", "_")
+    return s in {"london", "ldn"} or s.startswith("london_")
 
 
-def parse_float(value: Any) -> float | None:
-    if value is None:
+def _search_for_log(root: Path, name: str = DEFAULT_LOG_NAME) -> Optional[Path]:
+    if not root.exists():
         return None
-    text = str(value).strip().replace(",", "")
-    if not text:
-        return None
+    matches = []
     try:
-        return float(text)
-    except ValueError:
+        for p in root.rglob(name):
+            if p.is_file():
+                matches.append(p)
+    except (PermissionError, OSError):
+        pass
+    if not matches:
         return None
+    matches.sort(key=lambda p: p.stat().st_mtime if p.exists() else 0, reverse=True)
+    return matches[0]
 
 
-def find_log_file(search_roots: Iterable[Path], filename: str = DEFAULT_LOG_NAME, max_files: int = 250_000) -> Path | None:
-    checked = 0
-    skip_dirs = {"node_modules", ".git", "__pycache__", "Caches", "Cache", "Trash"}
-    for root in search_roots:
-        root = root.expanduser()
-        if not root.exists():
-            continue
-        if root.is_file() and root.name == filename:
-            return root
-        for current_root, dirs, files in os.walk(root):
-            dirs[:] = [d for d in dirs if d not in skip_dirs and not d.startswith(".")]
-            checked += len(files)
-            if filename in files:
-                return Path(current_root) / filename
-            if checked >= max_files:
-                return None
-    return None
+def _write_reports(report: Dict[str, Any]) -> None:
+    REPORT_DIR.mkdir(parents=True, exist_ok=True)
+    JSON_REPORT.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+    lines: List[str] = []
+    lines.append("# Stage 5B Dry-run Log Validator")
+    lines.append("")
+    lines.append(f"Generated UTC: `{report['generated_utc']}`")
+    lines.append(f"Tool version: `{report['tool_version']}`")
+    lines.append(f"Strict mode: `{report['strict_mode']}`")
+    lines.append(f"Overall status: **{report['overall_status']}**")
+    lines.append("")
+    lines.append("> Hard rule: this validates dry-run logs only. It does not authorize demo, paper, or live orders.")
+    lines.append("")
+    lines.append("## Stats")
+    lines.append("")
+    for key, value in report["stats"].items():
+        lines.append(f"- {key}: `{value}`")
+    lines.append("")
+    lines.append("## Detected columns")
+    lines.append("")
+    for col in report["columns"]:
+        lines.append(f"- `{col}`")
+    lines.append("")
+    lines.append("## Resolved columns")
+    lines.append("")
+    for key, value in report["resolved_columns"].items():
+        if value:
+            lines.append(f"- `{key}`: `{value}`")
+    lines.append("")
+    lines.append("## Checks")
+    lines.append("")
+    lines.append("| Status | Check | Detail |")
+    lines.append("|---|---|---|")
+    for chk in report["checks"]:
+        detail = str(chk["detail"]).replace("|", "\\|")
+        lines.append(f"| {chk['status']} | {chk['name']} | {detail} |")
+    lines.append("")
+    lines.append(f"Decision: **{report['decision']}**")
+    lines.append("")
+    MD_REPORT.write_text("\n".join(lines), encoding="utf-8")
 
 
-def load_strategy(path: Path) -> dict[str, Any]:
-    if not path.exists():
-        return {}
-    try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
-        return {}
-
-
-def validate(csv_path: Path, strategy: dict[str, Any]) -> tuple[list[ValidationItem], list[dict[str, str]], dict[str, Any]]:
-    items: list[ValidationItem] = []
+def validate(csv_path: Path, strict: bool = False, expected_strategy_id: str = DEFAULT_STRATEGY_ID) -> Dict[str, Any]:
+    checks: List[Check] = []
     if not csv_path.exists():
-        return [ValidationItem("CSV exists", "FAIL", f"File not found: {csv_path}")], [], {}
+        checks.append(Check("FAIL", "CSV file", f"File not found: {csv_path}"))
+        report = _build_report(csv_path, [], {}, [], checks, strict, {}, None, None)
+        _write_reports(report)
+        return report
 
-    try:
-        with csv_path.open("r", encoding="utf-8-sig", newline="") as f:
-            reader = csv.DictReader(f)
-            fieldnames = reader.fieldnames or []
-            rows = [dict(row) for row in reader]
-    except Exception as exc:  # noqa: BLE001 - diagnostic tool
-        return [ValidationItem("CSV readable", "FAIL", f"Could not read CSV: {exc}")], [], {}
+    size = csv_path.stat().st_size
+    if size == 0:
+        checks.append(Check("WARN", "CSV file", "File exists but is empty. This can be normal before first market tick/log row."))
+        report = _build_report(csv_path, [], {}, [], checks, strict, {"file_size_bytes": size}, None, None)
+        _write_reports(report)
+        return report
 
-    if not fieldnames:
-        items.append(ValidationItem("CSV header", "FAIL", "CSV has no header row."))
-        return items, rows, {}
-    items.append(ValidationItem("CSV header", "PASS", f"Detected {len(fieldnames)} column(s)."))
+    columns, rows, encoding, delimiter_name, delimiter, header_notes = _read_csv(csv_path)
+    resolved = _resolve_columns(columns)
+    colset = set(columns)
+    native_signal_only_schema = EA_NATIVE_SIGNAL_ONLY_COLUMNS.issubset(colset)
 
-    if not rows:
-        items.append(ValidationItem("CSV rows", "WARN", "CSV has a header but no data rows yet."))
+    checks.append(Check("PASS" if columns else "FAIL", "CSV header", f"Detected {len(columns)} column(s)."))
+    checks.append(Check("PASS", "CSV delimiter", f"Detected delimiter: {delimiter_name}."))
+    checks.append(Check("PASS" if rows else "WARN", "CSV rows", f"Detected {len(rows)} data row(s)."))
+    if encoding.lower() not in {"utf-8-sig", "utf-8"}:
+        checks.append(Check("WARN", "CSV encoding", f"Decoded as {encoding}. UTF-8/ANSI output is preferred."))
     else:
-        items.append(ValidationItem("CSV rows", "PASS", f"Detected {len(rows)} data row(s)."))
+        checks.append(Check("PASS", "CSV encoding", f"Decoded as {encoding}."))
+    for note in header_notes:
+        checks.append(Check("WARN", "Known header repair", note))
 
-    normalized_present = {normalize_col(c) for c in fieldnames}
-    missing_recommended = [c for c in RECOMMENDED_COLUMNS if normalize_col(c) not in normalized_present]
-    if missing_recommended:
-        items.append(
-            ValidationItem(
-                "Recommended schema",
-                "WARN",
-                "Missing recommended column(s): " + ", ".join(missing_recommended),
-            )
-        )
+    if native_signal_only_schema:
+        checks.append(Check("PASS", "EA-native signal-only schema", "Detected Stage 5A EA signal-log schema. Rows are treated as dry-run signal records."))
     else:
-        items.append(ValidationItem("Recommended schema", "PASS", "All recommended columns are present."))
+        missing_native = sorted(EA_NATIVE_SIGNAL_ONLY_COLUMNS - colset)
+        checks.append(Check("WARN", "EA-native signal-only schema", f"Not fully detected. Missing: {', '.join(missing_native[:12])}{'...' if len(missing_native) > 12 else ''}"))
 
-    resolved = resolve_columns(fieldnames)
-    for critical in ["timestamp_utc", "symbol", "signal", "reason"]:
-        if critical in resolved:
-            items.append(ValidationItem(f"Column mapping: {critical}", "PASS", f"Mapped to `{resolved[critical]}`."))
-        else:
-            severity = "WARN" if critical in {"signal", "reason"} else "FAIL"
-            items.append(ValidationItem(f"Column mapping: {critical}", severity, "No suitable column found."))
-
-    strategy_id_expected = strategy.get("strategy_id")
-    if strategy_id_expected and "strategy_id" in resolved and rows:
-        bad = [r for r in rows if str(r.get(resolved["strategy_id"], "")).strip() not in {"", strategy_id_expected}]
-        if bad:
-            items.append(ValidationItem("Strategy ID consistency", "FAIL", f"{len(bad)} row(s) do not match {strategy_id_expected}."))
-        else:
-            items.append(ValidationItem("Strategy ID consistency", "PASS", f"Rows match {strategy_id_expected} or are blank."))
-    elif strategy_id_expected:
-        items.append(ValidationItem("Strategy ID consistency", "WARN", "Strategy column unavailable; cannot verify strategy ID."))
-
-    if "timestamp_utc" in resolved and rows:
-        bad_times = []
-        parsed_times = []
-        for idx, row in enumerate(rows, start=2):
-            dt = parse_dt(row.get(resolved["timestamp_utc"], ""))
-            if dt is None:
-                bad_times.append(idx)
-            else:
-                parsed_times.append(dt)
-        if bad_times:
-            items.append(ValidationItem("Timestamp parse", "FAIL", f"Unparseable timestamp at CSV line(s): {bad_times[:10]}."))
-        else:
-            items.append(ValidationItem("Timestamp parse", "PASS", "All timestamps parsed as UTC-compatible values."))
-        if parsed_times and parsed_times != sorted(parsed_times):
-            items.append(ValidationItem("Timestamp order", "WARN", "Rows are not sorted by timestamp."))
-        elif parsed_times:
-            items.append(ValidationItem("Timestamp order", "PASS", "Rows are sorted by timestamp."))
-
-    if "closed_h1_time_utc" in resolved and rows:
-        bad_h1 = []
-        for idx, row in enumerate(rows, start=2):
-            dt = parse_dt(row.get(resolved["closed_h1_time_utc"], ""))
-            if dt is None or dt.minute != 0:
-                bad_h1.append(idx)
-        if bad_h1:
-            items.append(ValidationItem("Closed H1 time alignment", "WARN", f"Non-H1-aligned or unparseable row(s): {bad_h1[:10]}."))
-        else:
-            items.append(ValidationItem("Closed H1 time alignment", "PASS", "Closed H1 times align to minute 00."))
-
-    if {"close", "sma10", "distance_usd"}.issubset(resolved) and rows:
-        bad_distance = []
-        for idx, row in enumerate(rows, start=2):
-            close = parse_float(row.get(resolved["close"]))
-            sma = parse_float(row.get(resolved["sma10"]))
-            dist = parse_float(row.get(resolved["distance_usd"]))
-            if close is None or sma is None or dist is None:
-                bad_distance.append(idx)
-                continue
-            if abs((close - sma) - dist) > 0.05:
-                bad_distance.append(idx)
-        if bad_distance:
-            items.append(ValidationItem("Distance arithmetic", "WARN", f"close - sma10 differs from distance_usd at row(s): {bad_distance[:10]}."))
-        else:
-            items.append(ValidationItem("Distance arithmetic", "PASS", "distance_usd matches close - sma10 within tolerance."))
-
-    if "session_name" in resolved and "session_allowed" in resolved and rows:
-        london_allowed = []
-        for idx, row in enumerate(rows, start=2):
-            session = str(row.get(resolved["session_name"], "")).strip().lower()
-            allowed = parse_bool(row.get(resolved["session_allowed"]))
-            if session == "london" and allowed is True:
-                london_allowed.append(idx)
-        if london_allowed:
-            items.append(ValidationItem("No-London filter", "FAIL", f"London marked allowed at row(s): {london_allowed[:10]}."))
-        else:
-            items.append(ValidationItem("No-London filter", "PASS", "No row marks London as allowed."))
+    # Mapping checks.
+    if resolved.get("timestamp_utc") or resolved.get("closed_h1_time_utc"):
+        checks.append(Check("PASS", "Usable time column", f"timestamp={resolved.get('timestamp_utc')}, closed_h1={resolved.get('closed_h1_time_utc')}"))
+    elif rows:
+        checks.append(Check("FAIL", "Usable time column", "Rows exist but no timestamp/H1-time column could be mapped."))
     else:
-        items.append(ValidationItem("No-London filter", "WARN", "Session columns unavailable; cannot verify London blocking."))
+        checks.append(Check("WARN", "Usable time column", "No rows yet; cannot validate timestamps."))
 
-    signal_count = 0
-    blocked_count = 0
-    no_signal_count = 0
+    if resolved.get("signal"):
+        checks.append(Check("PASS", "Signal/event column", f"Mapped explicit signal column: {resolved['signal']}"))
+    elif native_signal_only_schema:
+        checks.append(Check("PASS" if not strict else "WARN", "Signal/event column", "No explicit signal column, but EA-native schema is signal-only; each data row is treated as a dry-run signal."))
+    else:
+        checks.append(Check("WARN", "Signal/event column", "No explicit signal column. This is acceptable only for signal-only CSV schemas."))
+
+    if resolved.get("reason"):
+        checks.append(Check("PASS", "Reason/status column", f"Mapped reason/status column: {resolved['reason']}"))
+    elif native_signal_only_schema:
+        checks.append(Check("WARN", "Reason/status column", "No reason/status column in current EA-native schema. Acceptable for signal-only logs, but less informative."))
+    else:
+        checks.append(Check("WARN", "Reason/status column", "No reason/status column found."))
+
+    # Validate rows.
+    signal_rows = 0
+    blocked_rows = 0
+    no_signal_rows = 0
+
     if rows:
-        for row in rows:
-            reason_text = " ".join(str(v) for v in row.values()).lower()
-            if "signal" in resolved:
-                signal_val = parse_bool(row.get(resolved["signal"]))
-                if signal_val is True:
-                    signal_count += 1
-            elif "dry-run signal" in reason_text or "dry run signal" in reason_text:
-                signal_count += 1
-            if "blocked" in reason_text or "london" in reason_text and "skip" in reason_text:
-                blocked_count += 1
-            if "no signal" in reason_text:
-                no_signal_count += 1
+        if native_signal_only_schema and not resolved.get("signal"):
+            signal_rows = len(rows)
+        else:
+            sig_col = resolved.get("signal")
+            reason_col = resolved.get("reason")
+            for row in rows:
+                sig = str(row.get(sig_col or "", "")).strip().lower()
+                reason = str(row.get(reason_col or "", "")).strip().lower()
+                combined = f"{sig} {reason}"
+                if any(x in combined for x in ["signal", "long", "buy", "entry"]):
+                    signal_rows += 1
+                if "blocked" in combined or "skip" in combined or "london" in combined:
+                    blocked_rows += 1
+                if "no_signal" in combined or "no signal" in combined:
+                    no_signal_rows += 1
+
+        # Dry-run-only safety flag.
+        dry_col = resolved.get("dry_run_only")
+        if dry_col:
+            values = [_truthy(row.get(dry_col, "")) for row in rows]
+            bad = [v for v in values if v is not True]
+            if bad:
+                checks.append(Check("FAIL", "Dry-run-only flag", f"{len(bad)} row(s) are not explicitly dry_run_only=true."))
+            else:
+                checks.append(Check("PASS", "Dry-run-only flag", "All rows have dry_run_only=true."))
+        else:
+            checks.append(Check("WARN", "Dry-run-only flag", "Column unavailable; cannot verify dry_run_only flag."))
+
+        # Strategy ID.
+        sid_col = resolved.get("strategy_id")
+        if sid_col:
+            mismatches = [row.get(sid_col, "") for row in rows if row.get(sid_col, "") != expected_strategy_id]
+            if mismatches:
+                checks.append(Check("FAIL", "Strategy ID consistency", f"{len(mismatches)} row(s) do not match {expected_strategy_id}."))
+            else:
+                checks.append(Check("PASS", "Strategy ID consistency", f"All rows match {expected_strategy_id}."))
+        else:
+            checks.append(Check("WARN", "Strategy ID consistency", "Strategy column unavailable; cannot verify strategy ID."))
+
+        # Direction.
+        direction_col = resolved.get("direction")
+        if direction_col:
+            bad_dir = [row.get(direction_col, "") for row in rows if str(row.get(direction_col, "")).strip().lower() not in {"long", "buy"}]
+            if bad_dir:
+                checks.append(Check("FAIL", "Long-only direction", f"{len(bad_dir)} row(s) are not long/buy."))
+            else:
+                checks.append(Check("PASS", "Long-only direction", "All rows are long/buy."))
+        else:
+            checks.append(Check("WARN", "Long-only direction", "Direction column unavailable."))
+
+        # TP/SL/time exit.
+        for label, colkey, expected in [
+            ("TP USD", "take_profit_usd", 24.0),
+            ("SL USD", "stop_loss_usd", 15.0),
+            ("Time exit H1 bars", "time_exit_h1_bars", 12.0),
+        ]:
+            col = resolved.get(colkey)
+            if not col:
+                checks.append(Check("WARN", label, f"Column {colkey} unavailable."))
+                continue
+            bad = []
+            for row in rows:
+                val = _to_float(row.get(col))
+                if val is None or abs(val - expected) > 1e-9:
+                    bad.append(row.get(col, ""))
+            if bad:
+                checks.append(Check("FAIL", label, f"{len(bad)} row(s) do not match expected {expected}."))
+            else:
+                checks.append(Check("PASS", label, f"All rows match expected {expected}."))
+
+        # Distance arithmetic.
+        c_col, s_col, d_col = resolved.get("close"), resolved.get("sma10"), resolved.get("distance_usd")
+        if c_col and s_col and d_col:
+            bad = 0
+            checked = 0
+            for row in rows:
+                close = _to_float(row.get(c_col))
+                sma = _to_float(row.get(s_col))
+                dist = _to_float(row.get(d_col))
+                if close is None or sma is None or dist is None:
+                    continue
+                checked += 1
+                if abs((close - sma) - dist) > 0.05:
+                    bad += 1
+            if checked == 0:
+                checks.append(Check("WARN", "Distance arithmetic", "Columns exist but no numeric rows could be checked."))
+            elif bad:
+                checks.append(Check("FAIL", "Distance arithmetic", f"{bad}/{checked} row(s) failed close - sma10 ≈ distance_usd."))
+            else:
+                checks.append(Check("PASS", "Distance arithmetic", f"Checked {checked} row(s): close - sma10 ≈ distance_usd."))
+        else:
+            checks.append(Check("WARN", "Distance arithmetic", "close/sma10/distance columns unavailable; cannot verify signal arithmetic."))
+
+        # No-London filter: signal rows must not be London.
+        sess_col = resolved.get("session_name")
+        if sess_col:
+            london_rows = [row for row in rows if _is_london_session(row.get(sess_col, ""))]
+            if london_rows:
+                checks.append(Check("FAIL", "No-London filter", f"{len(london_rows)} signal row(s) are in blocked London session."))
+            else:
+                checks.append(Check("PASS", "No-London filter", "No signal rows are marked as London session."))
+        else:
+            checks.append(Check("WARN", "No-London filter", "Session column unavailable; cannot verify London blocking from CSV alone."))
+    else:
+        checks.append(Check("WARN", "Evidence readiness", "No data rows yet. Header/schema can be checked, but dry-run evidence starts after first logged row."))
+
+    extra_stats = {
+        "file_size_bytes": size,
+        "encoding": encoding,
+        "detected_delimiter": delimiter_name,
+        "rows": len(rows),
+        "signals": signal_rows,
+        "blocked_skipped_rows": blocked_rows,
+        "no_signal_rows": no_signal_rows,
+        "native_signal_only_schema": native_signal_only_schema,
+    }
+    report = _build_report(csv_path, columns, resolved, rows, checks, strict, extra_stats, encoding, delimiter_name)
+    _write_reports(report)
+    return report
+
+
+def _build_report(
+    csv_path: Path,
+    columns: List[str],
+    resolved: Dict[str, Optional[str]],
+    rows: List[Dict[str, str]],
+    checks: List[Check],
+    strict: bool,
+    extra_stats: Dict[str, Any],
+    encoding: Optional[str],
+    delimiter_name: Optional[str],
+) -> Dict[str, Any]:
+    statuses = [c.status for c in checks]
+    if "FAIL" in statuses:
+        overall = "FAIL"
+        decision = "Do not rely on this dry-run log until FAIL items are fixed."
+    elif "WARN" in statuses:
+        # In non-strict mode, WARN is acceptable when only informational limitations remain.
+        overall = "WARN" if strict else "PASS_WITH_WARNINGS"
+        decision = "Usable for Stage 5B dry-run monitoring with warnings; not authorization for demo/paper/live orders."
+    else:
+        overall = "PASS"
+        decision = "Dry-run log passed Stage 5B validation; still not authorization for demo/paper/live orders."
 
     stats = {
-        "csv_path": str(csv_path),
-        "row_count": len(rows),
-        "columns": fieldnames,
-        "resolved_columns": resolved,
-        "signal_count": signal_count,
-        "blocked_or_skip_count": blocked_count,
-        "no_signal_count": no_signal_count,
+        "CSV path": str(csv_path),
+        **extra_stats,
     }
-    return items, rows, stats
-
-
-def summarize(items: Iterable[ValidationItem]) -> str:
-    statuses = [item.status for item in items]
-    if "FAIL" in statuses:
-        return "FAIL"
-    if "WARN" in statuses:
-        return "WARN"
-    return "PASS"
-
-
-def write_reports(items: list[ValidationItem], stats: dict[str, Any], report_dir: Path) -> tuple[Path, Path]:
-    report_dir.mkdir(parents=True, exist_ok=True)
-    now = datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
-    overall = summarize(items)
-    payload = {
-        "generated_at_utc": now,
-        "stage": "5B",
-        "tool": "stage5b_dryrun_log_validator",
+    return {
+        "generated_utc": _now_utc(),
+        "tool_version": TOOL_VERSION,
+        "strict_mode": strict,
         "overall_status": overall,
+        "decision": decision,
         "stats": stats,
-        "items": [asdict(item) for item in items],
-        "hard_rule": "This validates dry-run logs only. It does not authorize demo, paper, or live orders.",
+        "columns": columns,
+        "resolved_columns": {k: v for k, v in resolved.items() if v},
+        "checks": [asdict(c) for c in checks],
+        "sample_rows": rows[:5],
+        "report_paths": {
+            "json": str(JSON_REPORT),
+            "markdown": str(MD_REPORT),
+        },
     }
-    json_path = report_dir / "stage5b_dryrun_log_validator.json"
-    md_path = report_dir / "stage5b_dryrun_log_validator.md"
-    json_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-
-    lines = [
-        "# Stage 5B Dry-run Log Validator",
-        "",
-        f"Generated UTC: `{now}`",
-        f"Overall status: **{overall}**",
-        "",
-        "> Hard rule: this validates dry-run logs only. It does not authorize demo, paper, or live orders.",
-        "",
-        "## Stats",
-        "",
-        f"- CSV path: `{stats.get('csv_path', 'n/a')}`",
-        f"- Rows: `{stats.get('row_count', 0)}`",
-        f"- Signals: `{stats.get('signal_count', 0)}`",
-        f"- Blocked/skipped rows: `{stats.get('blocked_or_skip_count', 0)}`",
-        f"- No-signal rows: `{stats.get('no_signal_count', 0)}`",
-        "",
-        "## Checks",
-        "",
-        "| Status | Check | Detail |",
-        "|---|---|---|",
-    ]
-    for item in items:
-        lines.append(f"| {item.status} | {item.name} | {item.detail} |")
-    lines.append("")
-    if overall == "FAIL":
-        lines.append("Decision: **Do not rely on this dry-run log until FAIL items are fixed.**")
-    elif overall == "WARN":
-        lines.append("Decision: **Log is usable for inspection, but WARN items must be reviewed before evidence collection.**")
-    else:
-        lines.append("Decision: **Log schema and basic consistency checks passed. Continue dry-run evidence collection only.**")
-    lines.append("")
-    md_path.write_text("\n".join(lines), encoding="utf-8")
-    return json_path, md_path
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description="Stage 5B MT5 dry-run CSV log validator")
-    parser.add_argument("--csv", dest="csv_path", help="Explicit path to XAUUSD_DryRun_v1_signals.csv")
-    parser.add_argument("--search-root", action="append", default=[], help="Directory to search if --csv is not provided")
-    parser.add_argument("--log-name", default=DEFAULT_LOG_NAME, help="CSV filename to search for")
-    parser.add_argument("--strategy-json", default=str(DEFAULT_STRATEGY_JSON), help="Locked strategy JSON spec")
-    parser.add_argument("--report-dir", default=str(DEFAULT_REPORT_DIR), help="Output report directory")
-    args = parser.parse_args()
+def main(argv: Optional[Sequence[str]] = None) -> int:
+    parser = argparse.ArgumentParser(description="Validate XAUUSD Stage 5B MT5 dry-run CSV logs.")
+    parser.add_argument("--csv", dest="csv_path", help="Path to XAUUSD_DryRun_v1_signals.csv")
+    parser.add_argument("--search-root", help="Search root for XAUUSD_DryRun_v1_signals.csv")
+    parser.add_argument("--strict", action="store_true", help="Treat non-critical warnings as non-pass status.")
+    parser.add_argument("--expected-strategy-id", default=DEFAULT_STRATEGY_ID)
+    parser.add_argument("--print-columns", action="store_true")
+    args = parser.parse_args(argv)
 
-    report_dir = Path(args.report_dir).expanduser()
-    strategy = load_strategy(Path(args.strategy_json).expanduser())
+    csv_path: Optional[Path] = Path(args.csv_path).expanduser() if args.csv_path else None
+    if csv_path is None and args.search_root:
+        csv_path = _search_for_log(Path(args.search_root).expanduser())
+    if csv_path is None:
+        print("Stage 5B dry-run log validator: FAIL")
+        print("No CSV path provided and no log found with --search-root.")
+        return 2
 
-    if args.csv_path:
-        csv_path = Path(args.csv_path).expanduser()
-    else:
-        roots = [Path(p).expanduser() for p in args.search_root]
-        if not roots:
-            roots = [
-                Path.home() / "Library" / "Application Support",
-                Path.home() / ".wine",
-                Path.home() / "Downloads",
-            ]
-        found = find_log_file(roots, args.log_name)
-        if found is None:
-            print("FAIL: CSV log not found. Pass --csv explicitly after locating MT5 Common Files.")
-            print("Tried roots:")
-            for root in roots:
-                print(f"  - {root}")
-            return 1
-        csv_path = found
-
-    items, _rows, stats = validate(csv_path, strategy)
-    json_path, md_path = write_reports(items, stats, report_dir)
-    overall = summarize(items)
-
-    print(f"Stage 5B dry-run log validator: {overall}")
+    report = validate(csv_path, strict=args.strict, expected_strategy_id=args.expected_strategy_id)
+    print(f"Stage 5B dry-run log validator: {report['overall_status']}")
     print(f"CSV: {csv_path}")
-    print(f"JSON report: {json_path}")
-    print(f"Markdown report: {md_path}")
-    return 1 if overall == "FAIL" else 0
+    print(f"JSON report: {JSON_REPORT}")
+    print(f"Markdown report: {MD_REPORT}")
+    if args.print_columns:
+        print("Detected columns:")
+        for c in report.get("columns", []):
+            print(f"  - {c}")
+        print("Resolved columns:")
+        for k, v in report.get("resolved_columns", {}).items():
+            print(f"  - {k}: {v}")
+    return 1 if report["overall_status"] == "FAIL" else 0
 
 
 if __name__ == "__main__":

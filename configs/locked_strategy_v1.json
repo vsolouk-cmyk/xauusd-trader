@@ -1,0 +1,39 @@
+{
+  "strategy_id": "xauusd_long_tp24_sl15_no_london_v1",
+  "version": 1,
+  "status": "dry_run_candidate_only",
+  "symbol": {
+    "canonical": "XAUUSD",
+    "mt5_input_mode": "AUTO",
+    "note": "EA should use the chart symbol when InpSymbol=AUTO."
+  },
+  "direction": "long_only",
+  "signal_timeframe": "H1",
+  "sma_window": 10,
+  "signal_rule": {
+    "type": "distance_above_sma",
+    "expression": "close - SMA10 >= 10 USD",
+    "min_distance_usd": 10.0
+  },
+  "entry_model": {
+    "type": "next_h1_open_after_signal_candle"
+  },
+  "take_profit_usd": 24.0,
+  "stop_loss_usd": 15.0,
+  "time_exit_h1_bars": 12,
+  "session_filter": {
+    "timezone": "UTC",
+    "blocked": [
+      {"name": "london", "start": "07:00", "end": "13:00"}
+    ],
+    "allowed": ["asia", "london_ny_overlap", "new_york", "other"]
+  },
+  "safety": {
+    "order_placement_allowed": false,
+    "demo_order_allowed": false,
+    "paper_order_allowed": false,
+    "live_trading_allowed": false,
+    "lot_sizing_allowed": false,
+    "position_management_allowed": false
+  }
+}

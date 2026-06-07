@@ -1,0 +1,2 @@
+logged_at_gmt	symbol	chart_symbol	strategy_id	signal_closed_h1_time_server	signal_closed_h1_time_gmt_now	session_utc	close_h1	sma10	distance_usd	direction	planned_entry_model	tp_usd	sl_usd	time_exit_h1_bars	dry_run_only
+2026.06.08 01:00:00	XAUUSD	XAUUSD	xauusd_long_tp24_sl15_no_london_v1	2026.06.08 00:00:00	2026.06.08 00:00:00	asia	3340.50	3328.00	12.50	long	next_h1_open	24	15	12	true

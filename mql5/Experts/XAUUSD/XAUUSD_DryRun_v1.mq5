@@ -99,7 +99,7 @@ double SMAClosedBars(const string symbol, const ENUM_TIMEFRAMES tf, const int pe
 
 bool FileExistsInCommon(const string file_name)
 {
-   int h = FileOpen(file_name, FILE_READ | FILE_CSV | FILE_COMMON);
+   int h = FileOpen(file_name, FILE_READ | FILE_CSV | FILE_COMMON|FILE_ANSI);
    if(h == INVALID_HANDLE)
       return false;
    FileClose(h);
@@ -111,7 +111,7 @@ void EnsureHeader()
    if(FileExistsInCommon(g_logFileName))
       return;
 
-   int h = FileOpen(g_logFileName, FILE_WRITE | FILE_CSV | FILE_COMMON);
+   int h = FileOpen(g_logFileName, FILE_WRITE | FILE_CSV | FILE_COMMON|FILE_ANSI);
    if(h == INVALID_HANDLE)
    {
       Print("ERROR: Cannot create log file: ", g_logFileName, " err=", GetLastError());
@@ -149,7 +149,7 @@ void LogSignal(const string symbol, const datetime closed_bar_time, const double
    TimeToStruct(now_gmt, dt);
    string session = SessionNameUTC(dt.hour);
 
-   int h = FileOpen(g_logFileName, FILE_READ | FILE_WRITE | FILE_CSV | FILE_COMMON);
+   int h = FileOpen(g_logFileName, FILE_READ | FILE_WRITE | FILE_CSV | FILE_COMMON|FILE_ANSI);
    if(h == INVALID_HANDLE)
    {
       Print("ERROR: Cannot open log file: ", g_logFileName, " err=", GetLastError());

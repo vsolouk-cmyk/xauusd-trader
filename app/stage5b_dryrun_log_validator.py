@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
-TOOL_VERSION = "v4"
+TOOL_VERSION = "v5"
 DEFAULT_LOG_NAME = "XAUUSD_DryRun_v1_signals.csv"
 DEFAULT_STRATEGY_ID = "xauusd_long_tp24_sl15_no_london_v1"
 REPORT_DIR = Path("data/reports")
@@ -206,8 +206,15 @@ def _truthy(value: Any) -> Optional[bool]:
 
 
 def _is_london_session(value: str) -> bool:
+    """Return True only for the blocked standalone London session.
+
+    Important: ``london_ny_overlap`` is an explicitly allowed session in the
+    locked strategy. Older validator builds incorrectly treated any session
+    starting with ``london_`` as blocked, which caused false FAIL results for
+    valid overlap signals.
+    """
     s = str(value).strip().lower().replace("-", "_").replace(" ", "_")
-    return s in {"london", "ldn"} or s.startswith("london_")
+    return s in {"london", "ldn"}
 
 
 def _search_for_log(root: Path, name: str = DEFAULT_LOG_NAME) -> Optional[Path]:
@@ -432,7 +439,7 @@ def validate(csv_path: Path, strict: bool = False, expected_strategy_id: str = D
             if london_rows:
                 checks.append(Check("FAIL", "No-London filter", f"{len(london_rows)} signal row(s) are in blocked London session."))
             else:
-                checks.append(Check("PASS", "No-London filter", "No signal rows are marked as London session."))
+                checks.append(Check("PASS", "No-London filter", "No signal rows are in the blocked standalone London session. Allowed overlap sessions such as london_ny_overlap are not blocked."))
         else:
             checks.append(Check("WARN", "No-London filter", "Session column unavailable; cannot verify London blocking from CSV alone."))
     else:

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-XAUUSD Stage Pipeline Runner
+XAUUSD Stage Pipeline Runner v2
 
 Runs the allowed research / dry-run validation steps in a reproducible order.
 
@@ -10,22 +10,16 @@ Hard rule:
 - This script does NOT send orders.
 - This script only orchestrates existing local validation modules.
 
-Default modes:
-- live_only: Stage 5B validator + Stage 5C outcome tracker.
-- research: Stage 4G offset2/offset3 + Stage 4H offset2/offset3 + Stage 4I + Stage 4J.
-- full: research + live_only.
-
-Expected default inputs:
-- ~/Downloads/amarkets_xauusd_1h.csv
-- ~/Downloads/amarkets_xauusd_1m.csv
-- MT5 Common Files/XAUUSD_DryRun_v1_signals.csv
+Fixes in v2:
+- Better report-status inference for Stage 5C outcome tracker reports.
+- Detects resolved/open_or_unresolved summary lines.
+- Makes pipeline summary more useful for live-only runs.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
-import os
 import re
 import shlex
 import subprocess
@@ -33,10 +27,10 @@ import sys
 from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Optional, Sequence
+from typing import List, Sequence
 
 
-TOOL_VERSION = "v1"
+TOOL_VERSION = "v2"
 STRATEGY_ID = "xauusd_long_tp24_sl15_no_london_v1"
 
 DEFAULT_SIGNALS_CSV = Path("~/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/users/user/AppData/Roaming/MetaQuotes/Terminal/Common/Files/XAUUSD_DryRun_v1_signals.csv").expanduser()
@@ -73,9 +67,7 @@ def now_iso() -> str:
 
 def tail_text(text: str, max_chars: int = 4000) -> str:
     text = text or ""
-    if len(text) <= max_chars:
-        return text
-    return text[-max_chars:]
+    return text if len(text) <= max_chars else text[-max_chars:]
 
 
 def shell_join(cmd: Sequence[str]) -> str:
@@ -84,6 +76,12 @@ def shell_join(cmd: Sequence[str]) -> str:
 
 def path_exists(path_text: str) -> bool:
     return Path(path_text).expanduser().exists()
+
+
+def _extract_backtick_int(text: str, label: str):
+    # Matches markdown summary lines such as "- resolved: `0`"
+    m = re.search(rf"-\s*{re.escape(label)}:\s*`?([0-9]+)`?", text)
+    return int(m.group(1)) if m else None
 
 
 def infer_report_status(paths: Sequence[str]) -> str:
@@ -96,20 +94,49 @@ def infer_report_status(paths: Sequence[str]) -> str:
         path = Path(p).expanduser()
         if not path.exists() or path.suffix.lower() != ".md":
             continue
+
         text = path.read_text(encoding="utf-8", errors="replace")
+
+        # Stage 5C v1/v2 outcome tracker: no Overall status line by design.
+        if "# Stage 5C Live Dry-run Outcome Tracker" in text:
+            raw = _extract_backtick_int(text, "raw_signal_rows")
+            deduped = _extract_backtick_int(text, "deduped_signals")
+            signals = _extract_backtick_int(text, "signals")
+            resolved = _extract_backtick_int(text, "resolved")
+            openish = _extract_backtick_int(text, "open_or_unresolved")
+
+            total_signals = deduped if deduped is not None else signals
+            if total_signals is None:
+                statuses.append("STAGE5C_UNKNOWN")
+            elif total_signals == 0:
+                statuses.append("NO_SIGNALS")
+            elif resolved is not None and openish is not None:
+                if openish == 0:
+                    statuses.append(f"RESOLVED_ALL({resolved}/{total_signals})")
+                elif resolved == 0:
+                    statuses.append(f"OPEN_OR_UNRESOLVED({openish}/{total_signals})")
+                else:
+                    statuses.append(f"PARTIAL_RESOLVE(resolved={resolved}, open={openish}, total={total_signals})")
+            else:
+                statuses.append(f"SIGNALS_FOUND({total_signals})")
+            continue
+
+        # General reports with an explicit status.
         patterns = [
             r"Overall status:\s*\*\*([^*]+)\*\*",
             r"Stage [^\n:]+:\s*([A-Z_]+)",
             r"Top guard:\s*([A-Za-z0-9_]+).*status=([A-Z_]+)",
         ]
+        found = None
         for pat in patterns:
             m = re.search(pat, text)
             if m:
-                statuses.append(" | ".join(g for g in m.groups() if g))
+                found = " | ".join(g for g in m.groups() if g)
                 break
-    if not statuses:
-        return "UNKNOWN"
-    return "; ".join(statuses[:4])
+        if found:
+            statuses.append(found)
+
+    return "; ".join(statuses[:4]) if statuses else "UNKNOWN"
 
 
 def run_step(step: Step, continue_on_error: bool) -> StepResult:
@@ -130,12 +157,7 @@ def run_step(step: Step, continue_on_error: bool) -> StepResult:
             finished_utc=finished,
         )
 
-    proc = subprocess.run(
-        step.command,
-        text=True,
-        capture_output=True,
-        cwd=Path.cwd(),
-    )
+    proc = subprocess.run(step.command, text=True, capture_output=True, cwd=Path.cwd())
     finished = now_iso()
     status = "OK" if proc.returncode == 0 else "ERROR"
     inferred = infer_report_status(step.report_paths)
@@ -158,87 +180,47 @@ def run_step(step: Step, continue_on_error: bool) -> StepResult:
 
 def build_steps(args: argparse.Namespace) -> List[Step]:
     py = sys.executable
-    steps: List[Step] = []
-
     h1 = str(Path(args.h1_csv).expanduser())
     m1 = str(Path(args.m1_csv).expanduser())
     signals = str(Path(args.signals_csv).expanduser())
+
+    steps: List[Step] = []
 
     if args.mode in {"research", "full"}:
         steps.extend([
             Step(
                 name="stage4g_offset2_amarkets_backfill_non_overlap",
-                command=[
-                    py, "-m", "app.stage4g_amarkets_backfill_validation",
-                    "--h1-csv", h1,
-                    "--m1-csv", m1,
-                    "--server-utc-offset-hours", str(args.server_utc_offset_hours),
-                    "--out-dir", "data/reports/stage4g_v2",
-                ],
-                report_paths=[
-                    "data/reports/stage4g_v2/stage4g_v2_amarkets_backfill_validation.md",
-                    "data/reports/stage4g_v2/stage4g_v2_non_overlap_trades.csv",
-                ],
+                command=[py, "-m", "app.stage4g_amarkets_backfill_validation", "--h1-csv", h1, "--m1-csv", m1, "--server-utc-offset-hours", str(args.server_utc_offset_hours), "--out-dir", "data/reports/stage4g_v2"],
+                report_paths=["data/reports/stage4g_v2/stage4g_v2_amarkets_backfill_validation.md", "data/reports/stage4g_v2/stage4g_v2_non_overlap_trades.csv"],
                 required_inputs=[h1, m1],
             ),
             Step(
                 name="stage4g_offset3_amarkets_backfill_non_overlap",
-                command=[
-                    py, "-m", "app.stage4g_amarkets_backfill_validation",
-                    "--h1-csv", h1,
-                    "--m1-csv", m1,
-                    "--server-utc-offset-hours", "3",
-                    "--out-dir", "data/reports/stage4g_v2_offset3",
-                ],
-                report_paths=[
-                    "data/reports/stage4g_v2_offset3/stage4g_v2_amarkets_backfill_validation.md",
-                    "data/reports/stage4g_v2_offset3/stage4g_v2_non_overlap_trades.csv",
-                ],
+                command=[py, "-m", "app.stage4g_amarkets_backfill_validation", "--h1-csv", h1, "--m1-csv", m1, "--server-utc-offset-hours", "3", "--out-dir", "data/reports/stage4g_v2_offset3"],
+                report_paths=["data/reports/stage4g_v2_offset3/stage4g_v2_amarkets_backfill_validation.md", "data/reports/stage4g_v2_offset3/stage4g_v2_non_overlap_trades.csv"],
                 required_inputs=[h1, m1],
             ),
             Step(
                 name="stage4h_offset2_session_guard_lab",
-                command=[
-                    py, "-m", "app.stage4h_session_guard_lab",
-                    "--trades-csv", "data/reports/stage4g_v2/stage4g_v2_non_overlap_trades.csv",
-                    "--out-dir", "data/reports/stage4h_session_guard_lab",
-                ],
+                command=[py, "-m", "app.stage4h_session_guard_lab", "--trades-csv", "data/reports/stage4g_v2/stage4g_v2_non_overlap_trades.csv", "--out-dir", "data/reports/stage4h_session_guard_lab"],
                 report_paths=["data/reports/stage4h_session_guard_lab/stage4h_session_guard_lab.md"],
                 required_inputs=["data/reports/stage4g_v2/stage4g_v2_non_overlap_trades.csv"],
             ),
             Step(
                 name="stage4h_offset3_session_guard_lab",
-                command=[
-                    py, "-m", "app.stage4h_session_guard_lab",
-                    "--trades-csv", "data/reports/stage4g_v2_offset3/stage4g_v2_non_overlap_trades.csv",
-                    "--out-dir", "data/reports/stage4h_session_guard_lab_offset3",
-                ],
+                command=[py, "-m", "app.stage4h_session_guard_lab", "--trades-csv", "data/reports/stage4g_v2_offset3/stage4g_v2_non_overlap_trades.csv", "--out-dir", "data/reports/stage4h_session_guard_lab_offset3"],
                 report_paths=["data/reports/stage4h_session_guard_lab_offset3/stage4h_session_guard_lab.md"],
                 required_inputs=["data/reports/stage4g_v2_offset3/stage4g_v2_non_overlap_trades.csv"],
             ),
             Step(
                 name="stage4i_guard_robustness",
-                command=[
-                    py, "-m", "app.stage4i_guard_robustness",
-                    "--offset2-trades", "data/reports/stage4g_v2/stage4g_v2_non_overlap_trades.csv",
-                    "--offset3-trades", "data/reports/stage4g_v2_offset3/stage4g_v2_non_overlap_trades.csv",
-                    "--out-dir", "data/reports/stage4i_guard_robustness",
-                ],
+                command=[py, "-m", "app.stage4i_guard_robustness", "--offset2-trades", "data/reports/stage4g_v2/stage4g_v2_non_overlap_trades.csv", "--offset3-trades", "data/reports/stage4g_v2_offset3/stage4g_v2_non_overlap_trades.csv", "--out-dir", "data/reports/stage4i_guard_robustness"],
                 report_paths=["data/reports/stage4i_guard_robustness/stage4i_guard_robustness.md"],
-                required_inputs=[
-                    "data/reports/stage4g_v2/stage4g_v2_non_overlap_trades.csv",
-                    "data/reports/stage4g_v2_offset3/stage4g_v2_non_overlap_trades.csv",
-                ],
+                required_inputs=["data/reports/stage4g_v2/stage4g_v2_non_overlap_trades.csv", "data/reports/stage4g_v2_offset3/stage4g_v2_non_overlap_trades.csv"],
             ),
             Step(
                 name="stage4j_shock_regime_lab_offset2",
-                command=[
-                    py, "-m", "app.stage4j_shock_regime_lab",
-                    "--trades-csv", "data/reports/stage4g_v2/stage4g_v2_non_overlap_trades.csv",
-                    "--out-dir", "data/reports/stage4j_shock_regime_lab",
-                    "--shock-start", args.shock_start,
-                    "--recent-start", args.recent_start,
-                ],
+                command=[py, "-m", "app.stage4j_shock_regime_lab", "--trades-csv", "data/reports/stage4g_v2/stage4g_v2_non_overlap_trades.csv", "--out-dir", "data/reports/stage4j_shock_regime_lab", "--shock-start", args.shock_start, "--recent-start", args.recent_start],
                 report_paths=["data/reports/stage4j_shock_regime_lab/stage4j_shock_regime_lab.md"],
                 required_inputs=["data/reports/stage4g_v2/stage4g_v2_non_overlap_trades.csv"],
             ),
@@ -248,23 +230,13 @@ def build_steps(args: argparse.Namespace) -> List[Step]:
         steps.extend([
             Step(
                 name="stage5b_dryrun_signal_csv_validator",
-                command=[
-                    py, "-m", "app.stage5b_dryrun_log_validator",
-                    "--csv", signals,
-                    "--print-columns",
-                ],
+                command=[py, "-m", "app.stage5b_dryrun_log_validator", "--csv", signals, "--print-columns"],
                 report_paths=["data/reports/stage5b_dryrun_log_validator.md"],
                 required_inputs=[signals],
             ),
             Step(
                 name="stage5c_live_outcome_tracker",
-                command=[
-                    py, "-m", "app.stage5c_live_outcome_tracker",
-                    "--signals-csv", signals,
-                    "--m1-csv", m1,
-                    "--server-utc-offset-hours", str(args.server_utc_offset_hours),
-                    "--out-dir", "data/reports/stage5c_live_outcome_tracker",
-                ],
+                command=[py, "-m", "app.stage5c_live_outcome_tracker", "--signals-csv", signals, "--m1-csv", m1, "--server-utc-offset-hours", str(args.server_utc_offset_hours), "--out-dir", "data/reports/stage5c_live_outcome_tracker"],
                 report_paths=["data/reports/stage5c_live_outcome_tracker/stage5c_live_outcome_tracker.md"],
                 required_inputs=[signals, m1],
             ),
@@ -317,7 +289,7 @@ def write_summary(out_dir: Path, args: argparse.Namespace, results: List[StepRes
         lines.append(f"| {i} | {r.name} | {r.status} | {r.returncode} | {r.inferred_report_status} | {reports} |")
     lines.append("")
     lines.append("## Decision")
-    errors = [r for r in results if r.returncode not in (0,)]
+    errors = [r for r in results if r.returncode != 0]
     if errors:
         lines.append("- One or more steps failed or were skipped. Inspect the step reports before making any research decision.")
     else:

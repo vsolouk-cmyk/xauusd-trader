@@ -1,14 +1,12 @@
-"""Stage 4G AMarkets broker-feed backfill validation for XAUUSD.
-
-Standalone, stdlib-only validator/replay tool.
+"""
+Stage 4G AMarkets broker-feed backfill validation v2.
 
 Purpose:
-- Read AMarkets MT5 exported H1 and M1 CSV files.
-- Re-run the locked Stage 5A strategy candidate on broker feed.
-- Replay long entries with M1 path using TP/SL/time-exit.
-- Produce JSON/Markdown/CSV reports under data/reports.
+- Validate locked XAUUSD dry-run candidate on AMarkets MT5 CSV exports.
+- Report BOTH diagnostic overlapping replay and execution-realistic non-overlap replay.
+- Non-overlap mode is the decision basis because the locked candidate has a 12 H1-bar trade horizon.
 
-Hard rule: this is research/dry-run validation only. It does not place orders.
+No orders. No broker/API access. Local CSV analysis only.
 """
 from __future__ import annotations
 
@@ -16,46 +14,27 @@ import argparse
 import csv
 import json
 import math
-import statistics
+import os
+from bisect import bisect_left, bisect_right
 from dataclasses import dataclass, asdict
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Sequence, Tuple
+from typing import Dict, Iterable, List, Optional, Tuple
 
-TOOL_VERSION = "v1"
 STRATEGY_ID = "xauusd_long_tp24_sl15_no_london_v1"
+TOOL_VERSION = "v2_non_overlap"
 
 DEFAULT_H1 = "~/Downloads/amarkets_xauusd_1h.csv"
 DEFAULT_M1 = "~/Downloads/amarkets_xauusd_1m.csv"
-DEFAULT_OUT_DIR = "data/reports"
+DEFAULT_OUT_DIR = "data/reports/stage4g_v2"
 
 SMA_WINDOW = 10
 DISTANCE_THRESHOLD_USD = 10.0
 TP_USD = 24.0
 SL_USD = 15.0
-TIME_EXIT_HOURS = 12
+TIME_EXIT_H1_BARS = 12
 ROUNDTRIP_COST_USD = 0.35
 
-BLOCKED_SESSION = "london"
-ALLOWED_SESSIONS = {"asia", "london_ny_overlap", "new_york", "other"}
-
-DATE_FORMATS = (
-    "%Y.%m.%d %H:%M:%S",
-    "%Y.%m.%d %H:%M",
-    "%Y-%m-%d %H:%M:%S",
-    "%Y-%m-%d %H:%M",
-    "%d.%m.%Y %H:%M:%S",
-    "%d.%m.%Y %H:%M",
-)
-
-DANGEROUS_TERMS = (
-    "OrderSend",
-    "CTrade",
-    ".Buy(",
-    ".Sell(",
-    "PositionOpen",
-    "PositionClose",
-)
 
 @dataclass
 class Candle:
@@ -65,183 +44,146 @@ class Candle:
     high: float
     low: float
     close: float
-    tick_volume: Optional[float] = None
-    spread: Optional[float] = None
+
 
 @dataclass
-class TradeResult:
+class Trade:
+    replay_mode: str
     signal_server_time: str
     signal_utc_time: str
     entry_server_time: str
     entry_utc_time: str
-    session: str
+    exit_server_time: str
+    exit_utc_time: str
+    session_utc: str
+    entry_price: float
     close_h1: float
     sma10: float
     distance_usd: float
-    entry_price: float
-    tp_price: float
-    sl_price: float
-    exit_server_time: str
-    exit_utc_time: str
-    exit_price: float
+    tp_usd: float
+    sl_usd: float
+    time_exit_h1_bars: int
     exit_reason: str
     gross_usd: float
     net_usd: float
     ambiguous_exit: bool
-    bars_m1_used: int
 
 
-def expand_path(path: str) -> Path:
-    return Path(path).expanduser().resolve()
-
-
-def detect_delimiter(sample: str) -> str:
-    candidates = ["\t", ",", ";"]
-    first_lines = [ln for ln in sample.splitlines()[:5] if ln.strip()]
-    if not first_lines:
-        return ","
-    scores = {d: sum(line.count(d) for line in first_lines) for d in candidates}
-    return max(scores, key=scores.get) if max(scores.values()) > 0 else ","
-
-
-def read_text(path: Path) -> str:
-    for enc in ("utf-8-sig", "utf-16", "utf-8", "cp1252"):
+def parse_dt(date_s: str, time_s: Optional[str] = None) -> datetime:
+    s = (date_s or "").strip()
+    if time_s is not None:
+        s = f"{s} {(time_s or '').strip()}".strip()
+    s = s.replace("/", ".").replace("-", ".")
+    # common MT5 exports: 2026.06.08 13:00:00
+    for fmt in ("%Y.%m.%d %H:%M:%S", "%Y.%m.%d %H:%M", "%Y.%m.%d"):
         try:
-            return path.read_text(encoding=enc)
-        except UnicodeError:
-            continue
-    return path.read_text(errors="replace")
-
-
-def normalize_header(value: str) -> str:
-    v = value.strip().lower().replace("<", "").replace(">", "")
-    v = v.replace(" ", "_").replace("-", "_").replace(".", "_")
-    return v
-
-
-def looks_like_header(row: Sequence[str]) -> bool:
-    joined = "\t".join(row).lower()
-    return any(token in joined for token in ("open", "high", "low", "close", "date", "time"))
-
-
-def parse_dt(date_part: str, time_part: Optional[str] = None) -> datetime:
-    raw = f"{date_part.strip()} {time_part.strip()}" if time_part is not None else date_part.strip()
-    raw = raw.replace("/", ".")
-    for fmt in DATE_FORMATS:
-        try:
-            return datetime.strptime(raw, fmt)
+            return datetime.strptime(s, fmt)
         except ValueError:
             pass
-    # Last fallback: ISO-ish with T.
-    try:
-        return datetime.fromisoformat(raw.replace("T", " ")).replace(tzinfo=None)
-    except ValueError as exc:
-        raise ValueError(f"Could not parse datetime: {raw!r}") from exc
+    raise ValueError(f"unsupported datetime: {s!r}")
 
 
-def to_float(value: str) -> float:
-    v = str(value).strip().replace(" ", "").replace(",", ".")
-    if v == "":
-        return float("nan")
-    return float(v)
+def sniff_delimiter(path: Path) -> str:
+    sample = path.read_text(encoding="utf-8-sig", errors="replace")[:4096]
+    candidates = ["\t", ",", ";"]
+    return max(candidates, key=lambda d: sample.count(d))
 
 
-def parse_mt5_csv(path: Path, server_utc_offset_hours: float) -> Tuple[List[Candle], Dict[str, object]]:
-    text = read_text(path)
-    delimiter = detect_delimiter(text[:5000])
-    rows = list(csv.reader(text.splitlines(), delimiter=delimiter))
-    rows = [r for r in rows if r and any(str(x).strip() for x in r)]
-    if not rows:
-        return [], {"path": str(path), "delimiter": delimiter, "rows_raw": 0, "has_header": False}
+def norm_key(k: str) -> str:
+    return k.strip().lower().replace("<", "").replace(">", "").replace(" ", "_")
 
-    has_header = looks_like_header(rows[0])
-    header = [normalize_header(x) for x in rows[0]] if has_header else []
-    data_rows = rows[1:] if has_header else rows
 
-    def find_col(names: Sequence[str], fallback: Optional[int] = None) -> Optional[int]:
-        for name in names:
-            n = normalize_header(name)
-            if n in header:
-                return header.index(n)
-        return fallback
+def find_col(fieldnames: Iterable[str], aliases: Iterable[str]) -> Optional[str]:
+    lookup = {norm_key(f): f for f in fieldnames}
+    for a in aliases:
+        if norm_key(a) in lookup:
+            return lookup[norm_key(a)]
+    return None
 
-    if has_header:
-        date_idx = find_col(["date", "time", "datetime"])
-        time_idx = None
-        # Common MT5 export has separate DATE and TIME columns.
-        if "date" in header and "time" in header and header.index("date") != header.index("time"):
-            date_idx = header.index("date")
-            time_idx = header.index("time")
-        elif "datetime" in header:
-            date_idx = header.index("datetime")
-        elif "time" in header:
-            date_idx = header.index("time")
 
-        open_idx = find_col(["open"], 2)
-        high_idx = find_col(["high"], 3)
-        low_idx = find_col(["low"], 4)
-        close_idx = find_col(["close"], 5)
-        tick_idx = find_col(["tickvol", "tick_volume", "tick_volume_", "tickvol_"], None)
-        spread_idx = find_col(["spread"], None)
-    else:
-        # MT5 default without header: DATE TIME OPEN HIGH LOW CLOSE TICKVOL VOL SPREAD
-        date_idx, time_idx = 0, 1
-        open_idx, high_idx, low_idx, close_idx = 2, 3, 4, 5
-        tick_idx = 6 if len(rows[0]) > 6 else None
-        spread_idx = 8 if len(rows[0]) > 8 else None
-
-    required = [date_idx, open_idx, high_idx, low_idx, close_idx]
-    if any(idx is None for idx in required):
-        raise RuntimeError(f"Could not map required OHLC columns for {path}. header={header!r}")
-
+def read_mt5_candles(path_str: str, server_utc_offset_hours: float) -> Tuple[List[Candle], Dict[str, object]]:
+    path = Path(os.path.expanduser(path_str))
+    if not path.exists():
+        raise FileNotFoundError(path)
+    delimiter = sniff_delimiter(path)
     candles: List[Candle] = []
     bad_rows: List[Dict[str, object]] = []
-    offset = timedelta(hours=server_utc_offset_hours)
-    for row_no, row in enumerate(data_rows, start=2 if has_header else 1):
-        try:
-            max_idx = max(i for i in [date_idx, time_idx, open_idx, high_idx, low_idx, close_idx] if i is not None)
-            if len(row) <= max_idx:
-                raise ValueError(f"too few columns: {len(row)}")
-            server_time = parse_dt(row[date_idx], row[time_idx] if time_idx is not None else None)
-            utc_time = server_time - offset
-            c = Candle(
-                server_time=server_time,
-                utc_time=utc_time,
-                open=to_float(row[open_idx]),
-                high=to_float(row[high_idx]),
-                low=to_float(row[low_idx]),
-                close=to_float(row[close_idx]),
-                tick_volume=to_float(row[tick_idx]) if tick_idx is not None and len(row) > tick_idx else None,
-                spread=to_float(row[spread_idx]) if spread_idx is not None and len(row) > spread_idx else None,
-            )
-            if any(math.isnan(x) for x in (c.open, c.high, c.low, c.close)):
-                raise ValueError("NaN OHLC")
-            candles.append(c)
-        except Exception as exc:  # noqa: BLE001 - report all parse failures
-            if len(bad_rows) < 10:
-                bad_rows.append({"row_no": row_no, "row": row, "error": str(exc)})
+
+    with path.open("r", encoding="utf-8-sig", errors="replace", newline="") as f:
+        reader = csv.reader(f, delimiter=delimiter)
+        rows = list(reader)
+    if not rows:
+        return [], {"path": str(path), "delimiter": delimiter, "rows_parsed": 0, "bad_row_count": 0, "has_header": False}
+
+    first = [c.strip() for c in rows[0]]
+    has_header = any("date" in norm_key(c) or "time" in norm_key(c) or "open" in norm_key(c) for c in first)
+
+    if has_header:
+        headers = first
+        date_col = find_col(headers, ["date", "time", "datetime"])
+        time_col = find_col(headers, ["time"]) if date_col and norm_key(date_col) == "date" else None
+        open_col = find_col(headers, ["open"])
+        high_col = find_col(headers, ["high"])
+        low_col = find_col(headers, ["low"])
+        close_col = find_col(headers, ["close"])
+        if not all([date_col, open_col, high_col, low_col, close_col]):
+            raise ValueError(f"Cannot map OHLC columns in {path}. headers={headers}")
+        dict_rows = [dict(zip(headers, r)) for r in rows[1:] if any(cell.strip() for cell in r)]
+        for idx, r in enumerate(dict_rows, start=2):
+            try:
+                if time_col:
+                    st = parse_dt(r[date_col], r[time_col])
+                else:
+                    st = parse_dt(r[date_col])
+                candles.append(Candle(
+                    server_time=st,
+                    utc_time=st - timedelta(hours=server_utc_offset_hours),
+                    open=float(r[open_col]),
+                    high=float(r[high_col]),
+                    low=float(r[low_col]),
+                    close=float(r[close_col]),
+                ))
+            except Exception as e:
+                bad_rows.append({"line": idx, "error": str(e), "row": r})
+    else:
+        # common no-header MT5 order: date, time, open, high, low, close, tickvol, vol, spread
+        for idx, r in enumerate(rows, start=1):
+            if not r or not any(cell.strip() for cell in r):
+                continue
+            try:
+                if len(r) >= 6:
+                    st = parse_dt(r[0], r[1])
+                    o, h, l, c = float(r[2]), float(r[3]), float(r[4]), float(r[5])
+                elif len(r) >= 5:
+                    st = parse_dt(r[0])
+                    o, h, l, c = float(r[1]), float(r[2]), float(r[3]), float(r[4])
+                else:
+                    raise ValueError("not enough columns")
+                candles.append(Candle(st, st - timedelta(hours=server_utc_offset_hours), o, h, l, c))
+            except Exception as e:
+                bad_rows.append({"line": idx, "error": str(e), "row": r})
 
     candles.sort(key=lambda x: x.server_time)
-    meta: Dict[str, object] = {
+    meta = {
         "path": str(path),
         "delimiter": "TAB" if delimiter == "\t" else delimiter,
-        "rows_raw": len(rows),
         "has_header": has_header,
-        "header": header,
         "rows_parsed": len(candles),
-        "bad_row_count": len(data_rows) - len(candles),
-        "bad_row_samples": bad_rows,
-        "start_server": candles[0].server_time.isoformat() if candles else None,
-        "end_server": candles[-1].server_time.isoformat() if candles else None,
-        "start_utc": candles[0].utc_time.isoformat() if candles else None,
-        "end_utc": candles[-1].utc_time.isoformat() if candles else None,
-        "server_utc_offset_hours": server_utc_offset_hours,
+        "bad_row_count": len(bad_rows),
+        "bad_rows_sample": bad_rows[:5],
     }
+    if candles:
+        meta.update({
+            "start_server": candles[0].server_time.isoformat(),
+            "end_server": candles[-1].server_time.isoformat(),
+            "start_utc": candles[0].utc_time.isoformat(),
+            "end_utc": candles[-1].utc_time.isoformat(),
+        })
     return candles, meta
 
 
-def session_name(utc_dt: datetime) -> str:
-    h = utc_dt.hour + utc_dt.minute / 60.0
+def session_name_utc(dt: datetime) -> str:
+    h = dt.hour
     if 0 <= h < 7:
         return "asia"
     if 7 <= h < 13:
@@ -253,242 +195,216 @@ def session_name(utc_dt: datetime) -> str:
     return "other"
 
 
-def max_drawdown(values: Sequence[float]) -> float:
-    equity = 0.0
-    peak = 0.0
-    max_dd = 0.0
-    for v in values:
-        equity += v
-        peak = max(peak, equity)
-        max_dd = min(max_dd, equity - peak)
-    return max_dd
-
-
-def profit_factor(values: Sequence[float]) -> Optional[float]:
-    wins = sum(v for v in values if v > 0)
-    losses = -sum(v for v in values if v < 0)
-    if losses == 0:
-        return None if wins == 0 else float("inf")
-    return wins / losses
-
-
-def summarize(values: Sequence[float]) -> Dict[str, object]:
-    vals = list(values)
-    if not vals:
-        return {
-            "trades": 0,
-            "total_net_usd": 0.0,
-            "avg_net_usd": None,
-            "median_net_usd": None,
-            "win_rate": None,
-            "profit_factor": None,
-            "max_drawdown_usd": 0.0,
-        }
-    return {
-        "trades": len(vals),
-        "total_net_usd": round(sum(vals), 4),
-        "avg_net_usd": round(sum(vals) / len(vals), 6),
-        "median_net_usd": round(statistics.median(vals), 6),
-        "win_rate": round(sum(1 for v in vals if v > 0) / len(vals), 6),
-        "profit_factor": None if profit_factor(vals) is None else round(profit_factor(vals), 6),
-        "max_drawdown_usd": round(max_drawdown(vals), 6),
-        "best_net_usd": round(max(vals), 6),
-        "worst_net_usd": round(min(vals), 6),
-    }
-
-
-def make_signals(h1: Sequence[Candle]) -> List[Dict[str, object]]:
-    signals: List[Dict[str, object]] = []
+def generate_signals(h1: List[Candle]) -> List[Dict[str, object]]:
+    signals = []
     closes = [c.close for c in h1]
     for i in range(SMA_WINDOW - 1, len(h1) - 1):  # need next H1 open for entry
-        sma = sum(closes[i - SMA_WINDOW + 1 : i + 1]) / SMA_WINDOW
+        sma = sum(closes[i - SMA_WINDOW + 1:i + 1]) / SMA_WINDOW
         distance = h1[i].close - sma
-        sess = session_name(h1[i].utc_time)
-        if sess == BLOCKED_SESSION:
+        sess = session_name_utc(h1[i].utc_time)
+        if sess == "london":
             continue
         if distance >= DISTANCE_THRESHOLD_USD:
             signals.append({
                 "idx": i,
-                "signal_candle": h1[i],
-                "entry_candle": h1[i + 1],
+                "entry_idx": i + 1,
+                "signal": h1[i],
+                "entry_h1": h1[i + 1],
                 "sma10": sma,
                 "distance_usd": distance,
-                "session": sess,
+                "session_utc": sess,
             })
     return signals
 
 
-def replay_signals(
-    signals: Sequence[Dict[str, object]],
-    m1: Sequence[Candle],
-    roundtrip_cost_usd: float,
-) -> Tuple[List[TradeResult], Dict[str, object]]:
-    m1_by_time = {c.server_time: c for c in m1}
+def resolve_trade(sig: Dict[str, object], m1: List[Candle], m1_times: List[datetime], roundtrip_cost: float, mode: str) -> Optional[Trade]:
+    signal: Candle = sig["signal"]  # type: ignore[assignment]
+    entry_h1: Candle = sig["entry_h1"]  # type: ignore[assignment]
+    entry_time = entry_h1.server_time
+    horizon_time = entry_time + timedelta(hours=TIME_EXIT_H1_BARS)
+    entry_price = entry_h1.open
+    tp_price = entry_price + TP_USD
+    sl_price = entry_price - SL_USD
+
+    start = bisect_left(m1_times, entry_time)
+    end = bisect_right(m1_times, horizon_time)
+    path = m1[start:end]
+    if not path:
+        return None
+
+    exit_candle = path[-1]
+    exit_reason = "time_exit"
+    gross = exit_candle.close - entry_price
+    ambiguous = False
+
+    for c in path:
+        hit_tp = c.high >= tp_price
+        hit_sl = c.low <= sl_price
+        if hit_tp and hit_sl:
+            ambiguous = True
+            # Conservative for long when intraminute ordering is unknown.
+            exit_candle = c
+            exit_reason = "ambiguous_stop_first"
+            gross = -SL_USD
+            break
+        if hit_sl:
+            exit_candle = c
+            exit_reason = "stop_loss"
+            gross = -SL_USD
+            break
+        if hit_tp:
+            exit_candle = c
+            exit_reason = "take_profit"
+            gross = TP_USD
+            break
+
+    net = gross - roundtrip_cost
+    return Trade(
+        replay_mode=mode,
+        signal_server_time=signal.server_time.isoformat(sep=" "),
+        signal_utc_time=signal.utc_time.isoformat(sep=" "),
+        entry_server_time=entry_time.isoformat(sep=" "),
+        entry_utc_time=entry_h1.utc_time.isoformat(sep=" "),
+        exit_server_time=exit_candle.server_time.isoformat(sep=" "),
+        exit_utc_time=exit_candle.utc_time.isoformat(sep=" "),
+        session_utc=str(sig["session_utc"]),
+        entry_price=round(entry_price, 5),
+        close_h1=round(signal.close, 5),
+        sma10=round(float(sig["sma10"]), 5),
+        distance_usd=round(float(sig["distance_usd"]), 5),
+        tp_usd=TP_USD,
+        sl_usd=SL_USD,
+        time_exit_h1_bars=TIME_EXIT_H1_BARS,
+        exit_reason=exit_reason,
+        gross_usd=round(gross, 6),
+        net_usd=round(net, 6),
+        ambiguous_exit=ambiguous,
+    )
+
+
+def replay(signals: List[Dict[str, object]], m1: List[Candle], mode: str, roundtrip_cost: float) -> Tuple[List[Trade], int]:
     m1_times = [c.server_time for c in m1]
-    trades: List[TradeResult] = []
-    skipped: List[Dict[str, object]] = []
+    trades: List[Trade] = []
+    skipped_by_overlap = 0
+    open_until: Optional[datetime] = None
 
-    # Simple moving pointer for speed.
-    start_ptr = 0
     for sig in signals:
-        signal_c = sig["signal_candle"]
-        entry_c = sig["entry_candle"]
-        assert isinstance(signal_c, Candle) and isinstance(entry_c, Candle)
-        entry_time = entry_c.server_time
-        end_time = entry_time + timedelta(hours=TIME_EXIT_HOURS)
-        while start_ptr < len(m1_times) and m1_times[start_ptr] < entry_time:
-            start_ptr += 1
-        j = start_ptr
-        if j >= len(m1_times) or m1_times[j] >= end_time:
-            skipped.append({"signal_server_time": signal_c.server_time.isoformat(), "reason": "no_m1_after_entry"})
+        entry_h1: Candle = sig["entry_h1"]  # type: ignore[assignment]
+        if mode == "non_overlap" and open_until is not None and entry_h1.server_time < open_until:
+            skipped_by_overlap += 1
             continue
-
-        entry_price = entry_c.open
-        tp_price = entry_price + TP_USD
-        sl_price = entry_price - SL_USD
-        exit_c: Optional[Candle] = None
-        exit_reason = "time_exit"
-        exit_price: Optional[float] = None
-        ambiguous = False
-        bars_used = 0
-        last_in_window: Optional[Candle] = None
-
-        while j < len(m1_times) and m1_times[j] < end_time:
-            c = m1[j]
-            bars_used += 1
-            last_in_window = c
-            hit_tp = c.high >= tp_price
-            hit_sl = c.low <= sl_price
-            if hit_tp and hit_sl:
-                ambiguous = True
-                # Conservative ordering for long in one-minute ambiguity.
-                exit_c = c
-                exit_reason = "ambiguous_sl_first"
-                exit_price = sl_price
-                break
-            if hit_sl:
-                exit_c = c
-                exit_reason = "stop_loss"
-                exit_price = sl_price
-                break
-            if hit_tp:
-                exit_c = c
-                exit_reason = "take_profit"
-                exit_price = tp_price
-                break
-            j += 1
-
-        if exit_c is None:
-            if last_in_window is None:
-                skipped.append({"signal_server_time": signal_c.server_time.isoformat(), "reason": "empty_m1_window"})
-                continue
-            exit_c = last_in_window
-            exit_price = last_in_window.close
-            exit_reason = "time_exit"
-
-        gross = float(exit_price) - entry_price
-        net = gross - roundtrip_cost_usd
-        trades.append(TradeResult(
-            signal_server_time=signal_c.server_time.isoformat(sep=" "),
-            signal_utc_time=signal_c.utc_time.isoformat(sep=" "),
-            entry_server_time=entry_time.isoformat(sep=" "),
-            entry_utc_time=entry_c.utc_time.isoformat(sep=" "),
-            session=str(sig["session"]),
-            close_h1=round(signal_c.close, 5),
-            sma10=round(float(sig["sma10"]), 5),
-            distance_usd=round(float(sig["distance_usd"]), 5),
-            entry_price=round(entry_price, 5),
-            tp_price=round(tp_price, 5),
-            sl_price=round(sl_price, 5),
-            exit_server_time=exit_c.server_time.isoformat(sep=" "),
-            exit_utc_time=exit_c.utc_time.isoformat(sep=" "),
-            exit_price=round(float(exit_price), 5),
-            exit_reason=exit_reason,
-            gross_usd=round(gross, 5),
-            net_usd=round(net, 5),
-            ambiguous_exit=ambiguous,
-            bars_m1_used=bars_used,
-        ))
-
-    return trades, {"skipped_count": len(skipped), "skipped_samples": skipped[:10]}
+        tr = resolve_trade(sig, m1, m1_times, roundtrip_cost, mode)
+        if tr is None:
+            continue
+        trades.append(tr)
+        if mode == "non_overlap":
+            open_until = datetime.fromisoformat(tr.exit_server_time)
+    return trades, skipped_by_overlap
 
 
-def group_summary(trades: Sequence[TradeResult], attr: str) -> Dict[str, Dict[str, object]]:
-    groups: Dict[str, List[float]] = {}
+def max_drawdown(vals: List[float]) -> float:
+    equity = 0.0
+    peak = 0.0
+    max_dd = 0.0
+    for v in vals:
+        equity += v
+        peak = max(peak, equity)
+        max_dd = min(max_dd, equity - peak)
+    return round(max_dd, 6)
+
+
+def median(vals: List[float]) -> float:
+    if not vals:
+        return 0.0
+    xs = sorted(vals)
+    n = len(xs)
+    mid = n // 2
+    if n % 2:
+        return xs[mid]
+    return (xs[mid - 1] + xs[mid]) / 2.0
+
+
+def metrics(trades: List[Trade], cost_multiplier: float = 1.0, base_cost: float = ROUNDTRIP_COST_USD) -> Dict[str, object]:
+    # Trades already include base cost once. Adjust to requested multiplier.
+    nets = [t.gross_usd - base_cost * cost_multiplier for t in trades]
+    wins = [x for x in nets if x > 0]
+    losses = [x for x in nets if x < 0]
+    gross_profit = sum(wins)
+    gross_loss = -sum(losses)
+    pf = gross_profit / gross_loss if gross_loss > 0 else (math.inf if gross_profit > 0 else 0.0)
+    return {
+        "trades": len(trades),
+        "total_net_usd": round(sum(nets), 6),
+        "avg_net_usd": round(sum(nets) / len(nets), 6) if nets else 0.0,
+        "median_net_usd": round(median(nets), 6),
+        "win_rate": round(len(wins) / len(nets), 6) if nets else 0.0,
+        "profit_factor": round(pf, 6) if math.isfinite(pf) else "inf",
+        "max_drawdown_usd": max_drawdown(nets),
+        "best_net_usd": round(max(nets), 6) if nets else 0.0,
+        "worst_net_usd": round(min(nets), 6) if nets else 0.0,
+        "ambiguous_exit_count": sum(1 for t in trades if t.ambiguous_exit),
+    }
+
+
+def group_metrics(trades: List[Trade], key_fn) -> Dict[str, Dict[str, object]]:
+    groups: Dict[str, List[Trade]] = {}
     for t in trades:
-        key = str(getattr(t, attr))
-        groups.setdefault(key, []).append(t.net_usd)
-    return {k: summarize(v) for k, v in sorted(groups.items())}
+        groups.setdefault(str(key_fn(t)), []).append(t)
+    return {k: metrics(v) for k, v in sorted(groups.items())}
 
 
-def year_summary(trades: Sequence[TradeResult]) -> Dict[str, Dict[str, object]]:
-    groups: Dict[str, List[float]] = {}
-    for t in trades:
-        y = t.entry_utc_time[:4]
-        groups.setdefault(y, []).append(t.net_usd)
-    return {k: summarize(v) for k, v in sorted(groups.items())}
-
-
-def cost_stress(trades: Sequence[TradeResult], base_cost: float) -> Dict[str, Dict[str, object]]:
-    result = {}
-    for mult in (1, 2, 3, 4):
-        vals = [t.gross_usd - base_cost * mult for t in trades]
-        result[f"cost_x{mult}"] = summarize(vals)
-    return result
-
-
-def write_trades_csv(path: Path, trades: Sequence[TradeResult]) -> None:
+def write_trades_csv(path: Path, trades: List[Trade]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    fields = list(asdict(trades[0]).keys()) if trades else [
-        "signal_server_time", "signal_utc_time", "entry_server_time", "entry_utc_time", "session",
-        "close_h1", "sma10", "distance_usd", "entry_price", "tp_price", "sl_price",
-        "exit_server_time", "exit_utc_time", "exit_price", "exit_reason", "gross_usd", "net_usd",
-        "ambiguous_exit", "bars_m1_used",
-    ]
-    with path.open("w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=fields)
-        w.writeheader()
-        for t in trades:
-            w.writerow(asdict(t))
+    rows = [asdict(t) for t in trades]
+    if not rows:
+        path.write_text("", encoding="utf-8")
+        return
+    with path.open("w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
+        writer.writeheader()
+        writer.writerows(rows)
 
 
-def determine_status(summary_x1: Dict[str, object], trades: Sequence[TradeResult], min_trades: int) -> Tuple[str, List[Dict[str, str]]]:
-    checks: List[Dict[str, str]] = []
-    def add(status: str, check: str, detail: str) -> None:
-        checks.append({"status": status, "check": check, "detail": detail})
+def status_for(non_overlap: Dict[str, object]) -> Tuple[str, List[Tuple[str, str, str]]]:
+    checks: List[Tuple[str, str, str]] = []
+    def add(status: str, name: str, detail: str) -> None:
+        checks.append((status, name, detail))
 
-    n = len(trades)
-    add("PASS" if n > 0 else "FAIL", "Trades produced", f"trades={n}")
-    add("PASS" if n >= min_trades else "WARN", "Minimum trades", f"trades={n}, min_trades={min_trades}")
+    trades = int(non_overlap.get("trades", 0))
+    total = float(non_overlap.get("total_net_usd", 0.0))
+    median_v = float(non_overlap.get("median_net_usd", 0.0))
+    pf = non_overlap.get("profit_factor", 0.0)
+    pf_f = float(pf) if pf != "inf" else 999.0
 
-    total = float(summary_x1.get("total_net_usd") or 0.0)
-    pf = summary_x1.get("profit_factor")
-    med = summary_x1.get("median_net_usd")
-    amb = sum(1 for t in trades if t.ambiguous_exit)
-    amb_ratio = amb / n if n else 0.0
-
+    add("PASS" if trades >= 20 else "FAIL", "Minimum non-overlap trades", f"trades={trades}, min=20")
     add("PASS" if total > 0 else "FAIL", "Positive total net", f"total_net_usd={total}")
-    add("PASS" if pf is not None and (pf == float("inf") or float(pf) >= 1.05) else "FAIL", "Profit factor", f"profit_factor={pf}, threshold=1.05")
-    add("PASS" if med is not None and float(med) >= 0 else "WARN", "Median nonnegative", f"median_net_usd={med}")
-    add("PASS" if amb_ratio <= 0.02 else "WARN", "Ambiguous exit ratio", f"ambiguous={amb}, ratio={amb_ratio:.4f}")
+    add("PASS" if pf_f >= 1.05 else "FAIL", "Profit factor", f"profit_factor={pf_f}, threshold=1.05")
+    add("PASS" if median_v >= 0 else "WARN", "Median nonnegative", f"median_net_usd={median_v}")
+    add("PASS" if int(non_overlap.get("ambiguous_exit_count", 0)) == 0 else "WARN", "Ambiguous exits", f"ambiguous={non_overlap.get('ambiguous_exit_count')}")
 
-    if any(c["status"] == "FAIL" for c in checks):
+    if any(c[0] == "FAIL" for c in checks):
         return "FAIL", checks
-    if any(c["status"] == "WARN" for c in checks):
+    if any(c[0] == "WARN" for c in checks):
         return "PASS_WITH_WARNINGS", checks
     return "PASS", checks
 
 
-def markdown_report(report: Dict[str, object]) -> str:
+def render_md(report: Dict[str, object]) -> str:
     lines: List[str] = []
-    lines.append("# Stage 4G AMarkets Backfill Validation")
+    lines.append("# Stage 4G AMarkets Backfill Validation v2")
     lines.append("")
-    lines.append(f"Generated UTC: `{report['generated_utc']}`")
-    lines.append(f"Tool version: `{report['tool_version']}`")
-    lines.append(f"Strategy ID: `{report['strategy_id']}`")
-    lines.append(f"Overall status: **{report['status']}**")
+    lines.append(f"Generated UTC: `{datetime.utcnow().replace(microsecond=0).isoformat()}Z`")
+    lines.append(f"Tool version: `{TOOL_VERSION}`")
+    lines.append(f"Strategy ID: `{STRATEGY_ID}`")
+    lines.append(f"Overall status: **{report['overall_status']}**")
     lines.append("")
     lines.append("> Hard rule: this is broker-feed backfill validation only. It does not authorize demo, paper, or live orders.")
+    lines.append("")
+    lines.append("## Critical interpretation")
+    lines.append("")
+    lines.append("- `overlap_every_signal` is diagnostic only: it opens a replay trade for every qualifying H1 signal.")
+    lines.append("- `non_overlap` is the decision basis: it allows only one active dry-run trade at a time until TP, SL, or 12 H1-bar time-exit resolves.")
+    lines.append("- Demo-order remains forbidden unless non-overlap replay, live dry-run outcomes, spread guard, and risk guards pass.")
     lines.append("")
     lines.append("## Inputs")
     for k, v in report["inputs"].items():
@@ -496,153 +412,136 @@ def markdown_report(report: Dict[str, object]) -> str:
     lines.append("")
     lines.append("## Data quality")
     for name in ("h1", "m1"):
-        meta = report["data_quality"][name]
         lines.append(f"### {name.upper()}")
-        for k in ("rows_parsed", "bad_row_count", "start_server", "end_server", "start_utc", "end_utc", "delimiter", "has_header"):
-            lines.append(f"- {k}: `{meta.get(k)}`")
+        for k, v in report["data_quality"][name].items():
+            if k != "bad_rows_sample":
+                lines.append(f"- {k}: `{v}`")
         lines.append("")
-    lines.append("## Signal/replay stats")
-    stats = report["stats"]
-    for k, v in stats.items():
+    lines.append("## Signal counts")
+    for k, v in report["signal_counts"].items():
         lines.append(f"- {k}: `{v}`")
     lines.append("")
-    lines.append("## Main metrics, cost x1")
-    for k, v in report["metrics_cost_x1"].items():
-        lines.append(f"- {k}: `{v}`")
-    lines.append("")
-    lines.append("## Cost stress")
-    for label, metrics in report["cost_stress"].items():
+    lines.append("## Replay comparison")
+    for mode in ("overlap_every_signal", "non_overlap"):
+        lines.append(f"### {mode}")
+        for k, v in report["metrics"][mode]["cost_x1"].items():
+            lines.append(f"- {k}: `{v}`")
+        lines.append("")
+    lines.append("## Non-overlap cost stress")
+    for label, m in report["metrics"]["non_overlap"].items():
         lines.append(f"### {label}")
-        for k, v in metrics.items():
+        for k, v in m.items():
             lines.append(f"- {k}: `{v}`")
         lines.append("")
-    lines.append("## Session breakdown")
-    for sess, metrics in report["session_breakdown"].items():
+    lines.append("## Non-overlap session breakdown")
+    for sess, m in report["session_breakdown_non_overlap"].items():
         lines.append(f"### {sess}")
-        for k, v in metrics.items():
+        for k, v in m.items():
             lines.append(f"- {k}: `{v}`")
         lines.append("")
-    lines.append("## Year breakdown")
-    for year, metrics in report["year_breakdown"].items():
+    lines.append("## Non-overlap year breakdown")
+    for year, m in report["year_breakdown_non_overlap"].items():
         lines.append(f"### {year}")
-        for k, v in metrics.items():
+        for k, v in m.items():
             lines.append(f"- {k}: `{v}`")
         lines.append("")
-    lines.append("## Checks")
+    lines.append("## Checks — decision basis: non_overlap")
     lines.append("")
     lines.append("| Status | Check | Detail |")
     lines.append("|---|---|---|")
-    for c in report["checks"]:
-        lines.append(f"| {c['status']} | {c['check']} | {c['detail']} |")
+    for status, name, detail in report["checks"]:
+        lines.append(f"| {status} | {name} | {detail} |")
     lines.append("")
-    if report["status"] == "FAIL":
-        lines.append("Decision: **Do not advance from dry-run based on this AMarkets backfill. Diagnose mismatch first.**")
-    elif report["status"] == "PASS_WITH_WARNINGS":
-        lines.append("Decision: **Backfill is usable but not sufficient alone for demo-order. Continue live dry-run and inspect warnings.**")
-    else:
-        lines.append("Decision: **Backfill passed local criteria. Continue live dry-run and prepare outcome tracking; this still does not authorize orders.**")
-    lines.append("")
-    return "\n".join(lines)
+    lines.append(f"Decision: **{report['decision']}**")
+    return "\n".join(lines) + "\n"
 
 
-def run(args: argparse.Namespace) -> Dict[str, object]:
-    h1_path = expand_path(args.h1)
-    m1_path = expand_path(args.m1)
-    if not h1_path.exists():
-        raise FileNotFoundError(f"H1 file not found: {h1_path}")
-    if not m1_path.exists():
-        raise FileNotFoundError(f"M1 file not found: {m1_path}")
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--h1", default=DEFAULT_H1)
+    ap.add_argument("--m1", default=DEFAULT_M1)
+    ap.add_argument("--server-utc-offset-hours", type=float, default=2.0)
+    ap.add_argument("--roundtrip-cost-usd", type=float, default=ROUNDTRIP_COST_USD)
+    ap.add_argument("--out-dir", default=DEFAULT_OUT_DIR)
+    args = ap.parse_args()
 
-    h1, h1_meta = parse_mt5_csv(h1_path, args.server_utc_offset_hours)
-    m1, m1_meta = parse_mt5_csv(m1_path, args.server_utc_offset_hours)
-    signals = make_signals(h1)
-    trades, replay_meta = replay_signals(signals, m1, args.roundtrip_cost_usd)
-    nets = [t.net_usd for t in trades]
-    metrics_x1 = summarize(nets)
-    status, checks = determine_status(metrics_x1, trades, args.min_trades)
-
-    out_dir = expand_path(args.out_dir)
+    out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    trades_csv = out_dir / "stage4g_amarkets_backfill_trades.csv"
-    json_path = out_dir / "stage4g_amarkets_backfill_validation.json"
-    md_path = out_dir / "stage4g_amarkets_backfill_validation.md"
-    write_trades_csv(trades_csv, trades)
 
-    exit_reasons: Dict[str, int] = {}
-    for t in trades:
-        exit_reasons[t.exit_reason] = exit_reasons.get(t.exit_reason, 0) + 1
+    h1, h1_meta = read_mt5_candles(args.h1, args.server_utc_offset_hours)
+    m1, m1_meta = read_mt5_candles(args.m1, args.server_utc_offset_hours)
+    signals = generate_signals(h1)
 
-    report: Dict[str, object] = {
-        "generated_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "tool_version": TOOL_VERSION,
-        "strategy_id": STRATEGY_ID,
-        "status": status,
-        "inputs": {
-            "h1": str(h1_path),
-            "m1": str(m1_path),
-            "server_utc_offset_hours": args.server_utc_offset_hours,
-            "roundtrip_cost_usd": args.roundtrip_cost_usd,
-            "min_trades": args.min_trades,
+    overlap_trades, overlap_skipped = replay(signals, m1, "overlap_every_signal", args.roundtrip_cost_usd)
+    non_overlap_trades, non_overlap_skipped = replay(signals, m1, "non_overlap", args.roundtrip_cost_usd)
+
+    write_trades_csv(out_dir / "stage4g_v2_overlap_trades.csv", overlap_trades)
+    write_trades_csv(out_dir / "stage4g_v2_non_overlap_trades.csv", non_overlap_trades)
+
+    mode_metrics = {
+        "overlap_every_signal": {
+            "cost_x1": metrics(overlap_trades, 1, args.roundtrip_cost_usd),
+            "cost_x2": metrics(overlap_trades, 2, args.roundtrip_cost_usd),
+            "cost_x3": metrics(overlap_trades, 3, args.roundtrip_cost_usd),
+            "cost_x4": metrics(overlap_trades, 4, args.roundtrip_cost_usd),
         },
-        "locked_rules": {
-            "direction": "long-only",
-            "signal_timeframe": "H1",
-            "sma_window": SMA_WINDOW,
-            "distance_threshold_usd": DISTANCE_THRESHOLD_USD,
-            "tp_usd": TP_USD,
-            "sl_usd": SL_USD,
-            "time_exit_h1_bars": TIME_EXIT_HOURS,
-            "blocked_session": BLOCKED_SESSION,
-            "allowed_sessions": sorted(ALLOWED_SESSIONS),
-        },
-        "data_quality": {"h1": h1_meta, "m1": m1_meta},
-        "stats": {
-            "h1_rows": len(h1),
-            "m1_rows": len(m1),
-            "signals": len(signals),
-            "replayed_trades": len(trades),
-            "skipped_replay": replay_meta["skipped_count"],
-            "ambiguous_exit_count": sum(1 for t in trades if t.ambiguous_exit),
-            "exit_reasons": exit_reasons,
-            "trades_csv": str(trades_csv),
-        },
-        "metrics_cost_x1": metrics_x1,
-        "cost_stress": cost_stress(trades, args.roundtrip_cost_usd),
-        "session_breakdown": group_summary(trades, "session"),
-        "year_breakdown": year_summary(trades),
-        "checks": checks,
-        "replay_meta": replay_meta,
-        "artifacts": {
-            "json_report": str(json_path),
-            "markdown_report": str(md_path),
-            "trades_csv": str(trades_csv),
+        "non_overlap": {
+            "cost_x1": metrics(non_overlap_trades, 1, args.roundtrip_cost_usd),
+            "cost_x2": metrics(non_overlap_trades, 2, args.roundtrip_cost_usd),
+            "cost_x3": metrics(non_overlap_trades, 3, args.roundtrip_cost_usd),
+            "cost_x4": metrics(non_overlap_trades, 4, args.roundtrip_cost_usd),
         },
     }
-    json_path.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
-    md_path.write_text(markdown_report(report), encoding="utf-8")
-    return report
+    status, checks = status_for(mode_metrics["non_overlap"]["cost_x1"])
+    decision = {
+        "PASS": "Non-overlap AMarkets backfill passes baseline checks, but demo-order still requires live dry-run outcomes and guards.",
+        "PASS_WITH_WARNINGS": "Non-overlap AMarkets backfill is usable with warnings. Continue live dry-run and inspect weak segments before demo-order.",
+        "FAIL": "Non-overlap AMarkets backfill fails. Do not advance this candidate toward demo-order; revise or filter first.",
+    }[status]
 
+    report: Dict[str, object] = {
+        "tool_version": TOOL_VERSION,
+        "strategy_id": STRATEGY_ID,
+        "overall_status": status,
+        "inputs": {
+            "h1": str(Path(os.path.expanduser(args.h1))),
+            "m1": str(Path(os.path.expanduser(args.m1))),
+            "server_utc_offset_hours": args.server_utc_offset_hours,
+            "roundtrip_cost_usd": args.roundtrip_cost_usd,
+            "decision_basis": "non_overlap",
+        },
+        "data_quality": {"h1": h1_meta, "m1": m1_meta},
+        "signal_counts": {
+            "h1_rows": len(h1),
+            "m1_rows": len(m1),
+            "raw_signals": len(signals),
+            "overlap_replayed_trades": len(overlap_trades),
+            "non_overlap_replayed_trades": len(non_overlap_trades),
+            "non_overlap_skipped_by_open_position": non_overlap_skipped,
+            "overlap_skipped": overlap_skipped,
+        },
+        "metrics": mode_metrics,
+        "session_breakdown_non_overlap": group_metrics(non_overlap_trades, lambda t: t.session_utc),
+        "year_breakdown_non_overlap": group_metrics(non_overlap_trades, lambda t: t.signal_utc_time[:4]),
+        "checks": checks,
+        "decision": decision,
+        "outputs": {
+            "overlap_trades_csv": str(out_dir / "stage4g_v2_overlap_trades.csv"),
+            "non_overlap_trades_csv": str(out_dir / "stage4g_v2_non_overlap_trades.csv"),
+            "json_report": str(out_dir / "stage4g_v2_amarkets_backfill_validation.json"),
+            "markdown_report": str(out_dir / "stage4g_v2_amarkets_backfill_validation.md"),
+        },
+    }
 
-def main(argv: Optional[Sequence[str]] = None) -> int:
-    parser = argparse.ArgumentParser(description="Stage 4G AMarkets backfill validation for locked XAUUSD strategy.")
-    parser.add_argument("--h1", default=DEFAULT_H1, help=f"H1 MT5 export CSV. Default: {DEFAULT_H1}")
-    parser.add_argument("--m1", default=DEFAULT_M1, help=f"M1 MT5 export CSV. Default: {DEFAULT_M1}")
-    parser.add_argument("--server-utc-offset-hours", type=float, default=2.0, help="Broker server time offset from UTC. AMarkets observed around +2 from live signal row.")
-    parser.add_argument("--roundtrip-cost-usd", type=float, default=ROUNDTRIP_COST_USD, help="Roundtrip cost in USD price units, default from previous baseline lab.")
-    parser.add_argument("--min-trades", type=int, default=20, help="Minimum trades for stronger confidence. Below this is WARN, not automatic fail.")
-    parser.add_argument("--out-dir", default=DEFAULT_OUT_DIR, help="Output report directory.")
-    args = parser.parse_args(argv)
+    (out_dir / "stage4g_v2_amarkets_backfill_validation.json").write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+    (out_dir / "stage4g_v2_amarkets_backfill_validation.md").write_text(render_md(report), encoding="utf-8")
 
-    report = run(args)
-    print(f"Stage 4G AMarkets backfill validation: {report['status']}")
-    print(f"H1 rows: {report['stats']['h1_rows']}")
-    print(f"M1 rows: {report['stats']['m1_rows']}")
-    print(f"Signals: {report['stats']['signals']}")
-    print(f"Replayed trades: {report['stats']['replayed_trades']}")
-    print(f"JSON report: {report['artifacts']['json_report']}")
-    print(f"Markdown report: {report['artifacts']['markdown_report']}")
-    print(f"Trades CSV: {report['artifacts']['trades_csv']}")
-    return 0 if report["status"] != "FAIL" else 2
+    print(f"Stage 4G AMarkets backfill validation v2: {status}")
+    print(f"Decision basis: non_overlap")
+    print(f"JSON report: {out_dir / 'stage4g_v2_amarkets_backfill_validation.json'}")
+    print(f"Markdown report: {out_dir / 'stage4g_v2_amarkets_backfill_validation.md'}")
+    print(f"Non-overlap trades CSV: {out_dir / 'stage4g_v2_non_overlap_trades.csv'}")
+    return 0 if status != "FAIL" else 2
 
 
 if __name__ == "__main__":

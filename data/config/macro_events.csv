@@ -1,0 +1,5 @@
+event_time_utc,label,impact,guard_before_min,guard_after_min,mode
+2026-06-10T12:30:00Z,US CPI,high,120,240,block
+2026-06-11T12:30:00Z,US PPI,high,90,180,block
+2026-06-17T18:00:00Z,FOMC,high,180,360,block
+2026-06-05T12:30:00Z,US NFP,high,120,240,block

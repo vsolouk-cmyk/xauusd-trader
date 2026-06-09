@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
 """
-Stage 6B — Local Persist Runner
+Stage 6B v2 — Local Persist + Evidence Runner
 
-Runs the daily/local persistence flow in the correct order:
+Runs the daily/local evidence flow in the correct order:
 
 1. Stage data file audit
 2. Stage 5B dry-run signal CSV validator
 3. Stage 5C live dry-run outcome tracker
 4. Stage 6A local SQLite import
+5. Stage 6C DB evidence report
 
 Hard rules:
 - No demo/paper/live authorization.
 - No order sending.
 - Does not modify MT5 EA files.
-- Updates only the local SQLite evidence store when Stage 6A runs.
+- Updates only the local SQLite evidence store during Stage 6A.
+- Stage 6C is read-only and decision-report only.
 """
 
 from __future__ import annotations
@@ -29,12 +31,13 @@ from pathlib import Path
 from typing import List, Sequence
 
 
-TOOL_VERSION = "v1"
+TOOL_VERSION = "v2"
 STRATEGY_ID = "xauusd_long_tp24_sl15_no_london_v1"
 
 DEFAULT_H1 = Path("~/Downloads/amarkets_xauusd_1h.csv").expanduser()
 DEFAULT_M1 = Path("~/Downloads/amarkets_xauusd_1m.csv").expanduser()
 DEFAULT_SIGNALS = Path("~/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/users/user/AppData/Roaming/MetaQuotes/Terminal/Common/Files/XAUUSD_DryRun_v1_signals.csv").expanduser()
+DEFAULT_DB = Path("data/local/xauusd_local_store.sqlite")
 DEFAULT_OUT_DIR = Path("data/reports/stage6b_persist_runner")
 
 
@@ -88,30 +91,34 @@ def write_summary(out_dir: Path, args: argparse.Namespace, results: List[StepRes
         "tool_version": TOOL_VERSION,
         "strategy_id": STRATEGY_ID,
         "generated_utc": now_iso(),
-        "hard_rule": "Dry-run/persistence only. No orders.",
+        "hard_rule": "Dry-run/persistence/evidence only. No orders.",
         "inputs": {
             "h1_csv": str(Path(args.h1_csv).expanduser()),
             "m1_csv": str(Path(args.m1_csv).expanduser()),
             "signals_csv": str(Path(args.signals_csv).expanduser()),
+            "db": str(Path(args.db)),
             "fetch_twelve": args.fetch_twelve,
+            "run_6c": not args.skip_6c,
         },
         "results": [asdict(r) for r in results],
     }
     (out_dir / "stage6b_persist_runner.json").write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
 
     lines = [
-        "# Stage 6B Local Persist Runner",
+        "# Stage 6B Local Persist + Evidence Runner",
         "",
         f"Generated UTC: `{payload['generated_utc']}`",
         f"Tool version: `{TOOL_VERSION}`",
         "",
-        "> Hard rule: this runner validates dry-run evidence and updates local SQLite only. It does not authorize demo, paper, or live orders.",
+        "> Hard rule: this runner validates dry-run evidence, updates local SQLite, and produces DB evidence reports. It does not authorize demo, paper, or live orders.",
         "",
         "## Inputs",
         f"- h1_csv: `{payload['inputs']['h1_csv']}`",
         f"- m1_csv: `{payload['inputs']['m1_csv']}`",
         f"- signals_csv: `{payload['inputs']['signals_csv']}`",
+        f"- db: `{payload['inputs']['db']}`",
         f"- fetch_twelve: `{payload['inputs']['fetch_twelve']}`",
+        f"- run_6c: `{payload['inputs']['run_6c']}`",
         "",
         "## Step summary",
         "| # | Step | Status | Return code |",
@@ -127,13 +134,14 @@ def write_summary(out_dir: Path, args: argparse.Namespace, results: List[StepRes
         "- `data/reports/stage5b_dryrun_log_validator.md`",
         "- `data/reports/stage5c_live_outcome_tracker/stage5c_live_outcome_tracker.md`",
         "- `data/reports/stage6a_local_store/stage6a_local_store.md`",
+        "- `data/reports/stage6c_db_evidence_report/stage6c_db_evidence_report.md`",
         "",
         "## Decision",
     ]
     if any(r.returncode != 0 for r in results):
         lines.append("- One or more steps failed. Inspect the related report before relying on the local store.")
     else:
-        lines.append("- Persist flow completed. Local SQLite evidence store is updated.")
+        lines.append("- Persist + evidence flow completed. Local SQLite evidence store and DB evidence report are updated.")
     lines.append("- This does not authorize orders.")
     (out_dir / "stage6b_persist_runner.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -143,9 +151,11 @@ def main() -> int:
     p.add_argument("--h1-csv", default=str(DEFAULT_H1))
     p.add_argument("--m1-csv", default=str(DEFAULT_M1))
     p.add_argument("--signals-csv", default=str(DEFAULT_SIGNALS))
+    p.add_argument("--db", default=str(DEFAULT_DB))
     p.add_argument("--server-utc-offset-hours", type=float, default=2.0)
     p.add_argument("--fetch-twelve", action="store_true")
     p.add_argument("--twelve-allow-insecure-ssl", action="store_true")
+    p.add_argument("--skip-6c", action="store_true")
     p.add_argument("--out-dir", default=str(DEFAULT_OUT_DIR))
     p.add_argument("--continue-on-error", action="store_true", default=True)
     args = p.parse_args()
@@ -154,6 +164,7 @@ def main() -> int:
     h1 = str(Path(args.h1_csv).expanduser())
     m1 = str(Path(args.m1_csv).expanduser())
     signals = str(Path(args.signals_csv).expanduser())
+    db = str(Path(args.db))
 
     steps = [
         (
@@ -172,6 +183,7 @@ def main() -> int:
 
     stage6a_cmd = [
         py, "-m", "app.stage6a_local_data_store",
+        "--db", db,
         "--h1-csv", h1,
         "--m1-csv", m1,
         "--signals-csv", signals,
@@ -183,8 +195,14 @@ def main() -> int:
         stage6a_cmd.append("--twelve-allow-insecure-ssl")
     steps.append(("stage6a_local_data_store", stage6a_cmd))
 
-    print(f"Stage 6B persist runner: steps={len(steps)}")
-    print("Hard rule: dry-run/persistence only. No demo/paper/live authorization.")
+    if not args.skip_6c:
+        steps.append((
+            "stage6c_db_evidence_report",
+            [py, "-m", "app.stage6c_db_evidence_report", "--db", db, "--out-dir", "data/reports/stage6c_db_evidence_report"],
+        ))
+
+    print(f"Stage 6B persist + evidence runner: steps={len(steps)}")
+    print("Hard rule: dry-run/persistence/evidence only. No demo/paper/live authorization.")
 
     results = []
     for i, (name, cmd) in enumerate(steps, start=1):
@@ -200,6 +218,7 @@ def main() -> int:
     out_dir = Path(args.out_dir)
     write_summary(out_dir, args, results)
     print(f"\nSummary: {out_dir / 'stage6b_persist_runner.md'}")
+    print("Main evidence report: data/reports/stage6c_db_evidence_report/stage6c_db_evidence_report.md")
     return 0
 
 

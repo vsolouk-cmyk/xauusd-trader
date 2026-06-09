@@ -50,3 +50,15 @@ data/second_source/manifest.json
 # Local execution replay reports
 data/reports/
 data/reports/*
+
+# Local XAUUSD runtime/evidence store - do not commit
+data/local/*.sqlite
+data/local/*.sqlite-*
+data/local/*.db
+data/local/*.db-*
+
+# Large local broker exports - do not commit
+data/exports/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm

@@ -1,0 +1,44 @@
+{
+  "strategy_id": "xauusd_h4_up_compression_liquidity_long_v1",
+  "stage": "8D_forward_shadow_only",
+  "direction": "long_only",
+  "symbol": "XAUUSD",
+  "signal_timeframe": "H1",
+  "higher_timeframe": "H4",
+  "entry_model": "next_h1_open_after_signal_close",
+  "exit_model": "time_exit_12h_with_emergency_stop",
+  "time_exit_hours": 12,
+  "emergency_stop_usd": 30.0,
+  "take_profit_usd": null,
+  "candidate_basis": {
+    "definition": "liquidity_session",
+    "execution_basis": "nonoverlap",
+    "geometry": "time_exit_12h",
+    "emergency_stop": 30.0,
+    "stage8c_total_x4": 1090.16,
+    "stage8c_total_x6": 906.76,
+    "stage8c_pf_x4": 1.862694,
+    "stage8c_median_x4": 1.96,
+    "stage8c_max_dd_x1": -155.76,
+    "stage8c_positive_years": "4/5",
+    "stage8c_positive_quarters": "13/17",
+    "stage8c_worst_month_x4": -58.98
+  },
+  "rules": {
+    "h4_trend_up": "H4 close > EMA20 > EMA50 and EMA20 slope over 5 closed H4 bars is positive",
+    "compression_mid_high": "H1 rolling range16 percentile over prior 240 closed H1 bars is > 0.50 and <= 0.80",
+    "liquidity_session": "planned entry UTC hour is in London-NY overlap or New York session",
+    "sessions_allowed_utc": [
+      "london_ny_overlap",
+      "new_york"
+    ]
+  },
+  "hard_rules": [
+    "dry_run_only",
+    "no_order_send",
+    "no_demo_authorization",
+    "no_paper_authorization",
+    "no_live_authorization",
+    "forward_shadow_must_pass_before_any_order_stage"
+  ]
+}

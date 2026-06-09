@@ -1,0 +1,6 @@
+event_id,event_time_utc,event_end_utc,label,category,impact,guard_before_min,guard_after_min,mode,event_gold_bias,safe_haven_score,real_yield_pressure,usd_pressure,oil_inflation_pressure,growth_fear_score,central_bank_demand_score,confidence,source_note
+fomc_2026_06_17,2026-06-17T18:00:00Z,2026-06-17T18:30:00Z,FOMC statement / SEP / press conference,central_bank,high,360,360,block,0,0,0,0,0,0,0,1,Federal Reserve scheduled FOMC meeting; verify exact statement time manually
+fomc_2026_07_29,2026-07-29T18:00:00Z,2026-07-29T18:30:00Z,FOMC statement,central_bank,high,360,360,block,0,0,0,0,0,0,0,1,Federal Reserve scheduled FOMC meeting; verify exact statement time manually
+fomc_2026_09_16,2026-09-16T18:00:00Z,2026-09-16T18:30:00Z,FOMC statement / SEP / press conference,central_bank,high,360,360,block,0,0,0,0,0,0,0,1,Federal Reserve scheduled FOMC meeting; verify exact statement time manually
+fomc_2026_10_28,2026-10-28T18:00:00Z,2026-10-28T18:30:00Z,FOMC statement,central_bank,high,360,360,block,0,0,0,0,0,0,0,1,Federal Reserve scheduled FOMC meeting; verify exact statement time manually
+fomc_2026_12_09,2026-12-09T19:00:00Z,2026-12-09T19:30:00Z,FOMC statement / SEP / press conference,central_bank,high,360,360,block,0,0,0,0,0,0,0,1,Federal Reserve scheduled FOMC meeting; verify exact statement time manually

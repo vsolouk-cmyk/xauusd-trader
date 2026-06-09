@@ -62,3 +62,7 @@ data/exports/
 *.sqlite
 *.sqlite-wal
 *.sqlite-shm
+
+# Stage 9 macro runtime outputs
+data/macro/
+data/reports/stage9b_*/

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-Stage 10E — Event-Aware Guard / Report Simulation
+Stage 10E v2 — Event-Aware Guard / Report Simulation with Input Audit
 
 Purpose:
 - Test whether validated event classes improve the Stage 8B/8D candidate as a report/guard layer.
+- Audit inputs explicitly, so missing Stage 10C numeric events cannot silently produce "no_effect".
 - Do NOT modify EA logic.
 - Do NOT authorize orders.
 
@@ -22,8 +23,8 @@ Outputs:
 - data/reports/stage10e_event_aware_guard_simulation/stage10e_candidate_trades_event_annotated.csv
 - data/reports/stage10e_event_aware_guard_simulation/stage10e_guard_policy_simulation.csv
 - data/reports/stage10e_event_aware_guard_simulation/stage10e_recent_event_dashboard.csv
+- data/reports/stage10e_event_aware_guard_simulation/stage10e_input_audit.json
 - data/reports/stage10e_event_aware_guard_simulation/stage10e_event_aware_guard_simulation.json
-- SQLite not required; this is a pure report/simulation stage.
 
 Hard rules:
 - Research/report/guard simulation only.
@@ -44,7 +45,7 @@ from statistics import median
 from typing import Dict, List, Optional, Sequence, Tuple
 
 
-TOOL_VERSION = "v1"
+TOOL_VERSION = "v2_input_audit"
 DEFAULT_STAGE8B_TRADES = Path("data/reports/stage8b_single_regime_thesis_lab/stage8b_single_regime_trades.csv")
 DEFAULT_NUMERIC_EVENTS = Path("data/macro/events/stage10c_numeric_shock_events.csv")
 DEFAULT_GDELT_EVENTS = Path("data/macro/events/stage10b_detected_shock_events.csv")
@@ -166,33 +167,45 @@ def load_rules(path: Path) -> List[EventRule]:
     return rules
 
 
-def load_events(paths: Sequence[Path]) -> List[Event]:
+def load_events_from_path(path: Path, source_kind_default: str) -> List[Event]:
+    out: List[Event] = []
     seen = set()
-    events: List[Event] = []
-    for p in paths:
-        for r in read_csv(p):
-            eid = (r.get("event_id") or "").strip()
-            if not eid:
-                eid = f"{r.get('event_time_utc','')}|{r.get('title','')}"
-            if eid in seen:
-                continue
-            t = parse_time(r.get("event_time_utc") or "")
-            if t is None:
-                continue
-            seen.add(eid)
-            events.append(Event(
-                event_id=eid,
-                event_time_utc=t,
-                event_class=(r.get("event_class") or "unknown").strip(),
-                event_channel=(r.get("event_channel") or "unknown").strip(),
-                expected_gold_direction=safe_int(r.get("expected_gold_direction"), 0),
-                initial_importance=safe_float(r.get("initial_importance"), 1.0),
-                confidence=safe_float(r.get("confidence"), 0.5),
-                source_name=(r.get("source_name") or "").strip(),
-                source_kind=(r.get("source_kind") or ("gdelt" if "gdelt" in p.name.lower() else "numeric")).strip(),
-                title=(r.get("title") or "").strip(),
-            ))
-    return sorted(events, key=lambda e: e.event_time_utc)
+    for r in read_csv(path):
+        eid = (r.get("event_id") or "").strip()
+        if not eid:
+            eid = f"{r.get('event_time_utc','')}|{r.get('title','')}"
+        if eid in seen:
+            continue
+        t = parse_time(r.get("event_time_utc") or "")
+        if t is None:
+            continue
+        seen.add(eid)
+        out.append(Event(
+            event_id=eid,
+            event_time_utc=t,
+            event_class=(r.get("event_class") or "unknown").strip(),
+            event_channel=(r.get("event_channel") or "unknown").strip(),
+            expected_gold_direction=safe_int(r.get("expected_gold_direction"), 0),
+            initial_importance=safe_float(r.get("initial_importance"), 1.0),
+            confidence=safe_float(r.get("confidence"), 0.5),
+            source_name=(r.get("source_name") or "").strip(),
+            source_kind=(r.get("source_kind") or source_kind_default).strip(),
+            title=(r.get("title") or "").strip(),
+        ))
+    return out
+
+
+def load_events(numeric_path: Path, gdelt_path: Path) -> Tuple[List[Event], List[Event], List[Event]]:
+    numeric = load_events_from_path(numeric_path, "numeric")
+    gdelt = load_events_from_path(gdelt_path, "gdelt")
+    seen = set()
+    all_events = []
+    for e in sorted(numeric + gdelt, key=lambda x: x.event_time_utc):
+        if e.event_id in seen:
+            continue
+        seen.add(e.event_id)
+        all_events.append(e)
+    return numeric, gdelt, all_events
 
 
 def rule_for_event(e: Event, rules: Sequence[EventRule]) -> Optional[EventRule]:
@@ -279,6 +292,52 @@ def summarize(vals: Sequence[float]) -> dict:
     }
 
 
+def annotated_event_counts(events: Sequence[Event], rules: Sequence[EventRule]) -> Dict[str, int]:
+    counts = {}
+    for e in events:
+        r = rule_for_event(e, rules)
+        key = "unmatched"
+        if r:
+            key = f"{e.event_class}|{e.event_channel}|{r.role}"
+        counts[key] = counts.get(key, 0) + 1
+    return counts
+
+
+def audit_inputs(numeric_path: Path, gdelt_path: Path, rules: Sequence[EventRule], numeric_events: Sequence[Event], gdelt_events: Sequence[Event], all_events: Sequence[Event]) -> Tuple[dict, List[str]]:
+    warnings: List[str] = []
+
+    guard_rules = [r for r in rules if r.role in {"directional_or_guard_candidate", "guard_candidate"}]
+    guard_classes = {(r.event_class, r.event_channel) for r in guard_rules}
+    guard_events = [e for e in all_events if (e.event_class, e.event_channel) in guard_classes]
+
+    numeric_guard_events = [e for e in numeric_events if (e.event_class, e.event_channel) in guard_classes]
+
+    if guard_rules and not numeric_path.exists():
+        warnings.append(f"Numeric event file missing: {numeric_path}. Run Stage 10C before Stage 10E.")
+    if guard_rules and len(numeric_guard_events) == 0:
+        warnings.append("No numeric events matched directional/guard rules. Yield-guard simulation will have no effect. Run Stage 10C again after copying Stage 10B artifacts.")
+    if len(gdelt_events) > 0 and len(numeric_events) == 0:
+        warnings.append("Only GDELT events are loaded. Current GDELT classes are monitoring-only, so guard policies will likely show no_effect.")
+
+    audit = {
+        "numeric_events_path": str(numeric_path),
+        "numeric_events_path_exists": numeric_path.exists(),
+        "gdelt_events_path": str(gdelt_path),
+        "gdelt_events_path_exists": gdelt_path.exists(),
+        "numeric_events_loaded": len(numeric_events),
+        "gdelt_events_loaded": len(gdelt_events),
+        "all_events_loaded": len(all_events),
+        "rules_loaded": len(rules),
+        "guard_rules_loaded": len(guard_rules),
+        "guard_event_classes": [f"{c}|{ch}" for c, ch in sorted(guard_classes)],
+        "guard_events_loaded": len(guard_events),
+        "numeric_guard_events_loaded": len(numeric_guard_events),
+        "event_counts_by_rule": annotated_event_counts(all_events, rules),
+        "warnings": warnings,
+    }
+    return audit, warnings
+
+
 def annotate_trades(trades: Sequence[dict], events: Sequence[Event], rules: Sequence[EventRule]) -> List[dict]:
     relevant_events = [(e, rule_for_event(e, rules)) for e in events]
     relevant_events = [(e, r) for e, r in relevant_events if r is not None]
@@ -313,10 +372,6 @@ def annotate_trades(trades: Sequence[dict], events: Sequence[Event], rules: Sequ
         rr["active_event_labels"] = ";".join(active)
         rr["guard_event_labels"] = ";".join(guard)
         rr["monitoring_event_labels"] = ";".join(monitoring)
-
-        # For a long-only technical candidate:
-        # expected_gold_direction = -1 means event is initially hostile to long gold.
-        # expected_gold_direction = +1 means event is supportive.
         rr["hostile_event_active"] = 1 if any(x < 0 for x in expected_dirs) else 0
         rr["supportive_event_active"] = 1 if any(x > 0 for x in expected_dirs) else 0
         out.append(rr)
@@ -329,7 +384,7 @@ def simulate_policies(annotated: Sequence[dict]) -> List[dict]:
 
     policies = []
     baseline = summarize(base_vals)
-    policies.append({"policy": "baseline_all_trades", "description": "No event filter", **baseline, "blocked_trades": 0, "kept_trades": baseline["trades"]})
+    policies.append({"policy": "baseline_all_trades", "description": "No event filter", **baseline, "blocked_trades": 0, "kept_trades": baseline["trades"], "blocked_pct": 0.0})
 
     def policy(name: str, desc: str, keep_fn):
         kept = [r for r in annotated if keep_fn(r)]
@@ -344,28 +399,11 @@ def simulate_policies(annotated: Sequence[dict]) -> List[dict]:
             "blocked_pct": round((len(annotated) - len(kept)) / len(annotated), 6) if annotated else 0.0,
         })
 
-    policy(
-        "block_any_validated_yield_event_window",
-        "Block trades during any validated yield-shock event window",
-        lambda r: safe_int(r.get("guard_event_active"), 0) == 0,
-    )
-    policy(
-        "block_hostile_yield_event_window_only",
-        "Block trades only when validated event is hostile to long gold",
-        lambda r: safe_int(r.get("hostile_event_active"), 0) == 0,
-    )
-    policy(
-        "take_only_supportive_yield_event_window",
-        "Take trades only when validated event is supportive to long gold",
-        lambda r: safe_int(r.get("supportive_event_active"), 0) == 1,
-    )
-    policy(
-        "take_only_no_validated_event_window",
-        "Take trades only when no validated event window is active",
-        lambda r: safe_int(r.get("guard_event_active"), 0) == 0,
-    )
+    policy("block_any_validated_yield_event_window", "Block trades during any validated yield-shock event window", lambda r: safe_int(r.get("guard_event_active"), 0) == 0)
+    policy("block_hostile_yield_event_window_only", "Block trades only when validated event is hostile to long gold", lambda r: safe_int(r.get("hostile_event_active"), 0) == 0)
+    policy("take_only_supportive_yield_event_window", "Take trades only when validated event is supportive to long gold", lambda r: safe_int(r.get("supportive_event_active"), 0) == 1)
+    policy("take_only_no_validated_event_window", "Take trades only when no validated event window is active", lambda r: safe_int(r.get("guard_event_active"), 0) == 0)
 
-    # Add deltas vs baseline.
     b = policies[0]
     for p in policies:
         p["delta_total_vs_baseline"] = round(p["total_x4"] - b["total_x4"], 6)
@@ -374,7 +412,7 @@ def simulate_policies(annotated: Sequence[dict]) -> List[dict]:
         if p["policy"] == "baseline_all_trades":
             p["decision_hint"] = "baseline"
         elif p["blocked_trades"] == 0:
-            p["decision_hint"] = "no_effect"
+            p["decision_hint"] = "no_effect_check_input_audit"
         elif p["trades"] < 20:
             p["decision_hint"] = "insufficient_remaining_sample"
         elif p["total_x4"] > b["total_x4"] and p["pf_x4"] >= b["pf_x4"] and p["dd_x4"] >= b["dd_x4"]:
@@ -408,9 +446,10 @@ def recent_event_dashboard(events: Sequence[Event], rules: Sequence[EventRule], 
     return sorted(out, key=lambda x: x["event_time_utc"], reverse=True)
 
 
-def write_report(out_dir: Path, payload: dict, policies: Sequence[dict], dashboard: Sequence[dict]) -> None:
+def write_report(out_dir: Path, payload: dict, policies: Sequence[dict], dashboard: Sequence[dict], audit: dict, warnings: Sequence[str]) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "stage10e_event_aware_guard_simulation.json").write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+    (out_dir / "stage10e_input_audit.json").write_text(json.dumps(audit, indent=2, ensure_ascii=False), encoding="utf-8")
 
     lines = [
         "# Stage 10E Event-Aware Guard / Report Simulation",
@@ -420,6 +459,23 @@ def write_report(out_dir: Path, payload: dict, policies: Sequence[dict], dashboa
         "",
         "> Hard rule: simulation only. This does not authorize demo, paper, or live orders.",
         "",
+        "## Input audit",
+        f"- numeric_events_path_exists: `{audit['numeric_events_path_exists']}`",
+        f"- numeric_events_loaded: `{audit['numeric_events_loaded']}`",
+        f"- gdelt_events_loaded: `{audit['gdelt_events_loaded']}`",
+        f"- all_events_loaded: `{audit['all_events_loaded']}`",
+        f"- guard_rules_loaded: `{audit['guard_rules_loaded']}`",
+        f"- guard_events_loaded: `{audit['guard_events_loaded']}`",
+        f"- numeric_guard_events_loaded: `{audit['numeric_guard_events_loaded']}`",
+    ]
+
+    if warnings:
+        lines += ["", "## Input warnings"]
+        for w in warnings:
+            lines.append(f"- `{w}`")
+
+    lines += [
+        "",
         "## Inputs",
         f"- stage8b_trades: `{payload['stage8b_trades']}`",
         f"- numeric_events: `{payload['numeric_events']}`",
@@ -427,7 +483,6 @@ def write_report(out_dir: Path, payload: dict, policies: Sequence[dict], dashboa
         f"- rules_config: `{payload['rules_config']}`",
         f"- raw_stage8b_trades_loaded: `{payload['raw_stage8b_trades_loaded']}`",
         f"- candidate_trades_loaded: `{payload['candidate_trades_loaded']}`",
-        f"- events_loaded: `{payload['events_loaded']}`",
         f"- rules_loaded: `{payload['rules_loaded']}`",
         "",
         "## Guard policy simulation",
@@ -461,10 +516,9 @@ def write_report(out_dir: Path, payload: dict, policies: Sequence[dict], dashboa
     lines += [
         "",
         "## Interpretation",
+        "- If `numeric_guard_events_loaded` is zero, yield-guard simulation is invalid and Stage 10C must be rerun.",
         "- A policy is useful only if it improves PF/drawdown without destroying trade count.",
-        "- If a policy mostly removes trades without improving robustness, it is filter-mining and must be rejected.",
         "- GDELT central-bank demand is monitoring-only until it has enough independent clusters.",
-        "- Validated yield-shock classes can be tested as report/guard candidates, not as automatic entries.",
         "",
         "## Decision",
         "- No EA change.",
@@ -485,7 +539,8 @@ def run(stage8b_trades: Path, numeric_events: Path, gdelt_events: Path, rules_co
     candidate_trades = [r for r in norm_trades if is_stage8d_candidate_trade(r)]
 
     rules = load_rules(rules_config)
-    events = load_events([numeric_events, gdelt_events])
+    numeric_loaded, gdelt_loaded, events = load_events(numeric_events, gdelt_events)
+    audit, warnings = audit_inputs(numeric_events, gdelt_events, rules, numeric_loaded, gdelt_loaded, events)
 
     annotated = annotate_trades(candidate_trades, events, rules)
     policies = simulate_policies(annotated)
@@ -505,15 +560,22 @@ def run(stage8b_trades: Path, numeric_events: Path, gdelt_events: Path, rules_co
         "raw_stage8b_trades_loaded": len(raw_trades),
         "normalized_trades_loaded": len(norm_trades),
         "candidate_trades_loaded": len(candidate_trades),
+        "numeric_events_loaded": len(numeric_loaded),
+        "gdelt_events_loaded": len(gdelt_loaded),
         "events_loaded": len(events),
         "rules_loaded": len(rules),
+        "audit": audit,
         "policies": policies,
         "recent_event_dashboard_rows": len(dashboard),
     }
-    write_report(out_dir, payload, policies, dashboard)
+    write_report(out_dir, payload, policies, dashboard, audit, warnings)
 
     print("Stage 10E event-aware guard simulation: DONE")
-    print(f"candidate_trades={len(candidate_trades)} events={len(events)} policies={len(policies)}")
+    print(f"candidate_trades={len(candidate_trades)} numeric_events={len(numeric_loaded)} gdelt_events={len(gdelt_loaded)} guard_events={audit['guard_events_loaded']} policies={len(policies)}")
+    if warnings:
+        print("WARNINGS:")
+        for w in warnings:
+            print(f"- {w}")
     print(f"Report: {out_dir / 'stage10e_event_aware_guard_simulation.md'}")
     return 0
 

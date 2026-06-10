@@ -1,31 +1,23 @@
 #!/usr/bin/env python3
 """
-Stage 10B — Event Pipeline Update v2
+Stage 10B — Event Pipeline Update v3
 
 Purpose:
-- Build the unified Stage 10A event file from:
+- Build unified Stage 10A event file from:
   1) scheduled calendar events
   2) manual/curated override events
   3) GDELT shock/news candidates
-- Make GDELT access rate-limit aware after probe results:
-  - fewer default queries
-  - delay between queries
-  - retry/backoff for HTTP 429
-  - per-query status CSV
-- Write workflow run metadata into the report artifact.
 
-Outputs:
-- data/config/stage10a_news_events.csv
-- data/macro/events/stage10b_scheduled_events_normalized.csv
-- data/macro/events/stage10b_detected_shock_events.csv
-- data/macro/events/stage10b_unified_news_events.csv
-- data/reports/stage10b_event_pipeline_update/stage10b_event_pipeline_update.md
-- data/reports/stage10b_event_pipeline_update/stage10b_gdelt_query_status.csv
-- data/reports/stage10b_event_pipeline_update/workflow_run_metadata.json
-- data/reports/stage10b_event_pipeline_update/workflow_run_metadata.md
-- SQLite:
-  event_pipeline_staging
-  event_pipeline_runs
+v3 fixes:
+- Query-intent classification:
+  GDELT titles can be non-English, so English keyword matching alone misses
+  central-bank / Fed / XAUUSD context. The query that retrieved the article is
+  now used as a weak but explicit classification prior.
+- Better GDELT quality control:
+  - drops obvious broker/marketing articles for XAUUSD query
+  - groups non-English central-bank buying stories as central_bank_gold_demand
+  - keeps per-query status and workflow metadata
+- Artifact metadata includes GitHub run id/run number.
 
 Hard rules:
 - Data/event collection only.
@@ -53,7 +45,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Tuple
 
 
-TOOL_VERSION = "v2_rate_limit_metadata"
+TOOL_VERSION = "v3_query_intent_classification"
 DEFAULT_DB = Path("data/local/xauusd_local_store.sqlite")
 DEFAULT_SCHEDULED = Path("data/config/stage9b_scheduled_events_seed.csv")
 DEFAULT_MANUAL = Path("data/config/stage10a_news_events_manual.csv")
@@ -85,6 +77,16 @@ class EventRow:
     notes: str
     source_kind: str
     dedupe_key: str
+
+
+@dataclass
+class QuerySpec:
+    query: str
+    default_event_class: str
+    default_event_channel: str
+    default_expected_gold_direction: int
+    default_importance: float
+    default_tag: str
 
 
 def now_iso() -> str:
@@ -130,6 +132,16 @@ def parse_time(v: str) -> Optional[datetime]:
         except Exception:
             pass
     return None
+
+
+def parse_gdelt_time(value: str) -> datetime:
+    t = parse_time(value)
+    if t is not None:
+        return t
+    try:
+        return datetime.strptime(str(value), "%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc)
+    except Exception:
+        return datetime.now(timezone.utc).replace(microsecond=0)
 
 
 def stable_hash(s: str, n: int = 14) -> str:
@@ -284,7 +296,23 @@ def normalize_manual(path: Path) -> List[EventRow]:
     return out
 
 
-def classify_news(title: str) -> Tuple[str, str, int, float, str]:
+def is_obvious_marketing(title: str, domain: str) -> bool:
+    text = f"{title} {domain}".lower()
+    bad = [
+        "trusted reputation",
+        "leverages",
+        "global markets",
+        "broker",
+        "trading platform",
+        "opens office",
+        "sponsored",
+        "press release",
+        "plotio",
+    ]
+    return any(x in text for x in bad)
+
+
+def classify_news_by_title(title: str) -> Optional[Tuple[str, str, int, float, str]]:
     text = title.lower()
 
     if any(w in text for w in ["ceasefire", "truce", "peace", "de-escalat", "deal", "talks"]):
@@ -301,14 +329,34 @@ def classify_news(title: str) -> Tuple[str, str, int, float, str]:
         return "usd_shock", "usd_pressure", -1, 1.0, "keyword_usd_strong"
     if any(w in text for w in ["dollar falls", "dollar weakens", "weak dollar", "dxy falls"]):
         return "usd_shock", "usd_pressure", 1, 1.0, "keyword_usd_weak"
-    if any(w in text for w in ["central bank", "gold reserves", "gold buying", "purchases gold", "net gold purchases"]):
+    if any(w in text for w in ["central bank", "gold reserves", "gold buying", "purchases gold", "net gold purchases", "world gold council"]):
         return "central_bank_gold_demand", "central_bank_demand", 1, 1.0, "keyword_central_bank_gold"
     if any(w in text for w in ["gold etf", "etf inflows", "etf outflows"]):
         return "etf_flow", "physical_demand", 0, 0.8, "keyword_etf"
     if any(w in text for w in ["jewellery", "physical demand", "gold demand", "china demand", "india demand"]):
         return "physical_demand", "physical_demand", 0, 0.8, "keyword_physical_demand"
 
-    return "market_news", "mixed_macro", 0, 0.5, "keyword_general"
+    return None
+
+
+def query_specs(query_mode: str) -> List[QuerySpec]:
+    if query_mode == "smoke":
+        return [QuerySpec("XAUUSD", "market_news", "mixed_macro", 0, 0.3, "query_xauusd")]
+
+    rate_safe = [
+        QuerySpec("XAUUSD", "market_news", "mixed_macro", 0, 0.3, "query_xauusd"),
+        QuerySpec("gold federal reserve", "fed_policy_gold_context", "real_yield_fed_path", 0, 0.9, "query_gold_federal_reserve"),
+        QuerySpec("gold central bank", "central_bank_gold_demand", "central_bank_demand", 1, 1.0, "query_gold_central_bank"),
+    ]
+    if query_mode == "rate_safe":
+        return rate_safe
+
+    return rate_safe + [
+        QuerySpec("gold dollar", "usd_shock", "usd_pressure", 0, 0.8, "query_gold_dollar"),
+        QuerySpec("gold yields", "nominal_yield_shock", "real_yield_fed_path", 0, 0.8, "query_gold_yields"),
+        QuerySpec("gold Iran Israel", "geopolitical_escalation", "safe_haven", 1, 1.0, "query_gold_iran_israel"),
+        QuerySpec("gold oil", "oil_supply_shock", "oil_inflation_pressure", 0, 0.8, "query_gold_oil"),
+    ]
 
 
 def build_ssl_context(ssl_mode: str):
@@ -325,36 +373,13 @@ def build_ssl_context(ssl_mode: str):
 
 
 def fetch_json(url: str, timeout: int, ssl_mode: str) -> dict:
-    req = urllib.request.Request(url, headers={"User-Agent": "xauusd-trader-stage10b/2.0"})
+    req = urllib.request.Request(url, headers={"User-Agent": "xauusd-trader-stage10b/3.0"})
     ctx = build_ssl_context(ssl_mode)
     if ctx is None:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             return json.loads(resp.read().decode("utf-8"))
     with urllib.request.urlopen(req, timeout=timeout, context=ctx) as resp:
         return json.loads(resp.read().decode("utf-8"))
-
-
-def gdelt_queries(query_mode: str) -> List[str]:
-    if query_mode == "smoke":
-        return ["XAUUSD"]
-
-    # Default is based on the probe: these worked in GitHub.
-    rate_safe = [
-        "XAUUSD",
-        "gold federal reserve",
-        "gold central bank",
-    ]
-    if query_mode == "rate_safe":
-        return rate_safe
-
-    # Extended mode is for manual testing only; more likely to trigger 429.
-    extended = rate_safe + [
-        "gold dollar",
-        "gold yields",
-        "gold Iran Israel",
-        "gold oil",
-    ]
-    return extended
 
 
 def gdelt_fetch_once(query: str, timespan: str, max_records: int, timeout: int, ssl_mode: str) -> Tuple[dict, str]:
@@ -367,18 +392,7 @@ def gdelt_fetch_once(query: str, timespan: str, max_records: int, timeout: int, 
         "sort": "HybridRel",
     }
     url = "https://api.gdeltproject.org/api/v2/doc/doc?" + urllib.parse.urlencode(params)
-    data = fetch_json(url, timeout=timeout, ssl_mode=ssl_mode)
-    return data, url
-
-
-def parse_gdelt_time(value: str) -> datetime:
-    t = parse_time(value)
-    if t is not None:
-        return t
-    try:
-        return datetime.strptime(str(value), "%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc)
-    except Exception:
-        return datetime.now(timezone.utc).replace(microsecond=0)
+    return fetch_json(url, timeout=timeout, ssl_mode=ssl_mode), url
 
 
 def fetch_gdelt(timespan: str, max_records: int, ssl_mode: str, timeout: int, retries: int, query_mode: str, query_delay: float) -> Tuple[List[EventRow], List[str], List[dict]]:
@@ -387,9 +401,9 @@ def fetch_gdelt(timespan: str, max_records: int, ssl_mode: str, timeout: int, re
     events: List[EventRow] = []
     seen_urls = set()
 
-    queries = gdelt_queries(query_mode)
+    specs = query_specs(query_mode)
 
-    for qi, q in enumerate(queries):
+    for qi, spec in enumerate(specs):
         if qi > 0 and query_delay > 0:
             time.sleep(query_delay)
 
@@ -401,7 +415,7 @@ def fetch_gdelt(timespan: str, max_records: int, ssl_mode: str, timeout: int, re
 
         for attempt in range(1, retries + 2):
             try:
-                data, url = gdelt_fetch_once(q, timespan, max_records, timeout, ssl_mode)
+                data, url = gdelt_fetch_once(spec.query, timespan, max_records, timeout, ssl_mode)
                 last_error = ""
                 http_status = "ok"
                 break
@@ -410,7 +424,6 @@ def fetch_gdelt(timespan: str, max_records: int, ssl_mode: str, timeout: int, re
                 last_error = f"HTTPError: HTTP Error {e.code}: {e.reason}"
                 if e.code == 429:
                     rate_limited = True
-                    # Longer backoff for 429.
                     if attempt <= retries:
                         time.sleep(15 * attempt)
                         continue
@@ -423,38 +436,51 @@ def fetch_gdelt(timespan: str, max_records: int, ssl_mode: str, timeout: int, re
                     time.sleep(min(8, 2 * attempt))
 
         if data is None:
-            warnings.append(f"GDELT fetch failed query={q}: {last_error}")
+            warnings.append(f"GDELT fetch failed query={spec.query}: {last_error}")
             query_status.append({
-                "query": q,
+                "query": spec.query,
                 "status": "rate_limited" if rate_limited else "error",
                 "http_status": http_status,
                 "articles": 0,
+                "kept": 0,
+                "dropped": 0,
                 "error": last_error,
                 "url": url,
             })
             continue
 
         articles = data.get("articles", []) if isinstance(data, dict) else []
-        query_status.append({
-            "query": q,
-            "status": "ok",
-            "http_status": http_status,
-            "articles": len(articles),
-            "error": "",
-            "url": url,
-        })
+        kept = 0
+        dropped = 0
 
         for a in articles:
             title = normalize_title(a.get("title") or "")
             article_url = (a.get("url") or "").strip()
-            if not title or not article_url or article_url in seen_urls:
-                continue
-            seen_urls.add(article_url)
-
-            t = parse_gdelt_time(a.get("seendate") or a.get("seenDate") or "")
-            event_class, channel, expected, importance, tag = classify_news(title)
-            eid = f"gdelt_{stable_hash(article_url)}"
             domain = (a.get("domain") or "").strip()
+
+            if not title or not article_url or article_url in seen_urls:
+                dropped += 1
+                continue
+
+            if spec.query == "XAUUSD" and is_obvious_marketing(title, domain):
+                dropped += 1
+                continue
+
+            seen_urls.add(article_url)
+            t = parse_gdelt_time(a.get("seendate") or a.get("seenDate") or "")
+
+            title_cls = classify_news_by_title(title)
+            if title_cls is None:
+                event_class = spec.default_event_class
+                channel = spec.default_event_channel
+                expected = spec.default_expected_gold_direction
+                importance = spec.default_importance
+                tag = spec.default_tag + ";query_intent_fallback"
+            else:
+                event_class, channel, expected, importance, tag = title_cls
+                tag = tag + ";" + spec.default_tag
+
+            eid = f"gdelt_{stable_hash(article_url)}"
             source_name = f"gdelt:{domain}" if domain else "gdelt"
 
             events.append(EventRow(
@@ -470,17 +496,28 @@ def fetch_gdelt(timespan: str, max_records: int, ssl_mode: str, timeout: int, re
                 source_name=source_name,
                 source_url_or_note=article_url,
                 manual_tags=f"gdelt;{tag};query_mode={query_mode}",
-                notes="Auto-detected news candidate; requires Stage 10A/10D validation before trust",
+                notes="Auto-detected news candidate; query-intent classification; requires Stage 10A/10D validation before trust",
                 source_kind="gdelt",
                 dedupe_key=dedupe_key(title, t.isoformat(), article_url),
             ))
+            kept += 1
+
+        query_status.append({
+            "query": spec.query,
+            "status": "ok",
+            "http_status": http_status,
+            "articles": len(articles),
+            "kept": kept,
+            "dropped": dropped,
+            "error": "",
+            "url": url,
+        })
 
     return events, warnings, query_status
 
 
 def merge_events(scheduled: Sequence[EventRow], manual: Sequence[EventRow], shocks: Sequence[EventRow]) -> List[EventRow]:
     merged: Dict[str, EventRow] = {}
-    # Manual last to override dedupe collision.
     for e in list(scheduled) + list(shocks) + list(manual):
         merged[e.dedupe_key] = e
     return sorted(merged.values(), key=lambda e: (e.event_time_utc, e.source_kind, e.event_id))
@@ -582,7 +619,7 @@ def write_workflow_metadata(report_dir: Path, meta: Dict[str, str]) -> None:
 def write_report(report_dir: Path, payload: dict, warnings: Sequence[str], unified: Sequence[EventRow], query_status: Sequence[dict], meta: Dict[str, str]) -> None:
     report_dir.mkdir(parents=True, exist_ok=True)
     (report_dir / "stage10b_event_pipeline_update.json").write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
-    write_csv(report_dir / "stage10b_gdelt_query_status.csv", list(query_status), ["query", "status", "http_status", "articles", "error", "url"])
+    write_csv(report_dir / "stage10b_gdelt_query_status.csv", list(query_status), ["query", "status", "http_status", "articles", "kept", "dropped", "error", "url"])
     write_workflow_metadata(report_dir, meta)
 
     counts_by_kind: Dict[str, int] = {}
@@ -618,16 +655,19 @@ def write_report(report_dir: Path, payload: dict, warnings: Sequence[str], unifi
         f"- query_delay_sec: `{payload['gdelt_query_delay']}`",
         "",
         "## GDELT query status",
-        "| Query | Status | HTTP | Articles | Error |",
-        "|---|---|---|---:|---|",
+        "| Query | Status | HTTP | Articles | Kept | Dropped | Error |",
+        "|---|---|---|---:|---:|---:|---|",
     ]
 
     if query_status:
         for q in query_status:
             err = str(q.get("error", "")).replace("|", "/")[:160]
-            lines.append(f"| {q.get('query','')} | {q.get('status','')} | {q.get('http_status','')} | {q.get('articles',0)} | {err} |")
+            lines.append(
+                f"| {q.get('query','')} | {q.get('status','')} | {q.get('http_status','')} | "
+                f"{q.get('articles',0)} | {q.get('kept',0)} | {q.get('dropped',0)} | {err} |"
+            )
     else:
-        lines.append("| none | none | none | 0 | not run |")
+        lines.append("| none | none | none | 0 | 0 | 0 | not run |")
 
     lines += [
         "",

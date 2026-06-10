@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 """
-Stage 12A v2 — Consolidated Forward-Shadow Report with Input Resilience
+Stage 12A v3 — Consolidated Forward-Shadow Report with Signal File State
 
-v2 fixes:
-- Adds input completeness audit.
-- Scans fallback report paths instead of relying on one exact directory.
-- Reads macro context directly from local SQLite when report files are missing.
-- Reads Stage 10E policy from fallback locations; if missing, falls back to Stage 10D validation summary.
-- Allows explicit MT5/EA long-signal CSV path with --long-signal-csv or XAUUSD_LONG_SIGNAL_CSV.
+v3 changes:
+- Distinguishes long signal path states:
+  1) no_signal_file_path_found
+  2) signal_file_found_zero_rows
+  3) signal_file_found_header_only
+  4) signal_file_found_with_rows
+  5) signal_file_found_unparsed_text
+- Keeps report authorization flags unchanged.
+- Does not change EA, order logic, or strategy.
 
 Hard rules:
 - Report only.
@@ -25,12 +28,12 @@ import os
 import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 import pandas as pd
 
 
-TOOL_VERSION = "v2_input_resilience"
+TOOL_VERSION = "v3_signal_file_state"
 DEFAULT_OUT_DIR = Path("data/reports/stage12a_consolidated_forward_shadow_report")
 DEFAULT_DB = Path("data/local/xauusd_local_store.sqlite")
 
@@ -39,7 +42,7 @@ def now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
 
-def first_existing(paths: Iterable[Path]) -> Optional[Path]:
+def first_existing(paths: Iterable[Optional[Path]]) -> Optional[Path]:
     for p in paths:
         if p and p.exists():
             return p
@@ -75,6 +78,30 @@ def read_json(path: Optional[Path]) -> Dict[str, Any]:
         return {"_read_error": str(e), "_path": str(path)}
 
 
+def decode_bytes(raw: bytes) -> Tuple[str, str]:
+    if raw.startswith(b"\xff\xfe"):
+        try:
+            return raw.decode("utf-16"), "utf-16"
+        except Exception:
+            pass
+    if raw.startswith(b"\xfe\xff"):
+        try:
+            return raw.decode("utf-16-be"), "utf-16-be"
+        except Exception:
+            pass
+    if raw.startswith(b"\xef\xbb\xbf"):
+        try:
+            return raw.decode("utf-8-sig"), "utf-8-sig"
+        except Exception:
+            pass
+    for enc in ["utf-8-sig", "utf-8", "utf-16", "cp1252", "latin1"]:
+        try:
+            return raw.decode(enc), enc
+        except Exception:
+            continue
+    return raw.decode("latin1", errors="replace"), "latin1-replace"
+
+
 def read_csv_rows(path: Optional[Path]) -> List[dict]:
     if not path or not path.exists():
         return []
@@ -82,10 +109,91 @@ def read_csv_rows(path: Optional[Path]) -> List[dict]:
         return pd.read_csv(path).fillna("").to_dict(orient="records")
     except Exception:
         try:
-            text = path.read_text(encoding="utf-8-sig", errors="replace")
+            raw = path.read_bytes()
+            text, _ = decode_bytes(raw)
             return list(csv.DictReader(text.splitlines()))
         except Exception:
             return []
+
+
+def probe_signal_file(path: Path) -> Dict[str, Any]:
+    rec: Dict[str, Any] = {
+        "path": str(path),
+        "exists": path.exists(),
+    }
+    if not path.exists() or not path.is_file():
+        rec.update({
+            "state": "file_missing",
+            "rows": 0,
+            "headers": [],
+            "size_bytes": 0,
+            "encoding_detected": "",
+            "latest": {},
+        })
+        return rec
+
+    raw = path.read_bytes()
+    text, enc = decode_bytes(raw)
+    stripped = text.strip("\ufeff\r\n\t ")
+    rec["size_bytes"] = len(raw)
+    rec["encoding_detected"] = enc
+    rec["raw_hex_prefix"] = raw[:16].hex()
+
+    if len(raw) == 0:
+        rec.update({"state": "file_exists_empty", "rows": 0, "headers": [], "latest": {}})
+        return rec
+
+    if len(raw) <= 3 and stripped == "":
+        rec.update({"state": "file_exists_bom_only", "rows": 0, "headers": [], "latest": {}})
+        return rec
+
+    lines = [ln for ln in text.splitlines() if ln.strip()]
+    if not lines:
+        rec.update({"state": "file_exists_no_text_rows", "rows": 0, "headers": [], "latest": {}})
+        return rec
+
+    try:
+        reader = csv.DictReader(lines)
+        rows = list(reader)
+        headers = list(reader.fieldnames or [])
+    except Exception:
+        rows = []
+        headers = []
+
+    if headers and not rows:
+        rec.update({"state": "file_exists_header_only", "rows": 0, "headers": headers, "latest": {}})
+        return rec
+
+    if rows:
+        cols = rows[0].keys()
+        time_col = ""
+        for c in ["signal_utc", "time_utc", "timestamp_utc", "utc_time", "created_utc", "entry_utc"]:
+            if c in cols:
+                time_col = c
+                break
+        latest = rows[-1]
+        if time_col:
+            try:
+                latest = sorted(rows, key=lambda r: str(r.get(time_col, "")))[-1]
+            except Exception:
+                latest = rows[-1]
+        rec.update({
+            "state": "file_exists_with_rows",
+            "rows": len(rows),
+            "headers": headers,
+            "time_col": time_col,
+            "latest": latest,
+        })
+        return rec
+
+    rec.update({
+        "state": "file_exists_unparsed_text",
+        "rows": 0,
+        "headers": [],
+        "latest": {},
+        "text_preview": lines[:5],
+    })
+    return rec
 
 
 def sqlite_table_exists(conn: sqlite3.Connection, table: str) -> bool:
@@ -96,7 +204,6 @@ def sqlite_table_exists(conn: sqlite3.Connection, table: str) -> bool:
 def latest_macro_from_db(db_path: Path) -> Dict[str, Any]:
     if not db_path.exists():
         return {"status": "missing", "source": "db_missing", "db_path": str(db_path)}
-
     try:
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
@@ -133,17 +240,14 @@ def latest_macro_from_db(db_path: Path) -> Dict[str, Any]:
         out["error"] = str(e)
     finally:
         conn.close()
-
     return out
 
 
 def summarize_macro(db_path: Path) -> Dict[str, Any]:
-    # Prefer direct DB because reports may be archived.
     db_macro = latest_macro_from_db(db_path)
     if db_macro.get("status") == "available":
         return db_macro
 
-    # Fallback to report JSONs.
     p = glob_first([
         "data/reports/stage9d*/**/*.json",
         "data/reports/stage9c*/**/*.json",
@@ -217,7 +321,6 @@ def summarize_event_guard() -> Dict[str, Any]:
             "conclusion": "Stage 10E did not justify yield/news guard" if not any_candidate else "Review required; do not enable automatically",
         }
 
-    # Fallback: Stage10D says impact classes, but not guard effect on strategy.
     summary_path = first_existing([
         Path("data/reports/stage10d_event_impact_validation_lab/stage10d_event_class_validation_summary.csv"),
         glob_first(["archive/**/data/reports/stage10d_event_impact_validation_lab/stage10d_event_class_validation_summary.csv"]),
@@ -227,7 +330,6 @@ def summarize_event_guard() -> Dict[str, Any]:
     for r in rows:
         v = str(r.get("Verdict", r.get("verdict", "unknown")) or "unknown")
         verdict_counts[v] = verdict_counts.get(v, 0) + 1
-
     if rows:
         return {
             "status": "available_partial",
@@ -238,11 +340,7 @@ def summarize_event_guard() -> Dict[str, Any]:
             "conclusion": "Stage 10D validated event impact classes, but no Stage 10E guard policy is active; event/news remains report-only",
         }
 
-    return {
-        "status": "missing",
-        "decision": "no_event_guard_active",
-        "conclusion": "event/news guard not enabled",
-    }
+    return {"status": "missing", "decision": "no_event_guard_active", "conclusion": "event/news guard not enabled"}
 
 
 def summarize_short_watchlist() -> Dict[str, Any]:
@@ -285,7 +383,6 @@ def summarize_short_watchlist() -> Dict[str, Any]:
 
 def signal_candidate_paths(explicit_paths: List[str]) -> List[Path]:
     paths: List[Path] = []
-
     for s in explicit_paths:
         if s:
             paths.append(Path(s).expanduser())
@@ -294,7 +391,6 @@ def signal_candidate_paths(explicit_paths: List[str]) -> List[Path]:
     if env_p:
         paths.append(Path(env_p).expanduser())
 
-    # Repo-local fallback.
     paths.extend(glob_all([
         "data/**/*regime_shadow*signal*.csv",
         "data/**/*forward*signal*.csv",
@@ -303,11 +399,11 @@ def signal_candidate_paths(explicit_paths: List[str]) -> List[Path]:
         "data/**/*DryRun*signal*.csv",
     ]))
 
-    # Common MT5/Wine-ish fallback candidates. These may or may not exist.
     home = Path.home()
     paths.extend([
         home / "Library/Application Support/MetaQuotes/Terminal/Common/Files/XAUUSD_DryRun_v2_regime_shadow_signals.csv",
         home / "Library/Application Support/MetaQuotes/Terminal/Common/Files/XAUUSD_DryRun_v2_RegimeShadow_signals.csv",
+        home / "Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/users/user/AppData/Roaming/MetaQuotes/Terminal/Common/Files/XAUUSD_DryRun_v2_regime_shadow_signals.csv",
     ])
 
     uniq = []
@@ -320,33 +416,31 @@ def signal_candidate_paths(explicit_paths: List[str]) -> List[Path]:
     return uniq
 
 
-def summarize_signal_file(path: Path) -> Dict[str, Any]:
-    rows = read_csv_rows(path)
-    if not rows:
-        return {"path": str(path), "exists": path.exists(), "rows": 0}
-    cols = rows[0].keys()
-    time_col = ""
-    for c in ["signal_utc", "time_utc", "timestamp_utc", "utc_time", "created_utc", "entry_utc"]:
-        if c in cols:
-            time_col = c
-            break
-    latest = rows[-1]
-    if time_col:
-        try:
-            latest = sorted(rows, key=lambda r: str(r.get(time_col, "")))[-1]
-        except Exception:
-            latest = rows[-1]
-    return {"path": str(path), "exists": True, "rows": len(rows), "time_col": time_col, "latest": latest}
-
-
-def summarize_long_signals(explicit_paths: List[str]) -> List[Dict[str, Any]]:
-    out = []
+def summarize_long_signals(explicit_paths: List[str]) -> Dict[str, Any]:
+    probes = []
     for p in signal_candidate_paths(explicit_paths):
         if p.exists() and p.is_file():
-            s = summarize_signal_file(p)
-            if s.get("rows", 0) > 0:
-                out.append(s)
-    return sorted(out, key=lambda x: int(x.get("rows", 0)), reverse=True)[:5]
+            probes.append(probe_signal_file(p))
+
+    with_rows = [p for p in probes if p.get("state") == "file_exists_with_rows"]
+    zero_like = [p for p in probes if p.get("state") in {"file_exists_empty", "file_exists_bom_only", "file_exists_no_text_rows", "file_exists_header_only"}]
+    unparsed = [p for p in probes if p.get("state") == "file_exists_unparsed_text"]
+
+    if with_rows:
+        state = "signal_file_found_with_rows"
+    elif zero_like:
+        state = "signal_file_found_zero_rows"
+    elif unparsed:
+        state = "signal_file_found_unparsed_text"
+    else:
+        state = "no_signal_file_path_found"
+
+    return {
+        "state": state,
+        "file_found": bool(probes),
+        "rows_available": bool(with_rows),
+        "files": probes[:5],
+    }
 
 
 def authorization_flags() -> Dict[str, bool]:
@@ -362,8 +456,10 @@ def authorization_flags() -> Dict[str, bool]:
 
 
 def input_audit(payload: Dict[str, Any]) -> Dict[str, Any]:
+    long_state = payload.get("long_signal_state", {})
     return {
-        "long_signal_available": bool(payload.get("long_signal_files")),
+        "long_signal_file_found": bool(long_state.get("file_found")),
+        "long_signal_rows_available": bool(long_state.get("rows_available")),
         "macro_available": payload.get("macro", {}).get("status") == "available",
         "gdelt_available": payload.get("gdelt", {}).get("status") == "available",
         "event_guard_available": payload.get("event_guard", {}).get("status") in {"available", "available_partial"},
@@ -380,7 +476,7 @@ def write_report(out_dir: Path, payload: Dict[str, Any]) -> Path:
     gdelt = payload["gdelt"]
     event_guard = payload["event_guard"]
     short_watch = payload["short_watchlist"]
-    signal_files = payload["long_signal_files"]
+    long_state = payload["long_signal_state"]
     flags = payload["authorization_flags"]
     audit = payload["input_audit"]
 
@@ -413,19 +509,29 @@ def write_report(out_dir: Path, payload: Dict[str, Any]) -> Path:
         f"| Observe only | `{flags['observe_only']}` |",
         "",
         "## Long v2 forward-shadow state",
+        f"- state: `{long_state.get('state')}`",
+        f"- file_found: `{long_state.get('file_found')}`",
+        f"- rows_available: `{long_state.get('rows_available')}`",
+        "",
+        "| Signal file | State | Rows | Size bytes | Encoding | Latest summary |",
+        "|---|---|---:|---:|---|---|",
     ]
 
-    if signal_files:
-        lines += [
-            "| Signal file | Rows | Time column | Latest summary |",
-            "|---|---:|---|---|",
-        ]
-        for s in signal_files:
+    files = long_state.get("files", [])
+    if files:
+        for s in files:
             latest = s.get("latest", {})
             compact = "; ".join([f"{k}={v}" for k, v in list(latest.items())[:8]])
-            lines.append(f"| `{s.get('path')}` | {s.get('rows')} | `{s.get('time_col')}` | {compact} |")
+            lines.append(
+                f"| `{s.get('path')}` | `{s.get('state')}` | {s.get('rows')} | {s.get('size_bytes')} | "
+                f"`{s.get('encoding_detected')}` | {compact} |"
+            )
     else:
-        lines.append("- No local long-signal CSV found. Pass it with `--long-signal-csv /path/to/XAUUSD_DryRun_v2_regime_shadow_signals.csv` if it is in MT5 Common Files.")
+        lines.append("| none | `no_signal_file_path_found` | 0 | 0 |  |  |")
+
+    if long_state.get("state") == "signal_file_found_zero_rows":
+        lines.append("")
+        lines.append("- Interpretation: EA signal file exists, but no signal rows have been logged yet. This is not a trade signal and not an error.")
 
     lines += ["", "## Macro context"]
     lines.append(f"- status: `{macro.get('status')}`")
@@ -479,6 +585,7 @@ def write_report(out_dir: Path, payload: Dict[str, Any]) -> Path:
         "",
         "## Operational interpretation",
         "- Long-only validated forward-shadow remains the main active research/monitoring path.",
+        "- If the long signal file is found with zero rows, the EA has created the file but has not logged a qualifying signal yet.",
         "- Macro/news and central-bank-demand events remain monitoring/report-only.",
         "- Stage 10E/10D does not enable a yield/news guard.",
         "- Stage 11 short-side candidates are recent-regime watchlist only, not EA rules.",
@@ -495,6 +602,7 @@ def write_report(out_dir: Path, payload: Dict[str, Any]) -> Path:
 
 
 def run(out_dir: Path, db_path: Path, long_signal_csv: List[str]) -> int:
+    long_state = summarize_long_signals(long_signal_csv)
     payload: Dict[str, Any] = {
         "tool_version": TOOL_VERSION,
         "generated_utc": now_iso(),
@@ -502,7 +610,7 @@ def run(out_dir: Path, db_path: Path, long_signal_csv: List[str]) -> int:
             "db_path": str(db_path),
             "long_signal_csv": long_signal_csv,
         },
-        "long_signal_files": summarize_long_signals(long_signal_csv),
+        "long_signal_state": long_state,
         "macro": summarize_macro(db_path),
         "gdelt": summarize_gdelt(),
         "event_guard": summarize_event_guard(),
@@ -514,6 +622,7 @@ def run(out_dir: Path, db_path: Path, long_signal_csv: List[str]) -> int:
     md_path = write_report(out_dir, payload)
     print("Stage 12A consolidated forward-shadow report: DONE")
     print(f"tool_version={TOOL_VERSION}")
+    print(f"long_signal_state={payload['long_signal_state'].get('state')}")
     print(f"input_audit={payload['input_audit']}")
     print(f"trade_authorization={payload['authorization_flags']['trade_authorization']} observe_only={payload['authorization_flags']['observe_only']}")
     print(f"Report: {md_path}")

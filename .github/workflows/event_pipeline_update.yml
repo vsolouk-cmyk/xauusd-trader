@@ -8,7 +8,7 @@ on:
 jobs:
   event-pipeline-update:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 20
     permissions:
       contents: read
     steps:
@@ -22,12 +22,18 @@ jobs:
 
       - name: Run event pipeline update
         run: |
-          python -m app.stage10b_event_pipeline_update --gdelt-timespan 48h --gdelt-max-records 40
+          python -m app.stage10b_event_pipeline_update \
+            --gdelt-timespan 7d \
+            --gdelt-max-records 10 \
+            --gdelt-query-mode rate_safe \
+            --gdelt-timeout 60 \
+            --gdelt-retries 2 \
+            --gdelt-query-delay 20
 
       - name: Upload event pipeline artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: xauusd-event-pipeline-update
+          name: xauusd-event-pipeline-update-run-${{ github.run_number }}
           path: |
             data/config/stage10a_news_events.csv
             data/macro/events/

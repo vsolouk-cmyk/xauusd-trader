@@ -1,20 +1,18 @@
 #!/usr/bin/env python3
 """
-Stage 10B — Event Pipeline Update
+Stage 10B — Event Pipeline Update v2
 
 Purpose:
-- Remove manual-only event entry.
-- Collect/normalize/merge:
-  1) Scheduled calendar events
-  2) Manual/curated events
-  3) Shock/news events from GDELT DOC API
-- Write unified Stage 10A event CSV.
-- Store event staging data in local SQLite.
-
-Inputs:
-- data/config/stage9b_scheduled_events_seed.csv
-- data/config/stage10a_news_events_manual.csv
-- optional GDELT fetch
+- Build the unified Stage 10A event file from:
+  1) scheduled calendar events
+  2) manual/curated override events
+  3) GDELT shock/news candidates
+- Make GDELT access rate-limit aware after probe results:
+  - fewer default queries
+  - delay between queries
+  - retry/backoff for HTTP 429
+  - per-query status CSV
+- Write workflow run metadata into the report artifact.
 
 Outputs:
 - data/config/stage10a_news_events.csv
@@ -22,6 +20,9 @@ Outputs:
 - data/macro/events/stage10b_detected_shock_events.csv
 - data/macro/events/stage10b_unified_news_events.csv
 - data/reports/stage10b_event_pipeline_update/stage10b_event_pipeline_update.md
+- data/reports/stage10b_event_pipeline_update/stage10b_gdelt_query_status.csv
+- data/reports/stage10b_event_pipeline_update/workflow_run_metadata.json
+- data/reports/stage10b_event_pipeline_update/workflow_run_metadata.md
 - SQLite:
   event_pipeline_staging
   event_pipeline_runs
@@ -42,6 +43,8 @@ import json
 import os
 import sqlite3
 import ssl
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass, asdict
@@ -50,14 +53,13 @@ from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Tuple
 
 
-TOOL_VERSION = "v1"
+TOOL_VERSION = "v2_rate_limit_metadata"
 DEFAULT_DB = Path("data/local/xauusd_local_store.sqlite")
 DEFAULT_SCHEDULED = Path("data/config/stage9b_scheduled_events_seed.csv")
 DEFAULT_MANUAL = Path("data/config/stage10a_news_events_manual.csv")
 DEFAULT_OUT_EVENTS = Path("data/config/stage10a_news_events.csv")
 DEFAULT_EVENTS_DIR = Path("data/macro/events")
 DEFAULT_REPORT_DIR = Path("data/reports/stage10b_event_pipeline_update")
-
 
 STAGE10A_HEADER = [
     "event_id", "event_time_utc", "event_end_utc", "title", "event_class", "event_channel",
@@ -89,6 +91,26 @@ def now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
 
+def workflow_metadata() -> Dict[str, str]:
+    keys = [
+        "GITHUB_WORKFLOW",
+        "GITHUB_RUN_ID",
+        "GITHUB_RUN_NUMBER",
+        "GITHUB_RUN_ATTEMPT",
+        "GITHUB_JOB",
+        "GITHUB_REF",
+        "GITHUB_SHA",
+        "GITHUB_REPOSITORY",
+        "GITHUB_ACTOR",
+        "GITHUB_EVENT_NAME",
+        "RUNNER_OS",
+    ]
+    out = {k: os.environ.get(k, "") for k in keys}
+    out["generated_utc"] = now_iso()
+    out["tool_version"] = TOOL_VERSION
+    return out
+
+
 def parse_time(v: str) -> Optional[datetime]:
     if v is None:
         return None
@@ -110,6 +132,10 @@ def parse_time(v: str) -> Optional[datetime]:
     return None
 
 
+def stable_hash(s: str, n: int = 14) -> str:
+    return hashlib.sha1(s.encode("utf-8", errors="ignore")).hexdigest()[:n]
+
+
 def safe_float(v, default=0.0) -> float:
     try:
         if v is None or str(v).strip() == "":
@@ -126,10 +152,6 @@ def safe_int(v, default=0) -> int:
         return int(float(str(v).strip()))
     except Exception:
         return default
-
-
-def stable_hash(s: str, n: int = 14) -> str:
-    return hashlib.sha1(s.encode("utf-8", errors="ignore")).hexdigest()[:n]
 
 
 def dedupe_key(title: str, t: str, url: str = "") -> str:
@@ -265,39 +287,25 @@ def normalize_manual(path: Path) -> List[EventRow]:
 def classify_news(title: str) -> Tuple[str, str, int, float, str]:
     text = title.lower()
 
-    escalation_words = ["attack", "strike", "missile", "war", "escalat", "invasion", "conflict", "retaliat", "drone"]
-    deescalation_words = ["ceasefire", "truce", "peace", "de-escalat", "deal", "talks", "halt attacks"]
-    oil_words = ["oil", "brent", "wti", "hormuz", "opec", "supply disruption", "tanker"]
-    fed_hawkish_words = ["hawkish", "rate hike", "higher for longer", "inflation hot", "yields rise", "fed warns"]
-    fed_dovish_words = ["dovish", "rate cut", "cuts", "inflation cool", "yields fall", "fed easing"]
-    usd_strong_words = ["dollar rises", "dollar strengthens", "strong dollar", "dxy rises"]
-    usd_weak_words = ["dollar falls", "dollar weakens", "weak dollar", "dxy falls"]
-    cb_words = ["central bank", "gold reserves", "gold buying", "purchases gold"]
-    etf_words = ["gold etf", "etf inflows", "etf outflows"]
-    demand_words = ["jewellery", "physical demand", "gold demand", "china demand", "india demand"]
-
-    def has(words):
-        return any(w in text for w in words)
-
-    if has(deescalation_words):
+    if any(w in text for w in ["ceasefire", "truce", "peace", "de-escalat", "deal", "talks"]):
         return "geopolitical_deescalation", "safe_haven", -1, 1.5, "keyword_deescalation"
-    if has(escalation_words):
+    if any(w in text for w in ["attack", "strike", "missile", "war", "escalat", "conflict", "retaliat", "drone"]):
         return "geopolitical_escalation", "safe_haven", 1, 1.5, "keyword_escalation"
-    if has(oil_words):
+    if any(w in text for w in ["oil", "brent", "wti", "hormuz", "opec", "supply disruption", "tanker"]):
         return "oil_supply_shock", "oil_inflation_pressure", 0, 1.2, "keyword_oil"
-    if has(fed_hawkish_words):
+    if any(w in text for w in ["hawkish", "rate hike", "higher for longer", "inflation hot", "yields rise", "fed warns"]):
         return "fed_speech_hawkish", "real_yield_fed_path", -1, 1.2, "keyword_fed_hawkish"
-    if has(fed_dovish_words):
+    if any(w in text for w in ["dovish", "rate cut", "cuts", "inflation cool", "yields fall", "fed easing"]):
         return "fed_speech_dovish", "real_yield_fed_path", 1, 1.2, "keyword_fed_dovish"
-    if has(usd_strong_words):
+    if any(w in text for w in ["dollar rises", "dollar strengthens", "strong dollar", "dxy rises"]):
         return "usd_shock", "usd_pressure", -1, 1.0, "keyword_usd_strong"
-    if has(usd_weak_words):
+    if any(w in text for w in ["dollar falls", "dollar weakens", "weak dollar", "dxy falls"]):
         return "usd_shock", "usd_pressure", 1, 1.0, "keyword_usd_weak"
-    if has(cb_words):
+    if any(w in text for w in ["central bank", "gold reserves", "gold buying", "purchases gold", "net gold purchases"]):
         return "central_bank_gold_demand", "central_bank_demand", 1, 1.0, "keyword_central_bank_gold"
-    if has(etf_words):
+    if any(w in text for w in ["gold etf", "etf inflows", "etf outflows"]):
         return "etf_flow", "physical_demand", 0, 0.8, "keyword_etf"
-    if has(demand_words):
+    if any(w in text for w in ["jewellery", "physical demand", "gold demand", "china demand", "india demand"]):
         return "physical_demand", "physical_demand", 0, 0.8, "keyword_physical_demand"
 
     return "market_news", "mixed_macro", 0, 0.5, "keyword_general"
@@ -316,8 +324,8 @@ def build_ssl_context(ssl_mode: str):
     return None
 
 
-def fetch_json(url: str, timeout: int = 25, ssl_mode: str = "default") -> dict:
-    req = urllib.request.Request(url, headers={"User-Agent": "xauusd-trader-stage10b/1.0"})
+def fetch_json(url: str, timeout: int, ssl_mode: str) -> dict:
+    req = urllib.request.Request(url, headers={"User-Agent": "xauusd-trader-stage10b/2.0"})
     ctx = build_ssl_context(ssl_mode)
     if ctx is None:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
@@ -326,35 +334,116 @@ def fetch_json(url: str, timeout: int = 25, ssl_mode: str = "default") -> dict:
         return json.loads(resp.read().decode("utf-8"))
 
 
-def fetch_gdelt(timespan: str, max_records: int, ssl_mode: str) -> Tuple[List[EventRow], List[str]]:
-    warnings: List[str] = []
-    events: List[EventRow] = []
+def gdelt_queries(query_mode: str) -> List[str]:
+    if query_mode == "smoke":
+        return ["XAUUSD"]
 
-    queries = [
-        '("gold" OR "XAUUSD") ("Federal Reserve" OR Fed OR inflation OR yields OR dollar)',
-        '("gold" OR "XAUUSD") (Iran OR Israel OR "Middle East" OR oil OR Hormuz OR ceasefire OR sanctions)',
-        '("gold" OR "XAUUSD") ("central bank" OR ETF OR demand OR reserves)',
+    # Default is based on the probe: these worked in GitHub.
+    rate_safe = [
+        "XAUUSD",
+        "gold federal reserve",
+        "gold central bank",
     ]
+    if query_mode == "rate_safe":
+        return rate_safe
 
+    # Extended mode is for manual testing only; more likely to trigger 429.
+    extended = rate_safe + [
+        "gold dollar",
+        "gold yields",
+        "gold Iran Israel",
+        "gold oil",
+    ]
+    return extended
+
+
+def gdelt_fetch_once(query: str, timespan: str, max_records: int, timeout: int, ssl_mode: str) -> Tuple[dict, str]:
+    params = {
+        "query": query,
+        "mode": "ArtList",
+        "format": "json",
+        "maxrecords": str(max_records),
+        "timespan": timespan,
+        "sort": "HybridRel",
+    }
+    url = "https://api.gdeltproject.org/api/v2/doc/doc?" + urllib.parse.urlencode(params)
+    data = fetch_json(url, timeout=timeout, ssl_mode=ssl_mode)
+    return data, url
+
+
+def parse_gdelt_time(value: str) -> datetime:
+    t = parse_time(value)
+    if t is not None:
+        return t
+    try:
+        return datetime.strptime(str(value), "%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc)
+    except Exception:
+        return datetime.now(timezone.utc).replace(microsecond=0)
+
+
+def fetch_gdelt(timespan: str, max_records: int, ssl_mode: str, timeout: int, retries: int, query_mode: str, query_delay: float) -> Tuple[List[EventRow], List[str], List[dict]]:
+    warnings: List[str] = []
+    query_status: List[dict] = []
+    events: List[EventRow] = []
     seen_urls = set()
 
-    for q in queries:
-        params = {
-            "query": q,
-            "mode": "ArtList",
-            "format": "json",
-            "maxrecords": str(max_records),
-            "timespan": timespan,
-            "sort": "HybridRel",
-        }
-        url = "https://api.gdeltproject.org/api/v2/doc/doc?" + urllib.parse.urlencode(params)
-        try:
-            data = fetch_json(url, ssl_mode=ssl_mode)
-        except Exception as e:
-            warnings.append(f"GDELT fetch failed for query={q}: {type(e).__name__}: {e}")
+    queries = gdelt_queries(query_mode)
+
+    for qi, q in enumerate(queries):
+        if qi > 0 and query_delay > 0:
+            time.sleep(query_delay)
+
+        data = None
+        url = ""
+        last_error = ""
+        http_status = ""
+        rate_limited = False
+
+        for attempt in range(1, retries + 2):
+            try:
+                data, url = gdelt_fetch_once(q, timespan, max_records, timeout, ssl_mode)
+                last_error = ""
+                http_status = "ok"
+                break
+            except urllib.error.HTTPError as e:
+                http_status = str(e.code)
+                last_error = f"HTTPError: HTTP Error {e.code}: {e.reason}"
+                if e.code == 429:
+                    rate_limited = True
+                    # Longer backoff for 429.
+                    if attempt <= retries:
+                        time.sleep(15 * attempt)
+                        continue
+                if attempt <= retries:
+                    time.sleep(min(8, 2 * attempt))
+            except Exception as e:
+                http_status = "error"
+                last_error = f"{type(e).__name__}: {e}"
+                if attempt <= retries:
+                    time.sleep(min(8, 2 * attempt))
+
+        if data is None:
+            warnings.append(f"GDELT fetch failed query={q}: {last_error}")
+            query_status.append({
+                "query": q,
+                "status": "rate_limited" if rate_limited else "error",
+                "http_status": http_status,
+                "articles": 0,
+                "error": last_error,
+                "url": url,
+            })
             continue
 
         articles = data.get("articles", []) if isinstance(data, dict) else []
+        query_status.append({
+            "query": q,
+            "status": "ok",
+            "http_status": http_status,
+            "articles": len(articles),
+            "error": "",
+            "url": url,
+        })
+
         for a in articles:
             title = normalize_title(a.get("title") or "")
             article_url = (a.get("url") or "").strip()
@@ -362,16 +451,7 @@ def fetch_gdelt(timespan: str, max_records: int, ssl_mode: str) -> Tuple[List[Ev
                 continue
             seen_urls.add(article_url)
 
-            seen = a.get("seendate") or a.get("seenDate") or ""
-            t = parse_time(seen)
-            if t is None:
-                # GDELT seendate is often YYYYMMDDTHHMMSSZ
-                s = str(seen)
-                try:
-                    t = datetime.strptime(s, "%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc)
-                except Exception:
-                    t = datetime.now(timezone.utc).replace(microsecond=0)
-
+            t = parse_gdelt_time(a.get("seendate") or a.get("seenDate") or "")
             event_class, channel, expected, importance, tag = classify_news(title)
             eid = f"gdelt_{stable_hash(article_url)}"
             domain = (a.get("domain") or "").strip()
@@ -389,23 +469,18 @@ def fetch_gdelt(timespan: str, max_records: int, ssl_mode: str) -> Tuple[List[Ev
                 confidence=0.45,
                 source_name=source_name,
                 source_url_or_note=article_url,
-                manual_tags=f"gdelt;{tag}",
-                notes="Auto-detected news candidate; requires later event-impact validation",
+                manual_tags=f"gdelt;{tag};query_mode={query_mode}",
+                notes="Auto-detected news candidate; requires Stage 10A/10D validation before trust",
                 source_kind="gdelt",
                 dedupe_key=dedupe_key(title, t.isoformat(), article_url),
             ))
 
-    return events, warnings
+    return events, warnings, query_status
 
 
 def merge_events(scheduled: Sequence[EventRow], manual: Sequence[EventRow], shocks: Sequence[EventRow]) -> List[EventRow]:
-    """
-    Precedence:
-    - scheduled first
-    - shocks second
-    - manual last, because manual should override dedupe collisions
-    """
     merged: Dict[str, EventRow] = {}
+    # Manual last to override dedupe collision.
     for e in list(scheduled) + list(shocks) + list(manual):
         merged[e.dedupe_key] = e
     return sorted(merged.values(), key=lambda e: (e.event_time_utc, e.source_kind, e.event_id))
@@ -476,14 +551,39 @@ def insert_run(conn: sqlite3.Connection, status: str, scheduled_count: int, manu
         )
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
-        run_id, TOOL_VERSION, status, scheduled_count, manual_count, shock_count, unified_count, gen, "\n".join(warnings[:50])
+        run_id, TOOL_VERSION, status, scheduled_count, manual_count, shock_count, unified_count, gen, "\n".join(warnings[:80])
     ))
     conn.commit()
 
 
-def write_report(report_dir: Path, payload: dict, warnings: Sequence[str], unified: Sequence[EventRow], weights_hint: dict) -> None:
+def write_workflow_metadata(report_dir: Path, meta: Dict[str, str]) -> None:
+    report_dir.mkdir(parents=True, exist_ok=True)
+    (report_dir / "workflow_run_metadata.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False), encoding="utf-8")
+    lines = [
+        "# Workflow Run Metadata",
+        "",
+        f"- generated_utc: `{meta.get('generated_utc','')}`",
+        f"- tool_version: `{meta.get('tool_version','')}`",
+        f"- GITHUB_WORKFLOW: `{meta.get('GITHUB_WORKFLOW','')}`",
+        f"- GITHUB_RUN_ID: `{meta.get('GITHUB_RUN_ID','')}`",
+        f"- GITHUB_RUN_NUMBER: `{meta.get('GITHUB_RUN_NUMBER','')}`",
+        f"- GITHUB_RUN_ATTEMPT: `{meta.get('GITHUB_RUN_ATTEMPT','')}`",
+        f"- GITHUB_JOB: `{meta.get('GITHUB_JOB','')}`",
+        f"- GITHUB_REF: `{meta.get('GITHUB_REF','')}`",
+        f"- GITHUB_SHA: `{meta.get('GITHUB_SHA','')}`",
+        f"- GITHUB_REPOSITORY: `{meta.get('GITHUB_REPOSITORY','')}`",
+        f"- GITHUB_ACTOR: `{meta.get('GITHUB_ACTOR','')}`",
+        f"- GITHUB_EVENT_NAME: `{meta.get('GITHUB_EVENT_NAME','')}`",
+        f"- RUNNER_OS: `{meta.get('RUNNER_OS','')}`",
+    ]
+    (report_dir / "workflow_run_metadata.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def write_report(report_dir: Path, payload: dict, warnings: Sequence[str], unified: Sequence[EventRow], query_status: Sequence[dict], meta: Dict[str, str]) -> None:
     report_dir.mkdir(parents=True, exist_ok=True)
     (report_dir / "stage10b_event_pipeline_update.json").write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+    write_csv(report_dir / "stage10b_gdelt_query_status.csv", list(query_status), ["query", "status", "http_status", "articles", "error", "url"])
+    write_workflow_metadata(report_dir, meta)
 
     counts_by_kind: Dict[str, int] = {}
     counts_by_class: Dict[str, int] = {}
@@ -499,6 +599,13 @@ def write_report(report_dir: Path, payload: dict, warnings: Sequence[str], unifi
         "",
         "> Hard rule: data/event collection only. This does not authorize demo, paper, or live orders.",
         "",
+        "## Workflow metadata",
+        f"- workflow: `{meta.get('GITHUB_WORKFLOW','')}`",
+        f"- run_id: `{meta.get('GITHUB_RUN_ID','')}`",
+        f"- run_number: `{meta.get('GITHUB_RUN_NUMBER','')}`",
+        f"- run_attempt: `{meta.get('GITHUB_RUN_ATTEMPT','')}`",
+        f"- sha: `{meta.get('GITHUB_SHA','')}`",
+        "",
         "## Status",
         f"- status: `{payload['status']}`",
         f"- scheduled_count: `{payload['scheduled_count']}`",
@@ -506,7 +613,23 @@ def write_report(report_dir: Path, payload: dict, warnings: Sequence[str], unifi
         f"- shock_count: `{payload['shock_count']}`",
         f"- unified_count: `{payload['unified_count']}`",
         f"- gdelt_enabled: `{payload['gdelt_enabled']}`",
+        f"- gdelt_query_mode: `{payload['gdelt_query_mode']}`",
         f"- timespan: `{payload['gdelt_timespan']}`",
+        f"- query_delay_sec: `{payload['gdelt_query_delay']}`",
+        "",
+        "## GDELT query status",
+        "| Query | Status | HTTP | Articles | Error |",
+        "|---|---|---|---:|---|",
+    ]
+
+    if query_status:
+        for q in query_status:
+            err = str(q.get("error", "")).replace("|", "/")[:160]
+            lines.append(f"| {q.get('query','')} | {q.get('status','')} | {q.get('http_status','')} | {q.get('articles',0)} | {err} |")
+    else:
+        lines.append("| none | none | none | 0 | not run |")
+
+    lines += [
         "",
         "## Counts by source kind",
         "| Source kind | Events |",
@@ -542,7 +665,7 @@ def write_report(report_dir: Path, payload: dict, warnings: Sequence[str], unifi
 
     if warnings:
         lines += ["", "## Warnings"]
-        for w in warnings[:30]:
+        for w in warnings[:40]:
             lines.append(f"- `{w}`")
 
     lines += [
@@ -552,17 +675,14 @@ def write_report(report_dir: Path, payload: dict, warnings: Sequence[str], unifi
         f"- detected shock CSV: `{payload['detected_shock_csv']}`",
         f"- scheduled normalized CSV: `{payload['scheduled_normalized_csv']}`",
         f"- unified full CSV: `{payload['unified_full_csv']}`",
-        "",
-        "## Interpretation",
-        "- Scheduled events are known calendar risks.",
-        "- GDELT shock events are candidates, not truth.",
-        "- Stage 10A must measure actual XAUUSD reaction before any event class is trusted.",
-        "- Manual file is reserved for corrections/curation and overrides dedupe collisions.",
+        f"- GDELT query status CSV: `{report_dir / 'stage10b_gdelt_query_status.csv'}`",
+        f"- workflow metadata JSON: `{report_dir / 'workflow_run_metadata.json'}`",
+        f"- workflow metadata MD: `{report_dir / 'workflow_run_metadata.md'}`",
         "",
         "## Decision",
         "- No EA change.",
         "- No automatic news trading.",
-        "- Next step is running Stage 10A on the unified event file.",
+        "- Run Stage 10A/10D after copying the artifact into local repo.",
     ]
 
     (report_dir / "stage10b_event_pipeline_update.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -579,16 +699,30 @@ def run(
     gdelt_timespan: str,
     gdelt_max_records: int,
     ssl_mode: str,
+    gdelt_timeout: int,
+    gdelt_retries: int,
+    gdelt_query_mode: str,
+    gdelt_query_delay: float,
 ) -> int:
     warnings: List[str] = []
+    query_status: List[dict] = []
     generated = now_iso()
+    meta = workflow_metadata()
 
     scheduled = normalize_scheduled(scheduled_path)
     manual = normalize_manual(manual_path)
 
     shocks: List[EventRow] = []
     if fetch_gdelt_enabled:
-        shocks, gdelt_warnings = fetch_gdelt(gdelt_timespan, gdelt_max_records, ssl_mode)
+        shocks, gdelt_warnings, query_status = fetch_gdelt(
+            gdelt_timespan,
+            gdelt_max_records,
+            ssl_mode,
+            gdelt_timeout,
+            gdelt_retries,
+            gdelt_query_mode,
+            gdelt_query_delay,
+        )
         warnings.extend(gdelt_warnings)
     else:
         warnings.append("GDELT fetch disabled; only scheduled/manual events used.")
@@ -601,8 +735,11 @@ def run(
     write_csv(events_dir / "stage10b_unified_news_events.csv", [event_to_full_dict(e) for e in unified])
     write_csv(out_events_path, [event_to_stage10a_dict(e) for e in unified], STAGE10A_HEADER)
 
-    status = "ok"
-    if fetch_gdelt_enabled and warnings and not shocks:
+    if not fetch_gdelt_enabled:
+        status = "ok_no_gdelt"
+    elif shocks:
+        status = "ok"
+    else:
         status = "partial_no_gdelt_shocks"
 
     db_path.parent.mkdir(parents=True, exist_ok=True)
@@ -634,12 +771,19 @@ def run(
         "gdelt_enabled": fetch_gdelt_enabled,
         "gdelt_timespan": gdelt_timespan,
         "gdelt_max_records": gdelt_max_records,
+        "gdelt_timeout": gdelt_timeout,
+        "gdelt_retries": gdelt_retries,
+        "gdelt_query_mode": gdelt_query_mode,
+        "gdelt_query_delay": gdelt_query_delay,
+        "gdelt_query_status": query_status,
+        "workflow_metadata": meta,
         "warnings": warnings,
     }
 
-    write_report(report_dir, payload, warnings, unified, {})
+    write_report(report_dir, payload, warnings, unified, query_status, meta)
     print("Stage 10B event pipeline update: DONE")
     print(f"status={status} scheduled={len(scheduled)} manual={len(manual)} shocks={len(shocks)} unified={len(unified)}")
+    print(f"workflow_run_number={meta.get('GITHUB_RUN_NUMBER','')}")
     print(f"Report: {report_dir / 'stage10b_event_pipeline_update.md'}")
     return 0
 
@@ -653,8 +797,12 @@ def main() -> int:
     p.add_argument("--events-dir", default=str(DEFAULT_EVENTS_DIR))
     p.add_argument("--report-dir", default=str(DEFAULT_REPORT_DIR))
     p.add_argument("--no-gdelt", action="store_true")
-    p.add_argument("--gdelt-timespan", default="48h")
-    p.add_argument("--gdelt-max-records", type=int, default=40)
+    p.add_argument("--gdelt-timespan", default="7d")
+    p.add_argument("--gdelt-max-records", type=int, default=10)
+    p.add_argument("--gdelt-query-mode", default="rate_safe", choices=["rate_safe", "extended", "smoke"])
+    p.add_argument("--gdelt-timeout", type=int, default=60)
+    p.add_argument("--gdelt-retries", type=int, default=2)
+    p.add_argument("--gdelt-query-delay", type=float, default=20.0)
     p.add_argument("--ssl-mode", default=os.environ.get("EVENT_PIPELINE_SSL_MODE", "default"), choices=["default", "certifi", "insecure"])
     args = p.parse_args()
 
@@ -669,6 +817,10 @@ def main() -> int:
         args.gdelt_timespan,
         args.gdelt_max_records,
         args.ssl_mode,
+        args.gdelt_timeout,
+        args.gdelt_retries,
+        args.gdelt_query_mode,
+        args.gdelt_query_delay,
     )
 
 

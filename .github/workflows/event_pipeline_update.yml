@@ -1,0 +1,35 @@
+name: XAUUSD Event Pipeline Update
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */3 * * 1-5"
+
+jobs:
+  event-pipeline-update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Run event pipeline update
+        run: |
+          python -m app.stage10b_event_pipeline_update --gdelt-timespan 48h --gdelt-max-records 40
+
+      - name: Upload event pipeline artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: xauusd-event-pipeline-update
+          path: |
+            data/config/stage10a_news_events.csv
+            data/macro/events/
+            data/reports/stage10b_event_pipeline_update/
+          retention-days: 14

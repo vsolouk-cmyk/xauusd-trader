@@ -1,0 +1,2 @@
+event_id,event_time_utc,event_end_utc,title,event_class,event_channel,expected_gold_direction,initial_importance,confidence,source_name,source_url_or_note,manual_tags,notes
+EXAMPLE_DELETE_ME,2026-01-01T13:30:00Z,2026-01-01T13:30:00Z,EXAMPLE_DELETE_ME,geopolitical_escalation,safe_haven,1,1.5,0.7,manual,Delete this row,manual;shock,Delete this row and enter curated events only when needed

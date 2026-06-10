@@ -1,0 +1,4 @@
+event_class,event_channel,role,window_before_hours,window_after_hours,action,notes
+front_end_yield_shock,real_yield_fed_path,directional_or_guard_candidate,0,24,report_only,Passed Stage 10D numeric validation; test as event-risk/report guard only
+nominal_yield_shock,real_yield_fed_path,directional_or_guard_candidate,0,24,report_only,Passed Stage 10D numeric validation; test as event-risk/report guard only
+central_bank_gold_demand,central_bank_demand,monitoring_only,0,168,report_only,GDELT monitoring layer only; insufficient independent sample

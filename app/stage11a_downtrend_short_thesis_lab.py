@@ -1,23 +1,16 @@
 #!/usr/bin/env python3
 """
-Stage 11A — Downtrend Short-Side Thesis Lab
+Stage 11A v2 — Downtrend Short-Side Thesis Lab
+
+v2 fixes:
+- Removes repeated pandas FutureWarning caused by boolean fillna/downcasting.
+- Removes timezone-to-period warning by avoiding PeriodArray conversion.
+- Adds a small progress line every N variants so a long grid does not look stuck.
 
 Purpose:
 - Build/test a short-side counterpart to the selected long-only Stage 8D thesis.
 - Focus on H4 downtrend + H1 compression/liquidity continuation.
 - Research only. No EA change, no order logic.
-
-Inputs:
-- SQLite DB:
-  data/local/xauusd_local_store.sqlite
-- bars table:
-  source='amarkets_mt5', symbol='XAUUSD', timeframe='1h'
-
-Outputs:
-- data/reports/stage11a_downtrend_short_thesis_lab/stage11a_downtrend_short_thesis_lab.md
-- data/reports/stage11a_downtrend_short_thesis_lab/stage11a_short_candidate_summary.csv
-- data/reports/stage11a_downtrend_short_thesis_lab/stage11a_short_candidate_trades.csv
-- data/reports/stage11a_downtrend_short_thesis_lab/stage11a_downtrend_short_thesis_lab.json
 
 Hard rules:
 - Research only.
@@ -31,15 +24,15 @@ from __future__ import annotations
 import argparse
 import json
 import sqlite3
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Optional, Sequence, Tuple
+from typing import List, Sequence
 
 import pandas as pd
 
 
-TOOL_VERSION = "v1"
+TOOL_VERSION = "v2_warning_fix"
 DEFAULT_DB = Path("data/local/xauusd_local_store.sqlite")
 DEFAULT_OUT_DIR = Path("data/reports/stage11a_downtrend_short_thesis_lab")
 
@@ -84,8 +77,7 @@ def load_h1(conn: sqlite3.Connection) -> pd.DataFrame:
     for c in ["open", "high", "low", "close"]:
         df[c] = pd.to_numeric(df[c], errors="coerce")
     df = df.dropna(subset=["utc_time", "open", "high", "low", "close"]).sort_values("utc_time").drop_duplicates("utc_time")
-    df = df.set_index("utc_time")
-    return df
+    return df.set_index("utc_time")
 
 
 def resample_h4(h1: pd.DataFrame) -> pd.DataFrame:
@@ -127,27 +119,42 @@ def build_features(h1: pd.DataFrame, h4: pd.DataFrame, v: Variant) -> pd.DataFra
     df["h1_range_n"] = df["high"].rolling(v.compression_lookback).max() - df["low"].rolling(v.compression_lookback).min()
     df["compression_ratio"] = df["h1_range_n"] / df["atr14"]
 
-    df["prev_low_break"] = df["close"] < df["low"].rolling(v.h1_break_lookback).min().shift(1)
-    df["lower_close"] = df["close"] < df["close"].shift(1)
-    df["compression_ok"] = df["compression_ratio"] <= v.compression_max_atr
+    df["prev_low_break"] = (df["close"] < df["low"].rolling(v.h1_break_lookback).min().shift(1)).astype(bool)
+    df["lower_close"] = (df["close"] < df["close"].shift(1)).astype(bool)
+    df["compression_ok"] = (df["compression_ratio"] <= v.compression_max_atr)
 
     h4f = h4.copy()
     h4f["h4_sma"] = h4f["close"].rolling(v.h4_sma, min_periods=v.h4_sma).mean()
     h4f["h4_sma_slope"] = h4f["h4_sma"] - h4f["h4_sma"].shift(v.h4_slope_lookback)
-    h4f["h4_downtrend"] = (h4f["close"] < h4f["h4_sma"]) & (h4f["h4_sma_slope"] < 0)
+    h4f["h4_downtrend"] = ((h4f["close"] < h4f["h4_sma"]) & (h4f["h4_sma_slope"] < 0)).astype(bool)
 
-    # Use last closed H4 value available at each H1 timestamp.
     h4_state = h4f[["h4_downtrend", "h4_sma", "h4_sma_slope"]].reindex(df.index, method="ffill")
     df = df.join(h4_state)
+
+    # v2 warning fix:
+    # Avoid object-dtype .fillna(False), which produces repeated pandas FutureWarning.
+    df["h4_downtrend"] = df["h4_downtrend"].where(df["h4_downtrend"].notna(), False).astype(bool)
+    df["compression_ok"] = df["compression_ok"].where(df["compression_ok"].notna(), False).astype(bool)
+    df["prev_low_break"] = df["prev_low_break"].where(df["prev_low_break"].notna(), False).astype(bool)
+    df["lower_close"] = df["lower_close"].where(df["lower_close"].notna(), False).astype(bool)
+
     df["session_ok"] = [session_ok(ts, v.session_filter) for ts in df.index]
     df["signal"] = (
-        df["h4_downtrend"].fillna(False)
-        & df["compression_ok"].fillna(False)
-        & df["prev_low_break"].fillna(False)
-        & df["lower_close"].fillna(False)
-        & df["session_ok"].fillna(False)
-    )
+        df["h4_downtrend"]
+        & df["compression_ok"]
+        & df["prev_low_break"]
+        & df["lower_close"]
+        & df["session_ok"]
+    ).astype(bool)
     return df
+
+
+def variant_name(v: Variant) -> str:
+    return (
+        f"h4sma{v.h4_sma}_slope{v.h4_slope_lookback}_"
+        f"break{v.h1_break_lookback}_comp{v.compression_lookback}_{v.compression_max_atr}_"
+        f"cool{v.cooldown_h}_{v.session_filter}"
+    )
 
 
 def simulate_variant(h1: pd.DataFrame, features: pd.DataFrame, v: Variant, unit_multiplier: float = 4.0, cost_per_unit: float = 0.35) -> List[dict]:
@@ -172,7 +179,6 @@ def simulate_variant(h1: pd.DataFrame, features: pd.DataFrame, v: Variant, unit_
         exit_price = float(h1.iloc[exit_i]["close"])
         exit_reason = f"time_exit_{v.exit_h}h"
 
-        # For short: adverse move is high above entry.
         window = h1.iloc[entry_i:exit_i + 1]
         stop_hit = window[window["high"] >= entry_price + v.emergency_stop_usd]
         if not stop_hit.empty:
@@ -218,14 +224,6 @@ def simulate_variant(h1: pd.DataFrame, features: pd.DataFrame, v: Variant, unit_
     return rows
 
 
-def variant_name(v: Variant) -> str:
-    return (
-        f"h4sma{v.h4_sma}_slope{v.h4_slope_lookback}_"
-        f"break{v.h1_break_lookback}_comp{v.compression_lookback}_{v.compression_max_atr}_"
-        f"cool{v.cooldown_h}_{v.session_filter}"
-    )
-
-
 def drawdown(vals: Sequence[float]) -> float:
     eq = 0.0
     peak = 0.0
@@ -252,6 +250,7 @@ def summarize_trades(trades: List[dict], h1: pd.DataFrame) -> dict:
             "dd_x4": 0.0, "train_total_x4": 0.0, "test_total_x4": 0.0,
             "pos_years": 0, "years": 0, "pos_quarters": 0, "quarters": 0,
         }
+
     vals = [float(t["net_x4"]) for t in trades]
     wins = [v for v in vals if v > 0]
 
@@ -264,8 +263,13 @@ def summarize_trades(trades: List[dict], h1: pd.DataFrame) -> dict:
 
     df = pd.DataFrame(trades)
     df["entry_dt"] = pd.to_datetime(df["entry_utc"], utc=True)
-    df["year"] = df["entry_dt"].dt.year
-    df["quarter"] = df["entry_dt"].dt.to_period("Q").astype(str)
+
+    # v2 warning fix:
+    # Avoid .dt.to_period("Q") because it drops timezone info and prints a warning per variant.
+    df["year"] = df["entry_dt"].dt.year.astype(int)
+    q = df["entry_dt"].dt.quarter.astype(int)
+    df["quarter"] = df["entry_dt"].dt.year.astype(str) + "Q" + q.astype(str)
+
     by_year = df.groupby("year")["net_x4"].sum()
     by_quarter = df.groupby("quarter")["net_x4"].sum()
 
@@ -321,7 +325,7 @@ def robust_flag(s: dict) -> bool:
     )
 
 
-def run(db_path: Path, out_dir: Path) -> int:
+def run(db_path: Path, out_dir: Path, progress_every: int = 48) -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
     generated = now_iso()
 
@@ -330,9 +334,13 @@ def run(db_path: Path, out_dir: Path) -> int:
     conn.close()
     h4 = resample_h4(h1)
 
+    variants = build_variants()
     summaries = []
     all_trades = []
-    for v in build_variants():
+
+    print(f"Stage 11A v2: variants={len(variants)} h1_rows={len(h1)} h4_rows={len(h4)}")
+
+    for n, v in enumerate(variants, start=1):
         features = build_features(h1, h4, v)
         trades = simulate_variant(h1, features, v)
         s = summarize_trades(trades, h1)
@@ -353,6 +361,9 @@ def run(db_path: Path, out_dir: Path) -> int:
         s["robust_candidate"] = robust_flag(s)
         summaries.append(s)
         all_trades.extend(trades)
+
+        if progress_every > 0 and (n % progress_every == 0 or n == len(variants)):
+            print(f"Stage 11A progress: {n}/{len(variants)} variants")
 
     summary_df = pd.DataFrame(summaries)
     if not summary_df.empty:
@@ -446,8 +457,9 @@ def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--db", default=str(DEFAULT_DB))
     p.add_argument("--out-dir", default=str(DEFAULT_OUT_DIR))
+    p.add_argument("--progress-every", type=int, default=48)
     args = p.parse_args()
-    return run(Path(args.db), Path(args.out_dir))
+    return run(Path(args.db), Path(args.out_dir), args.progress_every)
 
 
 if __name__ == "__main__":

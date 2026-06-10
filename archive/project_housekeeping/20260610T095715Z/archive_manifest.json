@@ -1,0 +1,57 @@
+{
+  "tool_version": "v1",
+  "generated_utc": "2026-06-10T09:57:15+00:00",
+  "apply": true,
+  "archive_code": false,
+  "archive_root": "archive/project_housekeeping/20260610T095715Z",
+  "manifest": [
+    {
+      "source": ".github/workflows/xauusd_collectors.yml",
+      "classification": "keep_active",
+      "action": "keep",
+      "exists": true
+    },
+    {
+      "source": ".github/workflows/xauusd_data_store_refresh.yml",
+      "classification": "review_keep_unknown",
+      "action": "keep",
+      "exists": true
+    },
+    {
+      "source": ".github/workflows/xauusd_stage3d_forward_shadow.yml",
+      "classification": "review_keep_unknown",
+      "action": "keep",
+      "exists": true
+    },
+    {
+      "source": "data/reports/baseline_trades",
+      "classification": "review_keep_unknown",
+      "action": "keep",
+      "exists": true
+    },
+    {
+      "source": "data/reports/stage10b_event_pipeline_update",
+      "classification": "keep_active_collector_report",
+      "action": "keep",
+      "exists": true
+    },
+    {
+      "source": "data/reports/stage9b_macro_numeric_update",
+      "classification": "keep_active_collector_report",
+      "action": "keep",
+      "exists": true
+    },
+    {
+      "source": "data/reports/stage_data_file_audit",
+      "classification": "review_keep_unknown",
+      "action": "keep",
+      "exists": true
+    },
+    {
+      "source": "data/reports/stage_pipeline",
+      "classification": "review_keep_unknown",
+      "action": "keep",
+      "exists": true
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "tool_version": "v2",
+  "strategy_id": "xauusd_long_tp24_sl15_no_london_v1",
+  "generated_utc": "2026-06-09T12:01:46+00:00",
+  "hard_rule": "Dry-run/persistence/evidence only. No orders.",
+  "inputs": {
+    "h1_csv": "/Users/vahid/Downloads/amarkets_xauusd_1h.csv",
+    "m1_csv": "/Users/vahid/Downloads/amarkets_xauusd_1m.csv",
+    "signals_csv": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/users/user/AppData/Roaming/MetaQuotes/Terminal/Common/Files/XAUUSD_DryRun_v1_signals.csv",
+    "db": "data/local/xauusd_local_store.sqlite",
+    "fetch_twelve": false,
+    "run_6c": true
+  },
+  "results": [
+    {
+      "name": "stage_data_file_audit",
+      "command": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 -m app.stage_data_file_audit --h1-csv /Users/vahid/Downloads/amarkets_xauusd_1h.csv --m1-csv /Users/vahid/Downloads/amarkets_xauusd_1m.csv --signals-csv '/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/users/user/AppData/Roaming/MetaQuotes/Terminal/Common/Files/XAUUSD_DryRun_v1_signals.csv' --server-utc-offset-hours 2.0",
+      "returncode": 0,
+      "status": "OK",
+      "stdout_tail": "Stage data file audit: DONE\nh1: rows=24225 start=2022-05-01T23:00:00+00:00 end=2026-06-09T11:00:00+00:00\nm1: rows=1449867 start=2022-05-01T23:01:00+00:00 end=2026-06-09T11:44:00+00:00\nsignals: rows=1 start=2026-06-09T08:00:00+00:00 end=2026-06-09T08:00:00+00:00\nMarkdown report: data/reports/stage_data_file_audit/stage_data_file_audit.md\n",
+      "stderr_tail": "",
+      "started_utc": "2026-06-09T11:57:48+00:00",
+      "finished_utc": "2026-06-09T11:58:29+00:00"
+    },
+    {
+      "name": "stage5b_dryrun_signal_csv_validator",
+      "command": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 -m app.stage5b_dryrun_log_validator --csv '/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/users/user/AppData/Roaming/MetaQuotes/Terminal/Common/Files/XAUUSD_DryRun_v1_signals.csv' --print-columns",
+      "returncode": 0,
+      "status": "OK",
+      "stdout_tail": "Stage 5B dry-run log validator: PASS_WITH_WARNINGS\nCSV: /Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/users/user/AppData/Roaming/MetaQuotes/Terminal/Common/Files/XAUUSD_DryRun_v1_signals.csv\nJSON report: data/reports/stage5b_dryrun_log_validator.json\nMarkdown report: data/reports/stage5b_dryrun_log_validator.md\nDetected columns:\n  - logged_at_gmt\n  - symbol\n  - chart_symbol\n  - strategy_id\n  - signal_closed_h1_time_server\n  - signal_closed_h1_time_gmt_now\n  - session_utc\n  - close_h1\n  - sma10\n  - distance_usd\n  - direction\n  - planned_entry_model\n  - tp_usd\n  - sl_usd\n  - time_exit_h1_bars\n  - dry_run_only\nResolved columns:\n  - timestamp_utc: logged_at_gmt\n  - closed_h1_time_utc: signal_closed_h1_time_gmt_now\n  - symbol: symbol\n  - strategy_id: strategy_id\n  - session_name: session_utc\n  - distance_usd: distance_usd\n  - close: close_h1\n  - sma10: sma10\n  - take_profit_usd: tp_usd\n  - stop_loss_usd: sl_usd\n  - direction: direction\n  - dry_run_only: dry_run_only\n  - time_exit_h1_bars: time_exit_h1_bars\n",
+      "stderr_tail": "",
+      "started_utc": "2026-06-09T11:58:29+00:00",
+      "finished_utc": "2026-06-09T11:58:29+00:00"
+    },
+    {
+      "name": "stage5c_live_outcome_tracker",
+      "command": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 -m app.stage5c_live_outcome_tracker --signals-csv '/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/users/user/AppData/Roaming/MetaQuotes/Terminal/Common/Files/XAUUSD_DryRun_v1_signals.csv' --m1-csv /Users/vahid/Downloads/amarkets_xauusd_1m.csv --server-utc-offset-hours 2.0 --out-dir data/reports/stage5c_live_outcome_tracker",
+      "returncode": 0,
+      "status": "OK",
+      "stdout_tail": "Stage 5C live dry-run outcome tracker: DONE\nraw_rows=1 | deduped_signals=1 | m1_rows=1449867 | resolved=1 | open/unresolved=0\nM1 range: 2022-05-01T23:01:00+00:00 -> 2026-06-09T11:44:00+00:00\nMarkdown report: data/reports/stage5c_live_outcome_tracker/stage5c_live_outcome_tracker.md\n",
+      "stderr_tail": "",
+      "started_utc": "2026-06-09T11:58:29+00:00",
+      "finished_utc": "2026-06-09T11:59:08+00:00"
+    },
+    {
+      "name": "stage6a_local_data_store",
+      "command": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 -m app.stage6a_local_data_store --db data/local/xauusd_local_store.sqlite --h1-csv /Users/vahid/Downloads/amarkets_xauusd_1h.csv --m1-csv /Users/vahid/Downloads/amarkets_xauusd_1m.csv --signals-csv '/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/users/user/AppData/Roaming/MetaQuotes/Terminal/Common/Files/XAUUSD_DryRun_v1_signals.csv' --server-utc-offset-hours 2.0",
+      "returncode": 0,
+      "status": "OK",
+      "stdout_tail": "Stage 6A local persistent data store: DONE\nDB: data/local/xauusd_local_store.sqlite\namarkets_mt5 bars 1h: status=ok rows=24225 bad=0\namarkets_mt5 bars 1m: status=ok rows=1449867 bad=0\nmt5_ea dryrun_signals : status=ok rows=1 bad=0\nstage5c dryrun_outcomes : status=ok rows=1 bad=0\nReport: data/reports/stage6a_local_store/stage6a_local_store.md\n",
+      "stderr_tail": "",
+      "started_utc": "2026-06-09T11:59:08+00:00",
+      "finished_utc": "2026-06-09T12:01:43+00:00"
+    },
+    {
+      "name": "stage6c_db_evidence_report",
+      "command": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 -m app.stage6c_db_evidence_report --db data/local/xauusd_local_store.sqlite --out-dir data/reports/stage6c_db_evidence_report",
+      "returncode": 0,
+      "status": "OK",
+      "stdout_tail": "Stage 6C DB evidence report: DONE\nDB: data/local/xauusd_local_store.sqlite\nbars=1474092 signals=1 outcomes=1\nReport: data/reports/stage6c_db_evidence_report/stage6c_db_evidence_report.md\n",
+      "stderr_tail": "",
+      "started_utc": "2026-06-09T12:01:43+00:00",
+      "finished_utc": "2026-06-09T12:01:46+00:00"
+    }
+  ]
+}

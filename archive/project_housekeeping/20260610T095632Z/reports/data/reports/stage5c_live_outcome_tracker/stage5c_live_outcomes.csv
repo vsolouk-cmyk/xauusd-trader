@@ -1,0 +1,2 @@
+source_row,symbol,session_utc,status,reason,closed_h1_utc,entry_utc,entry_price,tp_price,sl_price,exit_utc,exit_price,net_usd_x1,m1_bars_checked
+1,XAUUSD,asia,RESOLVED,stop_loss,2026-06-09T06:00:00+00:00,2026-06-09T07:00:00+00:00,4343.26,4367.26,4328.26,2026-06-09T08:13:00+00:00,4328.26,-15.35,285

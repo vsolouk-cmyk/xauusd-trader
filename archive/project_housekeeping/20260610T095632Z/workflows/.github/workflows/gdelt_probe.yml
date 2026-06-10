@@ -1,0 +1,34 @@
+name: XAUUSD GDELT Probe
+
+on:
+  workflow_dispatch:
+
+jobs:
+  gdelt-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Run GDELT probe
+        run: |
+          python -m app.stage10b_gdelt_probe \
+            --timespan 7d \
+            --max-records 10 \
+            --timeout 60 \
+            --retries 2
+
+      - name: Upload GDELT probe artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: xauusd-gdelt-probe
+          path: data/reports/stage10b_gdelt_probe/
+          retention-days: 14

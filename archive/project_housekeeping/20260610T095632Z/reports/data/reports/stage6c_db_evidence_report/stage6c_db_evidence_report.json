@@ -1,0 +1,335 @@
+{
+  "tool_version": "v1",
+  "generated_utc": "2026-06-09T12:01:44+00:00",
+  "db_path": "data/local/xauusd_local_store.sqlite",
+  "counts": {
+    "bars": 1474092,
+    "dryrun_signals": 1,
+    "dryrun_outcomes": 1,
+    "import_runs": 20
+  },
+  "bars_by_source_tf": [
+    {
+      "source": "amarkets_mt5",
+      "symbol": "XAUUSD",
+      "timeframe": "1h",
+      "rows": 24225,
+      "start_utc": "2022-05-01T23:00:00+00:00",
+      "end_utc": "2026-06-09T11:00:00+00:00"
+    },
+    {
+      "source": "amarkets_mt5",
+      "symbol": "XAUUSD",
+      "timeframe": "1m",
+      "rows": 1449867,
+      "start_utc": "2022-05-01T23:01:00+00:00",
+      "end_utc": "2026-06-09T11:44:00+00:00"
+    }
+  ],
+  "latest_bars": {
+    "amarkets_mt5|XAUUSD|1h": [
+      {
+        "utc_time": "2026-06-09T11:00:00+00:00",
+        "open": 4331.96,
+        "high": 4336.28,
+        "low": 4325.14,
+        "close": 4332.07,
+        "tick_volume": 3075.0,
+        "spread": 33.0
+      },
+      {
+        "utc_time": "2026-06-09T10:00:00+00:00",
+        "open": 4326.36,
+        "high": 4335.54,
+        "low": 4324.0,
+        "close": 4331.98,
+        "tick_volume": 4134.0,
+        "spread": 33.0
+      },
+      {
+        "utc_time": "2026-06-09T09:00:00+00:00",
+        "open": 4326.2,
+        "high": 4336.58,
+        "low": 4321.09,
+        "close": 4326.41,
+        "tick_volume": 4740.0,
+        "spread": 33.0
+      }
+    ],
+    "amarkets_mt5|XAUUSD|1m": [
+      {
+        "utc_time": "2026-06-09T11:44:00+00:00",
+        "open": 4331.32,
+        "high": 4331.81,
+        "low": 4331.32,
+        "close": 4331.79,
+        "tick_volume": 5.0,
+        "spread": 39.0
+      },
+      {
+        "utc_time": "2026-06-09T11:43:00+00:00",
+        "open": 4330.08,
+        "high": 4331.53,
+        "low": 4329.75,
+        "close": 4331.27,
+        "tick_volume": 61.0,
+        "spread": 33.0
+      },
+      {
+        "utc_time": "2026-06-09T11:42:00+00:00",
+        "open": 4330.57,
+        "high": 4330.66,
+        "low": 4329.56,
+        "close": 4329.88,
+        "tick_volume": 65.0,
+        "spread": 33.0
+      }
+    ]
+  },
+  "latest_import_runs": [
+    {
+      "id": 20,
+      "created_utc": "2026-06-09T12:01:43+00:00",
+      "source": "stage5c",
+      "dataset": "dryrun_outcomes",
+      "timeframe": "event",
+      "rows_seen": 1,
+      "rows_inserted": 1,
+      "rows_bad": 0,
+      "start_utc": "2026-06-09T06:00:00+00:00",
+      "end_utc": "2026-06-09T06:00:00+00:00",
+      "path": "data/reports/stage5c_live_outcome_tracker/stage5c_live_outcomes.csv"
+    },
+    {
+      "id": 19,
+      "created_utc": "2026-06-09T12:01:43+00:00",
+      "source": "mt5_ea",
+      "dataset": "dryrun_signals",
+      "timeframe": "event",
+      "rows_seen": 1,
+      "rows_inserted": 1,
+      "rows_bad": 0,
+      "start_utc": "2026-06-09T06:00:00+00:00",
+      "end_utc": "2026-06-09T06:00:00+00:00",
+      "path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/users/user/AppData/Roaming/MetaQuotes/Terminal/Common/Files/XAUUSD_DryRun_v1_signals.csv"
+    },
+    {
+      "id": 18,
+      "created_utc": "2026-06-09T12:01:25+00:00",
+      "source": "amarkets_mt5",
+      "dataset": "bars",
+      "timeframe": "1m",
+      "rows_seen": 1449867,
+      "rows_inserted": 1449867,
+      "rows_bad": 0,
+      "start_utc": "2022-05-01T23:01:00+00:00",
+      "end_utc": "2026-06-09T11:44:00+00:00",
+      "path": "/Users/vahid/Downloads/amarkets_xauusd_1m.csv"
+    },
+    {
+      "id": 17,
+      "created_utc": "2026-06-09T11:59:10+00:00",
+      "source": "amarkets_mt5",
+      "dataset": "bars",
+      "timeframe": "1h",
+      "rows_seen": 24225,
+      "rows_inserted": 24225,
+      "rows_bad": 0,
+      "start_utc": "2022-05-01T23:00:00+00:00",
+      "end_utc": "2026-06-09T11:00:00+00:00",
+      "path": "/Users/vahid/Downloads/amarkets_xauusd_1h.csv"
+    },
+    {
+      "id": 16,
+      "created_utc": "2026-06-09T11:40:56+00:00",
+      "source": "stage5c",
+      "dataset": "dryrun_outcomes",
+      "timeframe": "event",
+      "rows_seen": 1,
+      "rows_inserted": 1,
+      "rows_bad": 0,
+      "start_utc": "2026-06-09T06:00:00+00:00",
+      "end_utc": "2026-06-09T06:00:00+00:00",
+      "path": "data/reports/stage5c_live_outcome_tracker/stage5c_live_outcomes.csv"
+    },
+    {
+      "id": 15,
+      "created_utc": "2026-06-09T11:40:56+00:00",
+      "source": "mt5_ea",
+      "dataset": "dryrun_signals",
+      "timeframe": "event",
+      "rows_seen": 1,
+      "rows_inserted": 1,
+      "rows_bad": 0,
+      "start_utc": "2026-06-09T06:00:00+00:00",
+      "end_utc": "2026-06-09T06:00:00+00:00",
+      "path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/users/user/AppData/Roaming/MetaQuotes/Terminal/Common/Files/XAUUSD_DryRun_v1_signals.csv"
+    },
+    {
+      "id": 14,
+      "created_utc": "2026-06-09T11:40:42+00:00",
+      "source": "amarkets_mt5",
+      "dataset": "bars",
+      "timeframe": "1m",
+      "rows_seen": 1449867,
+      "rows_inserted": 1449867,
+      "rows_bad": 0,
+      "start_utc": "2022-05-01T23:01:00+00:00",
+      "end_utc": "2026-06-09T11:44:00+00:00",
+      "path": "/Users/vahid/Downloads/amarkets_xauusd_1m.csv"
+    },
+    {
+      "id": 13,
+      "created_utc": "2026-06-09T11:38:54+00:00",
+      "source": "amarkets_mt5",
+      "dataset": "bars",
+      "timeframe": "1h",
+      "rows_seen": 24225,
+      "rows_inserted": 24225,
+      "rows_bad": 0,
+      "start_utc": "2022-05-01T23:00:00+00:00",
+      "end_utc": "2026-06-09T11:00:00+00:00",
+      "path": "/Users/vahid/Downloads/amarkets_xauusd_1h.csv"
+    },
+    {
+      "id": 12,
+      "created_utc": "2026-06-09T11:32:53+00:00",
+      "source": "stage5c",
+      "dataset": "dryrun_outcomes",
+      "timeframe": "event",
+      "rows_seen": 1,
+      "rows_inserted": 1,
+      "rows_bad": 0,
+      "start_utc": "2026-06-09T06:00:00+00:00",
+      "end_utc": "2026-06-09T06:00:00+00:00",
+      "path": "data/reports/stage5c_live_outcome_tracker/stage5c_live_outcomes.csv"
+    },
+    {
+      "id": 11,
+      "created_utc": "2026-06-09T11:32:53+00:00",
+      "source": "mt5_ea",
+      "dataset": "dryrun_signals",
+      "timeframe": "event",
+      "rows_seen": 1,
+      "rows_inserted": 1,
+      "rows_bad": 0,
+      "start_utc": "2026-06-09T06:00:00+00:00",
+      "end_utc": "2026-06-09T06:00:00+00:00",
+      "path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/users/user/AppData/Roaming/MetaQuotes/Terminal/Common/Files/XAUUSD_DryRun_v1_signals.csv"
+    },
+    {
+      "id": 10,
+      "created_utc": "2026-06-09T11:32:39+00:00",
+      "source": "amarkets_mt5",
+      "dataset": "bars",
+      "timeframe": "1m",
+      "rows_seen": 1449867,
+      "rows_inserted": 1449867,
+      "rows_bad": 0,
+      "start_utc": "2022-05-01T23:01:00+00:00",
+      "end_utc": "2026-06-09T11:44:00+00:00",
+      "path": "/Users/vahid/Downloads/amarkets_xauusd_1m.csv"
+    },
+    {
+      "id": 9,
+      "created_utc": "2026-06-09T11:30:45+00:00",
+      "source": "amarkets_mt5",
+      "dataset": "bars",
+      "timeframe": "1h",
+      "rows_seen": 24225,
+      "rows_inserted": 24225,
+      "rows_bad": 0,
+      "start_utc": "2022-05-01T23:00:00+00:00",
+      "end_utc": "2026-06-09T11:00:00+00:00",
+      "path": "/Users/vahid/Downloads/amarkets_xauusd_1h.csv"
+    }
+  ],
+  "recent_signals": [
+    {
+      "strategy_id": "xauusd_long_tp24_sl15_no_london_v1",
+      "symbol": "XAUUSD",
+      "signal_closed_h1_utc": "2026-06-09T06:00:00+00:00",
+      "session_utc": "asia",
+      "close_h1": 4343.25,
+      "sma10": 4330.492,
+      "distance_usd": 12.758,
+      "direction": "long",
+      "tp_usd": 24.0,
+      "sl_usd": 15.0,
+      "time_exit_h1_bars": 12,
+      "imported_utc": "2026-06-09T12:01:43+00:00"
+    }
+  ],
+  "recent_outcomes": [
+    {
+      "strategy_id": "xauusd_long_tp24_sl15_no_london_v1",
+      "symbol": "XAUUSD",
+      "signal_closed_h1_utc": "2026-06-09T06:00:00+00:00",
+      "session_utc": "asia",
+      "status": "RESOLVED",
+      "reason": "stop_loss",
+      "entry_utc": "2026-06-09T07:00:00+00:00",
+      "entry_price": 4343.26,
+      "exit_utc": "2026-06-09T08:13:00+00:00",
+      "exit_price": 4328.26,
+      "net_usd_x1": -15.35,
+      "m1_bars_checked": 285,
+      "imported_utc": "2026-06-09T12:01:43+00:00"
+    }
+  ],
+  "recent_signal_outcome": [
+    {
+      "signal_closed_h1_utc": "2026-06-09T06:00:00+00:00",
+      "symbol": "XAUUSD",
+      "session_utc": "asia",
+      "distance_usd": 12.758,
+      "close_h1": 4343.25,
+      "sma10": 4330.492,
+      "direction": "long",
+      "status": "RESOLVED",
+      "reason": "stop_loss",
+      "entry_utc": "2026-06-09T07:00:00+00:00",
+      "entry_price": 4343.26,
+      "exit_utc": "2026-06-09T08:13:00+00:00",
+      "exit_price": 4328.26,
+      "net_usd_x1": -15.35
+    }
+  ],
+  "outcome_summary": {
+    "total_outcomes": 1,
+    "resolved": 1,
+    "open_or_unresolved": 0,
+    "total_net_usd": -15.35,
+    "avg_net_usd": -15.35,
+    "wins": 0,
+    "losses": 1,
+    "win_rate": 0.0,
+    "by_session": [
+      {
+        "session_utc": "asia",
+        "trades": 1,
+        "resolved": 1,
+        "total_net": -15.35,
+        "avg_net": -15.35
+      }
+    ],
+    "by_reason": [
+      {
+        "reason": "stop_loss",
+        "trades": 1,
+        "total_net": -15.35
+      }
+    ]
+  },
+  "no_asia_counterfactual": {
+    "excluded_trades": 1,
+    "excluded_net_usd": -15.35,
+    "kept_trades": 0,
+    "kept_net_usd": 0,
+    "note": "Live-only sample. Not statistically sufficient by itself."
+  },
+  "warnings": [
+    "Only 1 resolved live dry-run outcome(s); live evidence is still too small for execution decisions.",
+    "no_asia counterfactual would have excluded 1 live resolved trade(s), net=-15.35."
+  ]
+}

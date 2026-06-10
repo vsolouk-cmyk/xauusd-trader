@@ -1,0 +1,96 @@
+{
+  "tool_version": "v1",
+  "generated_utc": "2026-06-10T09:34:18+00:00",
+  "db_path": "data/local/xauusd_local_store.sqlite",
+  "events_csv": "data/config/stage10a_news_events.csv",
+  "events_loaded": 515,
+  "h1_bars": 24225,
+  "reactions_resolved": 510,
+  "class_weight_rows": 6,
+  "verdict_counts": {
+    "candidate_relevant": 316,
+    "impactful_but_direction_wrong": 83,
+    "low_impact_monitor": 66,
+    "likely_noise": 45
+  },
+  "bucket_counts": {
+    "high_impact": 297,
+    "low_impact": 66,
+    "medium_impact": 102,
+    "noisy_or_no_impact": 45
+  },
+  "top_weights": [
+    {
+      "event_class": "oil_supply_shock",
+      "event_channel": "oil_inflation_pressure",
+      "events": 217,
+      "avg_adaptive_score": 1.195727,
+      "avg_abs_impact_12h": 28.572304,
+      "avg_norm_impact_12h": 6.550381,
+      "direction_accuracy_12h": "",
+      "candidate_relevant_count": 166,
+      "likely_noise_count": 20,
+      "recommended_weight": 1.125
+    },
+    {
+      "event_class": "central_bank_gold_demand",
+      "event_channel": "central_bank_demand",
+      "events": 10,
+      "avg_adaptive_score": 0.65722,
+      "avg_abs_impact_12h": 25.599,
+      "avg_norm_impact_12h": 4.155664,
+      "direction_accuracy_12h": 0.666667,
+      "candidate_relevant_count": 4,
+      "likely_noise_count": 1,
+      "recommended_weight": 1.0
+    },
+    {
+      "event_class": "usd_shock",
+      "event_channel": "usd_pressure",
+      "events": 55,
+      "avg_adaptive_score": 1.368203,
+      "avg_abs_impact_12h": 21.186182,
+      "avg_norm_impact_12h": 8.337094,
+      "direction_accuracy_12h": 0.6,
+      "candidate_relevant_count": 30,
+      "likely_noise_count": 8,
+      "recommended_weight": 0.9
+    },
+    {
+      "event_class": "front_end_yield_shock",
+      "event_channel": "real_yield_fed_path",
+      "events": 52,
+      "avg_adaptive_score": 1.197901,
+      "avg_abs_impact_12h": 14.564808,
+      "avg_norm_impact_12h": 9.514112,
+      "direction_accuracy_12h": 0.596154,
+      "candidate_relevant_count": 29,
+      "likely_noise_count": 2,
+      "recommended_weight": 0.894231
+    },
+    {
+      "event_class": "real_yield_shock",
+      "event_channel": "real_yield_fed_path",
+      "events": 143,
+      "avg_adaptive_score": 1.180436,
+      "avg_abs_impact_12h": 18.163077,
+      "avg_norm_impact_12h": 6.375099,
+      "direction_accuracy_12h": 0.584507,
+      "candidate_relevant_count": 70,
+      "likely_noise_count": 11,
+      "recommended_weight": 0.876761
+    },
+    {
+      "event_class": "nominal_yield_shock",
+      "event_channel": "real_yield_fed_path",
+      "events": 33,
+      "avg_adaptive_score": 1.011164,
+      "avg_abs_impact_12h": 15.924545,
+      "avg_norm_impact_12h": 8.246838,
+      "direction_accuracy_12h": 0.575758,
+      "candidate_relevant_count": 17,
+      "likely_noise_count": 3,
+      "recommended_weight": 0.863636
+    }
+  ]
+}

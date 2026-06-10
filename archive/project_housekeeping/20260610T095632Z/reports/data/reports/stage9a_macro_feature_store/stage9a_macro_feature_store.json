@@ -1,0 +1,32 @@
+{
+  "tool_version": "v1",
+  "generated_utc": "2026-06-09T19:09:02+00:00",
+  "db_path": "data/local/xauusd_local_store.sqlite",
+  "events_csv": "data/config/stage9a_macro_events.csv",
+  "h1_rows": 24225,
+  "events_loaded": 0,
+  "contexts_generated": 24225,
+  "stage8b_trades_annotated": 64474,
+  "stage8d_signals_annotated": 0,
+  "coverage": {
+    "neutral": 24225
+  },
+  "stage8b_macro_summary": [
+    {
+      "macro_regime": "neutral",
+      "trades": 62604,
+      "total_net_x4": 107072.3,
+      "median_net_x4": 0.48,
+      "pf_x4": 1.347556,
+      "win_rate_x4": 0.515654
+    },
+    {
+      "macro_regime": "unknown",
+      "trades": 1870,
+      "total_net_x4": 2024.16,
+      "median_net_x4": -0.13,
+      "pf_x4": 1.233382,
+      "win_rate_x4": 0.499465
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "tool_version": "v1",
+  "generated_utc": "2026-06-10T04:57:52+00:00",
+  "db_path": "data/local/xauusd_local_store.sqlite",
+  "stage8b_trades_csv": "data/reports/stage8b_single_regime_thesis_lab/stage8b_single_regime_trades.csv",
+  "stage8d_signals_csv": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/users/user/AppData/Roaming/MetaQuotes/Terminal/Common/Files/XAUUSD_DryRun_v2_regime_shadow_signals.csv",
+  "macro_numeric_rows": 8444,
+  "daily_regime_rows_upserted": 1620,
+  "stage8b_trades_loaded": 64474,
+  "stage8b_candidate_trades_loaded": 524,
+  "stage8d_signals_loaded": 0,
+  "daily_regime_counts": {
+    "neutral": 853,
+    "mixed": 483,
+    "hostile": 173,
+    "supportive": 111
+  },
+  "stage8b_candidate_macro_summary": [
+    {
+      "definition": "liquidity_session",
+      "guard_variant": "macro_blocked_nonoverlap",
+      "geometry": "time_exit_12h",
+      "macro_regime_numeric": "neutral",
+      "trades": 143,
+      "total_net_x4": 623.83,
+      "median_net_x4": 1.98,
+      "pf_x4": 1.890041,
+      "win_rate_x4": 0.573427,
+      "max_dd_x4": -194.1
+    },
+    {
+      "definition": "liquidity_session",
+      "guard_variant": "macro_blocked_nonoverlap",
+      "geometry": "time_exit_12h",
+      "macro_regime_numeric": "mixed",
+      "trades": 83,
+      "total_net_x4": 397.05,
+      "median_net_x4": 2.72,
+      "pf_x4": 1.737627,
+      "win_rate_x4": 0.590361,
+      "max_dd_x4": -124.53
+    },
+    {
+      "definition": "liquidity_session",
+      "guard_variant": "macro_blocked_nonoverlap",
+      "geometry": "time_exit_12h",
+      "macro_regime_numeric": "supportive",
+      "trades": 29,
+      "total_net_x4": 111.29,
+      "median_net_x4": 0.26,
+      "pf_x4": 2.746822,
+      "win_rate_x4": 0.517241,
+      "max_dd_x4": -19.31
+    },
+    {
+      "definition": "liquidity_session",
+      "guard_variant": "macro_blocked_nonoverlap",
+      "geometry": "time_exit_12h",
+      "macro_regime_numeric": "hostile",
+      "trades": 7,
+      "total_net_x4": 72.97,
+      "median_net_x4": 9.91,
+      "pf_x4": 13.141431,
+      "win_rate_x4": 0.857143,
+      "max_dd_x4": -6.01
+    },
+    {
+      "definition": "liquidity_session",
+      "guard_variant": "unguarded_nonoverlap",
+      "geometry": "time_exit_12h",
+      "macro_regime_numeric": "neutral",
+      "trades": 143,
+      "total_net_x4": 623.83,
+      "median_net_x4": 1.98,
+      "pf_x4": 1.890041,
+      "win_rate_x4": 0.573427,
+      "max_dd_x4": -194.1
+    },
+    {
+      "definition": "liquidity_session",
+      "guard_variant": "unguarded_nonoverlap",
+      "geometry": "time_exit_12h",
+      "macro_regime_numeric": "mixed",
+      "trades": 83,
+      "total_net_x4": 397.05,
+      "median_net_x4": 2.72,
+      "pf_x4": 1.737627,
+      "win_rate_x4": 0.590361,
+      "max_dd_x4": -124.53
+    },
+    {
+      "definition": "liquidity_session",
+      "guard_variant": "unguarded_nonoverlap",
+      "geometry": "time_exit_12h",
+      "macro_regime_numeric": "supportive",
+      "trades": 29,
+      "total_net_x4": 111.29,
+      "median_net_x4": 0.26,
+      "pf_x4": 2.746822,
+      "win_rate_x4": 0.517241,
+      "max_dd_x4": -19.31
+    },
+    {
+      "definition": "liquidity_session",
+      "guard_variant": "unguarded_nonoverlap",
+      "geometry": "time_exit_12h",
+      "macro_regime_numeric": "hostile",
+      "trades": 7,
+      "total_net_x4": 72.97,
+      "median_net_x4": 9.91,
+      "pf_x4": 13.141431,
+      "win_rate_x4": 0.857143,
+      "max_dd_x4": -6.01
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "numeric_events_path": "data/macro/events/stage10c_numeric_shock_events.csv",
+  "numeric_events_path_exists": true,
+  "gdelt_events_path": "data/macro/events/stage10b_detected_shock_events.csv",
+  "gdelt_events_path_exists": true,
+  "numeric_events_loaded": 500,
+  "gdelt_events_loaded": 10,
+  "all_events_loaded": 510,
+  "rules_loaded": 3,
+  "guard_rules_loaded": 2,
+  "guard_event_classes": [
+    "front_end_yield_shock|real_yield_fed_path",
+    "nominal_yield_shock|real_yield_fed_path"
+  ],
+  "guard_events_loaded": 85,
+  "numeric_guard_events_loaded": 85,
+  "event_counts_by_rule": {
+    "unmatched": 415,
+    "front_end_yield_shock|real_yield_fed_path|directional_or_guard_candidate": 52,
+    "nominal_yield_shock|real_yield_fed_path|directional_or_guard_candidate": 33,
+    "central_bank_gold_demand|central_bank_demand|monitoring_only": 10
+  },
+  "warnings": []
+}

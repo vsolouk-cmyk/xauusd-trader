@@ -1,5 +1,5 @@
 """
-Stage 23A — controlled lite proxy-then-exact discovery for XAUUSD.
+Stage 23A v3 — controlled lite proxy-then-exact discovery for XAUUSD.
 
 Research-only module. It does NOT modify Stage18A, does NOT authorize paper/live,
 and does NOT create orders.
@@ -8,7 +8,7 @@ Design:
 - Load AMarkets/local M1 and H1 OHLCV data from the local SQLite store when possible.
 - Fall back to ~/Downloads/amarkets_xauusd_1m.csv and ~/Downloads/amarkets_xauusd_1h.csv.
 - Build a lite M15 proxy grid over three non-trend-pullback families.
-- Run exact M1 replay only for the best proxy candidates.
+- Run exact M1 diagnostic replay for the best proxy candidates, while reserving runtime for exact.
 - Write JSON/CSV/MD reports under data/reports/stage23a_lite_proxy_exact_discovery/.
 
 Run:
@@ -42,17 +42,18 @@ ROUNDTRIP_COST_USD = 0.35
 RANDOM_SEED = 2301
 
 # Keep discovery controlled. Exact replay must remain small.
-# v2 hotfix: the first Stage23A grid was still too heavy on local AMarkets data.
+# v3 hotfix: reserve time for exact replay and cache repeated signal events.
 # These caps keep discovery in the intended lite/proxy-then-exact mode.
 MAX_PROXY_ROWS_IN_REPORT = 80
-MAX_EXACT_REPLAY_TOTAL = int(os.getenv("STAGE23A_MAX_EXACT", "18"))
-MAX_EXACT_REPLAY_PER_FAMILY = int(os.getenv("STAGE23A_MAX_EXACT_PER_FAMILY", "6"))
+MAX_EXACT_REPLAY_TOTAL = int(os.getenv("STAGE23A_MAX_EXACT", "12"))
+MAX_EXACT_REPLAY_PER_FAMILY = int(os.getenv("STAGE23A_MAX_EXACT_PER_FAMILY", "4"))
 MIN_PROXY_EVENTS = int(os.getenv("STAGE23A_MIN_PROXY_EVENTS", "25"))
 MIN_EXACT_EVENTS = int(os.getenv("STAGE23A_MIN_EXACT_EVENTS", "35"))
-MAX_RUNTIME_SECONDS = int(os.getenv("STAGE23A_MAX_RUNTIME_SECONDS", "240"))
-MAX_CANDIDATES_TOTAL = int(os.getenv("STAGE23A_MAX_CANDIDATES_TOTAL", "120"))
-PROXY_BOOTSTRAP_ITERS = int(os.getenv("STAGE23A_PROXY_BOOTSTRAP_ITERS", "40"))
-EXACT_BOOTSTRAP_ITERS = int(os.getenv("STAGE23A_EXACT_BOOTSTRAP_ITERS", "100"))
+MAX_RUNTIME_SECONDS = int(os.getenv("STAGE23A_MAX_RUNTIME_SECONDS", "180"))
+EXACT_RESERVED_SECONDS = int(os.getenv("STAGE23A_EXACT_RESERVED_SECONDS", "45"))
+MAX_CANDIDATES_TOTAL = int(os.getenv("STAGE23A_MAX_CANDIDATES_TOTAL", "60"))
+PROXY_BOOTSTRAP_ITERS = int(os.getenv("STAGE23A_PROXY_BOOTSTRAP_ITERS", "20"))
+EXACT_BOOTSTRAP_ITERS = int(os.getenv("STAGE23A_EXACT_BOOTSTRAP_ITERS", "80"))
 # CSV-first avoids expensive SQLite table discovery on large local stores.
 DATA_LOAD_MODE = os.getenv("STAGE23A_DATA_LOAD_MODE", "csv_first").strip().lower()
 
@@ -352,6 +353,8 @@ def bootstrap_pf_p05(values: Sequence[float], n_iter: int = 100) -> float:
     vals = np.asarray(list(values), dtype=float)
     if vals.size < 10:
         return 0.0
+    if n_iter <= 0:
+        return profit_factor(vals)
     rng = np.random.default_rng(RANDOM_SEED)
     pfs = []
     for _ in range(n_iter):
@@ -757,16 +760,33 @@ def build_candidates() -> List[Candidate]:
     return candidates[:MAX_CANDIDATES_TOTAL]
 
 
+def _signal_cache_key(cand: Candidate) -> str:
+    """Cache event-generation output for candidates sharing the same signal rule.
+
+    TP/SL and horizon affect replay only; they do not affect event generation.
+    Stage23A v2 recomputed identical daily/session scans many times, which allowed
+    proxy to consume the whole runtime and left no time for exact replay.
+    """
+    signal_params = {k: v for k, v in cand.params.items() if k not in {"tp_atr", "sl_atr", "horizon_min"}}
+    return cand.family + "|" + json.dumps(signal_params, sort_keys=True, separators=(",", ":"))
+
+
 def run_proxy_grid(m15: pd.DataFrame, candidates: List[Candidate], deadline_ts: float) -> Tuple[pd.DataFrame, Dict[str, pd.DataFrame], bool]:
     rows = []
     event_cache: Dict[str, pd.DataFrame] = {}
+    signal_event_cache: Dict[str, pd.DataFrame] = {}
     timed_out = False
     for idx, cand in enumerate(candidates, start=1):
         if time.monotonic() > deadline_ts:
             timed_out = True
             break
         gen = EVENT_GENERATORS[cand.family]
-        events = gen(m15, cand.params)
+        sig_key = _signal_cache_key(cand)
+        if sig_key in signal_event_cache:
+            events = signal_event_cache[sig_key]
+        else:
+            events = gen(m15, cand.params)
+            signal_event_cache[sig_key] = events
         event_cache[cand.name] = events
         if len(events) < MIN_PROXY_EVENTS:
             continue
@@ -967,7 +987,7 @@ def render_markdown(report: Dict[str, Any], proxy_df: pd.DataFrame, exact_df: pd
     lines.append("## Top exact M1 results")
     lines.append("")
     if exact_df.empty:
-        lines.append("No exact candidates were replayed. Usually this means the proxy grid found too few events or too weak proxy results.")
+        lines.append("No exact candidates were replayed. This should only happen if the proxy runtime cap was reached before the exact reserve or if no proxy candidate passed the minimum-event filter.")
     else:
         cols = ["decision", "family", "name", "events", "pf_x1", "pf_x4", "test20_pf_x1", "pf_2026_x1", "boot_pf_p05_x1", "median_x1", "total_x1"]
         lines.append(markdown_table(exact_df, cols, 15))
@@ -1015,7 +1035,11 @@ def main() -> None:
     m1 = merge_atr(m1, h1)
 
     candidates = build_candidates()
-    proxy_df, event_cache, proxy_timed_out = run_proxy_grid(m15, candidates, deadline_ts)
+    # Reserve part of the runtime for M1 exact replay. Without this, a weak but broad
+    # proxy grid can consume the whole cap and produce Exact replayed = 0.
+    exact_reserved = max(10, min(EXACT_RESERVED_SECONDS, max(10, MAX_RUNTIME_SECONDS // 2)))
+    proxy_deadline_ts = min(deadline_ts, started_monotonic + max(30, MAX_RUNTIME_SECONDS - exact_reserved))
+    proxy_df, event_cache, proxy_timed_out = run_proxy_grid(m15, candidates, proxy_deadline_ts)
     exact_selection = select_exact_candidates(proxy_df)
     exact_df, trades_df, exact_timed_out = run_exact_replay(m1, exact_selection, event_cache, deadline_ts)
     elapsed_seconds = round(time.monotonic() - started_monotonic, 2)

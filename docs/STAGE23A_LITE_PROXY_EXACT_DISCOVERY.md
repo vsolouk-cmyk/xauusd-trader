@@ -1,40 +1,29 @@
-# Stage23A v2 — Lite Proxy-Then-Exact Discovery Hotfix
+# Stage23A v3 — Lite Proxy-Then-Exact Discovery
 
-## Purpose
+Research-only discovery module. It does not modify Stage18A v2, does not modify any EA, and does not authorize paper/live/orders.
 
-Stage23A v2 keeps the Stage23 discovery track independent from Stage18A v2 and fixes the runtime problem observed in the first Stage23A patch.
+## Why v3 exists
 
-## Guardrails
+Stage23A v2 controlled total runtime, but proxy evaluation could consume the full runtime cap. In that case the report could show `Exact replayed: 0`, which is not useful for diagnostics.
 
-- Research/shadow only.
-- No EA change.
-- No automatic trading.
-- No paper/live/order authorization.
-- Stage18A v2 remains the active operational forward-shadow runner.
-- Stage19B/20A/21B/22A watchlist-only candidates are not added to Stage18A.
+v3 fixes this by:
 
-## Runtime fixes in v2
+- reserving runtime for exact M1 replay;
+- caching repeated signal-event generation across candidates that differ only by TP/SL/horizon;
+- lowering default candidate caps;
+- keeping exact replay diagnostic even when proxy candidates are weak.
 
-1. CSV-first loading by default:
-   - `~/Downloads/amarkets_xauusd_1m.csv`
-   - `~/Downloads/amarkets_xauusd_1h.csv`
+## Default runtime controls
 
-   This avoids expensive SQLite table discovery when the local store is large.
-
-2. Smaller deterministic lite grid:
-   - candidate cap default: 120
-   - exact replay cap default: 18 total / 6 per family
-
-3. Faster replay:
-   - numpy `searchsorted` instead of per-event DataFrame slicing.
-
-4. Runtime cap:
-   - default `STAGE23A_MAX_RUNTIME_SECONDS=240`
-   - if the cap is hit, the report still writes partial results and marks timeout flags in JSON.
-
-5. Lower bootstrap iterations:
-   - proxy default: 40
-   - exact default: 100
+```text
+STAGE23A_MAX_RUNTIME_SECONDS=180
+STAGE23A_EXACT_RESERVED_SECONDS=45
+STAGE23A_MAX_CANDIDATES_TOTAL=60
+STAGE23A_MAX_EXACT=12
+STAGE23A_MAX_EXACT_PER_FAMILY=4
+STAGE23A_PROXY_BOOTSTRAP_ITERS=20
+STAGE23A_EXACT_BOOTSTRAP_ITERS=80
+```
 
 ## Run
 
@@ -44,29 +33,10 @@ python3 -m app.stage23a_lite_proxy_exact_discovery
 cat data/reports/stage23a_lite_proxy_exact_discovery/stage23a_lite_proxy_exact_discovery.md
 ```
 
-## Optional faster run
+## Fast diagnostic run
 
 ```bash
 cd ~/Desktop/xauusd-trader
-STAGE23A_MAX_RUNTIME_SECONDS=180 STAGE23A_MAX_CANDIDATES_TOTAL=90 STAGE23A_MAX_EXACT=12 python3 -m app.stage23a_lite_proxy_exact_discovery
+STAGE23A_MAX_RUNTIME_SECONDS=120 STAGE23A_EXACT_RESERVED_SECONDS=40 STAGE23A_MAX_CANDIDATES_TOTAL=45 STAGE23A_MAX_EXACT=8 python3 -m app.stage23a_lite_proxy_exact_discovery
 cat data/reports/stage23a_lite_proxy_exact_discovery/stage23a_lite_proxy_exact_discovery.md
-```
-
-## If CSV files are missing
-
-The module falls back to SQLite. To force SQLite-first:
-
-```bash
-cd ~/Desktop/xauusd-trader
-STAGE23A_DATA_LOAD_MODE=sqlite_first python3 -m app.stage23a_lite_proxy_exact_discovery
-```
-
-## Outputs
-
-```text
-data/reports/stage23a_lite_proxy_exact_discovery/stage23a_lite_proxy_exact_discovery.md
-data/reports/stage23a_lite_proxy_exact_discovery/stage23a_lite_proxy_exact_discovery.json
-data/reports/stage23a_lite_proxy_exact_discovery/stage23a_proxy_candidates.csv
-data/reports/stage23a_lite_proxy_exact_discovery/stage23a_exact_candidates.csv
-data/reports/stage23a_lite_proxy_exact_discovery/stage23a_exact_trades.csv
 ```

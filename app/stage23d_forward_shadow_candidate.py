@@ -34,7 +34,6 @@ try:
         Candidate,
         ROUNDTRIP_COST_USD,
         events_london_oneway_continuation,
-        load_market_data,
         merge_atr,
         profit_factor,
     )
@@ -44,6 +43,14 @@ except Exception as exc:  # pragma: no cover - user-facing guard
         "Apply/run Stage23B before Stage23D. Original import error: " + str(exc)
     )
 
+try:
+    from app.stage25c_deduped_filter_validation import load_bars_from_db
+except Exception as exc:  # pragma: no cover - user-facing guard
+    raise RuntimeError(
+        "Stage23D DB-first hotfix depends on app.stage25c_deduped_filter_validation for "
+        "SQLite schema introspection. Apply/run Stage25C before Stage23D hotfix. Original import error: " + str(exc)
+    )
+
 
 STAGE_NAME = "stage23d_forward_shadow_candidate"
 REPORT_DIR = Path("data/reports") / STAGE_NAME
@@ -51,7 +58,9 @@ LEDGER_PATH = REPORT_DIR / "stage23d_forward_shadow_ledger.csv"
 REPORT_MD = REPORT_DIR / "stage23d_forward_shadow_candidate.md"
 REPORT_JSON = REPORT_DIR / "stage23d_forward_shadow_candidate.json"
 RECENT_EVENTS_CSV = REPORT_DIR / "stage23d_recent_events.csv"
+SCHEMA_DIAG_CSV = REPORT_DIR / "stage23d_db_schema_diagnostic.csv"
 
+DB_PATH = Path(os.getenv("STAGE23D_DB_PATH", "data/local/xauusd_local_store.sqlite")).expanduser()
 LOOKBACK_HOURS = int(os.getenv("STAGE23D_LOOKBACK_HOURS", "336"))  # 14 days
 MAX_RECENT_ROWS_REPORT = int(os.getenv("STAGE23D_MAX_RECENT_ROWS_REPORT", "25"))
 
@@ -103,6 +112,68 @@ def _safe_float(v: Any, default: float = 0.0) -> float:
         return out if np.isfinite(out) else default
     except Exception:
         return default
+
+
+
+
+def _to_time_df(df: pd.DataFrame) -> pd.DataFrame:
+    """Normalize DB-loaded candles to Stage23D's expected time/open/high/low/close schema."""
+    out = df.copy()
+    if "time" not in out.columns:
+        if "timestamp" in out.columns:
+            out = out.rename(columns={"timestamp": "time"})
+        elif "datetime" in out.columns:
+            out = out.rename(columns={"datetime": "time"})
+    if "time" not in out.columns:
+        raise RuntimeError("DB-first Stage23D could not find a time/timestamp column after schema introspection.")
+    out["time"] = pd.to_datetime(out["time"], utc=True, errors="coerce")
+    for col in ["open", "high", "low", "close"]:
+        if col not in out.columns:
+            raise RuntimeError(f"DB-first Stage23D could not find required OHLC column: {col}")
+        out[col] = pd.to_numeric(out[col], errors="coerce")
+    if "volume" not in out.columns:
+        out["volume"] = 0.0
+    out = out.dropna(subset=["time", "open", "high", "low", "close"]).sort_values("time").reset_index(drop=True)
+    # Ensure timezone-aware UTC timestamps.
+    out["time"] = pd.to_datetime(out["time"], utc=True)
+    return out[["time", "open", "high", "low", "close", "volume"]].copy()
+
+
+def _resample_ohlcv(df: pd.DataFrame, rule: str) -> pd.DataFrame:
+    if df.empty:
+        return df.copy()
+    d = df.copy().sort_values("time")
+    d = d.set_index("time")
+    out = (
+        d.resample(rule, label="left", closed="left")
+        .agg(open=("open", "first"), high=("high", "max"), low=("low", "min"), close=("close", "last"), volume=("volume", "sum"))
+        .dropna(subset=["open", "high", "low", "close"])
+        .reset_index()
+    )
+    out["time"] = pd.to_datetime(out["time"], utc=True)
+    return out
+
+
+def load_market_data_db_first() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, Dict[str, Any], pd.DataFrame]:
+    """Load candles from SQLite only. CSV fallback is intentionally disabled."""
+    m1_raw, h1_raw, db_meta, schema_diag = load_bars_from_db(DB_PATH)
+    m1 = _to_time_df(m1_raw)
+    h1 = _to_time_df(h1_raw) if h1_raw is not None and not h1_raw.empty else pd.DataFrame()
+    if h1.empty:
+        h1 = _resample_ohlcv(m1, "1h")
+        db_meta["h1_mode_stage23d"] = "derived_from_m1_resample"
+    m15 = _resample_ohlcv(m1, "15min")
+    db_meta.update(
+        {
+            "db_path": str(DB_PATH),
+            "db_first": True,
+            "csv_fallback_enabled": False,
+            "m1_rows_stage23d": int(len(m1)),
+            "h1_rows_stage23d": int(len(h1)),
+            "m15_rows_stage23d": int(len(m15)),
+        }
+    )
+    return m1, h1, m15, db_meta, schema_diag
 
 
 def _signal_id(candidate: Candidate, signal_time: Any, direction: str) -> str:
@@ -468,11 +539,18 @@ def render_markdown(report: Dict[str, Any], recent_df: pd.DataFrame, ledger_df: 
     lines.append(json.dumps(PRIMARY_CANDIDATE.params, indent=2, sort_keys=True))
     lines.append("```")
     lines.append("")
-    lines.append("## Data")
+    lines.append("## DB source of truth")
     lines.append("")
-    lines.append(f"- M1 rows: {report['data']['m1_rows']} | span: {report['data']['m1_start']} → {report['data']['m1_end']}")
-    lines.append(f"- H1 rows: {report['data']['h1_rows']} | span: {report['data']['h1_start']} → {report['data']['h1_end']}")
-    lines.append(f"- M15 rows: {report['data']['m15_rows']} | span: {report['data']['m15_start']} → {report['data']['m15_end']}")
+    db_meta = report.get("data", {}).get("db_meta", {})
+    lines.append(f"- db_path: `{db_meta.get('db_path', str(DB_PATH))}`")
+    lines.append(f"- candle_table: `{db_meta.get('m1_table', db_meta.get('candle_table', 'bars'))}`")
+    lines.append(f"- m1_mode: `{db_meta.get('m1_mode', db_meta.get('m1_mode_stage23d', 'db_schema_introspection'))}`")
+    lines.append(f"- h1_mode: `{db_meta.get('h1_mode', db_meta.get('h1_mode_stage23d', 'db_schema_introspection'))}`")
+    lines.append(f"- db_first: `{db_meta.get('db_first', True)}`")
+    lines.append(f"- csv_fallback_enabled: `{db_meta.get('csv_fallback_enabled', False)}`")
+    lines.append(f"- M1 rows used: `{report['data']['m1_rows']}` | span: `{report['data']['m1_start']} → {report['data']['m1_end']}`")
+    lines.append(f"- H1 rows used: `{report['data']['h1_rows']}` | span: `{report['data']['h1_start']} → {report['data']['h1_end']}`")
+    lines.append(f"- M15 rows derived: `{report['data']['m15_rows']}` | span: `{report['data']['m15_start']} → {report['data']['m15_end']}`")
     lines.append(f"- Lookback hours: {report['settings']['lookback_hours']}")
     lines.append(f"- Roundtrip cost x1: {ROUNDTRIP_COST_USD}")
     lines.append("")
@@ -517,9 +595,10 @@ def render_markdown(report: Dict[str, Any], recent_df: pd.DataFrame, ledger_df: 
     lines.append("## Interpretation")
     lines.append("")
     lines.append("- An open signal here is still research/shadow-only; it is not an order instruction.")
-    lines.append("- `LATE_DETECTED_ALREADY_RESOLVED` means the signal was first seen after its outcome was already knowable from the CSV; do not count it as forward proof.")
+    lines.append("- `LATE_DETECTED_ALREADY_RESOLVED` means the signal was first seen after its outcome was already knowable from SQLite candle history; do not count it as forward proof.")
     lines.append("- `FORWARD_OPEN_FIRST_SEEN_BEFORE_OUTCOME` is the useful state for collecting forward-shadow evidence.")
-    lines.append("- Keep Stage18A v2 running separately after each AMarkets CSV refresh.")
+    lines.append("- Candles are DB-first from SQLite; AMarkets CSV fallback is disabled in this module.")
+    lines.append("- Keep Stage18A v2 running separately after each AMarkets CSV refresh/import cycle.")
     lines.append("")
     lines.append("## Operational reminder")
     lines.append("")
@@ -535,6 +614,7 @@ def render_markdown(report: Dict[str, Any], recent_df: pd.DataFrame, ledger_df: 
     lines.append(f"- `{REPORT_MD}`")
     lines.append(f"- `{LEDGER_PATH}`")
     lines.append(f"- `{RECENT_EVENTS_CSV}`")
+    lines.append(f"- `{SCHEMA_DIAG_CSV}`")
     lines.append("")
     return "\n".join(lines)
 
@@ -543,7 +623,11 @@ def main() -> None:
     REPORT_DIR.mkdir(parents=True, exist_ok=True)
     generated_utc = _utc_now_iso()
 
-    m1, h1, m15, meta = load_market_data()
+    m1, h1, m15, meta, schema_diag = load_market_data_db_first()
+    try:
+        schema_diag.to_csv(SCHEMA_DIAG_CSV, index=False)
+    except Exception:
+        pd.DataFrame().to_csv(SCHEMA_DIAG_CSV, index=False)
     m15_atr = merge_atr(m15, h1)
     data_latest = pd.Timestamp(m1["time"].max())
     lookback_start = data_latest - pd.Timedelta(hours=LOOKBACK_HOURS)
@@ -592,6 +676,7 @@ def main() -> None:
         },
         "candidate": {"name": PRIMARY_CANDIDATE.name, "family": PRIMARY_CANDIDATE.family, "params": PRIMARY_CANDIDATE.params},
         "data": {
+            "db_meta": meta,
             "m1_rows": int(len(m1)),
             "m1_start": str(pd.Timestamp(m1["time"].min())),
             "m1_end": str(pd.Timestamp(m1["time"].max())),
@@ -618,6 +703,7 @@ def main() -> None:
             "report_md": str(REPORT_MD),
             "ledger_csv": str(LEDGER_PATH),
             "recent_events_csv": str(RECENT_EVENTS_CSV),
+            "db_schema_diagnostic_csv": str(SCHEMA_DIAG_CSV),
         },
     }
 

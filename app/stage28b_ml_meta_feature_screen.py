@@ -5,10 +5,12 @@ Stage28B ML-lite / meta-label feature screen for the XAUUSD research project.
 Purpose:
 - Do NOT create orders or modify active trackers.
 - Use the validated Stage23/25 lineage trade artifact as a research dataset.
-- Screen available numeric/time/session/regime features with simple non-linear gates,
+- Screen only forward-safe numeric/time/session/regime features with simple non-linear gates,
   plus limited pairwise combinations, to identify meta-label/gate candidates.
 - DB market candles are used only for metadata sanity via the validated Stage25C loader;
   the trade artifact is a research artifact, not market-data fallback.
+- Hotfix2: strict feature whitelist excludes future/day-complete fields, outcomes,
+  exit/tp/sl columns, and absolute price-level features.
 
 This module intentionally avoids sklearn dependencies. It is a deterministic feature/gate
 screen rather than a trained black-box model.
@@ -39,6 +41,41 @@ MAX_SINGLE_GATES = int(os.getenv("STAGE28B_MAX_SINGLE_GATES", "400"))
 MAX_PAIRWISE_BASE = int(os.getenv("STAGE28B_MAX_PAIRWISE_BASE", "24"))
 RANDOM_SEED = int(os.getenv("STAGE28B_RANDOM_SEED", "2802"))
 REQUESTED_CANDIDATE = os.getenv("STAGE28B_CANDIDATE", "S23B_B_pb0.1_eff0.60_h180_tp0.6_sl0.65")
+STRICT_FORWARD_SAFE = os.getenv("STAGE28B_STRICT_FORWARD_SAFE", "1").strip().lower() not in {"0", "false", "no"}
+
+# Only features knowable at, or strictly before, the canonical entry are allowed by default.
+# The top Stage28B raw result used day_range/day_high/day_low/day_close style fields,
+# which are not forward-safe at entry and must be treated as leakage diagnostics.
+FORWARD_SAFE_FEATURES = {
+    "direction",
+    "dir_mult",
+    "entry_hour",
+    "dow",
+    "month",
+    "year",
+    "prior_day_aligned",
+    "prior_day_range",
+    "asia_range",
+    "asia_eff",
+    "london_range",
+    "london_eff",
+}
+LEAK_PRONE_EXPLICIT_COLS = {
+    "entry",
+    "exit",
+    "tp",
+    "sl",
+    "day_high",
+    "day_low",
+    "day_close",
+    "day_range",
+    "early_ny_open",
+    "early_ny_high",
+    "early_ny_low",
+    "early_ny_close",
+    "early_ny_range",
+    "early_ny_eff",
+}
 
 NET_COLS = ["net_x1", "net_x4", "net_x6"]
 EXCLUDE_FEATURE_SUBSTRINGS = (
@@ -46,6 +83,10 @@ EXCLUDE_FEATURE_SUBSTRINGS = (
     "gross",
     "exit_price",
     "entry_price",
+    "open_price",
+    "high_price",
+    "low_price",
+    "close_price",
     "pnl",
     "profit",
     "loss",
@@ -53,12 +94,19 @@ EXCLUDE_FEATURE_SUBSTRINGS = (
     "ret_",
     "target",
     "label",
+    "outcome",
+    "filled",
+    "resolved",
 )
 EXCLUDE_FEATURE_COLS = {
     "candidate",
     "family",
     "reason",
     "exit_reason",
+    "entry",
+    "exit",
+    "tp",
+    "sl",
     "date",
     "timestamp",
     "entry_time",
@@ -242,46 +290,76 @@ def _load_db_meta() -> Dict[str, Any]:
     try:
         from app.stage25c_deduped_filter_validation import load_bars_from_db  # type: ignore
 
-        m1, m1_meta = load_bars_from_db(DEFAULT_DB_PATH, "M1")
-        h1, h1_meta = load_bars_from_db(DEFAULT_DB_PATH, "H1")
-        meta.update(
-            {
-                "m1_rows": int(len(m1)),
-                "h1_rows": int(len(h1)),
-                "m1_span": f"{m1.index.min()} → {m1.index.max()}" if len(m1) else "unavailable",
-                "h1_span": f"{h1.index.min()} → {h1.index.max()}" if len(h1) else "unavailable",
-                "m1_loader_meta": m1_meta,
-                "h1_loader_meta": h1_meta,
-            }
-        )
+        loaded = load_bars_from_db(DEFAULT_DB_PATH)
+        if isinstance(loaded, tuple) and len(loaded) >= 4:
+            m1, h1, loader_meta, schema_diag = loaded[:4]
+            meta.update(dict(loader_meta) if isinstance(loader_meta, dict) else {})
+            meta.update(
+                {
+                    "m1_rows": int(len(m1)),
+                    "h1_rows": int(len(h1)),
+                    "m1_span": f"{m1['timestamp'].min()} → {m1['timestamp'].max()}" if len(m1) and "timestamp" in m1.columns else "unavailable",
+                    "h1_span": f"{h1['timestamp'].min()} → {h1['timestamp'].max()}" if len(h1) and "timestamp" in h1.columns else "unavailable",
+                    "schema_diag_rows": int(len(schema_diag)) if hasattr(schema_diag, "__len__") else 0,
+                    "db_meta_status": "ok",
+                }
+            )
+        else:
+            meta.update({"db_meta_status": "warning", "db_meta_error": "Unexpected Stage25C loader return shape"})
     except Exception as exc:  # metadata sanity should not block artifact screening
         meta.update({"db_meta_status": "warning", "db_meta_error": f"{type(exc).__name__}: {exc}"})
     return meta
 
-
-def _feature_columns(df: pd.DataFrame) -> List[str]:
+def _feature_columns(df: pd.DataFrame) -> Tuple[List[str], List[Dict[str, Any]]]:
     cols: List[str] = []
+    excluded: List[Dict[str, Any]] = []
+
+    def reject(col: str, reason: str) -> None:
+        excluded.append({"feature": col, "reason": reason})
+
     for c in df.columns:
         cl = str(c).lower()
-        if c in EXCLUDE_FEATURE_COLS:
+        if c in EXCLUDE_FEATURE_COLS or cl in LEAK_PRONE_EXPLICIT_COLS:
+            reject(str(c), "explicit_outcome_or_future_or_price_level")
             continue
         if any(s in cl for s in EXCLUDE_FEATURE_SUBSTRINGS):
+            reject(str(c), "outcome_like_substring")
+            continue
+        if STRICT_FORWARD_SAFE and c not in FORWARD_SAFE_FEATURES:
+            reject(str(c), "not_in_forward_safe_whitelist")
             continue
         if pd.api.types.is_numeric_dtype(df[c]):
             valid = pd.to_numeric(df[c], errors="coerce").dropna()
             if len(valid) >= MIN_EVENTS and valid.nunique() >= 2:
                 cols.append(c)
-    # Always include known categorical/time fields if numeric.
+            else:
+                reject(str(c), "insufficient_valid_numeric_variation")
+        else:
+            reject(str(c), "non_numeric")
+
+    # Always include known categorical/time fields if numeric and whitelist-compatible.
     for c in ["direction", "dir_mult", "entry_hour", "dow", "month", "year"]:
         if c in df.columns and c not in cols:
+            if STRICT_FORWARD_SAFE and c not in FORWARD_SAFE_FEATURES:
+                reject(str(c), "not_in_forward_safe_whitelist")
+                continue
             try:
                 df[c] = pd.to_numeric(df[c], errors="coerce")
                 if df[c].dropna().nunique() >= 2:
                     cols.append(c)
+                else:
+                    reject(str(c), "insufficient_categorical_variation")
             except Exception:
-                pass
-    return cols
+                reject(str(c), "categorical_conversion_failed")
 
+    # Preserve order and remove duplicates.
+    seen: set[str] = set()
+    unique_cols: List[str] = []
+    for c in cols:
+        if c not in seen:
+            seen.add(c)
+            unique_cols.append(c)
+    return unique_cols, excluded
 
 def _classify_gate(m: Metrics, base: Metrics, kind: str) -> str:
     if kind.startswith("direction"):
@@ -428,7 +506,7 @@ def run() -> Dict[str, Any]:
     db_meta = _load_db_meta()
     trades, manifest = _normalize_artifact(DEFAULT_ARTIFACT)
     base = _metrics(trades)
-    features = _feature_columns(trades)
+    features, excluded_features = _feature_columns(trades)
     singles = _single_feature_gates(trades, features, base)
     pairwise = _pairwise_gates(trades, singles, base)
     gate_rows = [asdict(g) for g, _ in singles] + [asdict(g) for g in pairwise]
@@ -446,7 +524,7 @@ def run() -> Dict[str, Any]:
 
     review_count = int((gates.get("decision", pd.Series(dtype=str)) == "STAGE28B_GATE_CANDIDATE_REVIEW_ONLY").sum()) if not gates.empty else 0
     watch_count = int((gates.get("decision", pd.Series(dtype=str)) == "STAGE28B_WATCHLIST_ONLY").sum()) if not gates.empty else 0
-    decision = "STAGE28B_HAS_META_GATE_CANDIDATE_REVIEW_ONLY" if review_count else "STAGE28B_NO_META_GATE_PROMOTION_KEEP_DISCOVERY_OPEN"
+    decision = "STAGE28B_STRICT_HAS_FORWARD_SAFE_META_GATE_CANDIDATE_REVIEW_ONLY" if review_count else "STAGE28B_STRICT_NO_FORWARD_SAFE_META_GATE_KEEP_DISCOVERY_OPEN"
 
     top_gate_name = str(gates.iloc[0]["gate_name"]) if not gates.empty else "none"
     top_mask: Optional[pd.Series] = None
@@ -462,11 +540,13 @@ def run() -> Dict[str, Any]:
     splits_path = REPORT_DIR / "stage28b_top_gate_splits.csv"
     manifest_path = REPORT_DIR / "stage28b_artifact_manifest.csv"
     db_path = REPORT_DIR / "stage28b_db_schema_diagnostic.json"
+    excluded_path = REPORT_DIR / "stage28b_excluded_features.csv"
     enriched_path = REPORT_DIR / "stage28b_normalized_lineage_trades.csv"
     gates.to_csv(all_path, index=False)
     splits.to_csv(splits_path, index=False)
     pd.DataFrame([manifest]).to_csv(manifest_path, index=False)
     trades.to_csv(enriched_path, index=False)
+    pd.DataFrame(excluded_features).to_csv(excluded_path, index=False)
     db_path.write_text(json.dumps(db_meta, indent=2, default=str), encoding="utf-8")
 
     summary = {
@@ -474,8 +554,11 @@ def run() -> Dict[str, Any]:
         "db_meta": db_meta,
         "artifact_manifest": manifest,
         "base_metrics": asdict(base),
+        "strict_forward_safe": STRICT_FORWARD_SAFE,
         "feature_count": len(features),
         "features_sample": features[:60],
+        "excluded_feature_count": len(excluded_features),
+        "excluded_features_sample": excluded_features[:80],
         "single_gate_count": len(singles),
         "pairwise_gate_count": len(pairwise),
         "gate_candidates_tested": len(gates),
@@ -488,6 +571,7 @@ def run() -> Dict[str, Any]:
             "top_gate_splits": str(splits_path),
             "artifact_manifest": str(manifest_path),
             "normalized_trades": str(enriched_path),
+            "excluded_features": str(excluded_path),
             "db_schema_diagnostic": str(db_path),
         },
     }
@@ -518,6 +602,8 @@ def _render_markdown(summary: Dict[str, Any], gates: pd.DataFrame, splits: pd.Da
     lines.append("- Stage18A/Stage23D/Stage25D/Stage27D remain unchanged.")
     lines.append("- Market candle sanity is DB-first via the validated Stage25C loader; AMarkets CSV market fallback is disabled.")
     lines.append("- Trade artifact is used only as research evidence for meta-label/gate screening.")
+    lines.append("- Hotfix2 strict mode: only entry-time forward-safe whitelisted features are screened.")
+    lines.append("- Leak-prone fields such as full-day range/high/low/close, early-NY fields, exit/tp/sl, and absolute price-level columns are excluded.")
     lines.append("- This is ML-lite/nonlinear feature screening, not a black-box prediction model.")
     lines.append("")
     lines.append("## DB source of truth")
@@ -546,7 +632,9 @@ def _render_markdown(summary: Dict[str, Any], gates: pd.DataFrame, splits: pd.Da
     lines.append("")
     lines.append("## Counts")
     lines.append("")
+    lines.append(f"- strict_forward_safe: `{summary.get('strict_forward_safe')}`")
     lines.append(f"- feature_count: `{summary['feature_count']}`")
+    lines.append(f"- excluded_feature_count: `{summary.get('excluded_feature_count', 0)}`")
     lines.append(f"- single_gate_count: `{summary['single_gate_count']}`")
     lines.append(f"- pairwise_gate_count: `{summary['pairwise_gate_count']}`")
     lines.append(f"- gate_candidates_tested: `{summary['gate_candidates_tested']}`")
@@ -574,9 +662,10 @@ def _render_markdown(summary: Dict[str, Any], gates: pd.DataFrame, splits: pd.Da
     lines.append("")
     lines.append("## Interpretation")
     lines.append("")
-    lines.append("- Stage28B screens meta-label/gate features around the strongest Stage23/25 lineage instead of inventing a new raw entry rule.")
+    lines.append("- Stage28B Hotfix2 screens only forward-safe meta-label/gate features around the strongest Stage23/25 lineage.")
+    lines.append("- The earlier raw Stage28B top day_range gates are treated as leakage diagnostics, not deployable candidates.")
     lines.append("- A candidate here remains research-only and requires a dedicated validation stage before any forward tracker.")
-    lines.append("- If no meta-gate survives, the next useful step is adding richer exogenous/macro/news proxy features rather than mutating raw OHLC entries.")
+    lines.append("- If no strict meta-gate survives, the next useful step is adding richer exogenous/macro/news proxy features rather than mutating raw OHLC entries.")
     lines.append("")
     lines.append("## Operational reminder")
     lines.append("")

@@ -18,6 +18,7 @@ ACTIVE_APP_MODULES: Set[str] = {
     "stage17d_broker_time_forward_shadow_collector.py",
     "stage18e_shortlist_forward_shadow_collector.py",
     "stage18a_unified_shadow_ops_cycle.py",
+    "stage23b_continuation_no_trade_discovery.py",  # compatibility dependency used by active trackers
     "stage23d_forward_shadow_candidate.py",
     "stage25c_deduped_filter_validation.py",
     "stage25d_db_first_filtered_forward_shadow.py",
@@ -34,6 +35,7 @@ ACTIVE_REPORT_DIRS: Set[str] = {
     "stage17d_broker_time_forward_shadow_collector",
     "stage18e_shortlist_forward_shadow_collector",
     "stage18a_unified_shadow_ops_cycle",
+    "stage23b_continuation_no_trade_discovery",
     "stage23d_forward_shadow_candidate",
     "stage25c_deduped_filter_validation",
     "stage25d_db_first_filtered_forward_shadow",
@@ -45,7 +47,7 @@ ACTIVE_REPORT_DIRS: Set[str] = {
 }
 
 ACTIVE_DOC_KEYWORDS = [
-    "PROJECT_RULES", "TRANSFER", "BASELINE", "STAGE25C", "STAGE27B", "STAGE27C", "STAGE27D", "STAGE28A", "ACTIVE", "README_STAGE28A",
+    "PROJECT_RULES", "TRANSFER", "BASELINE", "STAGE23B", "STAGE25C", "STAGE27B", "STAGE27C", "STAGE27D", "STAGE28A", "ACTIVE", "README_STAGE28A",
 ]
 
 ACTIVE_WORKFLOW_KEYWORDS = ["xauusd", "shadow", "refresh", "active", "stage18", "stage23", "stage25", "stage27", "stage28"]

@@ -27,6 +27,7 @@ RT_COST_X1 = float(os.getenv("STAGE28A_ROUNDTRIP_COST_X1", "0.35"))
 MAX_RUNTIME_SECONDS = float(os.getenv("STAGE28A_MAX_RUNTIME_SECONDS", "210"))
 MAX_EXACT = int(os.getenv("STAGE28A_MAX_EXACT", "18"))
 MAX_EXACT_PER_FAMILY = int(os.getenv("STAGE28A_MAX_EXACT_PER_FAMILY", "3"))
+MAX_CANDIDATES_PER_FAMILY = int(os.getenv("STAGE28A_MAX_CANDIDATES_PER_FAMILY", "6"))
 MIN_EVENTS = int(os.getenv("STAGE28A_MIN_EVENTS", "45"))
 BOOT_N = int(os.getenv("STAGE28A_BOOT_N", "160"))
 RANDOM_SEED = int(os.getenv("STAGE28A_RANDOM_SEED", "270128"))
@@ -536,6 +537,36 @@ def _event_passes(spec: CandidateSpec, drow: pd.Series, entry: pd.Series) -> Tup
     return False, None, "unknown_family"
 
 
+
+def _interleave_and_cap_specs(specs: List[CandidateSpec]) -> List[CandidateSpec]:
+    """Return a family-balanced execution order.
+
+    Stage28A v1 evaluated registry specs in family blocks, so a runtime cap could
+    stop after only the first one or two families. This hotfix caps each family
+    and interleaves families round-robin before evaluation, making partial runs
+    diagnostically useful.
+    """
+    by_family: Dict[str, List[CandidateSpec]] = {}
+    family_order: List[str] = []
+    for spec in specs:
+        if spec.family not in by_family:
+            by_family[spec.family] = []
+            family_order.append(spec.family)
+        by_family[spec.family].append(spec)
+
+    cap = MAX_CANDIDATES_PER_FAMILY
+    if cap > 0:
+        by_family = {fam: vals[:cap] for fam, vals in by_family.items()}
+
+    out: List[CandidateSpec] = []
+    max_len = max((len(v) for v in by_family.values()), default=0)
+    for i in range(max_len):
+        for fam in family_order:
+            vals = by_family.get(fam, [])
+            if i < len(vals):
+                out.append(vals[i])
+    return out
+
 def evaluate_candidate(spec: CandidateSpec, m1: pd.DataFrame, m15: pd.DataFrame, daily: pd.DataFrame) -> Tuple[pd.DataFrame, Dict[str, Any]]:
     rows: List[Dict[str, Any]] = []
     # M15 ATR proxy for sizing; exact replay uses M1 path.
@@ -603,7 +634,8 @@ def run() -> Dict[str, Any]:
     REPORT_DIR.mkdir(parents=True, exist_ok=True)
     m1, h1, m15, db_meta = load_market(DEFAULT_DB_PATH)
     daily = _build_daily_features(m15, h1)
-    specs = registry()
+    raw_specs = registry()
+    specs = _interleave_and_cap_specs(raw_specs)
     all_rows: List[Dict[str, Any]] = []
     exact_trade_parts: List[pd.DataFrame] = []
     family_status: Dict[str, Dict[str, Any]] = {}
@@ -655,7 +687,9 @@ def run() -> Dict[str, Any]:
         ],
         "db_source_of_truth": db_meta,
         "counts": {
-            "registry_candidate_count": len(specs),
+            "registry_candidate_count": len(raw_specs),
+            "scheduled_candidate_count": len(specs),
+            "max_candidates_per_family": MAX_CANDIDATES_PER_FAMILY,
             "candidates_tested": int(len(candidates)),
             "candidates_passing_min_events": int((candidates.get("events", pd.Series(dtype=int)) >= MIN_EVENTS).sum()) if len(candidates) else 0,
             "candidate_review_count": review_count,
@@ -723,6 +757,7 @@ def write_report(result: Dict[str, Any]) -> None:
     lines.append("\n## Interpretation\n")
     lines.append("- Stage28A is a discovery factory branch, not a modification of active forward trackers.")
     lines.append("- It tests multiple independent pattern families in one batch using DB-first candles.")
+    lines.append("- Hotfix: registry execution is family-interleaved with a per-family cap so timeout-limited runs still cover all families.")
     lines.append("- Candidate-review results remain research-only and require dedicated validation plus separate forward-shadow tracking.")
     lines.append("- Negative families should be archived in the registry history to avoid repeated random mutation.")
     lines.append("\n## Operational reminder\n")

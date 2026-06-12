@@ -30,6 +30,8 @@ ACTIVE_APP_MODULES: Set[str] = {
     "stage28c_forward_safe_meta_gate_validation.py",
     "stage28d_forward_safe_meta_gate_tracker.py",
     "stage29a_high_range_regime_continuation_discovery.py",
+    "stage30a_candidate_pool_builder_ml_dataset.py",
+    "stage30b_ml_lite_feature_ranker.py",
     "run_active_shadow_suite.py",
 }
 
@@ -51,14 +53,16 @@ ACTIVE_REPORT_DIRS: Set[str] = {
     "stage28c_forward_safe_meta_gate_validation",
     "stage28d_forward_safe_meta_gate_tracker",
     "stage29a_high_range_regime_continuation_discovery",
+    "stage30a_candidate_pool_builder_ml_dataset",
+    "stage30b_ml_lite_feature_ranker",
     "active_shadow_suite",
 }
 
 ACTIVE_DOC_KEYWORDS = [
-    "PROJECT_RULES", "TRANSFER", "BASELINE", "STAGE23B", "STAGE25C", "STAGE27B", "STAGE27C", "STAGE27D", "STAGE28A", "STAGE28B", "STAGE28C", "STAGE28D", "ACTIVE", "README_STAGE28A", "README_STAGE28B", "README_STAGE28C", "README_STAGE28D", "STAGE29A", "README_STAGE29A",
+    "PROJECT_RULES", "TRANSFER", "BASELINE", "STAGE23B", "STAGE25C", "STAGE27B", "STAGE27C", "STAGE27D", "STAGE28A", "STAGE28B", "STAGE28C", "STAGE28D", "ACTIVE", "README_STAGE28A", "README_STAGE28B", "README_STAGE28C", "README_STAGE28D", "STAGE29A", "README_STAGE29A", "STAGE30A", "README_STAGE30A", "STAGE30B", "README_STAGE30B",
 ]
 
-ACTIVE_WORKFLOW_KEYWORDS = ["xauusd", "shadow", "refresh", "active", "stage18", "stage23", "stage25", "stage27", "stage28", "stage29"]
+ACTIVE_WORKFLOW_KEYWORDS = ["xauusd", "shadow", "refresh", "active", "stage18", "stage23", "stage25", "stage27", "stage28", "stage29", "stage30"]
 
 
 def _archive_path(root: Path) -> Path:

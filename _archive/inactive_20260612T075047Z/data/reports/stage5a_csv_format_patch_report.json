@@ -1,0 +1,17 @@
+{
+  "generated_utc": "2026-06-07T14:06:09Z",
+  "tool_version": "v4",
+  "ea_source": "mql5/Experts/XAUUSD/XAUUSD_DryRun_v1.mq5",
+  "detected_encoding": "utf-8",
+  "apply": true,
+  "status": "PASS",
+  "changes": [
+    "Added FILE_ANSI to a FILE_COMMON FileOpen(...) call.",
+    "Added FILE_ANSI to a FILE_COMMON FileOpen(...) call.",
+    "Added FILE_ANSI to a FILE_COMMON FileOpen(...) call."
+  ],
+  "warnings": [
+    "No explicit sma10/distance_usd header-join bug was found. EA may already be fixed or uses a different header construction."
+  ],
+  "errors": []
+}

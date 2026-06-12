@@ -1,0 +1,74 @@
+{
+  "tool_version": "v3_query_intent_classification",
+  "generated_utc": "2026-06-10T09:13:30+00:00",
+  "status": "ok",
+  "db_path": "data/local/xauusd_local_store.sqlite",
+  "scheduled_path": "data/config/stage9b_scheduled_events_seed.csv",
+  "manual_path": "data/config/stage10a_news_events_manual.csv",
+  "out_events_csv": "data/config/stage10a_news_events.csv",
+  "detected_shock_csv": "data/macro/events/stage10b_detected_shock_events.csv",
+  "scheduled_normalized_csv": "data/macro/events/stage10b_scheduled_events_normalized.csv",
+  "unified_full_csv": "data/macro/events/stage10b_unified_news_events.csv",
+  "scheduled_count": 5,
+  "manual_count": 0,
+  "shock_count": 10,
+  "unified_count": 15,
+  "gdelt_enabled": true,
+  "gdelt_timespan": "7d",
+  "gdelt_max_records": 10,
+  "gdelt_timeout": 60,
+  "gdelt_retries": 2,
+  "gdelt_query_mode": "rate_safe",
+  "gdelt_query_delay": 20.0,
+  "gdelt_query_status": [
+    {
+      "query": "XAUUSD",
+      "status": "rate_limited",
+      "http_status": "429",
+      "articles": 0,
+      "kept": 0,
+      "dropped": 0,
+      "error": "HTTPError: HTTP Error 429: Too Many Requests",
+      "url": ""
+    },
+    {
+      "query": "gold federal reserve",
+      "status": "rate_limited",
+      "http_status": "429",
+      "articles": 0,
+      "kept": 0,
+      "dropped": 0,
+      "error": "HTTPError: HTTP Error 429: Too Many Requests",
+      "url": ""
+    },
+    {
+      "query": "gold central bank",
+      "status": "ok",
+      "http_status": "ok",
+      "articles": 10,
+      "kept": 10,
+      "dropped": 0,
+      "error": "",
+      "url": "https://api.gdeltproject.org/api/v2/doc/doc?query=gold+central+bank&mode=ArtList&format=json&maxrecords=10&timespan=7d&sort=HybridRel"
+    }
+  ],
+  "workflow_metadata": {
+    "GITHUB_WORKFLOW": "XAUUSD Event Pipeline Update",
+    "GITHUB_RUN_ID": "27266011610",
+    "GITHUB_RUN_NUMBER": "3",
+    "GITHUB_RUN_ATTEMPT": "1",
+    "GITHUB_JOB": "event-pipeline-update",
+    "GITHUB_REF": "refs/heads/main",
+    "GITHUB_SHA": "2341a75dcc8969b224488bfcd349ffe2b17432c0",
+    "GITHUB_REPOSITORY": "vsolouk-cmyk/xauusd-trader",
+    "GITHUB_ACTOR": "vsolouk-cmyk",
+    "GITHUB_EVENT_NAME": "workflow_dispatch",
+    "RUNNER_OS": "Linux",
+    "generated_utc": "2026-06-10T09:13:30+00:00",
+    "tool_version": "v3_query_intent_classification"
+  },
+  "warnings": [
+    "GDELT fetch failed query=XAUUSD: HTTPError: HTTP Error 429: Too Many Requests",
+    "GDELT fetch failed query=gold federal reserve: HTTPError: HTTP Error 429: Too Many Requests"
+  ]
+}

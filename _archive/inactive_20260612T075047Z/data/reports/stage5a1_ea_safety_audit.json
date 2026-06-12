@@ -1,0 +1,100 @@
+{
+  "generated_at_utc": "2026-06-07T14:06:09Z",
+  "stage": "5A.1",
+  "tool": "stage5a_ea_safety_audit",
+  "ea_path": "mql5/Experts/XAUUSD/XAUUSD_DryRun_v1.mq5",
+  "overall_status": "PASS",
+  "items": [
+    {
+      "name": "Forbidden code check: OrderSend",
+      "status": "PASS",
+      "detail": "No executable occurrence found."
+    },
+    {
+      "name": "Forbidden code check: CTrade include",
+      "status": "PASS",
+      "detail": "No executable occurrence found."
+    },
+    {
+      "name": "Forbidden code check: CTrade object",
+      "status": "PASS",
+      "detail": "No executable occurrence found."
+    },
+    {
+      "name": "Forbidden code check: Buy call",
+      "status": "PASS",
+      "detail": "No executable occurrence found."
+    },
+    {
+      "name": "Forbidden code check: Sell call",
+      "status": "PASS",
+      "detail": "No executable occurrence found."
+    },
+    {
+      "name": "Forbidden code check: PositionOpen",
+      "status": "PASS",
+      "detail": "No executable occurrence found."
+    },
+    {
+      "name": "Forbidden code check: PositionClose",
+      "status": "PASS",
+      "detail": "No executable occurrence found."
+    },
+    {
+      "name": "Forbidden code check: OrderSendAsync",
+      "status": "PASS",
+      "detail": "No executable occurrence found."
+    },
+    {
+      "name": "Forbidden code check: trade request action",
+      "status": "PASS",
+      "detail": "No executable occurrence found."
+    },
+    {
+      "name": "Forbidden code check: TRADE_ACTION_DEAL",
+      "status": "PASS",
+      "detail": "No executable occurrence found."
+    },
+    {
+      "name": "Forbidden code check: TRADE_ACTION_PENDING",
+      "status": "PASS",
+      "detail": "No executable occurrence found."
+    },
+    {
+      "name": "Uses FILE_COMMON for MT5 common CSV logging",
+      "status": "PASS",
+      "detail": "Expected pattern found."
+    },
+    {
+      "name": "Reads H1 data internally",
+      "status": "PASS",
+      "detail": "Expected pattern found."
+    },
+    {
+      "name": "Supports AUTO/chart-symbol behavior",
+      "status": "PASS",
+      "detail": "Expected pattern found."
+    },
+    {
+      "name": "Contains strategy/dry-run wording",
+      "status": "PASS",
+      "detail": "Expected pattern found."
+    },
+    {
+      "name": "Contains CSV logging logic",
+      "status": "PASS",
+      "detail": "Expected pattern found."
+    },
+    {
+      "name": "London blocked start hour 07 UTC",
+      "status": "PASS",
+      "detail": "Session boundary hint found."
+    },
+    {
+      "name": "London blocked end hour 13 UTC",
+      "status": "PASS",
+      "detail": "Session boundary hint found."
+    }
+  ],
+  "hard_rule": "Stage 5A EA must remain dry-run/log-only and must not place or manage orders."
+}

@@ -1,0 +1,75 @@
+{
+  "tool_version": "v1",
+  "generated_utc": "2026-06-09T11:57:49+00:00",
+  "server_utc_offset_hours": 2.0,
+  "files": {
+    "h1": {
+      "path": "/Users/vahid/Downloads/amarkets_xauusd_1h.csv",
+      "kind": "h1",
+      "status": "ok",
+      "delimiter": "TAB",
+      "rows": 24225,
+      "columns": [
+        "<DATE>",
+        "<TIME>",
+        "<OPEN>",
+        "<HIGH>",
+        "<LOW>",
+        "<CLOSE>",
+        "<TICKVOL>",
+        "<VOL>",
+        "<SPREAD>"
+      ],
+      "start_utc": "2022-05-01T23:00:00+00:00",
+      "end_utc": "2026-06-09T11:00:00+00:00"
+    },
+    "m1": {
+      "path": "/Users/vahid/Downloads/amarkets_xauusd_1m.csv",
+      "kind": "m1",
+      "status": "ok",
+      "delimiter": "TAB",
+      "rows": 1449867,
+      "columns": [
+        "<DATE>",
+        "<TIME>",
+        "<OPEN>",
+        "<HIGH>",
+        "<LOW>",
+        "<CLOSE>",
+        "<TICKVOL>",
+        "<VOL>",
+        "<SPREAD>"
+      ],
+      "start_utc": "2022-05-01T23:01:00+00:00",
+      "end_utc": "2026-06-09T11:44:00+00:00"
+    },
+    "signals": {
+      "path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/users/user/AppData/Roaming/MetaQuotes/Terminal/Common/Files/XAUUSD_DryRun_v1_signals.csv",
+      "kind": "signals",
+      "status": "ok",
+      "delimiter": "TAB",
+      "rows": 1,
+      "columns": [
+        "logged_at_gmt",
+        "symbol",
+        "chart_symbol",
+        "strategy_id",
+        "signal_closed_h1_time_server",
+        "signal_closed_h1_time_gmt_now",
+        "session_utc",
+        "close_h1",
+        "sma10",
+        "distance_usd",
+        "direction",
+        "planned_entry_model",
+        "tp_usd",
+        "sl_usd",
+        "time_exit_h1_bars",
+        "dry_run_only"
+      ],
+      "start_utc": "2026-06-09T08:00:00+00:00",
+      "end_utc": "2026-06-09T08:00:00+00:00"
+    }
+  },
+  "hard_rule": "Read-only. No database update. No orders."
+}

@@ -1,0 +1,30 @@
+{
+  "decision": "STAGE26B_NO_PROMOTION_KEEP_DISCOVERY_OPEN",
+  "db_path": "data/local/xauusd_local_store.sqlite",
+  "m1_rows": 1532791,
+  "m1_span": [
+    "2022-05-01 23:01:00+00:00",
+    "2026-06-11 23:06:00+00:00"
+  ],
+  "h1_rows": 25585,
+  "h1_span": [
+    "2022-05-01 23:00:00+00:00",
+    "2026-06-11 23:00:00+00:00"
+  ],
+  "m15_rows": 102452,
+  "m15_span": [
+    "2022-05-01 23:15:00+00:00",
+    "2026-06-11 23:15:00+00:00"
+  ],
+  "m1_table": "bars",
+  "h1_table": "bars",
+  "h1_mode": "db_schema_introspection",
+  "proxy_candidates_tested": 36,
+  "proxy_candidates_passing_min_events": 24,
+  "exact_replayed": 12,
+  "promotion_review_candidates": 0,
+  "watchlist_only_candidates": 0,
+  "proxy_timed_out": false,
+  "exact_timed_out": false,
+  "runtime_seconds": 42.16
+}

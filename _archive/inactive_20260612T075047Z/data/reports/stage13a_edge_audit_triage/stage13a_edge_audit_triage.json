@@ -1,0 +1,69 @@
+{
+  "tool_version": "v1",
+  "generated_utc": "2026-06-10T20:49:15+00:00",
+  "final_decision": "KEEP_RESTRICTED_LONG_ONLY_WITH_REGIME_WAIT",
+  "evidence": [
+    {
+      "area": "Long technical thesis",
+      "status": "evidence_available",
+      "verdict": "KEEP_RESTRICTED_LONG_ONLY",
+      "confidence": "medium",
+      "source": "archive/project_housekeeping/20260610T095632Z/reports/data/reports/stage8c_robustness_validation/stage8c_robustness_validation.md",
+      "notes": "Prior Stage 8/8D evidence exists and supports keeping the long-only thesis as the only active forward-shadow path. However, this audit does not prove live edge; it only preserves the best existing candidate."
+    },
+    {
+      "area": "Forward signal activity",
+      "status": "file_found_zero_rows",
+      "verdict": "REGIME_WAIT_OR_REDESIGN",
+      "confidence": "high",
+      "source": "data/reports/stage12a_consolidated_forward_shadow_report/stage12a_consolidated_forward_shadow_report.json",
+      "notes": "EA signal file exists but has zero signal rows. This is consistent with a long-only strategy being inactive during non-uptrend regimes. It is not a CSV/parser problem; it is an opportunity-frequency problem."
+    },
+    {
+      "area": "Short-side thesis",
+      "status": "watchlist_only",
+      "verdict": "REJECT_AS_TRADING_RULE",
+      "confidence": "high",
+      "source": "data/reports/stage11c_recent_short_regime_diagnostic/stage11c_recent_short_regime_diagnostic.json",
+      "notes": "Short-side candidates are recent-regime/short-term watchlist only; no all-history short research candidate was found."
+    },
+    {
+      "area": "Macro/news/event layer",
+      "status": "available_but_no_guard",
+      "verdict": "REPORT_ONLY",
+      "confidence": "high",
+      "source": "data/reports/stage12a_consolidated_forward_shadow_report/stage12a_consolidated_forward_shadow_report.json",
+      "notes": "Macro/news/event analysis did not justify a guard or directional trading rule. Keep as context/report only."
+    },
+    {
+      "area": "Engineering/process complexity",
+      "status": "measured",
+      "verdict": "REDUCE_SCOPE",
+      "confidence": "high",
+      "source": "local repo structure",
+      "notes": "High process complexity detected: stage_report_dirs=8, workflows=4, archive_dirs=41. Stop creating support tooling unless tied to a decision."
+    }
+  ],
+  "recommended_actions": [
+    "Keep EA v2 long-only forward-shadow unchanged.",
+    "Do not add short/news/order logic.",
+    "Stop dashboard/parser polishing unless signal rows appear or a real operational failure occurs.",
+    "Define a waiting window for forward evidence; if no long signal appears after the window, redesign thesis instead of adding tools."
+  ],
+  "stop_rules": [
+    "No short EA/order/paper/live path from Stage 11 results.",
+    "No macro/news guard or directional news trading from Stage 9/10 results.",
+    "No new dashboard/workflow/report stage unless it directly changes KEEP/REDESIGN/STOP decision.",
+    "No paper/live authorization.",
+    "No EA order code.",
+    "No grid expansion without a new explicit thesis and kill rule."
+  ],
+  "authorization_flags": {
+    "trade_authorization": false,
+    "ea_change_authorization": false,
+    "paper_order_authorization": false,
+    "live_order_authorization": false,
+    "automatic_news_trading": false,
+    "automatic_short_trading": false
+  }
+}

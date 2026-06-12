@@ -1,0 +1,4 @@
+query,status,http_status,articles,kept,dropped,error,url
+XAUUSD,rate_limited,429,0,0,0,HTTPError: HTTP Error 429: Too Many Requests,
+gold federal reserve,rate_limited,429,0,0,0,HTTPError: HTTP Error 429: Too Many Requests,
+gold central bank,ok,ok,10,10,0,,https://api.gdeltproject.org/api/v2/doc/doc?query=gold+central+bank&mode=ArtList&format=json&maxrecords=10&timespan=7d&sort=HybridRel

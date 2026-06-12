@@ -1,0 +1,52 @@
+{
+  "tool_version": "v1",
+  "generated_utc": "2026-06-11T06:50:33+00:00",
+  "inputs": {
+    "db": "data/local/xauusd_local_store.sqlite",
+    "stage16c_out": "data/reports/stage16c_true_forward_shadow_collector",
+    "refresh_cmd": "",
+    "timeout_sec": 900,
+    "scan_days": 10
+  },
+  "bar_state": {
+    "pre_refresh_latest_bar_utc": "2026-06-11T09:26:00+00:00",
+    "post_refresh_latest_bar_utc": "2026-06-11T09:26:00+00:00",
+    "post_stage16c_latest_bar_utc": "2026-06-11T09:26:00+00:00",
+    "collector_start_utc": "2026-06-11T06:22:12+00:00",
+    "data_after_collector_start": true
+  },
+  "refresh_result": {
+    "enabled": false,
+    "cmd": "",
+    "returncode": null,
+    "stdout_tail": "",
+    "stderr_tail": "",
+    "status": "skipped"
+  },
+  "stage16c_result": {
+    "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 -m app.stage16c_true_forward_shadow_collector --out-dir data/reports/stage16c_true_forward_shadow_collector --scan-days 10",
+    "returncode": 0,
+    "stdout_tail": "Stage 16C true-forward shadow collector: DONE\nfinal_decision=TRUE_FORWARD_STARTED_NO_SIGNALS_YET\ncollector_start_utc=2026-06-11T06:22:12+00:00\nnew_logged_this_run=0 resolved_this_run=0 valid_forward_rows=0 closed_valid=0\nReport: data/reports/stage16c_true_forward_shadow_collector/stage16c_true_forward_shadow_collector.md\n",
+    "stderr_tail": "",
+    "status": "ok"
+  },
+  "stage16c_report_decision": "TRUE_FORWARD_STARTED_NO_SIGNALS_YET",
+  "journal_counts": {
+    "journal_rows": 0,
+    "valid_forward_rows": 0,
+    "closed_valid_forward_rows": 0,
+    "open_valid_forward_rows": 0,
+    "status_counts": {}
+  },
+  "final_decision": "CYCLE_ACTIVE_NO_FORWARD_SIGNAL_YET",
+  "reasons": [
+    "Post-start data exists, but no valid Stage16C signal has appeared yet."
+  ],
+  "authorization_flags": {
+    "trade_authorization": false,
+    "ea_change_authorization": false,
+    "paper_order_authorization": false,
+    "live_order_authorization": false,
+    "automatic_trading": false
+  }
+}

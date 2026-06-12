@@ -1,0 +1,65 @@
+{
+  "tool_version": "v1",
+  "generated_utc": "2026-06-11T06:16:42+00:00",
+  "inputs": {
+    "db": "data/local/xauusd_local_store.sqlite",
+    "signals_path": "data/reports/stage16a_macro_pressure_reversal_shadow_monitor/stage16a_shadow_signals.csv",
+    "cost_usd": 0.35
+  },
+  "data": {
+    "m1_rows": 1449867,
+    "m1_first": "2022-05-01T23:01:00+00:00",
+    "m1_last": "2026-06-09T11:44:00+00:00",
+    "signals": 22,
+    "outcomes": 22,
+    "status_counts": {
+      "closed_time_exit": 21,
+      "missing_m1_path": 1
+    }
+  },
+  "retrospective_recent_history_metrics": {
+    "events": 21,
+    "total": 46.24,
+    "avg": 2.201905,
+    "median": 6.05,
+    "win_rate": 0.666667,
+    "pf": 1.480017,
+    "max_dd": -37.81,
+    "pos_days": 9,
+    "days": 13
+  },
+  "final_decision": "RECENT_HISTORY_SHADOW_POSITIVE_NOT_FORWARD_PROOF",
+  "reasons": [
+    "Recent-history shadow outcomes are positive, but they are retrospective scans, not true-forward evidence.",
+    "Next step is scheduled true-forward shadow collection only."
+  ],
+  "latest_closed": [
+    {
+      "event_utc": "2026-06-08 04:00:00+00:00",
+      "entry_utc": "2026-06-08 04:15:00+00:00",
+      "exit_target_utc": "2026-06-08 05:15:00+00:00",
+      "research_side": "LONG",
+      "sweep_depth": 2.5599999999994907,
+      "reclaim_above_pdl": 1.1199999999998909,
+      "real_yield_10y": 2.21,
+      "real_yield_10y_chg5": 0.1,
+      "authorization": "RESEARCH_SHADOW_ONLY_NO_ORDER",
+      "status": "closed_time_exit",
+      "entry_price": 4313.07,
+      "entry_price_source": "m15_exact_open",
+      "exit_price": 4319.47,
+      "gross_ret": 6.4,
+      "net_ret_x1": 6.05,
+      "mfe": 7.05,
+      "mae": 9.87,
+      "minutes_observed": 60
+    }
+  ],
+  "authorization_flags": {
+    "trade_authorization": false,
+    "ea_change_authorization": false,
+    "paper_order_authorization": false,
+    "live_order_authorization": false,
+    "automatic_trading": false
+  }
+}

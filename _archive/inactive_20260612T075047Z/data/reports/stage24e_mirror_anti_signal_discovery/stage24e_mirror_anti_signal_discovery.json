@@ -1,0 +1,1034 @@
+{
+  "decision": "STAGE24E_NO_PROMOTION_KEEP_DISCOVERY_OPEN",
+  "m1_rows": 1452943,
+  "m1_span": "2022-05-02 01:01:00+00:00 \u2192 2026-06-11 19:04:00+00:00",
+  "h1_rows": 24277,
+  "h1_span": "2022-05-02 01:00:00+00:00 \u2192 2026-06-11 19:00:00+00:00",
+  "m15_proxy_rows": 97018,
+  "m15_span": "2022-05-02 01:00:00+00:00 \u2192 2026-06-11 19:00:00+00:00",
+  "roundtrip_cost_x1": 0.35,
+  "exact_replay_cap": "12 total / 4 per family",
+  "runtime_cap_seconds": 180,
+  "candidate_cap": 84,
+  "data_load_mode": "csv_first",
+  "m1_path": "/Users/vahid/Downloads/amarkets_xauusd_1m.csv",
+  "h1_path": "/Users/vahid/Downloads/amarkets_xauusd_1h.csv",
+  "proxy_candidates_tested": 84,
+  "proxy_candidates_passing_min_events": 48,
+  "exact_replayed": 4,
+  "promotion_review_candidates": 0,
+  "watchlist_only_candidates": 0,
+  "proxy_timed_out": true,
+  "exact_timed_out": false,
+  "elapsed_seconds": 137.375,
+  "candidates": [
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.0_h90_e14_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.0,
+        "entry_hour": 14,
+        "horizon_min": 90,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.0_h90_e14_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.0,
+        "entry_hour": 14,
+        "horizon_min": 90,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.0_h180_e14_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.0,
+        "entry_hour": 14,
+        "horizon_min": 180,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.0_h180_e14_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.0,
+        "entry_hour": 14,
+        "horizon_min": 180,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.0_h90_e15_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.0,
+        "entry_hour": 15,
+        "horizon_min": 90,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.0_h90_e15_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.0,
+        "entry_hour": 15,
+        "horizon_min": 90,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.0_h180_e15_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.0,
+        "entry_hour": 15,
+        "horizon_min": 180,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.0_h180_e15_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.0,
+        "entry_hour": 15,
+        "horizon_min": 180,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.0_h90_e16_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.0,
+        "entry_hour": 16,
+        "horizon_min": 90,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.0_h90_e16_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.0,
+        "entry_hour": 16,
+        "horizon_min": 90,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.0_h180_e16_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.0,
+        "entry_hour": 16,
+        "horizon_min": 180,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.0_h180_e16_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.0,
+        "entry_hour": 16,
+        "horizon_min": 180,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.05_h90_e14_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.05,
+        "entry_hour": 14,
+        "horizon_min": 90,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.05_h90_e14_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.05,
+        "entry_hour": 14,
+        "horizon_min": 90,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.05_h180_e14_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.05,
+        "entry_hour": 14,
+        "horizon_min": 180,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.05_h180_e14_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.05,
+        "entry_hour": 14,
+        "horizon_min": 180,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.05_h90_e15_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.05,
+        "entry_hour": 15,
+        "horizon_min": 90,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.05_h90_e15_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.05,
+        "entry_hour": 15,
+        "horizon_min": 90,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.05_h180_e15_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.05,
+        "entry_hour": 15,
+        "horizon_min": 180,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.05_h180_e15_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.05,
+        "entry_hour": 15,
+        "horizon_min": 180,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.05_h90_e16_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.05,
+        "entry_hour": 16,
+        "horizon_min": 90,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.05_h90_e16_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.05,
+        "entry_hour": 16,
+        "horizon_min": 90,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.05_h180_e16_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.05,
+        "entry_hour": 16,
+        "horizon_min": 180,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.05_h180_e16_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.05,
+        "entry_hour": 16,
+        "horizon_min": 180,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.1_h90_e14_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.1,
+        "entry_hour": 14,
+        "horizon_min": 90,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.1_h90_e14_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.1,
+        "entry_hour": 14,
+        "horizon_min": 90,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.1_h180_e14_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.1,
+        "entry_hour": 14,
+        "horizon_min": 180,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.1_h180_e14_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.1,
+        "entry_hour": 14,
+        "horizon_min": 180,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.1_h90_e15_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.1,
+        "entry_hour": 15,
+        "horizon_min": 90,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.1_h90_e15_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.1,
+        "entry_hour": 15,
+        "horizon_min": 90,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.1_h180_e15_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.1,
+        "entry_hour": 15,
+        "horizon_min": 180,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.1_h180_e15_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.1,
+        "entry_hour": 15,
+        "horizon_min": 180,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.1_h90_e16_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.1,
+        "entry_hour": 16,
+        "horizon_min": 90,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.1_h90_e16_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.1,
+        "entry_hour": 16,
+        "horizon_min": 90,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.1_h180_e16_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.1,
+        "entry_hour": 16,
+        "horizon_min": 180,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.45_cf0.1_h180_e16_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.45,
+        "confirm_atr": 0.1,
+        "entry_hour": 16,
+        "horizon_min": 180,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.0_h90_e14_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.0,
+        "entry_hour": 14,
+        "horizon_min": 90,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.0_h90_e14_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.0,
+        "entry_hour": 14,
+        "horizon_min": 90,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.0_h180_e14_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.0,
+        "entry_hour": 14,
+        "horizon_min": 180,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.0_h180_e14_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.0,
+        "entry_hour": 14,
+        "horizon_min": 180,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.0_h90_e15_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.0,
+        "entry_hour": 15,
+        "horizon_min": 90,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.0_h90_e15_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.0,
+        "entry_hour": 15,
+        "horizon_min": 90,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.0_h180_e15_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.0,
+        "entry_hour": 15,
+        "horizon_min": 180,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.0_h180_e15_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.0,
+        "entry_hour": 15,
+        "horizon_min": 180,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.0_h90_e16_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.0,
+        "entry_hour": 16,
+        "horizon_min": 90,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.0_h90_e16_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.0,
+        "entry_hour": 16,
+        "horizon_min": 90,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.0_h180_e16_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.0,
+        "entry_hour": 16,
+        "horizon_min": 180,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.0_h180_e16_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.0,
+        "entry_hour": 16,
+        "horizon_min": 180,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.05_h90_e14_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.05,
+        "entry_hour": 14,
+        "horizon_min": 90,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.05_h90_e14_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.05,
+        "entry_hour": 14,
+        "horizon_min": 90,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.05_h180_e14_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.05,
+        "entry_hour": 14,
+        "horizon_min": 180,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.05_h180_e14_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.05,
+        "entry_hour": 14,
+        "horizon_min": 180,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.05_h90_e15_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.05,
+        "entry_hour": 15,
+        "horizon_min": 90,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.05_h90_e15_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.05,
+        "entry_hour": 15,
+        "horizon_min": 90,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.05_h180_e15_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.05,
+        "entry_hour": 15,
+        "horizon_min": 180,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.05_h180_e15_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.05,
+        "entry_hour": 15,
+        "horizon_min": 180,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.05_h90_e16_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.05,
+        "entry_hour": 16,
+        "horizon_min": 90,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.05_h90_e16_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.05,
+        "entry_hour": 16,
+        "horizon_min": 90,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.05_h180_e16_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.05,
+        "entry_hour": 16,
+        "horizon_min": 180,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.05_h180_e16_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.05,
+        "entry_hour": 16,
+        "horizon_min": 180,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.1_h90_e14_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.1,
+        "entry_hour": 14,
+        "horizon_min": 90,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.1_h90_e14_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.1,
+        "entry_hour": 14,
+        "horizon_min": 90,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.1_h180_e14_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.1,
+        "entry_hour": 14,
+        "horizon_min": 180,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.1_h180_e14_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.1,
+        "entry_hour": 14,
+        "horizon_min": 180,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.1_h90_e15_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.1,
+        "entry_hour": 15,
+        "horizon_min": 90,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.1_h90_e15_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.1,
+        "entry_hour": 15,
+        "horizon_min": 90,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.1_h180_e15_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.1,
+        "entry_hour": 15,
+        "horizon_min": 180,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.1_h180_e15_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.1,
+        "entry_hour": 15,
+        "horizon_min": 180,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.1_h90_e16_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.1,
+        "entry_hour": 16,
+        "horizon_min": 90,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.1_h90_e16_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.1,
+        "entry_hour": 16,
+        "horizon_min": 90,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.1_h180_e16_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.1,
+        "entry_hour": 16,
+        "horizon_min": 180,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.7_cf0.1_h180_e16_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.7,
+        "confirm_atr": 0.1,
+        "entry_hour": 16,
+        "horizon_min": 180,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.95_cf0.0_h90_e14_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.95,
+        "confirm_atr": 0.0,
+        "entry_hour": 14,
+        "horizon_min": 90,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.95_cf0.0_h90_e14_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.95,
+        "confirm_atr": 0.0,
+        "entry_hour": 14,
+        "horizon_min": 90,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.95_cf0.0_h180_e14_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.95,
+        "confirm_atr": 0.0,
+        "entry_hour": 14,
+        "horizon_min": 180,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.95_cf0.0_h180_e14_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.95,
+        "confirm_atr": 0.0,
+        "entry_hour": 14,
+        "horizon_min": 180,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.95_cf0.0_h90_e15_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.95,
+        "confirm_atr": 0.0,
+        "entry_hour": 15,
+        "horizon_min": 90,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.95_cf0.0_h90_e15_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.95,
+        "confirm_atr": 0.0,
+        "entry_hour": 15,
+        "horizon_min": 90,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.95_cf0.0_h180_e15_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.95,
+        "confirm_atr": 0.0,
+        "entry_hour": 15,
+        "horizon_min": 180,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.95_cf0.0_h180_e15_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.95,
+        "confirm_atr": 0.0,
+        "entry_hour": 15,
+        "horizon_min": 180,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.95_cf0.0_h90_e16_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.95,
+        "confirm_atr": 0.0,
+        "entry_hour": 16,
+        "horizon_min": 90,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.95_cf0.0_h90_e16_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.95,
+        "confirm_atr": 0.0,
+        "entry_hour": 16,
+        "horizon_min": 90,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.95_cf0.0_h180_e16_tp0.6_sl0.65",
+      "params": {
+        "extension_atr": 0.95,
+        "confirm_atr": 0.0,
+        "entry_hour": 16,
+        "horizon_min": 180,
+        "tp_atr": 0.6,
+        "sl_atr": 0.65
+      }
+    },
+    {
+      "family": "day_open_extension_continuation",
+      "name": "day_open_ext_cont_ext0.95_cf0.0_h180_e16_tp0.8_sl0.8",
+      "params": {
+        "extension_atr": 0.95,
+        "confirm_atr": 0.0,
+        "entry_hour": 16,
+        "horizon_min": 180,
+        "tp_atr": 0.8,
+        "sl_atr": 0.8
+      }
+    }
+  ]
+}

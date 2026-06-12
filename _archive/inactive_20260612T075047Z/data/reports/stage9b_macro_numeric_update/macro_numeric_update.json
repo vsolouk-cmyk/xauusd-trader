@@ -1,0 +1,120 @@
+{
+  "tool_version": "v2_ssl_resilience",
+  "generated_utc": "2026-06-10T04:48:21+00:00",
+  "status": "db_error",
+  "start_date": "2022-01-01",
+  "ssl_mode_requested": "auto",
+  "allow_insecure_fallback": false,
+  "series_requested": 11,
+  "series_ok": 11,
+  "observations_fetched": 7188,
+  "observations_written_sqlite": 0,
+  "out_dir": "data/macro",
+  "report_dir": "data/reports/stage9b_macro_numeric_update",
+  "db_path": "data/local/xauusd_local_store.sqlite",
+  "errors": [
+    "SQLite write failed: OperationalError: unable to open database file"
+  ],
+  "warnings": [],
+  "series_results": [
+    {
+      "series_id": "DGS10",
+      "label": "US 10Y Treasury yield",
+      "status": "ok",
+      "observations": 1156,
+      "latest_date": "2026-06-08",
+      "latest_value": 4.56,
+      "ssl_mode": "default"
+    },
+    {
+      "series_id": "DGS2",
+      "label": "US 2Y Treasury yield",
+      "status": "ok",
+      "observations": 1156,
+      "latest_date": "2026-06-08",
+      "latest_value": 4.15,
+      "ssl_mode": "default"
+    },
+    {
+      "series_id": "DFII10",
+      "label": "US 10Y TIPS real yield",
+      "status": "ok",
+      "observations": 1156,
+      "latest_date": "2026-06-08",
+      "latest_value": 2.21,
+      "ssl_mode": "default"
+    },
+    {
+      "series_id": "DTWEXBGS",
+      "label": "Nominal Broad US Dollar Index",
+      "status": "ok",
+      "observations": 1155,
+      "latest_date": "2026-06-05",
+      "latest_value": 120.0831,
+      "ssl_mode": "default"
+    },
+    {
+      "series_id": "DCOILWTICO",
+      "label": "WTI crude oil spot price",
+      "status": "ok",
+      "observations": 1151,
+      "latest_date": "2026-06-01",
+      "latest_value": 95.96,
+      "ssl_mode": "default"
+    },
+    {
+      "series_id": "DCOILBRENTEU",
+      "label": "Brent crude oil spot price",
+      "status": "ok",
+      "observations": 1151,
+      "latest_date": "2026-06-01",
+      "latest_value": 98.29,
+      "ssl_mode": "default"
+    },
+    {
+      "series_id": "CPIAUCSL",
+      "label": "CPI All Urban Consumers",
+      "status": "ok",
+      "observations": 52,
+      "latest_date": "2026-04-01",
+      "latest_value": 332.407,
+      "ssl_mode": "default"
+    },
+    {
+      "series_id": "PPIACO",
+      "label": "Producer Price Index All Commodities",
+      "status": "ok",
+      "observations": 52,
+      "latest_date": "2026-04-01",
+      "latest_value": 283.764,
+      "ssl_mode": "default"
+    },
+    {
+      "series_id": "PAYEMS",
+      "label": "Nonfarm Payrolls",
+      "status": "ok",
+      "observations": 53,
+      "latest_date": "2026-05-01",
+      "latest_value": 159001.0,
+      "ssl_mode": "default"
+    },
+    {
+      "series_id": "UNRATE",
+      "label": "Unemployment Rate",
+      "status": "ok",
+      "observations": 53,
+      "latest_date": "2026-05-01",
+      "latest_value": 4.3,
+      "ssl_mode": "default"
+    },
+    {
+      "series_id": "FEDFUNDS",
+      "label": "Effective Federal Funds Rate",
+      "status": "ok",
+      "observations": 53,
+      "latest_date": "2026-05-01",
+      "latest_value": 3.63,
+      "ssl_mode": "default"
+    }
+  ]
+}

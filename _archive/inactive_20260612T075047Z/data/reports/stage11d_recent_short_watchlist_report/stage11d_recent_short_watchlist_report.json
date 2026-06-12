@@ -1,0 +1,14 @@
+{
+  "tool_version": "v1",
+  "generated_utc": "2026-06-10T19:22:31+00:00",
+  "db_path": "data/local/xauusd_local_store.sqlite",
+  "stage11b_summary": "data/reports/stage11b_alternative_short_thesis_lab/stage11b_short_candidate_summary.csv",
+  "stage11c_summary": "data/reports/stage11c_recent_short_regime_diagnostic/stage11c_recent_candidate_summary.csv",
+  "latest_closed_h1": "2026-06-09T11:00:00+00:00",
+  "watchlist_candidates_loaded": 12,
+  "watchlist_rows_reported": 12,
+  "latest_active_count": 0,
+  "recent_signal_candidate_count": 12,
+  "recent_hours": 72,
+  "decision": "recent_short_watchlist_seen_report_only"
+}

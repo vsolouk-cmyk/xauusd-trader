@@ -1,0 +1,5 @@
+source,family,name,events,pf_x1,pf_x4,pf_x6,test20_pf_x1,pf_2026_x1,boot_pf_p05_x1,median_x1,total_x1,rank_score,decision
+M1_EXACT,day_open_extension_continuation,day_open_ext_cont_ext0.7_cf0.0_h180_e16_tp0.8_sl0.8,1053,0.9557,0.6972,0.5601,1.0107,1.1437,0.8224,0.01,-160.7232,16.3498,STAGE24E_REJECT
+M1_EXACT,day_open_extension_continuation,day_open_ext_cont_ext0.45_cf0.0_h180_e16_tp0.8_sl0.8,1057,0.9509,0.6935,0.557,1.0147,1.1437,0.8362,-0.32,-178.9748,16.2937,STAGE24E_REJECT
+M1_EXACT,day_open_extension_continuation,day_open_ext_cont_ext0.45_cf0.05_h180_e16_tp0.8_sl0.8,1038,0.9444,0.6888,0.5534,1.0186,1.1221,0.817,-0.63,-199.95,16.1956,STAGE24E_REJECT
+M1_EXACT,day_open_extension_continuation,day_open_ext_cont_ext0.45_cf0.1_h180_e16_tp0.8_sl0.8,1019,0.929,0.6753,0.5409,0.9887,1.0651,0.8318,-0.73,-250.0696,16.1369,STAGE24E_REJECT

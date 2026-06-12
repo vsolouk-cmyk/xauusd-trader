@@ -1,0 +1,13 @@
+{
+  "path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/users/user/AppData/Roaming/MetaQuotes/Terminal/Common/Files/XAUUSD_DryRun_v2_regime_shadow_signals.csv",
+  "exists": true,
+  "tool_version": "v1",
+  "size_bytes": 2,
+  "encoding_detected": "utf-16",
+  "raw_hex_prefix": "fffe",
+  "status": "file_exists_bom_only",
+  "rows": 0,
+  "headers": [],
+  "latest_row": {},
+  "interpretation": "The signal file exists but contains only a byte-order mark. This usually means the EA created the file but has not written any signal/header rows."
+}

@@ -1,0 +1,164 @@
+{
+  "tool_version": "v1",
+  "generated_utc": "2026-06-11T12:58:08+00:00",
+  "candidate": {
+    "variant": "trend_pullback_continuation_short_trend5_pull0.5_new_york_only_h8",
+    "family": "trend_pullback_continuation_short",
+    "side": "SHORT",
+    "trend_dist": 5.0,
+    "pullback": 0.5,
+    "horizon_bars": 8,
+    "horizon_minutes": 120,
+    "cooldown_bars": 4,
+    "cost_usd": 0.35
+  },
+  "source": {
+    "m1_rows": 1532269,
+    "m15_rows": 102417,
+    "h1_rows": 25769,
+    "m1_first": "2022-05-01T23:01:00+00:00",
+    "m1_last": "2026-06-11T14:24:00+00:00"
+  },
+  "metrics": {
+    "net_x1": {
+      "events": 286,
+      "total": 284.97,
+      "avg": 0.996399,
+      "median": 0.06,
+      "wr": 0.506993,
+      "pf": 1.184984,
+      "dd": -269.03,
+      "pos_years": 4,
+      "years": 5,
+      "pos_quarters": 9,
+      "quarters": 17,
+      "months": 50
+    },
+    "net_x2": {
+      "events": 286,
+      "total": 184.87,
+      "avg": 0.646399,
+      "median": -0.29,
+      "wr": 0.479021,
+      "pf": 1.116178,
+      "dd": -274.28,
+      "pos_years": 4,
+      "years": 5,
+      "pos_quarters": 9,
+      "quarters": 17,
+      "months": 50
+    },
+    "net_x4": {
+      "events": 286,
+      "total": -15.33,
+      "avg": -0.053601,
+      "median": -0.99,
+      "wr": 0.458042,
+      "pf": 0.990969,
+      "dd": -284.97,
+      "pos_years": 2,
+      "years": 5,
+      "pos_quarters": 8,
+      "quarters": 17,
+      "months": 50
+    },
+    "split70": {
+      "frac": 0.7,
+      "train": {
+        "events": 200,
+        "total": 147.19,
+        "avg": 0.73595,
+        "median": 0.305,
+        "wr": 0.53,
+        "pf": 1.229722,
+        "dd": -66.36,
+        "pos_years": 3,
+        "years": 4,
+        "pos_quarters": 7,
+        "quarters": 14,
+        "months": 39
+      },
+      "test": {
+        "events": 86,
+        "total": 137.78,
+        "avg": 1.602093,
+        "median": -1.585,
+        "wr": 0.453488,
+        "pf": 1.153126,
+        "dd": -269.03,
+        "pos_years": 2,
+        "years": 2,
+        "pos_quarters": 2,
+        "quarters": 4,
+        "months": 12
+      }
+    },
+    "split80": {
+      "frac": 0.8,
+      "train": {
+        "events": 228,
+        "total": 65.41,
+        "avg": 0.286886,
+        "median": 0.11,
+        "wr": 0.513158,
+        "pf": 1.075023,
+        "dd": -111.17,
+        "pos_years": 2,
+        "years": 4,
+        "pos_quarters": 7,
+        "quarters": 15,
+        "months": 44
+      },
+      "test": {
+        "events": 58,
+        "total": 219.56,
+        "avg": 3.785517,
+        "median": -0.605,
+        "wr": 0.482759,
+        "pf": 1.328368,
+        "dd": -269.03,
+        "pos_years": 2,
+        "years": 2,
+        "pos_quarters": 2,
+        "quarters": 3,
+        "months": 7
+      }
+    },
+    "year2026": {
+      "events": 55,
+      "total": 115.59,
+      "avg": 2.101636,
+      "median": -0.1,
+      "wr": 0.490909,
+      "pf": 1.178493,
+      "dd": -269.03,
+      "pos_years": 1,
+      "years": 1,
+      "pos_quarters": 1,
+      "quarters": 2,
+      "months": 6
+    },
+    "bootstrap": {
+      "n": 300,
+      "total_p05": -272.7955,
+      "total_p50": 242.375,
+      "pf_p05": 0.857596,
+      "pf_p50": 1.16161,
+      "median_p05": -0.7785,
+      "prob_total_gt_0": 0.776667,
+      "prob_pf_gt_1": 0.776667,
+      "prob_median_gt_0": 0.566667
+    }
+  },
+  "final_decision": "EXACT_REPLAY_KEEP_WATCHLIST_ONLY",
+  "reasons": [
+    "Exact M1 replay is positive but not strong enough for forward-shadow design."
+  ],
+  "authorization_flags": {
+    "trade_authorization": false,
+    "ea_change_authorization": false,
+    "paper_order_authorization": false,
+    "live_order_authorization": false,
+    "automatic_trading": false
+  }
+}

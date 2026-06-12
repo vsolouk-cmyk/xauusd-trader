@@ -1,0 +1,49 @@
+{
+  "decision": "STAGE25B_DB_FIRST_HAS_FILTER_CANDIDATE_REVIEW_ONLY",
+  "scope": {
+    "research_shadow_only": true,
+    "stage18a_unchanged": true,
+    "stage23d_unchanged": true,
+    "no_ea_paper_live_orders": true,
+    "csv_fallback_disabled": true
+  },
+  "db": {
+    "path": "/Users/vahid/Desktop/xauusd-trader/data/local/xauusd_local_store.sqlite",
+    "m1_table": "bars",
+    "m1_mode": "db_schema_introspection",
+    "m1_rows": 1532440,
+    "m1_span": [
+      "2022-05-01T23:01:00+00:00",
+      "2026-06-11T17:15:00+00:00"
+    ],
+    "h1_table": "bars",
+    "h1_mode": "db_schema_introspection",
+    "h1_rows": 25579,
+    "h1_span": [
+      "2022-05-01T23:00:00+00:00",
+      "2026-06-11T17:00:00+00:00"
+    ],
+    "m15_rows_derived": 102237,
+    "m15_span": [
+      "2022-05-01T23:00:00+00:00",
+      "2026-06-11T17:15:00+00:00"
+    ]
+  },
+  "trades": {
+    "path": "/Users/vahid/Desktop/xauusd-trader/data/reports/stage23c_promotion_candidate_validation/stage23c_exact_trades.csv",
+    "events": 468
+  },
+  "base_metrics": {
+    "events": 468,
+    "pf_x1": 5.86384088059708,
+    "pf_x4": 2.8795789427487484,
+    "pf_x6": 1.6681425688004845,
+    "total_x1": 1102.9809300000002,
+    "total_x4": 611.58093,
+    "total_x6": 283.98093000000017,
+    "win_rate_x4": 0.7799145299145299,
+    "median_x4": 1.0094300000000005
+  },
+  "filter_candidate_count": 12,
+  "stage25a_comparison_available": true
+}

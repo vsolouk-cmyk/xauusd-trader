@@ -1,0 +1,2 @@
+db_path,candle_table,db_first,csv_fallback_enabled,m1_rows,m1_span,h1_rows,h1_span,h1_mode
+data/local/xauusd_local_store.sqlite,bars,True,False,0,unavailable,0,unavailable,not_found_or_derived_elsewhere

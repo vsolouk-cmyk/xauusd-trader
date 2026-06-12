@@ -1,0 +1,446 @@
+{
+  "ok": true,
+  "stage": "stage3c_overlap_aligned_feed_diagnostics",
+  "generated_at_utc": "2026-06-04T11:47:17.138107+00:00",
+  "candidate": {
+    "family": "sma_trend_1h",
+    "variant": "sma10_h12_dist10_cool1",
+    "interval": "1h"
+  },
+  "windows": {
+    "primary_full": {
+      "rows": 25745,
+      "start_utc": "2022-05-27T13:00:00+00:00",
+      "end_utc": "2026-06-04T07:00:00+00:00"
+    },
+    "secondary_full": {
+      "rows": 21071,
+      "start_utc": "2022-05-02T01:00:00+00:00",
+      "end_utc": "2025-11-20T13:00:00+00:00"
+    },
+    "common_overlap": {
+      "start_utc": "2022-05-27T13:00:00+00:00",
+      "end_utc": "2025-11-20T13:00:00+00:00",
+      "overlap_days": 1273.0
+    }
+  },
+  "exact_overlap": {
+    "primary": {
+      "summary": {
+        "trades": 665,
+        "total_net_usd": 667.3575239999985,
+        "profit_factor": 1.1412530636713334,
+        "win_rate": 0.49022556390977445,
+        "max_drawdown_usd": -387.5798290000002,
+        "cost_x4_total_net_usd": -30.892476000001693,
+        "positive_fold_ratio": 1.0,
+        "positive_month_ratio": 0.6190476190476191,
+        "long_total_net_usd": 491.67776600000093,
+        "short_total_net_usd": 175.6797579999976
+      }
+    },
+    "secondary": {
+      "summary": {
+        "trades": 657,
+        "total_net_usd": 731.8500000000005,
+        "profit_factor": 1.1534318545369167,
+        "win_rate": 0.4901065449010654,
+        "max_drawdown_usd": -330.06999999999834,
+        "cost_x4_total_net_usd": 42.000000000000796,
+        "positive_fold_ratio": 0.8,
+        "positive_month_ratio": 0.5714285714285714,
+        "long_total_net_usd": 705.6899999999982,
+        "short_total_net_usd": 26.16000000000239
+      }
+    },
+    "decision": {
+      "status": "overlap_second_source_pass",
+      "reason": "Fixed candidate passed overlap-aligned second-source checks.",
+      "checks": {
+        "min_overlap_days": true,
+        "secondary_min_trades": true,
+        "secondary_total_positive": true,
+        "secondary_pf_min": true,
+        "secondary_cost_x4_positive": true,
+        "degradation_ok": true
+      },
+      "primary_total_net_usd": 667.3575239999985,
+      "secondary_total_net_usd": 731.8500000000005,
+      "secondary_to_primary_total_ratio": 1.0966385688040914
+    }
+  },
+  "shift_diagnostics": [
+    {
+      "secondary_shift_hours": -3,
+      "overlap": {
+        "start_utc": "2022-05-27T13:00:00+00:00",
+        "end_utc": "2025-11-20T10:00:00+00:00",
+        "overlap_days": 1272.875
+      },
+      "primary": {
+        "summary": {
+          "trades": 665,
+          "total_net_usd": 667.3575239999985,
+          "profit_factor": 1.1412530636713334,
+          "win_rate": 0.49022556390977445,
+          "max_drawdown_usd": -387.5798290000002,
+          "cost_x4_total_net_usd": -30.892476000001693,
+          "positive_fold_ratio": 1.0,
+          "positive_month_ratio": 0.6190476190476191,
+          "long_total_net_usd": 491.67776600000093,
+          "short_total_net_usd": 175.6797579999976
+        }
+      },
+      "secondary": {
+        "summary": {
+          "trades": 657,
+          "total_net_usd": 731.8500000000005,
+          "profit_factor": 1.1534318545369167,
+          "win_rate": 0.4901065449010654,
+          "max_drawdown_usd": -330.06999999999834,
+          "cost_x4_total_net_usd": 42.000000000000796,
+          "positive_fold_ratio": 0.8,
+          "positive_month_ratio": 0.5476190476190477,
+          "long_total_net_usd": 705.6899999999982,
+          "short_total_net_usd": 26.16000000000239
+        }
+      },
+      "decision": {
+        "status": "overlap_second_source_pass",
+        "reason": "Fixed candidate passed overlap-aligned second-source checks.",
+        "checks": {
+          "min_overlap_days": true,
+          "secondary_min_trades": true,
+          "secondary_total_positive": true,
+          "secondary_pf_min": true,
+          "secondary_cost_x4_positive": true,
+          "degradation_ok": true
+        },
+        "primary_total_net_usd": 667.3575239999985,
+        "secondary_total_net_usd": 731.8500000000005,
+        "secondary_to_primary_total_ratio": 1.0966385688040914
+      }
+    },
+    {
+      "secondary_shift_hours": -2,
+      "overlap": {
+        "start_utc": "2022-05-27T13:00:00+00:00",
+        "end_utc": "2025-11-20T11:00:00+00:00",
+        "overlap_days": 1272.9166666666667
+      },
+      "primary": {
+        "summary": {
+          "trades": 665,
+          "total_net_usd": 667.3575239999985,
+          "profit_factor": 1.1412530636713334,
+          "win_rate": 0.49022556390977445,
+          "max_drawdown_usd": -387.5798290000002,
+          "cost_x4_total_net_usd": -30.892476000001693,
+          "positive_fold_ratio": 1.0,
+          "positive_month_ratio": 0.6190476190476191,
+          "long_total_net_usd": 491.67776600000093,
+          "short_total_net_usd": 175.6797579999976
+        }
+      },
+      "secondary": {
+        "summary": {
+          "trades": 657,
+          "total_net_usd": 731.8500000000005,
+          "profit_factor": 1.1534318545369167,
+          "win_rate": 0.4901065449010654,
+          "max_drawdown_usd": -330.06999999999834,
+          "cost_x4_total_net_usd": 42.000000000000796,
+          "positive_fold_ratio": 0.8,
+          "positive_month_ratio": 0.5714285714285714,
+          "long_total_net_usd": 705.6899999999982,
+          "short_total_net_usd": 26.16000000000239
+        }
+      },
+      "decision": {
+        "status": "overlap_second_source_pass",
+        "reason": "Fixed candidate passed overlap-aligned second-source checks.",
+        "checks": {
+          "min_overlap_days": true,
+          "secondary_min_trades": true,
+          "secondary_total_positive": true,
+          "secondary_pf_min": true,
+          "secondary_cost_x4_positive": true,
+          "degradation_ok": true
+        },
+        "primary_total_net_usd": 667.3575239999985,
+        "secondary_total_net_usd": 731.8500000000005,
+        "secondary_to_primary_total_ratio": 1.0966385688040914
+      }
+    },
+    {
+      "secondary_shift_hours": -1,
+      "overlap": {
+        "start_utc": "2022-05-27T13:00:00+00:00",
+        "end_utc": "2025-11-20T12:00:00+00:00",
+        "overlap_days": 1272.9583333333333
+      },
+      "primary": {
+        "summary": {
+          "trades": 665,
+          "total_net_usd": 667.3575239999985,
+          "profit_factor": 1.1412530636713334,
+          "win_rate": 0.49022556390977445,
+          "max_drawdown_usd": -387.5798290000002,
+          "cost_x4_total_net_usd": -30.892476000001693,
+          "positive_fold_ratio": 1.0,
+          "positive_month_ratio": 0.6190476190476191,
+          "long_total_net_usd": 491.67776600000093,
+          "short_total_net_usd": 175.6797579999976
+        }
+      },
+      "secondary": {
+        "summary": {
+          "trades": 657,
+          "total_net_usd": 731.8500000000005,
+          "profit_factor": 1.1534318545369167,
+          "win_rate": 0.4901065449010654,
+          "max_drawdown_usd": -330.06999999999834,
+          "cost_x4_total_net_usd": 42.000000000000796,
+          "positive_fold_ratio": 0.8,
+          "positive_month_ratio": 0.5714285714285714,
+          "long_total_net_usd": 705.6899999999982,
+          "short_total_net_usd": 26.16000000000239
+        }
+      },
+      "decision": {
+        "status": "overlap_second_source_pass",
+        "reason": "Fixed candidate passed overlap-aligned second-source checks.",
+        "checks": {
+          "min_overlap_days": true,
+          "secondary_min_trades": true,
+          "secondary_total_positive": true,
+          "secondary_pf_min": true,
+          "secondary_cost_x4_positive": true,
+          "degradation_ok": true
+        },
+        "primary_total_net_usd": 667.3575239999985,
+        "secondary_total_net_usd": 731.8500000000005,
+        "secondary_to_primary_total_ratio": 1.0966385688040914
+      }
+    },
+    {
+      "secondary_shift_hours": 0,
+      "overlap": {
+        "start_utc": "2022-05-27T13:00:00+00:00",
+        "end_utc": "2025-11-20T13:00:00+00:00",
+        "overlap_days": 1273.0
+      },
+      "primary": {
+        "summary": {
+          "trades": 665,
+          "total_net_usd": 667.3575239999985,
+          "profit_factor": 1.1412530636713334,
+          "win_rate": 0.49022556390977445,
+          "max_drawdown_usd": -387.5798290000002,
+          "cost_x4_total_net_usd": -30.892476000001693,
+          "positive_fold_ratio": 1.0,
+          "positive_month_ratio": 0.6190476190476191,
+          "long_total_net_usd": 491.67776600000093,
+          "short_total_net_usd": 175.6797579999976
+        }
+      },
+      "secondary": {
+        "summary": {
+          "trades": 657,
+          "total_net_usd": 731.8500000000005,
+          "profit_factor": 1.1534318545369167,
+          "win_rate": 0.4901065449010654,
+          "max_drawdown_usd": -330.06999999999834,
+          "cost_x4_total_net_usd": 42.000000000000796,
+          "positive_fold_ratio": 0.8,
+          "positive_month_ratio": 0.5714285714285714,
+          "long_total_net_usd": 705.6899999999982,
+          "short_total_net_usd": 26.16000000000239
+        }
+      },
+      "decision": {
+        "status": "overlap_second_source_pass",
+        "reason": "Fixed candidate passed overlap-aligned second-source checks.",
+        "checks": {
+          "min_overlap_days": true,
+          "secondary_min_trades": true,
+          "secondary_total_positive": true,
+          "secondary_pf_min": true,
+          "secondary_cost_x4_positive": true,
+          "degradation_ok": true
+        },
+        "primary_total_net_usd": 667.3575239999985,
+        "secondary_total_net_usd": 731.8500000000005,
+        "secondary_to_primary_total_ratio": 1.0966385688040914
+      }
+    },
+    {
+      "secondary_shift_hours": 1,
+      "overlap": {
+        "start_utc": "2022-05-27T13:00:00+00:00",
+        "end_utc": "2025-11-20T14:00:00+00:00",
+        "overlap_days": 1273.0416666666667
+      },
+      "primary": {
+        "summary": {
+          "trades": 665,
+          "total_net_usd": 667.3575239999985,
+          "profit_factor": 1.1412530636713334,
+          "win_rate": 0.49022556390977445,
+          "max_drawdown_usd": -387.5798290000002,
+          "cost_x4_total_net_usd": -30.892476000001693,
+          "positive_fold_ratio": 1.0,
+          "positive_month_ratio": 0.6190476190476191,
+          "long_total_net_usd": 491.67776600000093,
+          "short_total_net_usd": 175.6797579999976
+        }
+      },
+      "secondary": {
+        "summary": {
+          "trades": 657,
+          "total_net_usd": 731.8500000000005,
+          "profit_factor": 1.1534318545369167,
+          "win_rate": 0.4901065449010654,
+          "max_drawdown_usd": -330.06999999999834,
+          "cost_x4_total_net_usd": 42.000000000000796,
+          "positive_fold_ratio": 0.8,
+          "positive_month_ratio": 0.5714285714285714,
+          "long_total_net_usd": 705.6899999999982,
+          "short_total_net_usd": 26.16000000000239
+        }
+      },
+      "decision": {
+        "status": "overlap_second_source_pass",
+        "reason": "Fixed candidate passed overlap-aligned second-source checks.",
+        "checks": {
+          "min_overlap_days": true,
+          "secondary_min_trades": true,
+          "secondary_total_positive": true,
+          "secondary_pf_min": true,
+          "secondary_cost_x4_positive": true,
+          "degradation_ok": true
+        },
+        "primary_total_net_usd": 667.3575239999985,
+        "secondary_total_net_usd": 731.8500000000005,
+        "secondary_to_primary_total_ratio": 1.0966385688040914
+      }
+    },
+    {
+      "secondary_shift_hours": 2,
+      "overlap": {
+        "start_utc": "2022-05-27T13:00:00+00:00",
+        "end_utc": "2025-11-20T15:00:00+00:00",
+        "overlap_days": 1273.0833333333333
+      },
+      "primary": {
+        "summary": {
+          "trades": 665,
+          "total_net_usd": 667.3575239999985,
+          "profit_factor": 1.1412530636713334,
+          "win_rate": 0.49022556390977445,
+          "max_drawdown_usd": -387.5798290000002,
+          "cost_x4_total_net_usd": -30.892476000001693,
+          "positive_fold_ratio": 1.0,
+          "positive_month_ratio": 0.6190476190476191,
+          "long_total_net_usd": 491.67776600000093,
+          "short_total_net_usd": 175.6797579999976
+        }
+      },
+      "secondary": {
+        "summary": {
+          "trades": 657,
+          "total_net_usd": 731.8500000000005,
+          "profit_factor": 1.1534318545369167,
+          "win_rate": 0.4901065449010654,
+          "max_drawdown_usd": -330.06999999999834,
+          "cost_x4_total_net_usd": 42.000000000000796,
+          "positive_fold_ratio": 0.8,
+          "positive_month_ratio": 0.5714285714285714,
+          "long_total_net_usd": 705.6899999999982,
+          "short_total_net_usd": 26.16000000000239
+        }
+      },
+      "decision": {
+        "status": "overlap_second_source_pass",
+        "reason": "Fixed candidate passed overlap-aligned second-source checks.",
+        "checks": {
+          "min_overlap_days": true,
+          "secondary_min_trades": true,
+          "secondary_total_positive": true,
+          "secondary_pf_min": true,
+          "secondary_cost_x4_positive": true,
+          "degradation_ok": true
+        },
+        "primary_total_net_usd": 667.3575239999985,
+        "secondary_total_net_usd": 731.8500000000005,
+        "secondary_to_primary_total_ratio": 1.0966385688040914
+      }
+    },
+    {
+      "secondary_shift_hours": 3,
+      "overlap": {
+        "start_utc": "2022-05-27T13:00:00+00:00",
+        "end_utc": "2025-11-20T16:00:00+00:00",
+        "overlap_days": 1273.125
+      },
+      "primary": {
+        "summary": {
+          "trades": 665,
+          "total_net_usd": 667.3575239999985,
+          "profit_factor": 1.1412530636713334,
+          "win_rate": 0.49022556390977445,
+          "max_drawdown_usd": -387.5798290000002,
+          "cost_x4_total_net_usd": -30.892476000001693,
+          "positive_fold_ratio": 1.0,
+          "positive_month_ratio": 0.6190476190476191,
+          "long_total_net_usd": 491.67776600000093,
+          "short_total_net_usd": 175.6797579999976
+        }
+      },
+      "secondary": {
+        "summary": {
+          "trades": 657,
+          "total_net_usd": 731.8500000000005,
+          "profit_factor": 1.1534318545369167,
+          "win_rate": 0.4901065449010654,
+          "max_drawdown_usd": -330.06999999999834,
+          "cost_x4_total_net_usd": 42.000000000000796,
+          "positive_fold_ratio": 0.8,
+          "positive_month_ratio": 0.5952380952380952,
+          "long_total_net_usd": 705.6899999999982,
+          "short_total_net_usd": 26.16000000000239
+        }
+      },
+      "decision": {
+        "status": "overlap_second_source_pass",
+        "reason": "Fixed candidate passed overlap-aligned second-source checks.",
+        "checks": {
+          "min_overlap_days": true,
+          "secondary_min_trades": true,
+          "secondary_total_positive": true,
+          "secondary_pf_min": true,
+          "secondary_cost_x4_positive": true,
+          "degradation_ok": true
+        },
+        "primary_total_net_usd": 667.3575239999985,
+        "secondary_total_net_usd": 731.8500000000005,
+        "secondary_to_primary_total_ratio": 1.0966385688040914
+      }
+    }
+  ],
+  "decision": {
+    "status": "overlap_second_source_pass",
+    "reason": "Fixed candidate passed overlap-aligned second-source checks.",
+    "checks": {
+      "min_overlap_days": true,
+      "secondary_min_trades": true,
+      "secondary_total_positive": true,
+      "secondary_pf_min": true,
+      "secondary_cost_x4_positive": true,
+      "degradation_ok": true
+    },
+    "primary_total_net_usd": 667.3575239999985,
+    "secondary_total_net_usd": 731.8500000000005,
+    "secondary_to_primary_total_ratio": 1.0966385688040914
+  }
+}

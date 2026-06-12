@@ -1,0 +1,49 @@
+{
+  "ok": true,
+  "stage": "stage3d_forward_shadow",
+  "generated_at_utc": "2026-06-04T11:58:09.623058+00:00",
+  "candidate": {
+    "family": "sma_trend_1h",
+    "variant": "sma10_h12_dist10_cool1",
+    "interval": "1h"
+  },
+  "market": {
+    "primary_db": "data/store/xauusd.sqlite",
+    "latest_bar_time_utc": "2026-06-04T11:00:00+00:00",
+    "rows": 25749
+  },
+  "shadow_db": "data/shadow/forward_shadow.sqlite",
+  "closed_this_run": [],
+  "opened_this_run": null,
+  "latest_signal": null,
+  "shadow_state": {
+    "open_count": 0,
+    "closed_count": 0
+  },
+  "closed_metrics": {
+    "closed_count": 0,
+    "total_net_usd": 0.0,
+    "profit_factor": null,
+    "win_rate": 0.0,
+    "last_20_net_usd": 0.0,
+    "long_total_net_usd": 0.0,
+    "short_total_net_usd": 0.0
+  },
+  "kill_switch": {
+    "status": "collecting",
+    "reason": "Need at least 20 closed shadow trades before kill-switch evaluation.",
+    "checks": {
+      "enough_closed_for_eval": false,
+      "total_not_below_stop": true,
+      "last20_not_below_stop": true,
+      "long_not_below_stop": true,
+      "short_not_below_stop": true,
+      "pf_not_below_stop": true
+    }
+  },
+  "decision": {
+    "status": "forward_shadow_no_signal",
+    "reason": "Forward shadow run completed; no orders placed."
+  },
+  "warning": "Diagnostic only. No order placement. No paper-order. No live trading."
+}

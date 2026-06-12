@@ -1,0 +1,15 @@
+{
+  "GITHUB_WORKFLOW": "XAUUSD Event Pipeline Update",
+  "GITHUB_RUN_ID": "27266011610",
+  "GITHUB_RUN_NUMBER": "3",
+  "GITHUB_RUN_ATTEMPT": "1",
+  "GITHUB_JOB": "event-pipeline-update",
+  "GITHUB_REF": "refs/heads/main",
+  "GITHUB_SHA": "2341a75dcc8969b224488bfcd349ffe2b17432c0",
+  "GITHUB_REPOSITORY": "vsolouk-cmyk/xauusd-trader",
+  "GITHUB_ACTOR": "vsolouk-cmyk",
+  "GITHUB_EVENT_NAME": "workflow_dispatch",
+  "RUNNER_OS": "Linux",
+  "generated_utc": "2026-06-10T09:13:30+00:00",
+  "tool_version": "v3_query_intent_classification"
+}

@@ -211,7 +211,21 @@ def load_base_dataset(path: Path) -> Tuple[pd.DataFrame, Dict[str, object]]:
     if not path.exists():
         info["error"] = "dataset_not_found"
         return pd.DataFrame(), info
-    df = pd.read_csv(path)
+    try:
+        df = pd.read_csv(path)
+    except pd.errors.EmptyDataError:
+        info["error"] = "dataset_empty_no_columns"
+        info["loaded"] = False
+        info["rows_raw"] = 0
+        info["columns"] = []
+        return pd.DataFrame(), info
+    except Exception as exc:  # noqa: BLE001
+        info["error"] = f"dataset_read_error: {exc!r}"
+        info["loaded"] = False
+        return pd.DataFrame(), info
+    if df.empty or len(df.columns) == 0:
+        info.update({"loaded": False, "rows_raw": int(len(df)), "columns": list(df.columns), "error": "dataset_empty"})
+        return pd.DataFrame(), info
     info.update({"loaded": True, "rows_raw": int(len(df)), "columns": list(df.columns)})
     time_col = _pick_col(
         df.columns,

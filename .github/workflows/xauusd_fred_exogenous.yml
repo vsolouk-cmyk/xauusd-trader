@@ -73,6 +73,7 @@ jobs:
           cat data/reports/stage31a_exogenous_feature_ingestion/stage31a_exogenous_feature_ingestion.md
 
       - name: Upload FRED exogenous artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: xauusd-fred-exogenous-${{ github.run_id }}
@@ -81,3 +82,4 @@ jobs:
           path: |
             data/exogenous/*.csv
             data/reports/stage31a_exogenous_feature_ingestion/
+            data/reports/stage30a_candidate_pool_builder_ml_dataset/

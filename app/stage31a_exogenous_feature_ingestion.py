@@ -76,7 +76,7 @@ VALUE_CANDIDATES = ["close", "Close", "value", "Value", "price", "Price", "last"
 
 
 def _now_utc_iso() -> str:
-    return pd.Timestamp.utcnow().isoformat()
+    return pd.Timestamp.now(tz="UTC").isoformat()
 
 
 def _to_utc_series(s: pd.Series) -> pd.Series:
@@ -424,6 +424,30 @@ def feature_quality(df: pd.DataFrame) -> pd.DataFrame:
     return out.sort_values("rank_score", ascending=False)
 
 
+
+def _df_to_markdown_safe(df: pd.DataFrame, max_rows: int = 50) -> str:
+    """Render a small dataframe as markdown without requiring optional tabulate."""
+    if df is None or df.empty:
+        return ""
+    preview = df.head(max_rows).copy()
+    try:
+        return preview.to_markdown(index=False)
+    except Exception:
+        cols = [str(c) for c in preview.columns]
+        rows = []
+        rows.append("| " + " | ".join(cols) + " |")
+        rows.append("| " + " | ".join(["---"] * len(cols)) + " |")
+        for _, row in preview.iterrows():
+            vals = []
+            for c in preview.columns:
+                val = row.get(c, "")
+                if pd.isna(val):
+                    val = ""
+                text = str(val).replace("|", "\\|").replace("\n", " ")
+                vals.append(text)
+            rows.append("| " + " | ".join(vals) + " |")
+        return "\n".join(rows)
+
 def write_markdown(report: Dict[str, object], source_manifest: pd.DataFrame, fq: pd.DataFrame) -> None:
     md = []
     md.append("# Stage31A External/Macro/News Feature Ingestion\n")
@@ -444,13 +468,13 @@ def write_markdown(report: Dict[str, object], source_manifest: pd.DataFrame, fq:
     if source_manifest.empty:
         md.append("No source manifest rows.")
     else:
-        md.append(source_manifest.head(50).to_markdown(index=False))
+        md.append(_df_to_markdown_safe(source_manifest, max_rows=50))
     md.append("")
     md.append("## Feature quality sample\n")
     if fq.empty:
         md.append("No feature quality rows. Add exogenous CSVs to `data/exogenous/` and rerun Stage31A.")
     else:
-        md.append(fq.head(30).to_markdown(index=False))
+        md.append(_df_to_markdown_safe(fq, max_rows=30))
     md.append("")
     md.append("## Interpretation\n")
     md.append("- Stage31A does not create a tradable strategy; it only builds an exogenous-feature dataset for Stage31B.")

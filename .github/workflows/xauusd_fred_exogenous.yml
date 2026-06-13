@@ -43,6 +43,7 @@ jobs:
           else
             python -m pip install pandas numpy
           fi
+          python -m pip install tabulate
 
       - name: Download FRED exogenous CSVs
         env:

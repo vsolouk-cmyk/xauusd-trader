@@ -58,6 +58,15 @@ jobs:
           cat data/exogenous/fred_download_manifest.csv || true
           head -n 5 data/exogenous/dxy.csv || true
 
+      - name: Build Stage30A ML dataset if available
+        run: |
+          if [ -f app/stage30a_candidate_pool_builder_ml_dataset.py ]; then
+            python -m app.stage30a_candidate_pool_builder_ml_dataset
+          else
+            echo "Stage30A module is missing; Stage31A will emit a base-dataset readiness report."
+          fi
+          ls -lh data/reports/stage30a_candidate_pool_builder_ml_dataset/stage30a_ml_meta_dataset.csv || true
+
       - name: Run Stage31A exogenous ingestion
         run: |
           python -m app.stage31a_exogenous_feature_ingestion

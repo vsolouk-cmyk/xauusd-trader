@@ -1,17 +1,21 @@
-# Stage31A GitHub FRED Exogenous Workflow Hotfix
+# Stage31A GitHub FRED Exogenous Workflow Hotfix 2
 
-This workflow downloads FRED exogenous CSVs on GitHub Actions and runs Stage31A.
-The downloader is partial-safe: one transient FRED HTTP failure, such as 504, no longer aborts the whole run.
+This hotfix makes Stage31A robust when GitHub refreshes FRED data before a Stage30A ML dataset is available in the runner. It also updates the FRED workflow to attempt Stage30A dataset construction before Stage31A.
 
-Outputs:
+## Changes
 
-- `data/exogenous/dxy.csv`
-- `data/exogenous/us10y.csv`
-- `data/exogenous/real_yield.csv`
-- `data/exogenous/vix.csv`
-- `data/exogenous/spx.csv`
-- `data/exogenous/oil.csv`
-- `data/exogenous/fred_download_manifest.csv`
-- `data/reports/stage31a_exogenous_feature_ingestion/`
+- `app/stage31a_exogenous_feature_ingestion.py`
+  - Skips numeric asof joins when the base dataset is empty or has no normalized entry timestamp.
+  - Skips calendar proximity computation when the base dataset is empty or has no normalized entry timestamp.
+  - Accepts additional time column aliases such as `entry_time`, `entry_ts`, `signal_time`, `opened_ts`, `ts_utc`, and `time_utc`.
+  - Reports `time_column_used` in the dataset diagnostics.
+- `.github/workflows/xauusd_fred_exogenous.yml`
+  - Runs Stage30A first when available.
+  - Then runs Stage31A.
+  - Still uploads FRED CSVs and Stage31A reports as artifacts.
+- `tools/download_fred_exogenous.py`
+  - Carries forward the partial-safe FRED downloader.
 
-Run manually from GitHub Actions. Keep `strict=0` unless you intentionally want the workflow to fail on any missing source.
+## Scope
+
+Research/shadow only. No EA, paper/live, or order changes.

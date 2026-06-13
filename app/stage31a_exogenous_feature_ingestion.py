@@ -213,10 +213,27 @@ def load_base_dataset(path: Path) -> Tuple[pd.DataFrame, Dict[str, object]]:
         return pd.DataFrame(), info
     df = pd.read_csv(path)
     info.update({"loaded": True, "rows_raw": int(len(df)), "columns": list(df.columns)})
-    time_col = _pick_col(df.columns, ["entry_ts_norm", "entry_time", "timestamp", "time"])
+    time_col = _pick_col(
+        df.columns,
+        [
+            "entry_ts_norm",
+            "entry_time",
+            "entry_ts",
+            "signal_time",
+            "opened_ts",
+            "ts_utc",
+            "time_utc",
+            "timestamp_utc",
+            "timestamp",
+            "datetime",
+            "date",
+            "time",
+        ],
+    )
     if time_col is None:
         info["error"] = "no_entry_time_column"
         return pd.DataFrame(), info
+    info["time_column_used"] = time_col
     df["entry_ts_norm"] = _to_utc_series(df[time_col])
     before = len(df)
     df = df.dropna(subset=["entry_ts_norm"]).copy()
@@ -300,6 +317,10 @@ def load_calendar_events(path: Path) -> Tuple[pd.DataFrame, Dict[str, object]]:
 def asof_join_numeric(base: pd.DataFrame, exog: pd.DataFrame, key: str) -> pd.DataFrame:
     if exog.empty:
         return base
+    if base.empty or "entry_ts_norm" not in base.columns:
+        # GitHub workflow can refresh FRED before a Stage30A dataset exists.
+        # In that case Stage31A should produce a readiness report, not crash.
+        return base
     b = base.sort_values("entry_ts_norm").copy()
     e = exog.sort_values("timestamp").copy()
     joined = pd.merge_asof(b, e, left_on="entry_ts_norm", right_on="timestamp", direction="backward")
@@ -314,7 +335,7 @@ def add_calendar_features(base: pd.DataFrame, events: pd.DataFrame) -> pd.DataFr
     out["macro_event_within_2h"] = 0
     out["macro_event_within_6h"] = 0
     out["macro_event_within_24h"] = 0
-    if events.empty:
+    if events.empty or out.empty or "entry_ts_norm" not in out.columns:
         return out
     ev = events["event_ts"].sort_values().to_numpy(dtype="datetime64[ns]")
     entries = out["entry_ts_norm"].to_numpy(dtype="datetime64[ns]")

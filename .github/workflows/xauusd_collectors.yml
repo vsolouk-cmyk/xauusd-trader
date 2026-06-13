@@ -93,9 +93,21 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Run macro numeric update
+      - name: Run legacy macro numeric update if available
         run: |
-          python -m app.stage9b_macro_numeric_update
+          if [ -f app/stage9b_macro_numeric_update.py ]; then
+            python -m app.stage9b_macro_numeric_update
+          else
+            echo "Stage9B macro numeric updater is archived/missing; skipping this optional collector."
+            mkdir -p data/reports/stage9b_macro_numeric_update data/macro
+            cat > data/reports/stage9b_macro_numeric_update/stage9b_macro_numeric_update.md <<'EOF'
+          # Stage9B Macro Numeric Update
+
+          Decision: `STAGE9B_MACRO_NUMERIC_SKIPPED_ARCHIVED_OR_MISSING`
+
+          Stage9B macro numeric update is treated as a legacy optional collector in this workflow. The file `app/stage9b_macro_numeric_update.py` was not present in this checkout, so the GitHub Actions collector skipped it instead of failing the full workflow.
+          EOF
+          fi
 
       - name: Write workflow metadata
         run: |
@@ -142,9 +154,21 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Run macro event calendar update
+      - name: Run legacy macro event calendar update if available
         run: |
-          python -m app.stage9b_macro_event_calendar_update
+          if [ -f app/stage9b_macro_event_calendar_update.py ]; then
+            python -m app.stage9b_macro_event_calendar_update
+          else
+            echo "Stage9B macro event calendar updater is archived/missing; skipping this optional collector."
+            mkdir -p data/reports/stage9b_macro_event_calendar_update data/config
+            cat > data/reports/stage9b_macro_event_calendar_update/stage9b_macro_event_calendar_update.md <<'EOF'
+          # Stage9B Macro Event Calendar Update
+
+          Decision: `STAGE9B_MACRO_CALENDAR_SKIPPED_ARCHIVED_OR_MISSING`
+
+          Stage9B macro event calendar update is treated as a legacy optional collector in this workflow. The file `app/stage9b_macro_event_calendar_update.py` was not present in this checkout, so the GitHub Actions collector skipped it instead of failing the full workflow.
+          EOF
+          fi
 
       - name: Write workflow metadata
         run: |

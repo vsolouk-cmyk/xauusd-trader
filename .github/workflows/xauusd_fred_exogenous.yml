@@ -7,6 +7,10 @@ on:
         description: "First date to keep in FRED exogenous CSVs, YYYY-MM-DD"
         required: false
         default: "2022-05-01"
+      strict:
+        description: "Fail workflow if any FRED source fails: 0 or 1"
+        required: false
+        default: "0"
 
 permissions:
   contents: read
@@ -19,7 +23,7 @@ jobs:
   fred-exogenous-refresh:
     name: Download FRED exogenous data and run Stage31A
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
 
     steps:
       - name: Checkout repository
@@ -44,10 +48,14 @@ jobs:
         env:
           FRED_EXOGENOUS_START_DATE: ${{ github.event.inputs.start_date || '2022-05-01' }}
           FRED_EXOGENOUS_OUT_DIR: data/exogenous
+          FRED_EXOGENOUS_STRICT: ${{ github.event.inputs.strict || '0' }}
+          FRED_EXOGENOUS_ATTEMPTS: "4"
         run: |
           python tools/download_fred_exogenous.py
-          echo "Downloaded exogenous files:"
+          echo "Downloaded/usable exogenous files:"
           wc -l data/exogenous/*.csv || true
+          echo "FRED manifest:"
+          cat data/exogenous/fred_download_manifest.csv || true
           head -n 5 data/exogenous/dxy.csv || true
 
       - name: Run Stage31A exogenous ingestion
@@ -59,13 +67,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: xauusd-fred-exogenous-${{ github.run_id }}
-          if-no-files-found: error
+          if-no-files-found: ignore
           retention-days: 14
           path: |
-            data/exogenous/dxy.csv
-            data/exogenous/us10y.csv
-            data/exogenous/real_yield.csv
-            data/exogenous/vix.csv
-            data/exogenous/spx.csv
-            data/exogenous/oil.csv
+            data/exogenous/*.csv
             data/reports/stage31a_exogenous_feature_ingestion/

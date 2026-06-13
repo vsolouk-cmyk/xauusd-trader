@@ -7,8 +7,24 @@ on:
         description: "First date to keep in FRED exogenous CSVs, YYYY-MM-DD"
         required: false
         default: "2022-05-01"
+      series:
+        description: "FRED series to refresh: all, dxy, us10y, real_yield, vix, spx, oil, or comma list"
+        required: false
+        default: "all"
       strict:
-        description: "Fail workflow if any FRED source fails: 0 or 1"
+        description: "Fail workflow if any selected FRED source fails: 0 or 1"
+        required: false
+        default: "0"
+      attempts:
+        description: "Attempts per selected FRED source"
+        required: false
+        default: "4"
+      request_delay:
+        description: "Seconds to wait between selected series"
+        required: false
+        default: "5"
+      run_stage31a:
+        description: "Run Stage31A in GitHub after download: 0 or 1. Local run is preferred."
         required: false
         default: "0"
 
@@ -21,7 +37,7 @@ defaults:
 
 jobs:
   fred-exogenous-refresh:
-    name: Download FRED exogenous data and run Stage31A
+    name: Download selected FRED exogenous data
     runs-on: ubuntu-latest
     timeout-minutes: 35
 
@@ -45,21 +61,23 @@ jobs:
           fi
           python -m pip install tabulate
 
-      - name: Download FRED exogenous CSVs
+      - name: Download selected FRED exogenous CSVs
         env:
           FRED_EXOGENOUS_START_DATE: ${{ github.event.inputs.start_date || '2022-05-01' }}
+          FRED_EXOGENOUS_SERIES: ${{ github.event.inputs.series || 'all' }}
           FRED_EXOGENOUS_OUT_DIR: data/exogenous
           FRED_EXOGENOUS_STRICT: ${{ github.event.inputs.strict || '0' }}
-          FRED_EXOGENOUS_ATTEMPTS: "4"
+          FRED_EXOGENOUS_ATTEMPTS: ${{ github.event.inputs.attempts || '4' }}
+          FRED_EXOGENOUS_REQUEST_DELAY: ${{ github.event.inputs.request_delay || '5' }}
         run: |
           python tools/download_fred_exogenous.py
-          echo "Downloaded/usable exogenous files:"
-          wc -l data/exogenous/*.csv || true
+          echo "Selected-success artifact files:"
+          find data/exogenous/_artifact_success -maxdepth 1 -type f -print -exec wc -l {} \; || true
           echo "FRED manifest:"
           cat data/exogenous/fred_download_manifest.csv || true
-          head -n 5 data/exogenous/dxy.csv || true
 
-      - name: Build Stage30A ML dataset if available
+      - name: Build Stage30A ML dataset if Stage31A requested
+        if: ${{ github.event.inputs.run_stage31a == '1' }}
         run: |
           if [ -f app/stage30a_candidate_pool_builder_ml_dataset.py ]; then
             python -m app.stage30a_candidate_pool_builder_ml_dataset
@@ -68,19 +86,22 @@ jobs:
           fi
           ls -lh data/reports/stage30a_candidate_pool_builder_ml_dataset/stage30a_ml_meta_dataset.csv || true
 
-      - name: Run Stage31A exogenous ingestion
+      - name: Run Stage31A exogenous ingestion if requested
+        if: ${{ github.event.inputs.run_stage31a == '1' }}
         run: |
           python -m app.stage31a_exogenous_feature_ingestion
           cat data/reports/stage31a_exogenous_feature_ingestion/stage31a_exogenous_feature_ingestion.md
 
-      - name: Upload FRED exogenous artifact
+      - name: Upload selected FRED exogenous artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: xauusd-fred-exogenous-${{ github.run_id }}
+          name: xauusd-fred-exogenous-${{ github.event.inputs.series || 'all' }}-${{ github.run_id }}
           if-no-files-found: ignore
           retention-days: 14
           path: |
-            data/exogenous/*.csv
+            data/exogenous/_artifact_success/*.csv
+            data/exogenous/_artifact_success/*.txt
+            data/exogenous/fred_download_manifest.csv
             data/reports/stage31a_exogenous_feature_ingestion/
             data/reports/stage30a_candidate_pool_builder_ml_dataset/

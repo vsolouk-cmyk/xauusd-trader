@@ -11,6 +11,14 @@ on:
         description: "FRED series to refresh: all, dxy, us10y, real_yield, vix, spx, oil, or comma list"
         required: false
         default: "all"
+      endpoint_mode:
+        description: "FRED endpoint: api, graph, or auto. api is fastest but requires FRED_API_KEY secret."
+        required: false
+        default: "api"
+      graph_fallback:
+        description: "If API fails, fallback to legacy fredgraph endpoint: 0 or 1"
+        required: false
+        default: "0"
       strict:
         description: "Fail workflow if any selected FRED source fails: 0 or 1"
         required: false
@@ -18,11 +26,11 @@ on:
       attempts:
         description: "Attempts per selected FRED source"
         required: false
-        default: "4"
+        default: "3"
       request_delay:
         description: "Seconds to wait between selected series"
         required: false
-        default: "5"
+        default: "2"
       run_stage31a:
         description: "Run Stage31A in GitHub after download: 0 or 1. Local run is preferred."
         required: false
@@ -39,7 +47,7 @@ jobs:
   fred-exogenous-refresh:
     name: Download selected FRED exogenous data
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 20
 
     steps:
       - name: Checkout repository
@@ -61,14 +69,29 @@ jobs:
           fi
           python -m pip install tabulate
 
+
+      - name: Validate FRED API key for API mode
+        if: ${{ github.event.inputs.endpoint_mode == 'api' || github.event.inputs.endpoint_mode == '' }}
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: |
+          if [ -z "${FRED_API_KEY}" ]; then
+            echo "FRED_API_KEY repository secret is required when endpoint_mode=api."
+            echo "Add it under GitHub → Settings → Secrets and variables → Actions → New repository secret."
+            exit 1
+          fi
+
       - name: Download selected FRED exogenous CSVs
         env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
           FRED_EXOGENOUS_START_DATE: ${{ github.event.inputs.start_date || '2022-05-01' }}
           FRED_EXOGENOUS_SERIES: ${{ github.event.inputs.series || 'all' }}
+          FRED_EXOGENOUS_ENDPOINT_MODE: ${{ github.event.inputs.endpoint_mode || 'api' }}
+          FRED_EXOGENOUS_GRAPH_FALLBACK: ${{ github.event.inputs.graph_fallback || '0' }}
           FRED_EXOGENOUS_OUT_DIR: data/exogenous
           FRED_EXOGENOUS_STRICT: ${{ github.event.inputs.strict || '0' }}
-          FRED_EXOGENOUS_ATTEMPTS: ${{ github.event.inputs.attempts || '4' }}
-          FRED_EXOGENOUS_REQUEST_DELAY: ${{ github.event.inputs.request_delay || '5' }}
+          FRED_EXOGENOUS_ATTEMPTS: ${{ github.event.inputs.attempts || '3' }}
+          FRED_EXOGENOUS_REQUEST_DELAY: ${{ github.event.inputs.request_delay || '2' }}
         run: |
           python tools/download_fred_exogenous.py
           echo "Selected-success artifact files:"

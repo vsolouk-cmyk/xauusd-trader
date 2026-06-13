@@ -23,27 +23,15 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Run legacy GDELT/news event pipeline if available
+      - name: Run GDELT/news event pipeline
         run: |
-          if [ -f app/stage10b_event_pipeline_update.py ]; then
-            python -m app.stage10b_event_pipeline_update \
-              --gdelt-timespan 7d \
-              --gdelt-max-records 10 \
-              --gdelt-query-mode rate_safe \
-              --gdelt-timeout 60 \
-              --gdelt-retries 2 \
-              --gdelt-query-delay 20
-          else
-            echo "Stage10B legacy event pipeline is archived/missing; skipping this optional collector."
-            mkdir -p data/reports/stage10b_event_pipeline_update data/macro/events
-            cat > data/reports/stage10b_event_pipeline_update/stage10b_event_pipeline_update.md <<'EOF'
-          # Stage10B Legacy Event Pipeline
-
-          Decision: `STAGE10B_LEGACY_COLLECTOR_SKIPPED_ARCHIVED_OR_MISSING`
-
-          Stage10B is treated as a legacy optional collector in this workflow. The file `app/stage10b_event_pipeline_update.py` was not present in this checkout, so the GitHub Actions collector skipped it instead of failing the full workflow.
-          EOF
-          fi
+          python -m app.stage10b_event_pipeline_update \
+            --gdelt-timespan 7d \
+            --gdelt-max-records 10 \
+            --gdelt-query-mode rate_safe \
+            --gdelt-timeout 60 \
+            --gdelt-retries 2 \
+            --gdelt-query-delay 20
 
       - name: Write workflow metadata
         run: |
@@ -73,7 +61,6 @@ jobs:
             data/macro/events/
             data/reports/stage10b_event_pipeline_update/
             data/reports/workflow_metadata/xauusd_collectors_event_pipeline_run_metadata.json
-          if-no-files-found: ignore
           retention-days: 14
 
   macro-numeric:
@@ -124,7 +111,6 @@ jobs:
             data/macro/
             data/reports/stage9b_macro_numeric_update/
             data/reports/workflow_metadata/xauusd_collectors_macro_numeric_run_metadata.json
-          if-no-files-found: ignore
           retention-days: 14
 
   macro-calendar:
@@ -173,5 +159,4 @@ jobs:
             data/config/stage10a_news_events.csv
             data/reports/stage9b_macro_event_calendar_update/
             data/reports/workflow_metadata/xauusd_collectors_macro_calendar_run_metadata.json
-          if-no-files-found: ignore
           retention-days: 14

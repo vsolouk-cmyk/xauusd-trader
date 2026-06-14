@@ -228,6 +228,33 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         default=truthy_env("XAUUSD_ORCH_SKIP_ACTIVE_WRAPPER", "0"),
         help="Skip app.run_active_shadow_suite_with_exogenous_watchlist.",
     )
+    parser.add_argument(
+        "--skip-stage32b-intake",
+        action="store_true",
+        default=truthy_env("XAUUSD_ORCH_SKIP_STAGE32B_INTAKE", "0"),
+        help=(
+            "Skip the Stage32B dense forward shadow intake post-aggregation arm. "
+            "By default it runs after candidate_supply_summary is rebuilt so it uses fresh inputs."
+        ),
+    )
+    parser.add_argument(
+        "--skip-stage32c-tracker",
+        action="store_true",
+        default=truthy_env("XAUUSD_ORCH_SKIP_STAGE32C_TRACKER", "0"),
+        help=(
+            "Skip the Stage32C dense forward shadow tracker. "
+            "By default it runs after Stage32B so it uses the fresh shadow_intake_queue."
+        ),
+    )
+    parser.add_argument(
+        "--skip-stage32d-review",
+        action="store_true",
+        default=truthy_env("XAUUSD_ORCH_SKIP_STAGE32D_REVIEW", "0"),
+        help=(
+            "Skip the Stage32D dense forward review/tightening plan. "
+            "By default it runs after Stage32C so it inspects the fresh dense forward ledger."
+        ),
+    )
     return parser.parse_args(argv)
 
 
@@ -837,6 +864,39 @@ def commercial_readiness_summary(
     }
 
 
+def run_stage32b_intake_post_aggregation(args: argparse.Namespace) -> ModuleRun:
+    """Run Stage32B only after candidate_supply_summary/registry have been rebuilt."""
+    spec = ModuleSpec(
+        arm="stage32b_dense_forward_shadow_intake",
+        module="app.stage32b_dense_forward_shadow_intake",
+        required=False,
+        group="shadow_intake",
+    )
+    return run_module(spec, args.timeout_sec)
+
+
+def run_stage32c_tracker_post_intake(args: argparse.Namespace) -> ModuleRun:
+    """Run Stage32C only after Stage32B has refreshed shadow_intake_queue.csv."""
+    spec = ModuleSpec(
+        arm="stage32c_dense_forward_shadow_tracker",
+        module="app.stage32c_dense_forward_shadow_tracker",
+        required=False,
+        group="forward_tracking",
+    )
+    return run_module(spec, args.timeout_sec)
+
+
+def run_stage32d_review_post_tracker(args: argparse.Namespace) -> ModuleRun:
+    """Run Stage32D only after Stage32C has refreshed the dense forward ledger."""
+    spec = ModuleSpec(
+        arm="stage32d_dense_forward_review",
+        module="app.stage32d_dense_forward_review",
+        required=False,
+        group="forward_review",
+    )
+    return run_module(spec, args.timeout_sec)
+
+
 def write_csv(path: Path, rows: List[Dict[str, Any]], fieldnames: Optional[List[str]] = None) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     if fieldnames is None:
@@ -934,6 +994,9 @@ def write_markdown_report(
         "run_data_refresh_arm": args.run_data_refresh_arm,
         "run_discovery_arms": args.run_discovery_arms,
         "skip_active_wrapper": args.skip_active_wrapper,
+        "skip_stage32b_intake": args.skip_stage32b_intake,
+        "skip_stage32c_tracker": args.skip_stage32c_tracker,
+        "skip_stage32d_review": args.skip_stage32d_review,
         "timeout_sec": args.timeout_sec,
     })
     lines.append("")
@@ -1038,6 +1101,18 @@ def write_markdown_report(
         OUT_DIR / "commercial_readiness_summary.json",
         OUT_DIR / "db_data_freshness.csv",
         OUT_DIR / "db_data_freshness.json",
+        REPORT_ROOT / "stage32b_dense_forward_shadow_intake" / "stage32b_dense_forward_shadow_intake.md",
+        REPORT_ROOT / "stage32b_dense_forward_shadow_intake" / "shadow_intake_queue.csv",
+        REPORT_ROOT / "stage32b_dense_forward_shadow_intake" / "family_density_triage.csv",
+        REPORT_ROOT / "stage32b_dense_forward_shadow_intake" / "stage32b_summary.json",
+        REPORT_ROOT / "stage32c_dense_forward_shadow_tracker" / "stage32c_dense_forward_shadow_tracker.md",
+        REPORT_ROOT / "stage32c_dense_forward_shadow_tracker" / "dense_forward_signal_snapshot.csv",
+        REPORT_ROOT / "stage32c_dense_forward_shadow_tracker" / "dense_forward_candidate_summary.csv",
+        REPORT_ROOT / "stage32c_dense_forward_shadow_tracker" / "stage32c_summary.json",
+        REPORT_ROOT / "stage32d_dense_forward_review" / "stage32d_dense_forward_review.md",
+        REPORT_ROOT / "stage32d_dense_forward_review" / "dense_variant_tightening_plan.csv",
+        REPORT_ROOT / "stage32d_dense_forward_review" / "dense_review_candidate_diagnostics.csv",
+        REPORT_ROOT / "stage32d_dense_forward_review" / "stage32d_summary.json",
         OUT_DIR / "module_runs.csv",
         OUT_DIR / "report_manifest.csv",
         OUT_DIR / "stage_status_manifest.csv",
@@ -1057,7 +1132,6 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         for spec in module_plan(args):
             module_runs.append(run_module(spec, args.timeout_sec))
 
-    report_summaries = discover_reports()
     candidate_rows = build_candidate_registry()
     candidate_summary = build_candidate_supply_summary(candidate_rows)
     db_path = Path(args.db)
@@ -1065,10 +1139,6 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     db_freshness = db_data_freshness(db_path)
     commercial_summary = commercial_readiness_summary(module_runs, candidate_rows, candidate_summary, db_freshness)
 
-    write_csv(OUT_DIR / "module_runs.csv", [asdict(m) for m in module_runs])
-    write_json(OUT_DIR / "module_runs.json", [asdict(m) for m in module_runs])
-    write_csv(OUT_DIR / "report_manifest.csv", [asdict(r) for r in report_summaries])
-    write_json(OUT_DIR / "report_manifest.json", [asdict(r) for r in report_summaries])
     write_csv(OUT_DIR / "candidate_registry.csv", candidate_rows)
     write_json(OUT_DIR / "candidate_registry.json", candidate_rows)
     write_csv(OUT_DIR / "candidate_supply_summary.csv", candidate_summary)
@@ -1078,6 +1148,24 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     write_json(OUT_DIR / "stage_status_manifest.json", db_rows)
     write_csv(OUT_DIR / "db_data_freshness.csv", db_freshness)
     write_json(OUT_DIR / "db_data_freshness.json", db_freshness)
+
+    # Stage32B intentionally runs after the fresh Stage32A-HF1 candidate supply artifacts are written.
+    if not args.skip_stage32b_intake:
+        module_runs.append(run_stage32b_intake_post_aggregation(args))
+
+    # Stage32C intentionally runs after Stage32B so it uses the fresh dense intake queue.
+    if not args.skip_stage32c_tracker:
+        module_runs.append(run_stage32c_tracker_post_intake(args))
+
+    # Stage32D intentionally runs after Stage32C so it reviews the fresh dense forward ledger.
+    if not args.skip_stage32d_review:
+        module_runs.append(run_stage32d_review_post_tracker(args))
+
+    report_summaries = discover_reports()
+    write_csv(OUT_DIR / "module_runs.csv", [asdict(m) for m in module_runs])
+    write_json(OUT_DIR / "module_runs.json", [asdict(m) for m in module_runs])
+    write_csv(OUT_DIR / "report_manifest.csv", [asdict(r) for r in report_summaries])
+    write_json(OUT_DIR / "report_manifest.json", [asdict(r) for r in report_summaries])
 
     decision = write_markdown_report(
         args=args,
@@ -1094,6 +1182,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print(f"report={rel(OUT_DIR / 'research_shadow_orchestrator.md')}")
     print(f"candidate_registry={rel(OUT_DIR / 'candidate_registry.csv')}")
     print(f"candidate_supply_summary={rel(OUT_DIR / 'candidate_supply_summary.csv')}")
+    print(f"stage32b_shadow_intake_queue={rel(REPORT_ROOT / 'stage32b_dense_forward_shadow_intake' / 'shadow_intake_queue.csv')}")
+    print(f"stage32c_dense_forward_tracker={rel(REPORT_ROOT / 'stage32c_dense_forward_shadow_tracker' / 'stage32c_dense_forward_shadow_tracker.md')}")
+    print(f"stage32d_dense_forward_review={rel(REPORT_ROOT / 'stage32d_dense_forward_review' / 'stage32d_dense_forward_review.md')}")
 
     if args.fail_on_core_error and any(m.required and m.returncode != 0 for m in module_runs):
         return 2

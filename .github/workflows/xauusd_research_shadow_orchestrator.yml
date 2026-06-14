@@ -77,6 +77,14 @@ on:
         options:
           - "0"
           - "1"
+      skip_stage32e_monitor:
+        description: "Skip Stage32E extended dense shadow monitor"
+        required: true
+        default: "0"
+        type: choice
+        options:
+          - "0"
+          - "1"
       extra_modules:
         description: "Optional comma-separated app modules, used only in full mode"
         required: false
@@ -112,6 +120,7 @@ jobs:
       XAUUSD_ORCH_SKIP_STAGE32B_INTAKE: ${{ github.event.inputs.skip_stage32b_intake || '0' }}
       XAUUSD_ORCH_SKIP_STAGE32C_TRACKER: ${{ github.event.inputs.skip_stage32c_tracker || '0' }}
       XAUUSD_ORCH_SKIP_STAGE32D_REVIEW: ${{ github.event.inputs.skip_stage32d_review || '0' }}
+      XAUUSD_ORCH_SKIP_STAGE32E_MONITOR: ${{ github.event.inputs.skip_stage32e_monitor || '0' }}
       XAUUSD_ORCH_EXTRA_MODULES: ${{ github.event.inputs.extra_modules || '' }}
       XAUUSD_ORCH_TIMEOUT_SEC: "0"
       TRADING_DB: data/local/xauusd_local_store.sqlite
@@ -145,7 +154,7 @@ jobs:
             echo "XAUUSD_ORCH_MODE=observation" >> "$GITHUB_ENV"
           fi
 
-      - name: Run Stage32A-HF1 + Stage32B/Stage32C/Stage32D dense forward pipeline
+      - name: Run Stage32A-HF1 + Stage32B/Stage32C/Stage32D/Stage32E dense forward pipeline
         shell: bash
         run: |
           python -m app.run_xauusd_research_shadow_orchestrator \
@@ -185,5 +194,6 @@ jobs:
             data/reports/stage32b_dense_forward_shadow_intake/**
             data/reports/stage32c_dense_forward_shadow_tracker/**
             data/reports/stage32d_dense_forward_review/**
+            data/reports/stage32e_extended_dense_shadow_monitor/**
           if-no-files-found: warn
           retention-days: 30

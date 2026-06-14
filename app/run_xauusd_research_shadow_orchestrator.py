@@ -255,6 +255,15 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
             "By default it runs after Stage32C so it inspects the fresh dense forward ledger."
         ),
     )
+    parser.add_argument(
+        "--skip-stage32e-monitor",
+        action="store_true",
+        default=truthy_env("XAUUSD_ORCH_SKIP_STAGE32E_MONITOR", "0"),
+        help=(
+            "Skip the Stage32E extended dense shadow monitor. "
+            "By default it runs after Stage32D so the tightening plan becomes an operational focus queue."
+        ),
+    )
     return parser.parse_args(argv)
 
 
@@ -897,6 +906,17 @@ def run_stage32d_review_post_tracker(args: argparse.Namespace) -> ModuleRun:
     return run_module(spec, args.timeout_sec)
 
 
+def run_stage32e_monitor_post_review(args: argparse.Namespace) -> ModuleRun:
+    """Run Stage32E only after Stage32D has refreshed the tightening plan."""
+    spec = ModuleSpec(
+        arm="stage32e_extended_dense_shadow_monitor",
+        module="app.stage32e_extended_dense_shadow_monitor",
+        required=False,
+        group="extended_shadow_monitor",
+    )
+    return run_module(spec, args.timeout_sec)
+
+
 def write_csv(path: Path, rows: List[Dict[str, Any]], fieldnames: Optional[List[str]] = None) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     if fieldnames is None:
@@ -997,6 +1017,7 @@ def write_markdown_report(
         "skip_stage32b_intake": args.skip_stage32b_intake,
         "skip_stage32c_tracker": args.skip_stage32c_tracker,
         "skip_stage32d_review": args.skip_stage32d_review,
+        "skip_stage32e_monitor": args.skip_stage32e_monitor,
         "timeout_sec": args.timeout_sec,
     })
     lines.append("")
@@ -1113,6 +1134,11 @@ def write_markdown_report(
         REPORT_ROOT / "stage32d_dense_forward_review" / "dense_variant_tightening_plan.csv",
         REPORT_ROOT / "stage32d_dense_forward_review" / "dense_review_candidate_diagnostics.csv",
         REPORT_ROOT / "stage32d_dense_forward_review" / "stage32d_summary.json",
+        REPORT_ROOT / "stage32e_extended_dense_shadow_monitor" / "stage32e_extended_dense_shadow_monitor.md",
+        REPORT_ROOT / "stage32e_extended_dense_shadow_monitor" / "extended_shadow_focus_queue.csv",
+        REPORT_ROOT / "stage32e_extended_dense_shadow_monitor" / "suppressed_variant_plan.csv",
+        REPORT_ROOT / "stage32e_extended_dense_shadow_monitor" / "pre_commercial_robustness_queue.csv",
+        REPORT_ROOT / "stage32e_extended_dense_shadow_monitor" / "stage32e_summary.json",
         OUT_DIR / "module_runs.csv",
         OUT_DIR / "report_manifest.csv",
         OUT_DIR / "stage_status_manifest.csv",
@@ -1161,6 +1187,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if not args.skip_stage32d_review:
         module_runs.append(run_stage32d_review_post_tracker(args))
 
+    # Stage32E intentionally runs after Stage32D so its tightening plan becomes an operational extended-shadow monitor.
+    if not args.skip_stage32e_monitor:
+        module_runs.append(run_stage32e_monitor_post_review(args))
+
     report_summaries = discover_reports()
     write_csv(OUT_DIR / "module_runs.csv", [asdict(m) for m in module_runs])
     write_json(OUT_DIR / "module_runs.json", [asdict(m) for m in module_runs])
@@ -1185,6 +1215,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print(f"stage32b_shadow_intake_queue={rel(REPORT_ROOT / 'stage32b_dense_forward_shadow_intake' / 'shadow_intake_queue.csv')}")
     print(f"stage32c_dense_forward_tracker={rel(REPORT_ROOT / 'stage32c_dense_forward_shadow_tracker' / 'stage32c_dense_forward_shadow_tracker.md')}")
     print(f"stage32d_dense_forward_review={rel(REPORT_ROOT / 'stage32d_dense_forward_review' / 'stage32d_dense_forward_review.md')}")
+    print(f"stage32e_extended_dense_shadow_monitor={rel(REPORT_ROOT / 'stage32e_extended_dense_shadow_monitor' / 'stage32e_extended_dense_shadow_monitor.md')}")
 
     if args.fail_on_core_error and any(m.required and m.returncode != 0 for m in module_runs):
         return 2

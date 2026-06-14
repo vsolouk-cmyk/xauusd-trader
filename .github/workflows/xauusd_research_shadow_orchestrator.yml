@@ -9,7 +9,9 @@ on:
         default: "observation"
         type: choice
         options:
+          - aggregate
           - observation
+          - supply
           - full
       skip_module_runs:
         description: "Only aggregate existing reports; do not run suite modules"
@@ -27,13 +29,39 @@ on:
         options:
           - "0"
           - "1"
+      run_data_refresh_arm:
+        description: "Run Stage16E AMarkets CSV refresh as a separate arm before active suite"
+        required: true
+        default: "0"
+        type: choice
+        options:
+          - "0"
+          - "1"
+      run_discovery_arms:
+        description: "Run discovery/lineage/candidate-supply arms even outside supply/full mode"
+        required: true
+        default: "0"
+        type: choice
+        options:
+          - "0"
+          - "1"
+      skip_active_wrapper:
+        description: "Skip active suite + exogenous watchlist wrapper"
+        required: true
+        default: "0"
+        type: choice
+        options:
+          - "0"
+          - "1"
       extra_modules:
         description: "Optional comma-separated app modules, used only in full mode"
         required: false
         default: ""
   schedule:
-    # Weekday observation every 6 hours in UTC. GitHub schedules use UTC.
+    # Routine observation every 6 hours on weekdays, UTC.
     - cron: "0 */6 * * 1-5"
+    # Candidate-supply refresh once per weekday night, UTC.
+    - cron: "30 22 * * 1-5"
 
 permissions:
   contents: read
@@ -46,12 +74,17 @@ concurrency:
 jobs:
   orchestrate:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     env:
       PYTHONUNBUFFERED: "1"
-      XAUUSD_ORCH_MODE: ${{ github.event.inputs.mode || 'observation' }}
+      IS_SCHEDULE: ${{ github.event_name == 'schedule' }}
+      SCHEDULE_CRON: ${{ github.event.schedule || '' }}
+      XAUUSD_ORCH_MODE: ${{ github.event.inputs.mode || (github.event.schedule == '30 22 * * 1-5' && 'supply' || 'observation') }}
       XAUUSD_ORCH_SKIP_MODULE_RUNS: ${{ github.event.inputs.skip_module_runs || '0' }}
       XAUUSD_ORCH_FAIL_ON_CORE_ERROR: ${{ github.event.inputs.fail_on_core_error || '0' }}
+      XAUUSD_ORCH_RUN_DATA_REFRESH_ARM: ${{ github.event.inputs.run_data_refresh_arm || '0' }}
+      XAUUSD_ORCH_RUN_DISCOVERY_ARMS: ${{ github.event.inputs.run_discovery_arms || '0' }}
+      XAUUSD_ORCH_SKIP_ACTIVE_WRAPPER: ${{ github.event.inputs.skip_active_wrapper || '0' }}
       XAUUSD_ORCH_EXTRA_MODULES: ${{ github.event.inputs.extra_modules || '' }}
       XAUUSD_ORCH_TIMEOUT_SEC: "0"
       TRADING_DB: data/local/xauusd_local_store.sqlite
@@ -74,7 +107,18 @@ jobs:
             pip install -r requirements.txt
           fi
 
-      - name: Run Stage32A research shadow orchestrator
+      - name: Select scheduled mode
+        if: github.event_name == 'schedule'
+        shell: bash
+        run: |
+          echo "event.schedule=${SCHEDULE_CRON}"
+          if [ "${SCHEDULE_CRON}" = "30 22 * * 1-5" ]; then
+            echo "XAUUSD_ORCH_MODE=supply" >> "$GITHUB_ENV"
+          else
+            echo "XAUUSD_ORCH_MODE=observation" >> "$GITHUB_ENV"
+          fi
+
+      - name: Run Stage32A-HF1 commercial candidate supply orchestrator
         shell: bash
         run: |
           python -m app.run_xauusd_research_shadow_orchestrator \
@@ -98,7 +142,18 @@ jobs:
           name: xauusd-research-shadow-orchestrator-${{ github.run_id }}
           path: |
             data/reports/research_shadow_orchestrator/**
+            data/reports/active_shadow_suite/**
             data/reports/active_shadow_suite_exogenous_watchlist/**
+            data/reports/stage16e_amarkets_csv_refresh_cycle/**
+            data/reports/stage27b_db_first_lineage_gate_discovery/**
+            data/reports/stage27c_db_first_h1_atr_gate_validation/**
+            data/reports/stage27d_db_first_h1_atr_filtered_forward_shadow/**
+            data/reports/stage28a_discovery_factory_batch_runner/**
+            data/reports/stage28c_forward_safe_meta_gate_validation/**
+            data/reports/stage28d_forward_safe_meta_gate_tracker/**
+            data/reports/stage29a_high_range_regime_continuation_discovery/**
+            data/reports/stage30a_candidate_pool_builder_ml_dataset/**
+            data/reports/stage30b_ml_lite_feature_ranker/**
             data/reports/stage31g_exogenous_active_suite_watchlist/**
           if-no-files-found: warn
           retention-days: 30

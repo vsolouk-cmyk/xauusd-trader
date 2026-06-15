@@ -178,10 +178,24 @@ def normalize_ledger(ledger: pd.DataFrame) -> Tuple[pd.DataFrame, Dict[str, str]
         contains=("candidate",),
     )
     family_col = find_column(ledger, ["family", "family_id", "pattern_family"], contains=("family",))
+    # Stage32C ledger writes signal timestamps under `entry_time`. Earlier Stage33B only
+    # searched generic ts/timestamp columns, which made real Stage32C ledgers look
+    # unavailable even when rows existed. Keep broader aliases for forward compatibility.
     ts_col = find_column(
         ledger,
-        ["signal_ts_utc", "signal_time_utc", "signal_ts", "ts_utc", "timestamp", "time", "datetime"],
-        contains=("ts",),
+        [
+            "entry_time",
+            "entry_time_utc",
+            "signal_entry_time",
+            "signal_ts_utc",
+            "signal_time_utc",
+            "signal_ts",
+            "ts_utc",
+            "timestamp",
+            "time",
+            "datetime",
+        ],
+        contains=("time",),
     )
     direction_col = find_column(
         ledger,

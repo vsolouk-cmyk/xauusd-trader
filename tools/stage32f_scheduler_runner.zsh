@@ -1,151 +1,137 @@
 #!/bin/zsh
-# XAUUSD Stage32F Mac scheduler runner
-# Purpose: lightweight preflight first; run heavy Stage32F wrapper only when useful.
-# Safe default: skip RUN_BUT_LOW_SAMPLE_PROBABILITY to avoid wasting 10-15 minutes.
-
 set -u
 
-REPO_DIR="${XAUUSD_REPO_DIR:-$HOME/Desktop/xauusd-trader}"
-CSV_DIR="${XAUUSD_CSV_DIR:-$HOME/Downloads}"
-RUN_LOW_PROB="${XAUUSD_RUN_LOW_PROB:-0}"
-PYTHON_BIN="${XAUUSD_PYTHON_BIN:-python3}"
-
+REPO_DIR="/Users/vahid/Desktop/xauusd-trader"
 REPORT_DIR="$REPO_DIR/data/reports/stage32f_mac_scheduler"
-LOCK_DIR="$REPO_DIR/data/.stage32f_scheduler.lock"
-mkdir -p "$REPORT_DIR"
+LOCK_DIR="$REPORT_DIR/stage32f_scheduler.lockdir"
+STATE_FILE="$REPORT_DIR/latest_scheduler_state.env"
+PYTHON_BIN="python3"
+RUN_LOW_PROB="${RUN_LOW_PROB:-0}"
 
+mkdir -p "$REPORT_DIR"
 TS_UTC="$(date -u +%Y%m%dT%H%M%SZ)"
 LOG_FILE="$REPORT_DIR/scheduler_${TS_UTC}.log"
-STATE_FILE="$REPORT_DIR/latest_scheduler_state.env"
 
-log() {
-  echo "[$(date -u '+%Y-%m-%dT%H:%M:%SZ')] $*" | tee -a "$LOG_FILE"
-}
-
-if ! mkdir "$LOCK_DIR" 2>/dev/null; then
-  log "DECISION=SKIP_ALREADY_RUNNING"
-  exit 0
-fi
-trap 'rmdir "$LOCK_DIR" 2>/dev/null || true' EXIT
-
-if [[ ! -d "$REPO_DIR" ]]; then
-  log "DECISION=ERROR_REPO_NOT_FOUND"
-  log "REPO_DIR=$REPO_DIR"
-  exit 2
-fi
-
-cd "$REPO_DIR" || exit 2
-
-log "REPO_DIR=$REPO_DIR"
-log "CSV_DIR=$CSV_DIR"
-log "RUN_LOW_PROB=$RUN_LOW_PROB"
-
-PREFLIGHT_OUT="$REPORT_DIR/preflight_${TS_UTC}.out"
-log "Running preflight..."
-
-set +e
-$PYTHON_BIN -m app.stage32f_amarkets_csv_preflight --csv-dir "$CSV_DIR" > "$PREFLIGHT_OUT" 2>&1
-PREFLIGHT_RC=$?
-set -e
-
-cat "$PREFLIGHT_OUT" >> "$LOG_FILE"
-
-if [[ "$PREFLIGHT_RC" -ne 0 ]]; then
-  log "DECISION=ERROR_PREFLIGHT_FAILED"
-  log "PREFLIGHT_RC=$PREFLIGHT_RC"
-  exit "$PREFLIGHT_RC"
-fi
-
-DECISION="$(grep -E '^DECISION=' "$PREFLIGHT_OUT" | tail -n 1 | cut -d= -f2- | tr -d '\r')"
-WRAPPER_RECOMMENDED="$(grep -E '^WRAPPER_RECOMMENDED=' "$PREFLIGHT_OUT" | tail -n 1 | cut -d= -f2- | tr -d '\r')"
-H1_CSV_MAX="$(grep -E '^H1_CSV_MAX=' "$PREFLIGHT_OUT" | tail -n 1 | cut -d= -f2- | tr -d '\r')"
-H1_DB_MAX="$(grep -E '^H1_DB_MAX=' "$PREFLIGHT_OUT" | tail -n 1 | cut -d= -f2- | tr -d '\r')"
-CROSSED_TARGET_HOURS="$(grep -E '^CROSSED_TARGET_HOURS=' "$PREFLIGHT_OUT" | tail -n 1 | cut -d= -f2- | tr -d '\r')"
-
-cat > "$STATE_FILE" <<STATE
+write_state() {
+  local decision="$1"
+  local wrapper_recommended="$2"
+  local final_decision="$3"
+  local wrapper_executed="$4"
+  local wrapper_rc="$5"
+  local reason="$6"
+  local h1_csv_max="${7:-NA}"
+  local h1_db_max="${8:-NA}"
+  local crossed="${9:-NA}"
+  cat > "$STATE_FILE" <<STATE
 TS_UTC=$TS_UTC
-DECISION=$DECISION
-WRAPPER_RECOMMENDED=$WRAPPER_RECOMMENDED
-H1_CSV_MAX=$H1_CSV_MAX
-H1_DB_MAX=$H1_DB_MAX
-CROSSED_TARGET_HOURS=$CROSSED_TARGET_HOURS
+DECISION=$decision
+WRAPPER_RECOMMENDED=$wrapper_recommended
+FINAL_DECISION=$final_decision
+WRAPPER_EXECUTED=$wrapper_executed
+WRAPPER_RC=$wrapper_rc
+RUN_LOW_PROB=$RUN_LOW_PROB
+REASON=$reason
+H1_CSV_MAX=$h1_csv_max
+H1_DB_MAX=$h1_db_max
+CROSSED_TARGET_HOURS=$crossed
 LOG_FILE=$LOG_FILE
 STATE
+}
 
-log "PREFLIGHT_DECISION=$DECISION"
-log "H1_CSV_MAX=$H1_CSV_MAX"
-log "H1_DB_MAX=$H1_DB_MAX"
-log "CROSSED_TARGET_HOURS=$CROSSED_TARGET_HOURS"
+log() {
+  echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*" | tee -a "$LOG_FILE"
+}
 
-RUN_WRAPPER=0
-case "$DECISION" in
-  RUN_WRAPPER_RECOMMENDED)
-    RUN_WRAPPER=1
-    ;;
-  RUN_BUT_LOW_SAMPLE_PROBABILITY)
-    if [[ "$RUN_LOW_PROB" == "1" ]]; then
-      RUN_WRAPPER=1
-      log "LOW_PROB_OVERRIDE=1"
-    else
-      RUN_WRAPPER=0
-      log "LOW_PROB_SKIP=1"
-    fi
-    ;;
-  *)
-    RUN_WRAPPER=0
-    ;;
-esac
+is_pid_alive() {
+  local pid="$1"
+  [[ -n "$pid" ]] || return 1
+  [[ "$pid" == <-> ]] || return 1
+  kill -0 "$pid" 2>/dev/null
+}
 
-if [[ "$RUN_WRAPPER" -ne 1 ]]; then
-  log "FINAL_DECISION=SKIP_WRAPPER"
-  exit 0
+# Atomic lock acquisition via mkdir. If existing, inspect PID and clear stale lock.
+if ! mkdir "$LOCK_DIR" 2>/dev/null; then
+  LOCK_PID=""
+  LOCK_TS=""
+  [[ -f "$LOCK_DIR/pid" ]] && LOCK_PID="$(cat "$LOCK_DIR/pid" 2>/dev/null | tr -d '[:space:]')"
+  [[ -f "$LOCK_DIR/ts_utc" ]] && LOCK_TS="$(cat "$LOCK_DIR/ts_utc" 2>/dev/null | tr -d '[:space:]')"
+
+  if is_pid_alive "$LOCK_PID"; then
+    echo "SKIP_ALREADY_RUNNING pid=$LOCK_PID ts=$LOCK_TS" > "$LOG_FILE"
+    write_state "SKIP_ALREADY_RUNNING" "False" "SKIP_ALREADY_RUNNING" "False" "NA" "another_scheduler_instance_is_running_pid_${LOCK_PID}" "NA" "NA" "NA"
+    exit 0
+  fi
+
+  rm -rf "$LOCK_DIR"
+  if ! mkdir "$LOCK_DIR" 2>/dev/null; then
+    echo "SKIP_LOCK_RACE" > "$LOG_FILE"
+    write_state "SKIP_LOCK_RACE" "False" "SKIP_LOCK_RACE" "False" "NA" "lock_race_after_stale_cleanup" "NA" "NA" "NA"
+    exit 0
+  fi
+  log "Removed stale lock pid=$LOCK_PID ts=$LOCK_TS"
 fi
 
-log "FINAL_DECISION=RUN_STAGE32F_WRAPPER"
-WRAPPER_OUT="$REPORT_DIR/stage32f_wrapper_${TS_UTC}.out"
+echo $$ > "$LOCK_DIR/pid"
+echo "$TS_UTC" > "$LOCK_DIR/ts_utc"
+trap 'rm -rf "$LOCK_DIR"' EXIT INT TERM
 
-set +e
-$PYTHON_BIN -m app.stage32f_extended_shadow_refresh_cycle --run-active-wrapper > "$WRAPPER_OUT" 2>&1
-WRAPPER_RC=$?
-set -e
+cd "$REPO_DIR" || {
+  write_state "REPO_DIR_ERROR" "False" "REPO_DIR_ERROR" "False" "NA" "cannot_cd_repo_dir" "NA" "NA" "NA"
+  exit 2
+}
 
-cat "$WRAPPER_OUT" >> "$LOG_FILE"
-log "WRAPPER_RC=$WRAPPER_RC"
+log "Starting Stage32F scheduler HF2"
 
-SUMMARY_JSON="$REPO_DIR/data/reports/stage32f_extended_shadow_refresh_cycle/stage32f_summary.json"
-if [[ -f "$SUMMARY_JSON" ]]; then
-  $PYTHON_BIN - <<PY >> "$LOG_FILE" 2>/dev/null
-import json
-from pathlib import Path
-p=Path("$SUMMARY_JSON")
-d=json.loads(p.read_text())
-for k in ["decision","leading_candidate","leading_remaining_to_extended_min","ledger_rows","pre_commercial_robustness_queue_rows","required_module_errors","commercial_transition_authorized"]:
-    print(f"STAGE32F_{k.upper()}={d.get(k)}")
-PY
+PREFLIGHT_OUT="$($PYTHON_BIN -m app.stage32f_amarkets_csv_preflight --csv-dir /Users/vahid/Downloads 2>&1)"
+PREFLIGHT_RC=$?
+echo "$PREFLIGHT_OUT" >> "$LOG_FILE"
+
+if [[ $PREFLIGHT_RC -ne 0 ]]; then
+  write_state "PREFLIGHT_FAILED" "False" "PREFLIGHT_FAILED" "False" "$PREFLIGHT_RC" "preflight_returned_nonzero" "NA" "NA" "NA"
+  exit $PREFLIGHT_RC
 fi
 
-if [[ "$WRAPPER_RC" -ne 0 ]]; then
-  osascript -e 'display notification "Stage32F wrapper failed. Check scheduler logs." with title "XAUUSD Stage32F"' >/dev/null 2>&1 || true
-  exit "$WRAPPER_RC"
-fi
+DECISION="$(echo "$PREFLIGHT_OUT" | awk -F= '/^DECISION=/{print $2; exit}')"
+WRAPPER_RECOMMENDED="$(echo "$PREFLIGHT_OUT" | awk -F= '/^WRAPPER_RECOMMENDED=/{print $2; exit}')"
+REASON_RAW="$(echo "$PREFLIGHT_OUT" | awk -F= '/^REASON=/{print substr($0, index($0,"=")+1); exit}' | tr ' ' '_' | tr -cd '[:alnum:]_.,:-')"
+H1_CSV_MAX="$(echo "$PREFLIGHT_OUT" | awk -F= '/^H1_CSV_MAX=/{print substr($0, index($0,"=")+1); exit}')"
+H1_DB_MAX="$(echo "$PREFLIGHT_OUT" | awk -F= '/^H1_DB_MAX=/{print substr($0, index($0,"=")+1); exit}')"
+CROSSED="$(echo "$PREFLIGHT_OUT" | awk -F= '/^CROSSED_TARGET_HOURS=/{print substr($0, index($0,"=")+1); exit}' | tr ' ' '_')"
 
-# Notify only when a robustness candidate appears or errors are nonzero.
-if [[ -f "$SUMMARY_JSON" ]]; then
-  SHOULD_NOTIFY="$($PYTHON_BIN - <<PY
-import json
-from pathlib import Path
-p=Path("$SUMMARY_JSON")
-d=json.loads(p.read_text())
-if int(d.get("pre_commercial_robustness_queue_rows") or 0) > 0 or int(d.get("required_module_errors") or 0) > 0:
-    print("1")
-else:
-    print("0")
-PY
-)"
-  if [[ "$SHOULD_NOTIFY" == "1" ]]; then
-    osascript -e 'display notification "Stage32F needs review. Check latest report." with title "XAUUSD Stage32F"' >/dev/null 2>&1 || true
+[[ -n "$DECISION" ]] || DECISION="UNKNOWN"
+[[ -n "$WRAPPER_RECOMMENDED" ]] || WRAPPER_RECOMMENDED="False"
+[[ -n "$REASON_RAW" ]] || REASON_RAW="NA"
+[[ -n "$H1_CSV_MAX" ]] || H1_CSV_MAX="NA"
+[[ -n "$H1_DB_MAX" ]] || H1_DB_MAX="NA"
+[[ -n "$CROSSED" ]] || CROSSED="NA"
+
+# Strict default: low-probability runs are skipped unless RUN_LOW_PROB=1.
+if [[ "$DECISION" == "RUN_WRAPPER_RECOMMENDED" ]]; then
+  log "Preflight recommends wrapper. Running Stage32F wrapper."
+  $PYTHON_BIN -m app.stage32f_extended_shadow_refresh_cycle --run-active-wrapper >> "$LOG_FILE" 2>&1
+  WRAP_RC=$?
+  if [[ $WRAP_RC -eq 0 ]]; then
+    write_state "$DECISION" "$WRAPPER_RECOMMENDED" "WRAPPER_COMPLETED" "True" "0" "strict_preflight_recommended" "$H1_CSV_MAX" "$H1_DB_MAX" "$CROSSED"
+    exit 0
+  else
+    write_state "$DECISION" "$WRAPPER_RECOMMENDED" "WRAPPER_FAILED" "True" "$WRAP_RC" "wrapper_returned_nonzero" "$H1_CSV_MAX" "$H1_DB_MAX" "$CROSSED"
+    exit $WRAP_RC
   fi
 fi
 
-log "DONE"
+if [[ "$DECISION" == "RUN_BUT_LOW_SAMPLE_PROBABILITY" && "$RUN_LOW_PROB" == "1" ]]; then
+  log "Low-probability run allowed by RUN_LOW_PROB=1. Running wrapper."
+  $PYTHON_BIN -m app.stage32f_extended_shadow_refresh_cycle --run-active-wrapper >> "$LOG_FILE" 2>&1
+  WRAP_RC=$?
+  if [[ $WRAP_RC -eq 0 ]]; then
+    write_state "$DECISION" "$WRAPPER_RECOMMENDED" "WRAPPER_COMPLETED_LOW_PROB" "True" "0" "low_probability_forced_by_env" "$H1_CSV_MAX" "$H1_DB_MAX" "$CROSSED"
+    exit 0
+  else
+    write_state "$DECISION" "$WRAPPER_RECOMMENDED" "WRAPPER_FAILED_LOW_PROB" "True" "$WRAP_RC" "low_probability_wrapper_failed" "$H1_CSV_MAX" "$H1_DB_MAX" "$CROSSED"
+    exit $WRAP_RC
+  fi
+fi
+
+log "Skipping wrapper: decision=$DECISION reason=$REASON_RAW"
+write_state "$DECISION" "$WRAPPER_RECOMMENDED" "SKIP_WRAPPER" "False" "NA" "$REASON_RAW" "$H1_CSV_MAX" "$H1_DB_MAX" "$CROSSED"
 exit 0

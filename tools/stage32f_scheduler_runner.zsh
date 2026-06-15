@@ -12,6 +12,111 @@ LOCK_DIR="$REPORT_DIR/stage32f_scheduler.lock.d"
 LEGACY_LOCK_FILE="$REPORT_DIR/stage32f_scheduler.lock"
 RUN_LOW_PROB="${STAGE32F_RUN_LOW_PROB:-0}"
 
+
+PIPELINE_REPORT_DIR="$REPO_DIR/data/reports/stage35c_stage36a_scheduler"
+PIPELINE_STATE_FILE="$PIPELINE_REPORT_DIR/latest_pipeline_state.env"
+
+extract_key_from_text() {
+  local text="$1"
+  local key="$2"
+  echo "$text" | awk -F= -v k="$key" '$1==k {print substr($0, index($0,"=")+1); exit}'
+}
+
+run_stage35c_stage36a_pipeline_checks() {
+  local context="$1"
+  mkdir -p "$PIPELINE_REPORT_DIR"
+  local stage35c_out=""
+  local stage35c_rc="NA"
+  local stage35c_decision="MODULE_MISSING"
+  local stage35c_new="NA"
+  local stage35c_min="NA"
+  local stage36a_out=""
+  local stage36a_rc="NA"
+  local stage36a_decision="NOT_RUN"
+  local stage36a_executed="False"
+  local stage36b_out=""
+  local stage36b_rc="NA"
+  local stage36b_decision="NOT_RUN"
+  local stage36b_executed="False"
+  local today_utc
+  today_utc="$(date -u +%Y-%m-%d)"
+  local stage36a_daily_marker="$PIPELINE_REPORT_DIR/stage36a_last_run_date_utc.txt"
+  local stage36b_daily_marker="$PIPELINE_REPORT_DIR/stage36b_last_run_date_utc.txt"
+  local last_stage36a_date=""
+  local last_stage36b_date=""
+  [[ -f "$stage36a_daily_marker" ]] && last_stage36a_date="$(cat "$stage36a_daily_marker" 2>/dev/null || true)"
+  [[ -f "$stage36b_daily_marker" ]] && last_stage36b_date="$(cat "$stage36b_daily_marker" 2>/dev/null || true)"
+
+  if [[ -f "$REPO_DIR/app/stage35c_forward_confirmation_trigger_queue_pruner.py" ]]; then
+    stage35c_out="$($PYTHON_BIN -m app.stage35c_forward_confirmation_trigger_queue_pruner 2>&1)"
+    stage35c_rc=$?
+    stage35c_decision="$(extract_key_from_text "$stage35c_out" DECISION)"
+    stage35c_new="$(extract_key_from_text "$stage35c_out" NEW_SIGNAL_COUNT)"
+    stage35c_min="$(extract_key_from_text "$stage35c_out" MIN_NEW_EVENTS)"
+    [[ -n "$stage35c_decision" ]] || stage35c_decision="UNKNOWN"
+    [[ -n "$stage35c_new" ]] || stage35c_new="NA"
+    [[ -n "$stage35c_min" ]] || stage35c_min="NA"
+  fi
+
+  if [[ -f "$REPO_DIR/app/stage36a_new_thesis_parallel_intake.py" ]]; then
+    if [[ "${STAGE36A_FORCE_RUN:-0}" == "1" || "$last_stage36a_date" != "$today_utc" ]]; then
+      stage36a_out="$($PYTHON_BIN -m app.stage36a_new_thesis_parallel_intake 2>&1)"
+      stage36a_rc=$?
+      stage36a_decision="$(extract_key_from_text "$stage36a_out" DECISION)"
+      [[ -n "$stage36a_decision" ]] || stage36a_decision="UNKNOWN"
+      stage36a_executed="True"
+      echo "$today_utc" > "$stage36a_daily_marker"
+    else
+      stage36a_decision="SKIP_ALREADY_RAN_TODAY"
+      stage36a_executed="False"
+    fi
+  else
+    stage36a_decision="MODULE_MISSING"
+  fi
+
+  if [[ -f "$REPO_DIR/app/stage36b_session_regime_baseline_scout.py" ]]; then
+    if [[ "${STAGE36B_FORCE_RUN:-0}" == "1" || "$last_stage36b_date" != "$today_utc" ]]; then
+      stage36b_out="$($PYTHON_BIN -m app.stage36b_session_regime_baseline_scout 2>&1)"
+      stage36b_rc=$?
+      stage36b_decision="$(extract_key_from_text "$stage36b_out" DECISION)"
+      [[ -n "$stage36b_decision" ]] || stage36b_decision="UNKNOWN"
+      stage36b_executed="True"
+      echo "$today_utc" > "$stage36b_daily_marker"
+    else
+      stage36b_decision="SKIP_ALREADY_RAN_TODAY"
+      stage36b_executed="False"
+    fi
+  else
+    stage36b_decision="MODULE_MISSING"
+  fi
+
+  {
+    echo "--- STAGE35C/STAGE36A/STAGE36B PIPELINE CHECK context=$context ---"
+    echo "STAGE35C_RC=$stage35c_rc"
+    echo "$stage35c_out"
+    echo "STAGE36A_RC=$stage36a_rc"
+    echo "$stage36a_out"
+    echo "STAGE36B_RC=$stage36b_rc"
+    echo "$stage36b_out"
+  } >> "$LOG_FILE"
+
+  cat > "$PIPELINE_STATE_FILE" <<PIPELINE_STATE_EOF
+TS_UTC=$TS_UTC
+CONTEXT=$context
+STAGE35C_DECISION=$stage35c_decision
+STAGE35C_RC=$stage35c_rc
+STAGE35C_NEW_SIGNAL_COUNT=$stage35c_new
+STAGE35C_MIN_NEW_EVENTS=$stage35c_min
+STAGE36A_DECISION=$stage36a_decision
+STAGE36A_EXECUTED=$stage36a_executed
+STAGE36A_RC=$stage36a_rc
+STAGE36B_DECISION=$stage36b_decision
+STAGE36B_EXECUTED=$stage36b_executed
+STAGE36B_RC=$stage36b_rc
+LOG_FILE=$LOG_FILE
+PIPELINE_STATE_EOF
+}
+
 mkdir -p "$REPORT_DIR"
 
 write_state() {
@@ -167,6 +272,7 @@ crossed="$(extract_value CROSSED_TARGET_HOURS)"
 [[ -n "$crossed" ]] || crossed="NA"
 
 if [[ "$preflight_rc" != "0" ]]; then
+  run_stage35c_stage36a_pipeline_checks "preflight_failed"
   write_state "$pre_decision" "PREFLIGHT_FAILED" "$pre_wrapper" "False" "NA" "preflight_returncode_${preflight_rc}" "$h1_csv_max" "$h1_db_max" "$crossed" "$$" "pid_lock_dir" "$LOCK_DIR"
   exit $preflight_rc
 fi
@@ -180,6 +286,7 @@ elif [[ "$pre_decision" == "RUN_BUT_LOW_SAMPLE_PROBABILITY" && "$RUN_LOW_PROB" =
   should_run="1"
   run_reason="low_probability_allowed_by_env"
 else
+  run_stage35c_stage36a_pipeline_checks "skip_wrapper"
   write_state "$pre_decision" "SKIP_WRAPPER" "$pre_wrapper" "False" "NA" "preflight_decision_${pre_decision}" "$h1_csv_max" "$h1_db_max" "$crossed" "$$" "pid_lock_dir" "$LOCK_DIR"
   exit 0
 fi
@@ -196,6 +303,8 @@ wrapper_rc=$?
   echo "--- WRAPPER END rc=$wrapper_rc ---"
   date -u
 } >> "$LOG_FILE"
+
+run_stage35c_stage36a_pipeline_checks "after_wrapper"
 
 if [[ "$wrapper_rc" == "0" ]]; then
   write_state "$pre_decision" "WRAPPER_COMPLETED" "$pre_wrapper" "True" "$wrapper_rc" "$run_reason" "$h1_csv_max" "$h1_db_max" "$crossed" "$$" "pid_lock_dir" "$LOCK_DIR"

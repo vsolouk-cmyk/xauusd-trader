@@ -1,0 +1,97 @@
+CAPTURE_DATE_UTC: 2026-06-16T13:07:40Z
+CAPTURED_BY: user_screenshot
+BROKER: AMarkets
+SERVER: UNCLEAR
+ACCOUNT_TYPE: UNCLEAR
+SYMBOL: XAUUSD
+SYMBOL_DESCRIPTION: Gold vs US Dollar
+
+EXCHANGE: XCCY
+SECTOR: Commodities
+INDUSTRY: Precious Metals
+
+DIGITS: 2
+POINT: 0.01
+POINT_SOURCE: derived_from_DIGITS_2
+TICK_SIZE: 0.00
+TICK_SIZE_NOTE: shown_as_0.00_in_MT5_screenshot; not reliable for monetary conversion
+TICK_VALUE: 0
+TICK_VALUE_NOTE: shown_as_0_in_MT5_screenshot; not reliable for monetary conversion
+CONTRACT_SIZE: 100
+
+MIN_VOLUME: 0.01
+MAX_VOLUME: 100
+VOLUME_STEP: 0.01
+
+SPREAD_TYPE: floating
+CURRENT_SPREAD_SHOWN: NOT_SHOWN
+AVERAGE_SPREAD_IF_SHOWN: NOT_SHOWN
+SPREAD_AUDIT_UNIT: points
+SPREAD_PRICE_CONVERSION_RULE_V0: spread_price_distance = spread_points * 0.01
+
+STOPS_LEVEL: 0
+FREEZE_LEVEL: NOT_SHOWN
+
+MARGIN_CURRENCY: USD
+PROFIT_CURRENCY: USD
+CALCULATION_MODE: CFD Leverage
+CHART_MODE: By bid price
+
+TRADE_ACCESS: Full access
+EXECUTION: Market
+GTC_MODE: Good till cancelled
+FILLING: Fill or Kill, Immediate or Cancel
+EXPIRATION: All
+ORDERS: All
+
+COMMISSION: NOT_SHOWN
+COMMISSION_UNIT: NOT_SHOWN
+COMMISSION_PER_LOT_OR_SIDE: NOT_SHOWN
+
+SWAP_TYPE: In points
+SWAP_LONG: -64.7
+SWAP_SHORT: 34.1
+SWAP_MODE: points
+TRIPLE_SWAP_DAY: Wednesday
+SWAP_RATES:
+  Monday: 1
+  Tuesday: 1
+  Wednesday: 3
+  Thursday: 1
+  Friday: 1
+
+TRADING_HOURS_SERVER_TIME:
+  Monday: 01:00-23:59
+  Tuesday: 01:00-23:59
+  Wednesday: 01:00-23:59
+  Thursday: 01:00-23:59
+  Friday: 01:00-23:55
+QUOTE_HOURS_SERVER_TIME:
+  Monday: 01:00-23:59
+  Tuesday: 01:00-23:59
+  Wednesday: 01:00-23:59
+  Thursday: 01:00-23:59
+  Friday: 01:00-23:55
+ROLLOVER_TIME_SERVER: around daily session boundary / UNCLEAR
+ROLLOVER_TIME_UTC_IF_KNOWN: UNCLEAR
+
+MARGIN_RATES_NOTIONAL_VALUE:
+  Market buy:
+    Initial: 1.0000000
+    Initial usd_per_lot: ~144.91
+    Maintenance: 1.0000000
+    Maintenance usd_per_lot: ~144.91
+  Market sell:
+    Initial: 1.0000000
+    Initial usd_per_lot: ~144.90
+    Maintenance: 1.0000000
+    Maintenance usd_per_lot: ~144.90
+
+NOTES:
+  - Values extracted from MT5 Specification screenshot.
+  - POINT is derived from DIGITS=2 as 0.01.
+  - Tick size and tick value are shown as 0.00 and 0, so they are not reliable for full monetary P/L conversion.
+  - For Stage38A v0, spread_points can be provisionally converted to XAUUSD price distance using POINT=0.01.
+  - Commission is not shown in the screenshot and must remain NOT_SHOWN unless broker/account confirms it.
+  - Swap is in points: long=-64.7, short=34.1, triple swap Wednesday.
+  - Trading/quote sessions shown in server time, not confirmed UTC.

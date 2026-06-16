@@ -1,0 +1,92 @@
+{
+  "candidate": {
+    "family": "london_oneway_continuation",
+    "name": "S25D_FILTERED_S23B_B_eff0.60_pb0.1_h180_tp0.6_sl0.65_london_range_drop_low30",
+    "params": {
+      "eff_min": 0.6,
+      "entry_hour": 13,
+      "horizon_min": 180,
+      "london_move_atr_min": 0.9,
+      "ny_confirm_atr_min": 0.15,
+      "pullback_atr_max": 0.1,
+      "sl_atr": 0.65,
+      "tp_atr": 0.6
+    }
+  },
+  "counters": {
+    "ledger_total_rows": 0,
+    "new_forward_open_count": 0,
+    "new_late_backfill_count": 0,
+    "new_signal_count": 0,
+    "newly_resolved_forward_count": 0,
+    "recent_events_after_filter": 0,
+    "recent_events_before_filter": 0
+  },
+  "data": {
+    "db_meta": {
+      "candle_table": "bars",
+      "csv_fallback_enabled": false,
+      "db_first": true,
+      "db_path": "data/local/xauusd_local_store.sqlite",
+      "h1_mode": "db_schema_introspection",
+      "h1_rows": 25643,
+      "h1_rows_stage25d": 25643,
+      "h1_span": "2022-05-01 23:00:00+00:00 → 2026-06-16 12:00:00+00:00",
+      "m15_rows_stage25d": 102493,
+      "m1_mode": "db_schema_introspection",
+      "m1_rows": 1536273,
+      "m1_rows_stage25d": 1536273,
+      "m1_span": "2022-05-01 23:01:00+00:00 → 2026-06-16 12:18:00+00:00"
+    },
+    "h1_end": "2026-06-16 12:00:00+00:00",
+    "h1_rows": 25643,
+    "h1_start": "2022-05-01 23:00:00+00:00",
+    "m15_end": "2026-06-16 12:15:00+00:00",
+    "m15_rows": 102493,
+    "m15_start": "2022-05-01 23:00:00+00:00",
+    "m1_end": "2026-06-16 12:18:00+00:00",
+    "m1_rows": 1536273,
+    "m1_start": "2022-05-01 23:01:00+00:00"
+  },
+  "decision": "STAGE25D_NO_ACTIVE_FILTERED_FORWARD_SIGNAL_RESEARCH_ONLY",
+  "filter": {
+    "filter_name": "london_range_drop_low30",
+    "filtered_in": 0,
+    "filtered_out": 0
+  },
+  "forward_valid_metrics": {
+    "events": 0,
+    "pf_x1": 0.0,
+    "pf_x4": 0.0,
+    "total_x1": 0.0,
+    "win_rate_x1": 0.0
+  },
+  "forward_valid_resolved_count": 0,
+  "generated_utc": "2026-06-16T09:40:12+00:00",
+  "open_signal_count_now": 0,
+  "output_files": {
+    "filter_diag_csv": "data/reports/stage25d_db_first_filtered_forward_shadow/stage25d_filter_diagnostics.csv",
+    "ledger_csv": "data/reports/stage25d_db_first_filtered_forward_shadow/stage25d_filtered_forward_shadow_ledger.csv",
+    "recent_events_csv": "data/reports/stage25d_db_first_filtered_forward_shadow/stage25d_recent_filtered_events.csv",
+    "report_json": "data/reports/stage25d_db_first_filtered_forward_shadow/stage25d_db_first_filtered_forward_shadow.json",
+    "report_md": "data/reports/stage25d_db_first_filtered_forward_shadow/stage25d_db_first_filtered_forward_shadow.md"
+  },
+  "resolved_signal_count_in_ledger": 0,
+  "scope": {
+    "csv_fallback_enabled": false,
+    "db_first": true,
+    "no_automatic_trading": true,
+    "no_ea_change": true,
+    "no_paper_live_order_authorization": true,
+    "research_shadow_only": true,
+    "stage18a_unchanged": true,
+    "stage23d_unchanged": true
+  },
+  "settings": {
+    "filter_name": "london_range_drop_low30",
+    "filter_quantile": 0.3,
+    "lookback_hours": 336,
+    "max_recent_rows_report": 25,
+    "min_calibration_days": 250
+  }
+}

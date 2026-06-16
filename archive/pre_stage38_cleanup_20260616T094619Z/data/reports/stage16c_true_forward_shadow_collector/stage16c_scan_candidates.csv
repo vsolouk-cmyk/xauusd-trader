@@ -1,0 +1,2 @@
+event_utc,open,high,low,close,day,pdh,pdl,sweep_depth,reclaim_above_pdl,tech_condition,dt,real_yield_10y,real_yield_10y_chg5,macro_real_yield_up,stage16c_signal_condition,entry_utc,exit_target_utc,signal_id,research_side,authorization
+2026-06-08 06:00:00+00:00,4314.97,4320.57,4309.05,4312.73,2026-06-08,4481.21,4311.61,2.5599999999994907,1.1199999999998909,True,2026-06-08 00:00:00+00:00,2.21,0.10000000000000009,True,True,2026-06-08 06:15:00+00:00,2026-06-08 07:15:00+00:00,20260608T060000Z_stage16c_macro_pressure_reversal_long,LONG,RESEARCH_TRUE_FORWARD_SHADOW_ONLY_NO_ORDER

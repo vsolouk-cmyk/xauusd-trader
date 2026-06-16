@@ -1,0 +1,40 @@
+{
+  "candidate_registry_exists": true,
+  "candidate_registry_path": "data/reports/research_shadow_orchestrator/candidate_registry.csv",
+  "candidate_supply_summary_path": "data/reports/research_shadow_orchestrator/candidate_supply_summary.csv",
+  "classification_counts": {
+    "STAGE32B_DENSE_REJECTED_REPAIR_QUEUE": 18,
+    "STAGE32B_DENSE_SHADOW_INTAKE": 3,
+    "STAGE32B_EXOGENOUS_WATCHLIST_ONLY": 360,
+    "STAGE32B_GENERIC_AGGREGATE_ROW_REPAIR_FIRST": 1,
+    "STAGE32B_LOW_DENSITY_REJECT_FOR_PRIMARY_INTAKE": 47,
+    "STAGE32B_STRONG_DENSE_SHADOW_INTAKE": 4
+  },
+  "commercial_goal": "FASTEST_SAFE_PATH_TO_COMMERCIALLY_USABLE_SYSTEM",
+  "commercial_summary_path": "data/reports/research_shadow_orchestrator/commercial_readiness_summary.json",
+  "decision": "STAGE32B_DENSE_FORWARD_SHADOW_INTAKE_QUEUE_READY_RESEARCH_SHADOW_ONLY",
+  "dense_repair_review_rows": 19,
+  "enriched_candidate_rows": 433,
+  "exogenous_watchlist_rows": 360,
+  "family_count": 23,
+  "input_candidate_identity_rows": 433,
+  "max_total_queue": 24,
+  "max_variants_per_family": 4,
+  "min_event_count": 500,
+  "min_forward_samples_before_review": 20,
+  "no_ea_change": true,
+  "no_order_authorization": true,
+  "no_paper_live": true,
+  "primary_shadow_queue_rows": 7,
+  "research_shadow_only": true,
+  "secondary_repair_queue_rows": 10,
+  "shadow_queue_rows": 17,
+  "strong_event_count": 1000,
+  "target_forward_days": 30,
+  "tier_counts": {
+    "PRIMARY_DENSE": 7,
+    "REJECT_LOW_DENSITY": 47,
+    "SECONDARY_REPAIR": 19,
+    "WATCHLIST_EXOGENOUS": 360
+  }
+}

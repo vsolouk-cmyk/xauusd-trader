@@ -1,0 +1,16 @@
+{
+  "runs": [
+    {
+      "module": "app.run_active_shadow_suite",
+      "returncode": 0,
+      "stdout_tail": "Stage 16E v2 AMarkets CSV refresh + cycle: DONE\nbefore_latest=2026-06-12T23:54:00+00:00\nafter_latest=2026-06-12T23:54:00+00:00\nfiles_imported=2 rows_upserted=1478915\nstage16d_final_decision=None\nReport: data/reports/stage16e_amarkets_csv_refresh_cycle/stage16e_amarkets_csv_refresh_cycle.md\nStage 18A unified shadow ops cycle v2: DONE\nfinal_decision=UNIFIED_ACTIVE_NO_SIGNAL_YET\nstage16c=TRUE_FORWARD_STARTED_NO_SIGNALS_YET\nstage17d=BROKER_FORWARD_ACTIVE_NO_SIGNAL_YET\nstage18e=SHORTLIST_ACTIVE_NO_SIGNAL_YET\nReport: data/reports/stage18a_unified_shadow_ops_cycle/stage18a_unified_shadow_ops_cycle.md\n{\"stage\": \"stage23d_forward_shadow_candidate\", \"decision\": \"STAGE23D_NO_ACTIVE_FORWARD_SIGNAL_RESEARCH_ONLY\", \"report_md\": \"data/reports/stage23d_forward_shadow_candidate/stage23d_forward_shadow_candidate.md\"}\n{\"stage\": \"stage25d_db_first_filtered_forward_shadow\", \"decision\": \"STAGE25D_NO_ACTIVE_FILTERED_FORWARD_SIGNAL_RESEARCH_ONLY\", \"report_md\": \"data/reports/stage25d_db_first_filtered_forward_shadow/stage25d_db_first_filtered_forward_shadow.md\"}\n{\"stage\": \"stage27d_db_first_h1_atr_filtered_forward_shadow\", \"decision\": \"STAGE27D_NO_ACTIVE_H1_ATR_FILTERED_FORWARD_SIGNAL_RESEARCH_ONLY\", \"report_md\": \"data/reports/stage27d_db_first_h1_atr_filtered_forward_shadow/stage27d_db_first_h1_atr_filtered_forward_shadow.md\"}\n",
+      "stderr_tail": ""
+    },
+    {
+      "module": "app.stage31g_exogenous_active_suite_watchlist",
+      "returncode": 0,
+      "stdout_tail": "{\n  \"decision\": \"STAGE31G_LOW_CADENCE_WATCHLIST_REVIEW_ONLY\",\n  \"reason\": \"Only the long lookback window has signals; cadence is too sparse for promotion.\",\n  \"short_recent_signal_rows\": 0,\n  \"mid_recent_signal_rows\": 0,\n  \"long_recent_signal_rows\": 4,\n  \"max_recent_signal_rows\": 4,\n  \"latest_recent_entry_ts\": \"2026-03-06 13:01:00+00:00\"\n}\n",
+      "stderr_tail": ""
+    }
+  ]
+}

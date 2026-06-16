@@ -1,0 +1,114 @@
+{
+  "candidate": {
+    "family": "london_oneway_continuation",
+    "name": "S28D_META_FILTERED_S23B_B_eff0.60_pb0.1_h180_tp0.6_sl0.65_london_q60_prior_q25",
+    "params": {
+      "eff_min": 0.6,
+      "entry_hour": 13,
+      "horizon_min": 180,
+      "london_move_atr_min": 0.9,
+      "ny_confirm_atr_min": 0.15,
+      "pullback_atr_max": 0.1,
+      "sl_atr": 0.65,
+      "tp_atr": 0.6
+    }
+  },
+  "counters": {
+    "ledger_total_rows": 0,
+    "new_forward_open_count": 0,
+    "new_late_backfill_count": 0,
+    "new_signal_count": 0,
+    "newly_resolved_forward_count": 0,
+    "recent_events_after_gate": 0,
+    "recent_events_before_gate": 0
+  },
+  "data": {
+    "db_meta": {
+      "candle_table": "bars",
+      "csv_fallback_enabled": false,
+      "db_first": true,
+      "db_path": "data/local/xauusd_local_store.sqlite",
+      "h1_mode": "db_schema_introspection",
+      "h1_rows": 25608,
+      "h1_rows_stage28d": 25608,
+      "h1_span": "2022-05-01 23:00:00+00:00 → 2026-06-12 23:00:00+00:00",
+      "m15_rows_stage28d": 102355,
+      "m1_mode": "db_schema_introspection",
+      "m1_rows": 1534217,
+      "m1_rows_stage28d": 1534217,
+      "m1_span": "2022-05-01 23:01:00+00:00 → 2026-06-12 23:54:00+00:00"
+    },
+    "h1_end": "2026-06-12 23:00:00+00:00",
+    "h1_rows": 25608,
+    "h1_start": "2022-05-01 23:00:00+00:00",
+    "m15_end": "2026-06-12 23:45:00+00:00",
+    "m15_rows": 102355,
+    "m15_start": "2022-05-01 23:00:00+00:00",
+    "m1_end": "2026-06-12 23:54:00+00:00",
+    "m1_rows": 1534217,
+    "m1_start": "2022-05-01 23:01:00+00:00"
+  },
+  "decision": "STAGE28D_NO_ACTIVE_META_GATE_FORWARD_SIGNAL_RESEARCH_ONLY",
+  "forward_valid_metrics": {
+    "events": 0,
+    "pf_x1": 0.0,
+    "pf_x4": 0.0,
+    "total_x1": 0.0,
+    "win_rate_x1": 0.0
+  },
+  "forward_valid_resolved_count": 0,
+  "gate": {
+    "events_before_gate_recent": 0,
+    "events_before_gate_total": 99,
+    "gate_basis": "event_by_event_expanding_prior_candidate_events",
+    "gate_dropped_recent": 0,
+    "gate_dropped_total": 56,
+    "gate_kept_recent": 0,
+    "gate_kept_total": 43,
+    "gate_name": "stage28c_london_q60_prior_q25_expanding",
+    "gate_retained_ratio_recent": 0.0,
+    "gate_retained_ratio_total": 0.43434343434343436,
+    "insufficient_calibration_count": 25,
+    "london_range_quantile": 0.6,
+    "lookback_hours": 336,
+    "min_calib_events": 25,
+    "missing_london_range": 0,
+    "missing_prior_day_range": 0,
+    "prior_day_range_quantile": 0.25
+  },
+  "generated_utc": "2026-06-14T17:59:29+00:00",
+  "historical_gate_total_events": 43,
+  "open_signal_count_now": 0,
+  "output_files": {
+    "gate_diag_csv": "data/reports/stage28d_forward_safe_meta_gate_tracker/stage28d_meta_gate_diagnostics.csv",
+    "ledger_csv": "data/reports/stage28d_forward_safe_meta_gate_tracker/stage28d_meta_gate_forward_shadow_ledger.csv",
+    "recent_events_csv": "data/reports/stage28d_forward_safe_meta_gate_tracker/stage28d_recent_meta_gate_events.csv",
+    "report_json": "data/reports/stage28d_forward_safe_meta_gate_tracker/stage28d_forward_safe_meta_gate_tracker.json",
+    "report_md": "data/reports/stage28d_forward_safe_meta_gate_tracker/stage28d_forward_safe_meta_gate_tracker.md",
+    "schema_diag_csv": "data/reports/stage28d_forward_safe_meta_gate_tracker/stage28d_db_schema_diagnostic.csv"
+  },
+  "resolved_signal_count_in_ledger": 0,
+  "scope": {
+    "active_suite_unchanged": true,
+    "csv_fallback_enabled": false,
+    "db_first": true,
+    "expanding_thresholds_only": true,
+    "forward_safe_features_only": true,
+    "no_automatic_trading": true,
+    "no_ea_change": true,
+    "no_paper_live_order_authorization": true,
+    "research_shadow_only": true,
+    "stage18a_unchanged": true,
+    "stage23d_unchanged": true,
+    "stage25d_unchanged": true,
+    "stage27d_unchanged": true
+  },
+  "settings": {
+    "gate_name": "stage28c_london_q60_prior_q25_expanding",
+    "london_range_quantile": 0.6,
+    "lookback_hours": 336,
+    "max_recent_rows_report": 25,
+    "min_calib_events": 25,
+    "prior_day_range_quantile": 0.25
+  }
+}

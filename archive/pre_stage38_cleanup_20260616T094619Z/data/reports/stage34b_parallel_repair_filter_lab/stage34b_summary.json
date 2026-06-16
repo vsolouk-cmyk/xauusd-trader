@@ -1,0 +1,40 @@
+{
+  "generated_utc": "2026-06-15T21:03:03Z",
+  "decision": "STAGE34B_HAS_SHORT_CONFIRMATION_REPAIR_FILTER_PATH_RESEARCH_ONLY",
+  "execution_status": "RESEARCH_ONLY",
+  "commercial_transition_authorized": false,
+  "no_ea_change": true,
+  "no_paper_live": true,
+  "no_order_authorization": true,
+  "primary_objective": "PARALLEL_REPAIR_FILTER_LAB_TO_REDUCE_TIME_TO_COMMERCIAL_DECISION",
+  "recommended_next_stage": "CONTINUE_SHORT_CONFIRMATION_AND_PARALLEL_ACCELERATION_NO_EA_NO_PAPER_LIVE",
+  "stage34a_decision": "STAGE34A_HAS_SHORT_CONFIRMATION_FAST_PATH_RESEARCH_ONLY",
+  "stage33e_decision": "STAGE33E_SHORT_CONFIRMATION_SHADOW_ACTIVE_RESEARCH_ONLY",
+  "ledger_path": "data/reports/stage32c_dense_forward_shadow_tracker/dense_forward_signal_ledger.csv",
+  "ledger_available": true,
+  "ledger_rows": 167,
+  "ledger_column_map": {
+    "candidate_col": "candidate",
+    "family_col": "family",
+    "timestamp_col": "entry_time",
+    "direction_col": "direction",
+    "net_col": "net_x4"
+  },
+  "candidate_set_rows": 30,
+  "precommercial_repair_filter_rows": 0,
+  "short_confirmation_rows": 1,
+  "accelerate_collection_rows": 7,
+  "repair_or_kill_rows": 22,
+  "thresholds": {
+    "min_review_events": 24,
+    "min_accel_events": 14,
+    "min_precomm_pf": 1.35,
+    "min_precomm_wr": 0.58,
+    "min_precomm_avg": 0.25,
+    "min_precomm_tail_pf": 1.0,
+    "min_precomm_cost1_pf": 1.1,
+    "min_precomm_last5_pf": 1.0,
+    "min_precomm_last5_avg": 0.0,
+    "max_drawdown": -35.0
+  }
+}

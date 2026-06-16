@@ -1,0 +1,3 @@
+priority,queue,reason,next_check
+1,stage33e_h13_h14_short_confirmation,Primary short confirmation path; run via scheduler/background only.,Rerun Stage33D/E after >=5 new h13/h14 events.
+2,stage32f_scheduler,Background collection only; not the main decision path.,Only run wrapper when preflight indicates useful H1 target-hour progress.

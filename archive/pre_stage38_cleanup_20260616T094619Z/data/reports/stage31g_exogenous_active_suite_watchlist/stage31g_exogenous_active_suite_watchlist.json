@@ -1,0 +1,22 @@
+{
+  "generated_utc": "2026-06-16T09:41:23.174895+00:00",
+  "report": {
+    "decision": "STAGE31G_LOW_CADENCE_WATCHLIST_REVIEW_ONLY",
+    "reason": "Only the long lookback window has signals; cadence is too sparse for promotion.",
+    "short_recent_signal_rows": 0,
+    "mid_recent_signal_rows": 0,
+    "long_recent_signal_rows": 4,
+    "max_recent_signal_rows": 4,
+    "latest_recent_entry_ts": "2026-03-06 13:01:00+00:00"
+  },
+  "stage31f_run": {
+    "attempted": true,
+    "returncode": 0,
+    "stdout_tail": "{\"decision\": \"STAGE31F_LOW_CADENCE_WATCHLIST_REVIEW_ONLY\", \"lookbacks\": [336, 720, 2160, 4320]}\n",
+    "stderr_tail": ""
+  },
+  "source_paths": {
+    "stage31f_summary": "data/reports/stage31f_exogenous_tracker_cadence_audit/stage31f_cadence_summary.csv",
+    "stage31g_report_dir": "data/reports/stage31g_exogenous_active_suite_watchlist"
+  }
+}

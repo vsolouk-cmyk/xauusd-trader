@@ -1,0 +1,29 @@
+[
+  {
+    "candidate_count": 3,
+    "family": "calendar_time_risk_proxy_v1",
+    "latest_signal_ts": "2026-06-16 12:15:00+00:00",
+    "recommendation": "REVIEW_DENSE_FORWARD_CANDIDATES",
+    "resolved_count": 73,
+    "review_ready_candidate_count": 1,
+    "signal_count": 79
+  },
+  {
+    "candidate_count": 3,
+    "family": "volatility_transition_v1",
+    "latest_signal_ts": "2026-06-15 13:00:00+00:00",
+    "recommendation": "KEEP_COLLECTING_FORWARD_SAMPLES",
+    "resolved_count": 58,
+    "review_ready_candidate_count": 0,
+    "signal_count": 64
+  },
+  {
+    "candidate_count": 3,
+    "family": "session_handoff_imbalance_v1",
+    "latest_signal_ts": "2026-06-16 12:15:00+00:00",
+    "recommendation": "KEEP_COLLECTING_FORWARD_SAMPLES",
+    "resolved_count": 39,
+    "review_ready_candidate_count": 0,
+    "signal_count": 45
+  }
+]

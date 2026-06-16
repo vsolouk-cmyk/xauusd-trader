@@ -1,0 +1,21 @@
+{
+  "generated_utc": "2026-06-16T04:16:13Z",
+  "decision": "STAGE36A_START_NEW_THESIS_BRANCHES_WHILE_STAGE35C_WAITS_RESEARCH_ONLY",
+  "execution_status": "RESEARCH_ONLY",
+  "commercial_transition_authorized": false,
+  "no_ea_change": true,
+  "no_paper_live": true,
+  "no_order_authorization": true,
+  "primary_objective": "START_DISTINCT_THESIS_BRANCH_NOW_WHILE_PENDING_CONFIRMATION_RUNS_BACKGROUND",
+  "recommended_next_stage": "BUILD_STAGE36B_SESSION_REGIME_BASELINE_SCOUT_AND_KEEP_STAGE35C_SCHEDULED",
+  "stage35c_decision": "STAGE35C_WAIT_FOR_MORE_FORWARD_EVENTS_RESEARCH_ONLY",
+  "stage35b_decision": "STAGE35B_VARIANTS_PENDING_FORWARD_CONFIRMATION_RESEARCH_ONLY",
+  "stage34c_decision": "STAGE34C_CONTROLLED_INTAKE_EXPANSION_ACTIVE_RESEARCH_ONLY",
+  "new_signal_count": 1,
+  "min_new_events": 5,
+  "current_branch_pending": true,
+  "promotion_allowed_now": false,
+  "thesis_branch_rows": 5,
+  "scheduler_plan_rows": 3,
+  "next_branch_priority": "stage36_session_regime_baseline_scout"
+}

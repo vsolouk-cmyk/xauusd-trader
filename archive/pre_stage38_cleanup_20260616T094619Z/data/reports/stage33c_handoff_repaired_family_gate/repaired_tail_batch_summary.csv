@@ -1,0 +1,4 @@
+batch_index,start_ts,end_ts,signal_count,pf_x4,avg_net_x4,win_rate_x4,tail_pf_x4,max_drawdown_x4,sibling_group
+1,2026-05-15T13:00:00Z,2026-05-26T14:00:00Z,10,2.275903988004505,1.8209924999999199,0.8,2.275903988004505,-10.4926750000006,session_handoff_imbalance_v1::handoff_align_follow_h13_h14_repaired_tp06_sl065
+2,2026-05-29T13:00:00Z,2026-06-08T14:00:00Z,10,inf,4.103110000000106,1.0,inf,0.0,session_handoff_imbalance_v1::handoff_align_follow_h13_h14_repaired_tp06_sl065
+3,2026-06-10T13:00:00Z,2026-06-15T13:00:00Z,5,0.7412765326320437,-0.9071000000000824,0.6,0.7412765326320437,-11.858100000000105,session_handoff_imbalance_v1::handoff_align_follow_h13_h14_repaired_tp06_sl065

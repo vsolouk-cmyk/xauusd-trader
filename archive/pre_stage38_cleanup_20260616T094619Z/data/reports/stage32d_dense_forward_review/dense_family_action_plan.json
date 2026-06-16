@@ -1,0 +1,29 @@
+[
+  {
+    "candidate_count": 3,
+    "family": "session_handoff_imbalance_v1",
+    "negative_or_pause_count": 1,
+    "promising_low_n_count": 2,
+    "recommendation": "ACCELERATE_COLLECTION_FOR_PROMISING_LOW_N_VARIANTS",
+    "reviewable_candidate_count": 0,
+    "signal_count": 45
+  },
+  {
+    "candidate_count": 3,
+    "family": "calendar_time_risk_proxy_v1",
+    "negative_or_pause_count": 1,
+    "promising_low_n_count": 0,
+    "recommendation": "REVIEW_DENSE_FORWARD_CANDIDATES",
+    "reviewable_candidate_count": 0,
+    "signal_count": 79
+  },
+  {
+    "candidate_count": 3,
+    "family": "volatility_transition_v1",
+    "negative_or_pause_count": 2,
+    "promising_low_n_count": 0,
+    "recommendation": "KEEP_COLLECTING_FORWARD_SAMPLES",
+    "reviewable_candidate_count": 0,
+    "signal_count": 64
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "db_path": "data/local/xauusd_local_store.sqlite",
+  "db_first": true,
+  "csv_fallback_enabled": false,
+  "loader_mode": "reused:app.stage25c_deduped_filter_validation.load_bars_from_db",
+  "candle_table": "bars",
+  "m1_mode": "db_schema_introspection",
+  "m1_rows": 1534149,
+  "m1_span": "2022-05-01 23:01:00+00:00 \u2192 2026-06-12 22:46:00+00:00",
+  "h1_mode": "db_schema_introspection",
+  "h1_rows": 25607,
+  "h1_span": "2022-05-01 23:00:00+00:00 \u2192 2026-06-12 22:00:00+00:00",
+  "schema_diag_rows": 18,
+  "db_meta_status": "ok"
+}

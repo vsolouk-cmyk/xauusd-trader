@@ -1,0 +1,97 @@
+{
+  "candidate": {
+    "family": "london_oneway_continuation",
+    "name": "S27D_H1_ATR_FILTERED_S23B_B_eff0.60_pb0.1_h180_tp0.6_sl0.65_h1atr_drop_low30",
+    "params": {
+      "eff_min": 0.6,
+      "entry_hour": 13,
+      "horizon_min": 180,
+      "london_move_atr_min": 0.9,
+      "ny_confirm_atr_min": 0.15,
+      "pullback_atr_max": 0.1,
+      "sl_atr": 0.65,
+      "tp_atr": 0.6
+    }
+  },
+  "counters": {
+    "ledger_total_rows": 0,
+    "new_forward_open_count": 0,
+    "new_late_backfill_count": 0,
+    "new_signal_count": 0,
+    "newly_resolved_forward_count": 0,
+    "recent_events_after_gate": 0,
+    "recent_events_before_gate": 0
+  },
+  "data": {
+    "db_meta": {
+      "candle_table": "bars",
+      "csv_fallback_enabled": false,
+      "db_first": true,
+      "db_path": "data/local/xauusd_local_store.sqlite",
+      "h1_mode": "db_schema_introspection",
+      "h1_rows": 25643,
+      "h1_rows_stage27d": 25643,
+      "h1_span": "2022-05-01 23:00:00+00:00 → 2026-06-16 12:00:00+00:00",
+      "m15_rows_stage27d": 102493,
+      "m1_mode": "db_schema_introspection",
+      "m1_rows": 1536273,
+      "m1_rows_stage27d": 1536273,
+      "m1_span": "2022-05-01 23:01:00+00:00 → 2026-06-16 12:18:00+00:00"
+    },
+    "h1_end": "2026-06-16 12:00:00+00:00",
+    "h1_rows": 25643,
+    "h1_start": "2022-05-01 23:00:00+00:00",
+    "m15_end": "2026-06-16 12:15:00+00:00",
+    "m15_rows": 102493,
+    "m15_start": "2022-05-01 23:00:00+00:00",
+    "m1_end": "2026-06-16 12:18:00+00:00",
+    "m1_rows": 1536273,
+    "m1_start": "2022-05-01 23:01:00+00:00"
+  },
+  "decision": "STAGE27D_NO_ACTIVE_H1_ATR_FILTERED_FORWARD_SIGNAL_RESEARCH_ONLY",
+  "forward_valid_metrics": {
+    "events": 0,
+    "pf_x1": 0.0,
+    "pf_x4": 0.0,
+    "total_x1": 0.0,
+    "win_rate_x1": 0.0
+  },
+  "forward_valid_resolved_count": 0,
+  "gate": {
+    "events_before_gate": 0,
+    "gate_dropped": 0,
+    "gate_kept": 0,
+    "gate_name": "h1_atr_drop_low30_strict_completed"
+  },
+  "generated_utc": "2026-06-16T09:40:41+00:00",
+  "open_signal_count_now": 0,
+  "output_files": {
+    "gate_diag_csv": "data/reports/stage27d_db_first_h1_atr_filtered_forward_shadow/stage27d_h1_atr_gate_diagnostics.csv",
+    "ledger_csv": "data/reports/stage27d_db_first_h1_atr_filtered_forward_shadow/stage27d_h1_atr_filtered_forward_shadow_ledger.csv",
+    "recent_events_csv": "data/reports/stage27d_db_first_h1_atr_filtered_forward_shadow/stage27d_recent_h1_atr_filtered_events.csv",
+    "report_json": "data/reports/stage27d_db_first_h1_atr_filtered_forward_shadow/stage27d_db_first_h1_atr_filtered_forward_shadow.json",
+    "report_md": "data/reports/stage27d_db_first_h1_atr_filtered_forward_shadow/stage27d_db_first_h1_atr_filtered_forward_shadow.md",
+    "schema_diag_csv": "data/reports/stage27d_db_first_h1_atr_filtered_forward_shadow/stage27d_db_schema_diagnostic.csv"
+  },
+  "resolved_signal_count_in_ledger": 0,
+  "scope": {
+    "csv_fallback_enabled": false,
+    "db_first": true,
+    "no_automatic_trading": true,
+    "no_ea_change": true,
+    "no_paper_live_order_authorization": true,
+    "research_shadow_only": true,
+    "stage18a_unchanged": true,
+    "stage23d_unchanged": true,
+    "stage25d_unchanged": true,
+    "strict_completed_h1": true
+  },
+  "settings": {
+    "gate_name": "h1_atr_drop_low30_strict_completed",
+    "gate_quantile": 0.3,
+    "h1_atr_period": 20,
+    "lookback_hours": 336,
+    "max_recent_rows_report": 25,
+    "min_calibration_days": 250
+  }
+}

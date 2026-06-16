@@ -1,0 +1,59 @@
+{
+  "tool_version": "v1",
+  "generated_utc": "2026-06-16T09:38:38+00:00",
+  "collector_start_utc": "2026-06-11T06:22:12+00:00",
+  "inputs": {
+    "db": "data/local/xauusd_local_store.sqlite",
+    "scan_days": 10,
+    "sweep_depth_min": 1.62,
+    "reclaim_max": 1.55,
+    "buffer_usd": 0.2,
+    "cost_usd": 0.35
+  },
+  "source": {
+    "intraday_source": "m1_to_m15",
+    "m15_rows": 102685,
+    "m15_latest_bar": "2026-06-16T12:30:00+00:00",
+    "m1_rows": 1536273,
+    "macro_audit": {
+      "macro_source": "macro_daily_regime",
+      "date_col": "obs_date",
+      "real_yield_col": "real_yield_10y",
+      "rows": 1613,
+      "status": "loaded",
+      "reason": "preferred_daily_regime"
+    }
+  },
+  "counts": {
+    "scan_candidates": 1,
+    "new_logged_this_run": 0,
+    "skipped_before_collector_start": 1,
+    "resolved_this_run": 0,
+    "journal_rows": 0,
+    "valid_forward_rows": 0,
+    "closed_valid_forward_rows": 0,
+    "open_valid_forward_rows": 0,
+    "late_or_invalid_rows": 0,
+    "status_counts": {}
+  },
+  "closed_valid_forward_metrics": {
+    "events": 0,
+    "total": 0.0,
+    "avg": 0.0,
+    "median": 0.0,
+    "win_rate": 0.0,
+    "pf": 0.0,
+    "max_dd": 0.0
+  },
+  "final_decision": "TRUE_FORWARD_STARTED_NO_SIGNALS_YET",
+  "reasons": [
+    "Collector state exists; no post-start signal has been logged yet."
+  ],
+  "authorization_flags": {
+    "trade_authorization": false,
+    "ea_change_authorization": false,
+    "paper_order_authorization": false,
+    "live_order_authorization": false,
+    "automatic_trading": false
+  }
+}

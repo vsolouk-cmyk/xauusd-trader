@@ -1,0 +1,6 @@
+family,candidates_tested,passing_min_events,best_pf_x4,best_total_x4
+session_compression_expansion_v1,6,6,0.5904975716235917,-253.7795250000001
+liquidity_sweep_regime_v1,6,4,0.44585829199516464,-52.3931500000001
+volatility_transition_v1,6,6,0.4051091523386092,-654.586424999999
+session_handoff_imbalance_v1,6,6,0.3973887077587126,-609.0585250000022
+calendar_time_risk_proxy_v1,6,6,0.3591121603542732,-757.2410749999942

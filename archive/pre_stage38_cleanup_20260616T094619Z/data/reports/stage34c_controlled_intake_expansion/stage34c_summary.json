@@ -1,0 +1,22 @@
+{
+  "generated_utc": "2026-06-15T21:16:09Z",
+  "decision": "STAGE34C_CONTROLLED_INTAKE_EXPANSION_ACTIVE_RESEARCH_ONLY",
+  "execution_status": "RESEARCH_ONLY",
+  "commercial_transition_authorized": false,
+  "no_ea_change": true,
+  "no_paper_live": true,
+  "no_order_authorization": true,
+  "primary_objective": "CONTROLLED_INTAKE_EXPANSION_TO_REDUCE_TIME_TO_COMMERCIAL_DECISION",
+  "recommended_next_stage": "BUILD_STAGE35A_TARGETED_VARIANT_GENERATOR_WHILE_STAGE33E_RUNS_BACKGROUND",
+  "stage34b_decision": "STAGE34B_HAS_SHORT_CONFIRMATION_REPAIR_FILTER_PATH_RESEARCH_ONLY",
+  "stage33e_decision": "STAGE33E_SHORT_CONFIRMATION_SHADOW_ACTIVE_RESEARCH_ONLY",
+  "stage34b_precommercial_rows": 0,
+  "stage34b_short_confirmation_rows": 1,
+  "stage34b_accelerate_collection_rows": 7,
+  "stage34b_repair_or_kill_rows": 22,
+  "controlled_intake_spec_rows": 5,
+  "repair_or_kill_enforced_rows": 22,
+  "background_queue_rows": 2,
+  "stage34b_summary_path": "data/reports/stage34b_parallel_repair_filter_lab/stage34b_summary.json",
+  "stage33e_summary_path": "data/reports/stage33e_short_confirmation_recency_filter/stage33e_summary.json"
+}

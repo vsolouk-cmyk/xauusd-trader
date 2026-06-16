@@ -1,0 +1,4 @@
+family,candidate_count,signal_count,reviewable_candidate_count,promising_low_n_count,negative_or_pause_count,recommendation
+session_handoff_imbalance_v1,3,45,0,2,1,ACCELERATE_COLLECTION_FOR_PROMISING_LOW_N_VARIANTS
+calendar_time_risk_proxy_v1,3,79,0,0,1,REVIEW_DENSE_FORWARD_CANDIDATES
+volatility_transition_v1,3,64,0,0,2,KEEP_COLLECTING_FORWARD_SAMPLES

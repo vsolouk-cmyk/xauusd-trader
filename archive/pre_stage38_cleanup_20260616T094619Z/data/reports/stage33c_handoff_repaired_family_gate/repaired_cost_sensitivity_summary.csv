@@ -1,0 +1,6 @@
+cost_penalty_x4,signal_count,pf_x4,avg_net_x4,win_rate_x4,tail_pf_x4,max_drawdown_x4,sibling_group
+0.0,25,2.720165647484951,2.1882209999999938,0.84,2.124122234074739,-11.8581000000001,session_handoff_imbalance_v1::handoff_align_follow_h13_h14_repaired_tp06_sl065
+0.25,25,2.4771911265841706,1.9382209999999938,0.84,1.9542936057636506,-12.6081000000001,session_handoff_imbalance_v1::handoff_align_follow_h13_h14_repaired_tp06_sl065
+0.5,25,2.2485927435786643,1.6882209999999938,0.84,1.7936298926623047,-13.3581000000001,session_handoff_imbalance_v1::handoff_align_follow_h13_h14_repaired_tp06_sl065
+0.75,25,2.0331312643712645,1.4382209999999938,0.84,1.6414087008612717,-14.1081000000001,session_handoff_imbalance_v1::handoff_align_follow_h13_h14_repaired_tp06_sl065
+1.0,25,1.8297059072033268,1.188220999999994,0.84,1.4969816131856766,-14.8581000000001,session_handoff_imbalance_v1::handoff_align_follow_h13_h14_repaired_tp06_sl065

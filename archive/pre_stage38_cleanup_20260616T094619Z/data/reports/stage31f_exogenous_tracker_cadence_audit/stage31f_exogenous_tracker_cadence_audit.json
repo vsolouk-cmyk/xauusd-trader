@@ -1,0 +1,66 @@
+{
+  "generated_utc": "2026-06-16T09:41:23.140028+00:00",
+  "decision": "STAGE31F_LOW_CADENCE_WATCHLIST_REVIEW_ONLY",
+  "lookbacks": [
+    336,
+    720,
+    2160,
+    4320
+  ],
+  "results": [
+    {
+      "lookback_hours": 336,
+      "stage31e_returncode": 0,
+      "stage31e_decision": "STAGE31E_NO_RECENT_FORWARD_SHADOW_SIGNAL_RESEARCH_ONLY",
+      "recent_signal_rows": 0,
+      "recent_signal_gate_count": 0,
+      "tracker_results": 8,
+      "latest_recent_entry_ts": "",
+      "copied_md": "data/reports/stage31f_exogenous_tracker_cadence_audit/stage31e_lookback_336h.md",
+      "copied_recent_signals_csv": "data/reports/stage31f_exogenous_tracker_cadence_audit/stage31e_lookback_336h_recent_signals.csv",
+      "copied_tracker_summary_csv": "data/reports/stage31f_exogenous_tracker_cadence_audit/stage31e_lookback_336h_tracker_summary.csv"
+    },
+    {
+      "lookback_hours": 720,
+      "stage31e_returncode": 0,
+      "stage31e_decision": "STAGE31E_NO_RECENT_FORWARD_SHADOW_SIGNAL_RESEARCH_ONLY",
+      "recent_signal_rows": 0,
+      "recent_signal_gate_count": 0,
+      "tracker_results": 8,
+      "latest_recent_entry_ts": "",
+      "copied_md": "data/reports/stage31f_exogenous_tracker_cadence_audit/stage31e_lookback_720h.md",
+      "copied_recent_signals_csv": "data/reports/stage31f_exogenous_tracker_cadence_audit/stage31e_lookback_720h_recent_signals.csv",
+      "copied_tracker_summary_csv": "data/reports/stage31f_exogenous_tracker_cadence_audit/stage31e_lookback_720h_tracker_summary.csv"
+    },
+    {
+      "lookback_hours": 2160,
+      "stage31e_returncode": 0,
+      "stage31e_decision": "STAGE31E_NO_RECENT_FORWARD_SHADOW_SIGNAL_RESEARCH_ONLY",
+      "recent_signal_rows": 0,
+      "recent_signal_gate_count": 0,
+      "tracker_results": 8,
+      "latest_recent_entry_ts": "",
+      "copied_md": "data/reports/stage31f_exogenous_tracker_cadence_audit/stage31e_lookback_2160h.md",
+      "copied_recent_signals_csv": "data/reports/stage31f_exogenous_tracker_cadence_audit/stage31e_lookback_2160h_recent_signals.csv",
+      "copied_tracker_summary_csv": "data/reports/stage31f_exogenous_tracker_cadence_audit/stage31e_lookback_2160h_tracker_summary.csv"
+    },
+    {
+      "lookback_hours": 4320,
+      "stage31e_returncode": 0,
+      "stage31e_decision": "STAGE31E_FORWARD_SHADOW_ACTIVE_SIGNAL_REVIEW_ONLY",
+      "recent_signal_rows": 4,
+      "recent_signal_gate_count": 8,
+      "tracker_results": 8,
+      "latest_recent_entry_ts": "2026-03-06 13:01:00+00:00",
+      "copied_md": "data/reports/stage31f_exogenous_tracker_cadence_audit/stage31e_lookback_4320h.md",
+      "copied_recent_signals_csv": "data/reports/stage31f_exogenous_tracker_cadence_audit/stage31e_lookback_4320h_recent_signals.csv",
+      "copied_tracker_summary_csv": "data/reports/stage31f_exogenous_tracker_cadence_audit/stage31e_lookback_4320h_tracker_summary.csv"
+    }
+  ],
+  "guardrails": {
+    "research_shadow_only": true,
+    "no_ea_change": true,
+    "no_paper_live_order_authorization": true,
+    "no_internet_fetch": true
+  }
+}

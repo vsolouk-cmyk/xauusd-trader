@@ -1,0 +1,10 @@
+candidate,family,signal_count,resolved_count,latest_signal_ts,pf_x4,avg_net_x4,win_rate_x4,readiness
+calendar_drop_friday_h9_tp06_sl065,calendar_time_risk_proxy_v1,27,25,2026-06-16 09:00:00+00:00,1.141681,0.297066,0.52,DENSE_FORWARD_REVIEW_QUEUE_RESEARCH_ONLY
+calendar_drop_friday_h13_tp06_sl065,calendar_time_risk_proxy_v1,27,24,2026-06-16 12:15:00+00:00,0.933662,-0.147248,0.541667,FORWARD_SAMPLE_COLLECTION_ACTIVE_RESEARCH_ONLY
+calendar_drop_monday_h13_tp06_sl065,calendar_time_risk_proxy_v1,25,24,2026-06-16 12:15:00+00:00,0.817511,-0.456615,0.5,FORWARD_SAMPLE_COLLECTION_ACTIVE_RESEARCH_ONLY
+vol_trans_follow_h1_low_to_high_h13_tp06_sl065,volatility_transition_v1,22,20,2026-06-15 13:00:00+00:00,0.843633,-0.474349,0.6,FORWARD_SAMPLE_COLLECTION_ACTIVE_RESEARCH_ONLY
+vol_trans_fade_h1_low_to_high_h12_tp06_sl065,volatility_transition_v1,21,19,2026-06-15 12:00:00+00:00,1.298189,0.668022,0.684211,FORWARD_SAMPLE_COLLECTION_ACTIVE_RESEARCH_ONLY
+vol_trans_follow_h1_low_to_high_h12_tp06_sl065,volatility_transition_v1,21,19,2026-06-15 12:00:00+00:00,0.468069,-2.119478,0.473684,FORWARD_SAMPLE_COLLECTION_ACTIVE_RESEARCH_ONLY
+handoff_align_follow_h14_tp06_sl065,session_handoff_imbalance_v1,15,13,2026-06-16 12:15:00+00:00,3.043089,2.243025,0.846154,FORWARD_SAMPLE_COLLECTION_ACTIVE_RESEARCH_ONLY
+handoff_align_follow_h13_tp06_sl065,session_handoff_imbalance_v1,15,13,2026-06-16 12:15:00+00:00,2.612842,2.174892,0.846154,FORWARD_SAMPLE_COLLECTION_ACTIVE_RESEARCH_ONLY
+handoff_align_follow_h15_tp06_sl065,session_handoff_imbalance_v1,15,13,2026-06-16 12:15:00+00:00,0.748923,-0.759812,0.615385,FORWARD_SAMPLE_COLLECTION_ACTIVE_RESEARCH_ONLY

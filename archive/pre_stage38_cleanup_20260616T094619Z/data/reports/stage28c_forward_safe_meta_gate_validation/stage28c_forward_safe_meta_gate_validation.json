@@ -1,0 +1,53 @@
+{
+  "decision": "STAGE28C_HAS_FORWARD_SAFE_META_GATE_VALIDATION_CANDIDATE_REVIEW_ONLY",
+  "db_meta": {
+    "loader_mode": "reused:app.stage25c_deduped_filter_validation.load_bars_from_db",
+    "db_path": "data/local/xauusd_local_store.sqlite",
+    "db_first": true,
+    "csv_fallback_enabled": false,
+    "candle_table": "bars",
+    "m1_mode": "db_schema_introspection",
+    "m1_rows": 1534217,
+    "m1_span": "2022-05-01 23:01:00+00:00 \u2192 2026-06-12 23:54:00+00:00",
+    "h1_mode": "db_schema_introspection",
+    "h1_rows": 25608,
+    "h1_span": "2022-05-01 23:00:00+00:00 \u2192 2026-06-12 23:00:00+00:00",
+    "db_meta_status": "ok"
+  },
+  "artifact_manifest": {
+    "selected_artifact": "data/reports/stage28b_ml_meta_feature_screen/stage28b_normalized_lineage_trades.csv",
+    "exists": true,
+    "rows": 100,
+    "status": "loaded",
+    "time_column_used": "entry_ts_norm",
+    "rows_after_event_dedup": 100,
+    "dedup_removed": 0
+  },
+  "base_metrics": {
+    "events": 100,
+    "pf_x1": 5.578964,
+    "pf_x4": 2.851412,
+    "pf_x6": 1.653422,
+    "boot_pf_p05_x4": 1.818163,
+    "median_x4": 1.02936,
+    "total_x4": 127.61561,
+    "win_rate_x4": 0.81,
+    "years_positive_x4": 4,
+    "year_count": 5
+  },
+  "gate_defs_total": 16,
+  "gate_defs_available": 16,
+  "min_calib_events": 25,
+  "min_events": 25,
+  "validated_count": 16,
+  "watchlist_only_count": 0,
+  "outputs": {
+    "md": "data/reports/stage28c_forward_safe_meta_gate_validation/stage28c_forward_safe_meta_gate_validation.md",
+    "json": "data/reports/stage28c_forward_safe_meta_gate_validation/stage28c_forward_safe_meta_gate_validation.json",
+    "gate_validation": "data/reports/stage28c_forward_safe_meta_gate_validation/stage28c_gate_validation.csv",
+    "yearly_walk_forward": "data/reports/stage28c_forward_safe_meta_gate_validation/stage28c_yearly_walk_forward.csv",
+    "leave_one_year_out": "data/reports/stage28c_forward_safe_meta_gate_validation/stage28c_leave_one_year_out.csv",
+    "gate_splits": "data/reports/stage28c_forward_safe_meta_gate_validation/stage28c_gate_splits.csv",
+    "db_schema_diagnostic": "data/reports/stage28c_forward_safe_meta_gate_validation/stage28c_db_schema_diagnostic.json"
+  }
+}

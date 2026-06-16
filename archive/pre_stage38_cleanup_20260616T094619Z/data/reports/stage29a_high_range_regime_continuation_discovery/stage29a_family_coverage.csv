@@ -1,0 +1,5 @@
+family,candidates_tested,passing_min_events,review_count,watchlist_count,best_name,best_pf_x4,best_pf_x6,best_total_x4,best_events
+high_range_asia_london_alignment_v1,2,2,0,0,hr_asia_london_align_h13_lq35_aq35_tp06_sl065,0.20005824297574115,0.1262257698945193,-335.46667500000336,137
+high_range_broad_pullback_continuation_v1,3,3,0,0,hr_broad_pb_h13_lq40_pb025_tp07_sl08,0.18353823220022253,0.11726586857070848,-756.4067999999988,254
+high_range_london_continuation_v1,3,3,0,0,hr_london_follow_h13_lq35_pq10_c00_tp06_sl065,0.14331222580410855,0.0863063290198344,-847.2738250000023,313
+high_range_london_breakout_follow_v1,2,2,0,0,hr_london_breakout_h13_lq40_b00_tp06_sl08,0.08135931331919559,0.04387869017345005,-228.8705999999985,56

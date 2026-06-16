@@ -1,0 +1,58 @@
+[
+  {
+    "area": "bars",
+    "first_utc": "2022-05-01T23:00:00+00:00",
+    "item": "amarkets_mt5::1h",
+    "last_utc": "2026-06-12T23:00:00+00:00",
+    "row_count": 25608,
+    "status": "ok"
+  },
+  {
+    "area": "bars",
+    "first_utc": "2022-05-01T23:01:00+00:00",
+    "item": "amarkets_mt5::1m",
+    "last_utc": "2026-06-12T23:54:00+00:00",
+    "row_count": 1534217,
+    "status": "ok"
+  },
+  {
+    "area": "table",
+    "first_utc": "2026-06-09T12:01:43+00:00",
+    "item": "dryrun_signals",
+    "last_utc": "2026-06-09T12:01:43+00:00",
+    "row_count": 1,
+    "status": "ok"
+  },
+  {
+    "area": "table",
+    "first_utc": "2026-06-09T12:01:43+00:00",
+    "item": "dryrun_outcomes",
+    "last_utc": "2026-06-09T12:01:43+00:00",
+    "row_count": 1,
+    "status": "ok"
+  },
+  {
+    "area": "table",
+    "first_utc": "2026-06-10T05:53:32+00:00",
+    "item": "event_pipeline_runs",
+    "last_utc": "2026-06-10T05:54:02+00:00",
+    "row_count": 2,
+    "status": "ok"
+  },
+  {
+    "area": "table",
+    "first_utc": "2026-06-10T05:54:02+00:00",
+    "item": "event_pipeline_staging",
+    "last_utc": "2026-06-10T05:54:02+00:00",
+    "row_count": 5,
+    "status": "ok"
+  },
+  {
+    "area": "table",
+    "first_utc": "2026-06-10T09:08:21+00:00",
+    "item": "event_impact_validation_summary",
+    "last_utc": "2026-06-10T09:34:22+00:00",
+    "row_count": 7,
+    "status": "ok"
+  }
+]

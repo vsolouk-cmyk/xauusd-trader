@@ -1,0 +1,17 @@
+{
+  "patch": "stage39c_microstructure_session_condition_diagnostic_patch",
+  "stage": "Stage39C_MICROSTRUCTURE_SESSION_CONDITION_DIAGNOSTIC",
+  "scope": "RESEARCH_STAGE_ONLY_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "files": [
+    "scripts/stage39c_microstructure_session_condition_diagnostic.py",
+    "docs/STAGE39C_MICROSTRUCTURE_SESSION_CONDITION_DIAGNOSTIC.md",
+    "reports/stage39c/.gitkeep",
+    "stage39c_patch_manifest.json"
+  ],
+  "created_for": "Stage39B path watch rows only",
+  "input_candidates": [
+    "BB_LOWER_REV_LONG_W120_K2.5",
+    "RANGE_BOTTOM_REV_LONG_W48_Q0.05"
+  ]
+}

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.xauusd.stage35c.minimal.monitor</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string>
+    <string>/Users/vahid/Desktop/xauusd-trader/tools/stage35c_minimal_monitor_runner.zsh</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>/Users/vahid/Desktop/xauusd-trader</string>
+
+  <key>StartInterval</key>
+  <integer>1200</integer>
+
+  <key>StandardOutPath</key>
+  <string>/Users/vahid/Desktop/xauusd-trader/data/reports/stage35c_minimal_monitor/launchd.out.log</string>
+
+  <key>StandardErrorPath</key>
+  <string>/Users/vahid/Desktop/xauusd-trader/data/reports/stage35c_minimal_monitor/launchd.err.log</string>
+
+  <key>RunAtLoad</key>
+  <true/>
+</dict>
+</plist>

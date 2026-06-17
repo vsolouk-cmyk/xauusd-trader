@@ -1,0 +1,114 @@
+{
+  "stage": "Stage41_PARALLEL_THESIS_MEGASCAN_V2",
+  "data": {
+    "db_path": "data/local/xauusd_local_store.sqlite",
+    "table": "bars",
+    "source_filter_used": true,
+    "symbol_filter_used": true,
+    "timeframe_filter_used": true,
+    "source": "amarkets_mt5",
+    "symbol": "XAUUSD",
+    "timeframe": "H1",
+    "loaded_rows": 25643,
+    "loaded_start": "2022-05-01T23:00:00+00:00",
+    "loaded_end": "2026-06-16T12:00:00+00:00",
+    "columns_detected": {
+      "timestamp": "utc_time",
+      "open": "open",
+      "high": "high",
+      "low": "low",
+      "close": "close",
+      "volume": "volume",
+      "source": "source",
+      "symbol": "symbol",
+      "timeframe": "timeframe"
+    },
+    "available_dimensions_top20": {
+      "source": [
+        {
+          "value": "amarkets_mt5",
+          "n": 1971743
+        }
+      ],
+      "symbol": [
+        {
+          "value": "XAUUSD",
+          "n": 1971743
+        }
+      ],
+      "timeframe": [
+        {
+          "value": "1m",
+          "n": 1536273
+        },
+        {
+          "value": "M5",
+          "n": 307334
+        },
+        {
+          "value": "M15",
+          "n": 102493
+        },
+        {
+          "value": "1h",
+          "n": 25643
+        }
+      ]
+    },
+    "loaded_dimension_values_top20": {
+      "source": [
+        "amarkets_mt5"
+      ],
+      "symbol": [
+        "XAUUSD"
+      ],
+      "timeframe": [
+        "1h"
+      ]
+    },
+    "filter_debug": {
+      "requested_source": "amarkets_mt5",
+      "requested_symbol": "XAUUSD",
+      "requested_timeframe": "H1",
+      "pre_filter_rows": 1971743,
+      "normalization": "source/symbol use strip+casefold+compact; timeframe uses aliases such as 1h/60/M60 -> H1",
+      "source_exact_matches": 1971743,
+      "source_compact_matches": 1971743,
+      "symbol_exact_matches": 1971743,
+      "symbol_compact_matches": 1971743,
+      "requested_timeframe_normalized": "H1",
+      "timeframe_alias_matches": 25643,
+      "post_filter_rows_before_ohlc_clean": 25643,
+      "post_filter_rows_after_ohlc_clean": 25643
+    }
+  },
+  "settings": {
+    "cost_bps": 8.0,
+    "slip_bps": 16.0,
+    "min_events": 40,
+    "event_clock": "candidate-specific min_gap equals horizon",
+    "train_oos_split": "chronological 70/30 event-clock split"
+  },
+  "families_scanned": [
+    "41A_MTF_STRUCTURE_BREAK_RETEST",
+    "41B_NY_IMPULSE_EXHAUSTION_REVERSAL",
+    "41C_SHOCK_COOLDOWN_CONTINUATION",
+    "41D_ASIA_RANGE_BREAK_RETEST",
+    "41E_PRIOR_DAY_LEVEL_RECLAIM_REJECT",
+    "41F_MULTIBAR_VOL_REGIME_EXPANSION_CONFIRMATION"
+  ],
+  "candidate_rows": 180,
+  "events_rows_written": 19627,
+  "strict_stage41_scan_watch_count": 0,
+  "soft_stage41_scan_watch_count": 0,
+  "classification_counts": {
+    "FAIL_BENCHMARK_OR_STABILITY_RESEARCH_ONLY": 136,
+    "INSUFFICIENT_EVENTS_RESEARCH_ONLY": 44
+  },
+  "errors": [],
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "next_allowed_step": "Stage41B_STRICT_SHORTLIST_PATH_STABILITY_AUDIT only if strict_stage41_scan_watch_count > 0; otherwise archive Stage41 or start new thesis families."
+}

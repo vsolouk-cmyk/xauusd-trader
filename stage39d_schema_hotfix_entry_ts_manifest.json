@@ -1,0 +1,18 @@
+{
+  "stage": "Stage39D_CONDITION_ROBUSTNESS_AND_FORWARD_SPLIT_AUDIT",
+  "hotfix": "ENTRY_TS_EVENT_TIMESTAMP_COMPATIBILITY",
+  "decision_scope": "RESEARCH_STAGE_ONLY_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "ea": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "files": [
+    "scripts/stage39d_condition_robustness_forward_split_audit.py",
+    "docs/STAGE39D_CONDITION_ROBUSTNESS_AND_FORWARD_SPLIT_AUDIT.md",
+    "reports/stage39d/.gitkeep",
+    "stage39d_schema_hotfix_entry_ts_manifest.json"
+  ],
+  "fix": "Add entry_ts/entry_time and other timestamp aliases to DEFAULT_EVENT_TIME_COLS so Stage39D accepts Stage39C event rows.",
+  "logic_changed": false,
+  "thresholds_changed": false
+}

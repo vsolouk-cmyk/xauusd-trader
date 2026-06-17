@@ -1,0 +1,70 @@
+{
+  "stage": "Stage39D_CONDITION_ROBUSTNESS_AND_FORWARD_SPLIT_AUDIT",
+  "decision_scope": "RESEARCH_STAGE_ONLY_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "ea": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "parameters": {
+    "cost_bps": 8.0,
+    "extra_slippage_bps": [
+      0.0,
+      4.0,
+      8.0,
+      12.0,
+      16.0
+    ],
+    "min_events": 30,
+    "min_years": 4,
+    "min_ex2025_events": 20,
+    "min_cost_mean_bps": 15.0,
+    "min_recent_cost_mean_bps": 10.0,
+    "max_touch_stop_100_pct": 45.0,
+    "max_median_mae_abs_bps": 100.0
+  },
+  "input_files": {
+    "stage39c_summary": "reports/stage39c/stage39c_condition_diagnostic_summary.json",
+    "stage39c_events": "reports/stage39c/stage39c_condition_event_rows.csv",
+    "stage39c_buckets": "reports/stage39c/stage39c_condition_bucket_summary.csv",
+    "stage39c_cross": "reports/stage39c/stage39c_condition_cross_matrix.csv"
+  },
+  "stage39c_context": {
+    "summary_loaded": true,
+    "candidate_watch_count": 2,
+    "condition_bucket_watch_count": 8,
+    "bucket_classification_counts": {
+      "INSUFFICIENT_BUCKET_EVENTS_NO_PROMOTION": 72,
+      "WEAK_BUCKET_NO_PROMOTION": 10,
+      "CONDITION_BUCKET_WATCH_ONLY_NO_PROMOTION": 8,
+      "BAD_BUCKET_NO_PROMOTION": 1
+    },
+    "cross_classification_counts": {
+      "INSUFFICIENT_BUCKET_EVENTS_NO_PROMOTION": 51,
+      "BAD_BUCKET_NO_PROMOTION": 2,
+      "CONDITION_BUCKET_WATCH_ONLY_NO_PROMOTION": 1,
+      "WEAK_BUCKET_NO_PROMOTION": 1
+    }
+  },
+  "detected_columns": {
+    "event_time": "entry_ts",
+    "final_bps": "final_bps",
+    "mae_bps": "mae_bps",
+    "mfe_bps": "mfe_bps"
+  },
+  "watch_specs_total": 9,
+  "watch_specs_audited": 9,
+  "errors": [],
+  "classification_counts": {
+    "STRICT_CONDITION_ROBUSTNESS_WATCH_ONLY_NO_PROMOTION": 5,
+    "FORWARD_ROBUSTNESS_WATCH_ONLY_NO_PROMOTION": 3,
+    "FAIL_CONDITION_ROBUSTNESS_NO_PROMOTION": 1
+  },
+  "survivor_watch_count": 8,
+  "outputs": {
+    "condition_robustness_csv": "reports/stage39d/stage39d_condition_robustness_summary.csv",
+    "forward_split_csv": "reports/stage39d/stage39d_forward_split_audit.csv",
+    "audited_event_rows_csv": "reports/stage39d/stage39d_condition_audited_event_rows.csv",
+    "summary_json": "reports/stage39d/stage39d_condition_robustness_summary.json",
+    "markdown": "reports/stage39d/stage39d_condition_robustness_forward_split.md"
+  }
+}

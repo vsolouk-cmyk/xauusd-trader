@@ -1,0 +1,14 @@
+{
+  "stage": "Stage40B_SURVIVOR_PATH_STABILITY_AUDIT",
+  "decision_scope": "RESEARCH_STAGE_ONLY_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "ea": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "files": [
+    "scripts/stage40b_survivor_path_stability_audit.py",
+    "docs/STAGE40B_SURVIVOR_PATH_STABILITY_AUDIT.md",
+    "reports/stage40b/.gitkeep",
+    "stage40b_patch_manifest.json"
+  ]
+}

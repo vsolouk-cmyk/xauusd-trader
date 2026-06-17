@@ -1,0 +1,30 @@
+{
+  "patch": "stage39b_schema_hotfix_db_first_filtering_patch",
+  "stage": "Stage39B_EVENT_PATH_AND_TRADABILITY_DIAGNOSTIC",
+  "scope": "RESEARCH_STAGE_ONLY_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "fix": "Replace exact SQL metadata filters with Stage39A-compatible DB-first tolerant filtering for source/symbol/timeframe.",
+  "created_utc": "2026-06-16T20:54:20Z",
+  "files": [
+    {
+      "path": "docs/STAGE39B_EVENT_PATH_AND_TRADABILITY_DIAGNOSTIC.md",
+      "sha256": "32f8b69a63d5dd685d59d941cb713574c16d3cd6a6653ad7c513b44c7aaa6bc4",
+      "bytes": 3365
+    },
+    {
+      "path": "docs/STAGE39B_SCHEMA_HOTFIX_DB_FIRST_FILTERING.md",
+      "sha256": "2198ed5c217b373a9e992c1a5683cb693557a6ad3a8a862aa72a3423bf2b76d7",
+      "bytes": 1629
+    },
+    {
+      "path": "reports/stage39b/.gitkeep",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "scripts/stage39b_event_path_tradability_diagnostic.py",
+      "sha256": "732cbe7a63836005e960db7f4aecbd5734698b573a658e9612b91831ff60ece0",
+      "bytes": 36182
+    }
+  ]
+}

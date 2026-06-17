@@ -1,0 +1,12 @@
+{
+  "patch": "stage39a_benchmark_first_reversal_or_mean_reversion_scan",
+  "stage": "Stage39A_BENCHMARK_FIRST_REVERSAL_OR_MEAN_REVERSION_SCAN",
+  "scope": "research-stage only",
+  "promotion": "NO_GO",
+  "files": [
+    "scripts/stage39a_benchmark_first_reversal_mean_reversion_scan.py",
+    "docs/STAGE39A_BENCHMARK_FIRST_REVERSAL_OR_MEAN_REVERSION_SCAN.md",
+    "reports/stage39a/.gitkeep"
+  ],
+  "created_utc": "2026-06-16T20:25:14Z"
+}

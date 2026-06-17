@@ -1,0 +1,206 @@
+{
+  "stage": "Stage39B_EVENT_PATH_AND_TRADABILITY_DIAGNOSTIC",
+  "decision_scope": "RESEARCH_STAGE_ONLY_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "ea": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "data_audit": {
+    "db_path": "data/local/xauusd_local_store.sqlite",
+    "table": "bars",
+    "available_columns": [
+      "source",
+      "symbol",
+      "timeframe",
+      "utc_time",
+      "open",
+      "high",
+      "low",
+      "close",
+      "tick_volume",
+      "spread",
+      "real_volume",
+      "source_time",
+      "imported_utc",
+      "raw_json",
+      "volume",
+      "ingested_at"
+    ],
+    "columns": {
+      "timestamp": "utc_time",
+      "open": "open",
+      "high": "high",
+      "low": "low",
+      "close": "close",
+      "spread": "spread",
+      "symbol": "symbol",
+      "source": "source",
+      "timeframe": "timeframe"
+    },
+    "requested_filters": {
+      "symbol": "XAUUSD",
+      "source": "amarkets_mt5",
+      "timeframe": "H1"
+    },
+    "distinct_values_sample": {
+      "symbol": [
+        "XAUUSD"
+      ],
+      "source": [
+        "amarkets_mt5"
+      ],
+      "timeframe": [
+        "1h",
+        "M5",
+        "M15",
+        "1m"
+      ]
+    },
+    "filter_steps": [
+      {
+        "filter": "symbol",
+        "requested": "XAUUSD",
+        "normalized": "XAUUSD",
+        "before": 1971743,
+        "after": 1971743
+      },
+      {
+        "filter": "source",
+        "requested": "amarkets_mt5",
+        "normalized": "amarkets_mt5",
+        "before": 1971743,
+        "after": 1971743
+      },
+      {
+        "filter": "timeframe",
+        "requested": "H1",
+        "normalized": "H1",
+        "before": 1971743,
+        "after": 25643
+      }
+    ],
+    "pre_filter_rows": 1971743,
+    "post_filter_rows": 25643,
+    "loaded_rows": 25643,
+    "date_min": "2022-05-01T23:00:00+00:00",
+    "date_max": "2026-06-16T12:00:00+00:00"
+  },
+  "parameters": {
+    "symbol": "XAUUSD",
+    "source": "amarkets_mt5",
+    "timeframe": "H1",
+    "cost_bps": 8.0,
+    "extra_slippage_bps": [
+      0.0,
+      4.0,
+      8.0,
+      12.0,
+      16.0
+    ],
+    "stage39a_events": "reports/stage39a/stage39a_reversal_mean_reversion_event_clock_events.csv",
+    "force_recompute_events": false,
+    "bar_hours": 1.0
+  },
+  "stage39a_context": {
+    "strict_research_watch_source": "Stage39A strict rows only",
+    "candidate_count": 4,
+    "candidate_specs": [
+      {
+        "candidate": "BB_LOWER_REV_LONG_W120_K2.5",
+        "family": "BOLLINGER_REVERSAL",
+        "side": "LONG",
+        "horizon_hours": 72,
+        "lookback_hours": 120,
+        "trigger_type": "bb_lower",
+        "threshold": 2.5,
+        "source_stage39a_residual_bps": 12.930408592169847,
+        "source_stage39a_event_clock_n": 87,
+        "source_stage39a_median_mae_bps": -88.40617792181149,
+        "source_stage39a_median_mfe_bps": 149.0487486707437
+      },
+      {
+        "candidate": "RANGE_BOTTOM_REV_LONG_W48_Q0.05",
+        "family": "ROLLING_RANGE_REVERSAL",
+        "side": "LONG",
+        "horizon_hours": 72,
+        "lookback_hours": 48,
+        "trigger_type": "range_bottom",
+        "threshold": 0.05,
+        "source_stage39a_residual_bps": 8.961150568044353,
+        "source_stage39a_event_clock_n": 177,
+        "source_stage39a_median_mae_bps": -82.90879175967936,
+        "source_stage39a_median_mfe_bps": 120.25091360799101
+      },
+      {
+        "candidate": "RET_Z_DOWNSIDE_EXTREME_REV_LONG_L24_T1.5",
+        "family": "RETURN_ZSCORE_REVERSAL",
+        "side": "LONG",
+        "horizon_hours": 120,
+        "lookback_hours": 24,
+        "trigger_type": "ret_z_downside",
+        "threshold": 1.5,
+        "source_stage39a_residual_bps": 6.98131119227718,
+        "source_stage39a_event_clock_n": 172,
+        "source_stage39a_median_mae_bps": -120.22,
+        "source_stage39a_median_mfe_bps": 175.98
+      },
+      {
+        "candidate": "BB_LOWER_REV_LONG_W24_K2",
+        "family": "BOLLINGER_REVERSAL",
+        "side": "LONG",
+        "horizon_hours": 120,
+        "lookback_hours": 24,
+        "trigger_type": "bb_lower",
+        "threshold": 2.0,
+        "source_stage39a_residual_bps": 4.92131119227718,
+        "source_stage39a_event_clock_n": 200,
+        "source_stage39a_median_mae_bps": -107.57,
+        "source_stage39a_median_mfe_bps": 170.56
+      }
+    ]
+  },
+  "event_build_info": {
+    "BB_LOWER_REV_LONG_W120_K2.5": {
+      "event_source": "stage39a_events_csv",
+      "raw_trigger_count": 87,
+      "event_clock_count": 80,
+      "horizon_bars": 72,
+      "bar_hours": 1.0
+    },
+    "RANGE_BOTTOM_REV_LONG_W48_Q0.05": {
+      "event_source": "stage39a_events_csv",
+      "raw_trigger_count": 177,
+      "event_clock_count": 145,
+      "horizon_bars": 72,
+      "bar_hours": 1.0
+    },
+    "RET_Z_DOWNSIDE_EXTREME_REV_LONG_L24_T1.5": {
+      "event_source": "stage39a_events_csv",
+      "raw_trigger_count": 172,
+      "event_clock_count": 127,
+      "horizon_bars": 120,
+      "bar_hours": 1.0
+    },
+    "BB_LOWER_REV_LONG_W24_K2": {
+      "event_source": "stage39a_events_csv",
+      "raw_trigger_count": 200,
+      "event_clock_count": 132,
+      "horizon_bars": 120,
+      "bar_hours": 1.0
+    }
+  },
+  "classification_counts": {
+    "PATH_DIAGNOSTIC_WATCH_ONLY_NO_PROMOTION": 2,
+    "WEAK_RESIDUAL_VS_PATH_RISK_NO_PROMOTION": 2
+  },
+  "path_watch_count": 2,
+  "outputs": {
+    "candidate_summary_csv": "reports/stage39b/stage39b_event_path_candidate_summary.csv",
+    "event_rows_csv": "reports/stage39b/stage39b_event_path_event_rows.csv",
+    "year_split_csv": "reports/stage39b/stage39b_event_path_year_split.csv",
+    "path_profile_csv": "reports/stage39b/stage39b_event_path_profile.csv",
+    "summary_json": "reports/stage39b/stage39b_event_path_diagnostic_summary.json",
+    "markdown": "reports/stage39b/stage39b_event_path_tradability.md",
+    "plots": []
+  }
+}

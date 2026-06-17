@@ -1,0 +1,13 @@
+{
+  "patch": "stage39b_event_path_tradability_diagnostic_patch",
+  "stage": "Stage39B_EVENT_PATH_AND_TRADABILITY_DIAGNOSTIC",
+  "scope": "RESEARCH_STAGE_ONLY_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "files": [
+    "scripts/stage39b_event_path_tradability_diagnostic.py",
+    "docs/STAGE39B_EVENT_PATH_AND_TRADABILITY_DIAGNOSTIC.md",
+    "reports/stage39b/.gitkeep",
+    "stage39b_patch_manifest.json"
+  ],
+  "created_for": "Follow-up after Stage39A produced 4 strict research-watch rows, still no promotion."
+}

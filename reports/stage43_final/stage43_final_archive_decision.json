@@ -1,0 +1,150 @@
+{
+  "stage": "Stage43_FINAL_ARCHIVE_AFTER_CONTEXT_REGIME_MEGASCAN_V4",
+  "created_utc": "2026-06-17T12:46:47.171910+00:00",
+  "source_stage": "Stage43_PARALLEL_CONTEXT_REGIME_MEGASCAN_V4",
+  "decision": {
+    "Stage43": "ARCHIVE",
+    "Stage43B": "NOT_ALLOWED",
+    "promotion": "NO_GO",
+    "EA": "NO_GO",
+    "paper_live": "NO_GO",
+    "live": "NO_GO"
+  },
+  "input_data": {
+    "db_path": "data/local/xauusd_local_store.sqlite",
+    "table": "bars",
+    "source_filter_used": true,
+    "symbol_filter_used": true,
+    "timeframe_filter_used": true,
+    "source": "amarkets_mt5",
+    "symbol": "XAUUSD",
+    "timeframe": "M15",
+    "timeframe_normalized": "M15",
+    "timeframe_minutes": 15,
+    "loaded_rows": 102493,
+    "loaded_start": "2022-05-01T23:00:00+00:00",
+    "loaded_end": "2026-06-16T12:15:00+00:00",
+    "columns_detected": {
+      "timestamp": "utc_time",
+      "open": "open",
+      "high": "high",
+      "low": "low",
+      "close": "close",
+      "volume": "volume",
+      "spread": "spread",
+      "source": "source",
+      "symbol": "symbol",
+      "timeframe": "timeframe"
+    },
+    "available_dimensions_top20": {
+      "source": [
+        {
+          "value": "amarkets_mt5",
+          "n": 1971743
+        }
+      ],
+      "symbol": [
+        {
+          "value": "XAUUSD",
+          "n": 1971743
+        }
+      ],
+      "timeframe": [
+        {
+          "value": "1m",
+          "n": 1536273
+        },
+        {
+          "value": "M5",
+          "n": 307334
+        },
+        {
+          "value": "M15",
+          "n": 102493
+        },
+        {
+          "value": "1h",
+          "n": 25643
+        }
+      ]
+    },
+    "loaded_dimension_values_top20": {
+      "source": [
+        "amarkets_mt5"
+      ],
+      "symbol": [
+        "XAUUSD"
+      ],
+      "timeframe": [
+        "M15"
+      ]
+    },
+    "filter_debug": {
+      "requested_source": "amarkets_mt5",
+      "requested_symbol": "XAUUSD",
+      "requested_timeframe": "M15",
+      "pre_filter_rows": 1971743,
+      "normalization": "source/symbol use strip+casefold+compact; timeframe uses aliases such as 15m/M15/15MIN -> M15",
+      "source_exact_matches": 1971743,
+      "source_compact_matches": 1971743,
+      "symbol_exact_matches": 1971743,
+      "symbol_compact_matches": 1971743,
+      "requested_timeframe_normalized": "M15",
+      "timeframe_alias_matches": 102493,
+      "post_filter_rows_before_ohlc_clean": 102493,
+      "post_filter_rows_after_ohlc_clean": 102493
+    }
+  },
+  "settings": {
+    "cost_bps": 8.0,
+    "slip_bps": 16.0,
+    "min_events": 120,
+    "event_clock": "candidate-specific min_gap equals horizon_bars",
+    "train_oos_split": "chronological 70/30 event-clock split",
+    "context_regime_inputs": "HTF trend proxy, volatility state, session context, prior-day location/range, Asia range, compression/expansion",
+    "derived_bars": {
+      "b1h": 4,
+      "b2h": 8,
+      "b4h": 16,
+      "b8h": 32,
+      "b12h": 48,
+      "b24h": 96,
+      "b48h": 192,
+      "b5d": 480,
+      "b10d": 960,
+      "b20d": 1920
+    }
+  },
+  "families_scanned": [
+    "43A_CONTEXT_TREND_PULLBACK_CONTINUATION",
+    "43B_VOL_CONTEXT_IMPULSE_EXHAUSTION_REVERSAL",
+    "43C_PRIOR_DAY_CONTEXT_RECLAIM_REJECT",
+    "43D_CONTEXT_COMPRESSION_TO_EXPANSION",
+    "43E_ASIA_RANGE_REGIME_ACCEPT_REJECT",
+    "43F_NEUTRAL_REGIME_VALUE_ROTATION"
+  ],
+  "evidence": {
+    "candidate_rows": 336,
+    "events_rows_written": 49079,
+    "strict_stage43_context_regime_scan_watch_count": 0,
+    "soft_stage43_context_regime_scan_watch_count": 0,
+    "classification_counts": {
+      "INSUFFICIENT_EVENTS_RESEARCH_ONLY": 203,
+      "FAIL_BENCHMARK_OR_CONTEXT_STABILITY_RESEARCH_ONLY": 133
+    },
+    "errors": []
+  },
+  "hard_reasons": [
+    "strict_stage43_context_regime_scan_watch_count_eq_0",
+    "soft_stage43_context_regime_scan_watch_count_eq_0",
+    "no_preexisting_shortlist_for_stage43b",
+    "all_candidates_failed_or_insufficient_events",
+    "no_rescue_or_posthoc_filtering_allowed"
+  ],
+  "anti_overfit_constraints": [
+    "Do not rescue failed Stage43 rows by removing weak hours, months, years, quarters, volatility states, context states, or stop-touch buckets after seeing output.",
+    "Do not build Stage43B because there are no strict or soft shortlist rows.",
+    "Do not promote any Stage43 row to EA, paper-live, or live."
+  ],
+  "next_allowed_step": "Start Stage44 only as a genuinely new branch; recommended direction is meta-diagnostic / thesis-space audit before adding more scans."
+}

@@ -1,0 +1,106 @@
+{
+  "stage": "Stage42_FINAL_ARCHIVE_AFTER_INTRADAY_MEGASCAN_V3",
+  "created_utc": "2026-06-17T12:26:11Z",
+  "source_stage": "Stage42_PARALLEL_INTRADAY_EXECUTION_MEGASCAN_V3",
+  "decision": {
+    "Stage42": "ARCHIVE",
+    "Stage42B": "NOT_ALLOWED",
+    "promotion": "NO_GO",
+    "EA": "NO_GO",
+    "paper_live": "NO_GO",
+    "live": "NO_GO"
+  },
+  "data": {
+    "db_path": "data/local/xauusd_local_store.sqlite",
+    "table": "bars",
+    "source": "amarkets_mt5",
+    "symbol": "XAUUSD",
+    "timeframe": "M15",
+    "timeframe_normalized": "M15",
+    "timeframe_minutes": 15,
+    "loaded_rows": 102493,
+    "loaded_start": "2022-05-01T23:00:00+00:00",
+    "loaded_end": "2026-06-16T12:15:00+00:00",
+    "columns_detected": {
+      "timestamp": "utc_time",
+      "open": "open",
+      "high": "high",
+      "low": "low",
+      "close": "close",
+      "volume": "volume",
+      "spread": "spread",
+      "source": "source",
+      "symbol": "symbol",
+      "timeframe": "timeframe"
+    },
+    "filter_debug": {
+      "requested_source": "amarkets_mt5",
+      "requested_symbol": "XAUUSD",
+      "requested_timeframe": "M15",
+      "pre_filter_rows": 1971743,
+      "normalization": "source/symbol use strip+casefold+compact; timeframe uses aliases such as 15m/M15/15MIN -> M15",
+      "source_exact_matches": 1971743,
+      "source_compact_matches": 1971743,
+      "symbol_exact_matches": 1971743,
+      "symbol_compact_matches": 1971743,
+      "requested_timeframe_normalized": "M15",
+      "timeframe_alias_matches": 102493,
+      "post_filter_rows_before_ohlc_clean": 102493,
+      "post_filter_rows_after_ohlc_clean": 102493
+    }
+  },
+  "scan_settings": {
+    "cost_bps": 8.0,
+    "slip_bps": 16.0,
+    "min_events": 120,
+    "event_clock": "candidate-specific min_gap equals horizon_bars",
+    "train_oos_split": "chronological 70/30 event-clock split",
+    "intraday_path_risk": "MAE/MFE plus touch_stop_35bps and touch_stop_50bps",
+    "derived_bars": {
+      "b1h": 4,
+      "b2h": 8,
+      "b4h": 16,
+      "b8h": 32,
+      "b12h": 48,
+      "b24h": 96,
+      "b48h": 192
+    }
+  },
+  "families_scanned": [
+    "42A_LONDON_ASIA_RANGE_MICRO_RETEST",
+    "42B_NY_IMPULSE_PULLBACK_CONTINUATION",
+    "42C_PREVDAY_LIQUIDITY_SWEEP_REVERSAL",
+    "42D_INTRADAY_COMPRESSION_EXPANSION_CONFIRM",
+    "42E_LONDON_RANGE_ACCEPTANCE_REJECTION",
+    "42F_MICROTREND_PULLBACK_HOLD"
+  ],
+  "scan_result": {
+    "candidate_rows": 168,
+    "events_rows_written": 103371,
+    "strict_stage42_intraday_scan_watch_count": 0,
+    "soft_stage42_intraday_scan_watch_count": 0,
+    "classification_counts": {
+      "FAIL_BENCHMARK_OR_INTRADAY_STABILITY_RESEARCH_ONLY": 128,
+      "INSUFFICIENT_EVENTS_RESEARCH_ONLY": 40
+    },
+    "errors": []
+  },
+  "archive_reasons": [
+    "strict_stage42_intraday_scan_watch_count == 0",
+    "soft_stage42_intraday_scan_watch_count == 0",
+    "No shortlist exists for Stage42B path-stability/promotion audit.",
+    "All eligible-looking rows failed benchmark/stability gates or lacked enough events.",
+    "Do not rescue failed Stage42 rows by removing weak hours/months/years/stop-touch buckets after seeing the output."
+  ],
+  "next_allowed_step": "Start Stage43 only as a genuinely new thesis branch; do not run Stage42B or post-hoc filters on Stage42 rows.",
+  "recommended_stage43_direction": {
+    "name": "Stage43_PARALLEL_CONTEXT_REGIME_MEGASCAN_V4",
+    "rationale": "H1 Stage41 and M15 Stage42 produced zero strict/soft shortlist rows. The next branch should test new context/regime hypotheses rather than narrower execution tweaks.",
+    "constraints": [
+      "No rescue of Stage41/Stage42 candidates.",
+      "Benchmark-first and cost-aware.",
+      "No promotion at scan stage.",
+      "Use predeclared macro/time/session/volatility-context gates if implemented; no after-the-fact bucket removal."
+    ]
+  }
+}

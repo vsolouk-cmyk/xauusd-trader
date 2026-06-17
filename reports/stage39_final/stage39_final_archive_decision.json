@@ -1,0 +1,42 @@
+{
+  "stage": "Stage39_FINAL_ARCHIVE_AFTER_STAGE39F_RECENCY_BIAS_AUDIT",
+  "created_utc": "2026-06-17T05:01:50Z",
+  "decision_scope": "RESEARCH_STAGE_ARCHIVE_ONLY_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "ea": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "reason": "Stage39F found zero strict stable frozen watch rows; all frozen survivors were recency-biased watch-only rows.",
+  "stage39f_key_counts": {
+    "strict_stable_frozen_watch_count": 0,
+    "recency_biased_watch_count": 6,
+    "classification_counts": {
+      "RECENCY_BIASED_FROZEN_RULE_WATCH_ONLY_NO_PROMOTION": 6
+    }
+  },
+  "final_stage39_candidate_state": "NO_STABLE_FROZEN_RULE_SURVIVOR",
+  "allowed_next_action": "Archive Stage39A-F. Do not extend the surviving rules with more filters. A future Stage40 must start from a new thesis, not from Stage39 filter extension.",
+  "candidate_family_archive": {
+    "last_family": "RANGE_BOTTOM_REV_LONG_W48_Q0.05",
+    "status": "RECENCY_BIASED_WATCH_ONLY_NO_PROMOTION",
+    "not_tradeable_reason": [
+      "oos/train asymmetry",
+      "early-quarter negative or slip16-negative behavior",
+      "worst-quarter robustness failures",
+      "zero strict stable frozen watch rows"
+    ]
+  },
+  "standing_rules": [
+    "No EA",
+    "No paper-live",
+    "No live",
+    "No Telegram trade alerts",
+    "No more filters on Stage39 survivors",
+    "Keep COT/macro/GLD/composite only as context/annotation",
+    "Future research must be benchmark-first and no-promotion until strict stable evidence appears"
+  ],
+  "source_files": {
+    "stage39f_markdown": "reports/stage39f/stage39f_frozen_rule_recency_bias_audit.md",
+    "stage39f_summary_json": "reports/stage39f/stage39f_frozen_rule_recency_bias_summary.json"
+  }
+}

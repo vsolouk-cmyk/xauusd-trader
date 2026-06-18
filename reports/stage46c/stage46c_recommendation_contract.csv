@@ -1,0 +1,5 @@
+recommendation,status,reason
+do_not_promote_stage46a,required,strict_count=0 and soft_count=0; all tested candidates remain research-only failures
+do_not_rescue_stage41_42_43,required,Stage46A was a fresh pass; archived candidate rescue remains prohibited
+archive_stage46_branch_if_no_new_thesis,recommended,external context design did not overcome observed costs or stability constraints
+new_thesis_only_if_structurally_distinct,optional_future_research,"Any next scan must be based on a predefined structurally new thesis, not post-hoc filters"

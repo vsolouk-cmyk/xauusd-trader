@@ -1,0 +1,8 @@
+key,path,exists,schema_ok,required_ok,row_count,timestamp_column,start,end,columns,missing_required_columns,numeric_profiles,error
+cme_gc_reference,data/reference/cme_gc.csv,False,False,False,0,,,,[],"['timestamp', 'open', 'high', 'low', 'close']",{},
+cme_gc_reference,data/external/cme_gc.csv,False,False,False,0,,,,[],"['timestamp', 'open', 'high', 'low', 'close']",{},
+cme_gc_reference,data/external/gc_futures.csv,False,False,False,0,,,,[],"['timestamp', 'open', 'high', 'low', 'close']",{},
+cme_gc_reference,data/external/GC.csv,False,False,False,0,,,,[],"['timestamp', 'open', 'high', 'low', 'close']",{},
+cme_gc_reference,data/external/mgc_futures.csv,False,False,False,0,,,,[],"['timestamp', 'open', 'high', 'low', 'close']",{},
+cme_gc_reference,data/reference/gc_futures.csv,False,False,False,0,,,,[],"['timestamp', 'open', 'high', 'low', 'close']",{},
+cme_gc_reference,data/reference/GC.csv,False,False,False,0,,,,[],"['timestamp', 'open', 'high', 'low', 'close']",{},

@@ -1,0 +1,36 @@
+{
+  "generated_utc": "2026-06-18T18:58:00+00:00",
+  "stage": "Stage47B_LIQUIDITY_SWEEP_REVERSAL_SCAN_DESIGN",
+  "status": "IMPLEMENTATION_READY_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "selected_thesis_id": "STRUCT47_A_LIQUIDITY_SWEEP_REVERSAL",
+  "next_allowed_step": "RUN_STAGE47B_SCAN_ON_REPO_DATA",
+  "executable_file": "app/stage47b_liquidity_sweep_reversal_scan.py",
+  "workflow_file": ".github/workflows/stage47b_liquidity_sweep_reversal_scan.yml",
+  "manual_workflow_name": "Stage47B Liquidity Sweep Reversal Scan",
+  "candidate_grid_count": 96,
+  "reference_ranges": ["Asia", "PriorDay"],
+  "active_windows": ["London", "NY"],
+  "sweep_atr_multipliers": [0.1, 0.2, 0.35],
+  "confirmations": ["close_back_inside", "close_back_inside_plus_0.10_ATR"],
+  "targets": ["midpoint", "opposite_side", "1R", "1.5R"],
+  "default_max_hold_minutes": 360,
+  "default_base_cost_points": 0.5,
+  "hard_prohibitions": [
+    "NO_RESCUE_STAGE41_42_43",
+    "NO_STAGE46_EXTERNAL_CONTEXT_CONTINUATION",
+    "NO_POST_HOC_BAD_BUCKET_TUNING",
+    "NO_ML",
+    "NO_EA_PAPER_LIVE_LIVE"
+  ],
+  "double_checks": {
+    "python_compile": "PASS",
+    "csv_smoke_test": "PASS",
+    "sqlite_introspection_smoke_test": "PASS",
+    "no_data_stop_test": "PASS",
+    "json_outputs_parse": "PASS"
+  }
+}

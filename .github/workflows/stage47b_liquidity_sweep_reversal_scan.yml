@@ -1,0 +1,41 @@
+name: Stage47B Liquidity Sweep Reversal Scan
+
+on:
+  workflow_dispatch:
+    inputs:
+      csv_path:
+        description: "Optional explicit normalized CSV path"
+        required: false
+        default: ""
+      timeframe:
+        description: "Timeframe, e.g. M5"
+        required: true
+        default: "M5"
+
+jobs:
+  stage47b-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Debug source
+        run: |
+          if [ -n "${{ inputs.csv_path }}" ]; then
+            python3 app/stage47b_liquidity_sweep_reversal_scan.py --debug-source --csv "${{ inputs.csv_path }}" --timeframe "${{ inputs.timeframe }}"
+          else
+            python3 app/stage47b_liquidity_sweep_reversal_scan.py --debug-source --timeframe "${{ inputs.timeframe }}" --prefer-source csv
+          fi
+      - name: Run Stage47B scan
+        run: |
+          if [ -n "${{ inputs.csv_path }}" ]; then
+            python3 app/stage47b_liquidity_sweep_reversal_scan.py --csv "${{ inputs.csv_path }}" --timeframe "${{ inputs.timeframe }}" --out reports/stage47b
+          else
+            python3 app/stage47b_liquidity_sweep_reversal_scan.py --timeframe "${{ inputs.timeframe }}" --prefer-source csv --out reports/stage47b
+          fi
+      - name: Upload reports artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage47b-reports
+          path: reports/stage47b

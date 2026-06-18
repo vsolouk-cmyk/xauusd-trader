@@ -136,7 +136,7 @@
     {
       "area": "news_blackout",
       "metric": "selected_blackout_coverage_pct",
-      "value": 0.5558818651029827,
+      "value": 0.0792444362053994,
       "operator": ">=",
       "threshold": 0.001,
       "ok": true,
@@ -146,10 +146,10 @@
     {
       "area": "news_blackout",
       "metric": "selected_blackout_coverage_pct",
-      "value": 0.5558818651029827,
+      "value": 0.0792444362053994,
       "operator": "<=",
       "threshold": 0.25,
-      "ok": false,
+      "ok": true,
       "severity": "blocker",
       "note": "If blackout removes too many bars, the calendar is not suitable for baseline design."
     },
@@ -202,8 +202,8 @@
       "candidate_features": "is_news_blackout,minutes_to_event,event_category",
       "input_file": "data/external/news_blackout_windows.csv",
       "alignment_rule": "interval_overlap_utc_predefined_window",
-      "readiness": "BLOCKED_TOO_BROAD",
-      "reason": "selected_variant=macro_usd_or_unknown; selected_blackout_pct=0.5558818651029827; max_allowed=0.25"
+      "readiness": "READY",
+      "reason": "selected_variant=macro_usd_or_unknown; selected_blackout_pct=0.0792444362053994; max_allowed=0.25"
     }
   ],
   "news_calendar_quality_profile": [
@@ -224,7 +224,7 @@
     },
     {
       "metric": "selected_bars_in_blackout",
-      "value": 56974,
+      "value": 8122,
       "interpretation": "Too broad if it removes a large share of all M15 bars."
     },
     {
@@ -314,18 +314,16 @@
     }
   ],
   "decision": {
-    "status": "EXTERNAL_CONTEXT_BASELINE_DESIGN_PRECHECK_BLOCKED_NO_PROMOTION",
+    "status": "EXTERNAL_CONTEXT_BASELINE_DESIGN_PRECHECK_READY_NO_PROMOTION",
     "promotion": "NO_GO",
     "EA": "NO_GO",
     "paper_live": "NO_GO",
     "live": "NO_GO",
-    "blockers": [
-      "news_blackout_coverage_too_broad"
-    ],
+    "blockers": [],
     "warnings": [
       "news_calendar_mixed_semantics_review_required"
     ],
-    "recommended_next_stage": "Stage45B3A_NEWS_CALENDAR_SEMANTIC_REDUCTION",
+    "recommended_next_stage": "Stage46_EXTERNAL_CONTEXT_BASELINE_SCAN_DESIGN",
     "rationale": [
       "Stage45B3 is a design precheck only; it does not create signals or scan candidates.",
       "External context may be technically aligned while still being unsuitable for baseline design if blackout semantics are too broad.",
@@ -343,7 +341,7 @@
   "EA": "NO_GO",
   "paper_live": "NO_GO",
   "live": "NO_GO",
-  "next_allowed_step": "Stage45B3A_NEWS_CALENDAR_SEMANTIC_REDUCTION",
+  "next_allowed_step": "Stage46_EXTERNAL_CONTEXT_BASELINE_SCAN_DESIGN",
   "outputs": {
     "summary_json": "/Users/vahid/Desktop/xauusd-trader/reports/stage45b3/stage45b3_external_context_baseline_design_precheck_summary.json",
     "markdown": "/Users/vahid/Desktop/xauusd-trader/reports/stage45b3/stage45b3_external_context_baseline_design_precheck.md",

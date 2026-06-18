@@ -1,0 +1,6 @@
+metric,value,note
+input_event_count,47.0,Rows in input canonical news calendar before semantic reduction.
+scheduled_macro_event_count,47.0,Rows retained for scheduled macro blackout.
+excluded_context_event_count,0.0,"Rows moved to context/shock file, not blackout."
+scheduled_macro_blackout_bars,0.0,M15 bars inside reduced scheduled macro windows.
+scheduled_macro_blackout_pct,0.0,Share of M15 bars inside reduced scheduled macro windows.

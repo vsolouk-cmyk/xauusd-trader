@@ -7,8 +7,8 @@ promotion = NO_GO
 EA = NO_GO
 paper_live = NO_GO
 live = NO_GO
-status = EXTERNAL_CONTEXT_BASELINE_DESIGN_PRECHECK_BLOCKED_NO_PROMOTION
-recommended_next_stage = Stage45B3A_NEWS_CALENDAR_SEMANTIC_REDUCTION
+status = EXTERNAL_CONTEXT_BASELINE_DESIGN_PRECHECK_READY_NO_PROMOTION
+recommended_next_stage = Stage46_EXTERNAL_CONTEXT_BASELINE_SCAN_DESIGN
 ```
 
 Stage45B3 is a baseline-design precheck only. It does not create trading signals, shortlist candidates, or promote archived rows.
@@ -17,9 +17,7 @@ Stage45B3 is a baseline-design precheck only. It does not create trading signals
 
 ```json
 {
-  "blockers": [
-    "news_blackout_coverage_too_broad"
-  ],
+  "blockers": [],
   "warnings": [
     "news_calendar_mixed_semantics_review_required"
   ]
@@ -39,8 +37,8 @@ Stage45B3 is a baseline-design precheck only. It does not create trading signals
 | cme_reference | cme_return_corr | 0.8445723130581777 | >= 0.65 | True | blocker |
 | cme_reference | cme_return_sign_agreement_pct | 0.8658301158301158 | >= 0.6 | True | blocker |
 | news_blackout | selected_blackout_variant | macro_usd_or_unknown | in macro_usd_or_unknown/macro_semantic_only | True | warning |
-| news_blackout | selected_blackout_coverage_pct | 0.5558818651029827 | >= 0.001 | True | blocker |
-| news_blackout | selected_blackout_coverage_pct | 0.5558818651029827 | <= 0.25 | False | blocker |
+| news_blackout | selected_blackout_coverage_pct | 0.0792444362053994 | >= 0.001 | True | blocker |
+| news_blackout | selected_blackout_coverage_pct | 0.0792444362053994 | <= 0.25 | True | blocker |
 | news_semantics | mixed_numeric_backfill_or_shock_semantics | True | == False | False | warning |
 
 ## Feature contract
@@ -51,13 +49,11 @@ Stage45B3 is a baseline-design precheck only. It does not create trading signals
 | nominal_yield_context | READY | daily_safe_lag_1d_forward_fill | safe_lag_coverage=0.9984423676012462 |
 | real_yield_context_optional | READY_OPTIONAL | daily_safe_lag_1d_forward_fill | safe_lag_coverage=0.9984423676012462 |
 | reference_feed_sanity | READY_REFERENCE_ONLY | daily_reference_overlap_only_not_execution_grade | return_corr=0.8445723130581777; source must stay reference_only |
-| news_blackout | BLOCKED_TOO_BROAD | interval_overlap_utc_predefined_window | selected_variant=macro_usd_or_unknown; selected_blackout_pct=0.5558818651029827; max_allowed=0.25 |
+| news_blackout | READY | interval_overlap_utc_predefined_window | selected_variant=macro_usd_or_unknown; selected_blackout_pct=0.0792444362053994; max_allowed=0.25 |
 
 ## Interpretation
 
-The external context is technically aligned, but the selected news blackout is too broad for baseline design. A blackout that removes most M15 bars would make downstream evidence hard to interpret and could hide overfitting.
-
-The next valid step is to reduce the news calendar to scheduled macro events or construct a separate shock-regime feature instead of treating all numeric shock backfills as no-trade events.
+The external context passes the design precheck. The next valid step is a predefined external-context baseline scan design, not candidate rescue.
 
 ## Not allowed
 

@@ -19,12 +19,12 @@ Stage45B2A repairs only external-context/news-blackout alignment diagnostics. It
 {
   "exists": true,
   "schema_ok": true,
-  "row_count": 515,
-  "start": "2022-01-10T13:30:00+00:00",
-  "end": "2026-12-09T19:00:00+00:00",
-  "macro_semantic_hits": 288,
-  "central_bank_gold_only_hits": 10,
-  "usd_or_unknown_rows": 515
+  "row_count": 47,
+  "start": "2026-01-08T19:00:00+00:00",
+  "end": "2026-12-30T19:00:00+00:00",
+  "macro_semantic_hits": 47,
+  "central_bank_gold_only_hits": 0,
+  "usd_or_unknown_rows": 47
 }
 ```
 
@@ -32,15 +32,15 @@ Stage45B2A repairs only external-context/news-blackout alignment diagnostics. It
 
 | variant | event_count | bars_in_blackout | bars_in_blackout_pct | events_with_bar | median_bars_per_event |
 | :-- | --: | --: | --: | --: | --: |
-| all_events | 515 | 73958 | 72.159% | 459 | 736.0 |
-| macro_semantic_only | 288 | 56974 | 55.588% | 255 | 734.5 |
-| macro_usd_or_unknown | 288 | 56974 | 55.588% | 255 | 734.5 |
+| all_events | 47 | 8122 | 7.924% | 25 | 610.0 |
+| macro_semantic_only | 47 | 8122 | 7.924% | 25 | 610.0 |
+| macro_usd_or_unknown | 47 | 8122 | 7.924% | 25 | 610.0 |
 
 ## Selected repaired blackout windows
 
 ```text
 selected_blackout_variant = macro_usd_or_unknown
-selected_bars_in_blackout = 56974
+selected_bars_in_blackout = 8122
 canonical_blackout_windows_path = data/external/news_blackout_windows.csv
 ```
 
@@ -49,9 +49,7 @@ canonical_blackout_windows_path = data/external/news_blackout_windows.csv
 ```json
 {
   "blockers": [],
-  "warnings": [
-    "news_calendar_contains_mixed_semantics_review_recommended"
-  ]
+  "warnings": []
 }
 ```
 

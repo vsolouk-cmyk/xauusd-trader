@@ -2,7 +2,7 @@ metric,value,interpretation
 schema_ok,True,"Schema is sufficient for parsing, but not enough for strategy design."
 row_count,515,"Event count is sufficient, but event semantics must be constrained."
 selected_variant,macro_usd_or_unknown,Selected variant should be macro-focused.
-selected_bars_in_blackout,56974,Too broad if it removes a large share of all M15 bars.
+selected_bars_in_blackout,8122,Too broad if it removes a large share of all M15 bars.
 category_count,oil_supply_shock=217,Large shock/backfill categories should not automatically be treated as scheduled-news blackout.
 category_count,real_yield_shock=143,Large shock/backfill categories should not automatically be treated as scheduled-news blackout.
 category_count,usd_shock=55,Large shock/backfill categories should not automatically be treated as scheduled-news blackout.

@@ -8,6 +8,6 @@ cme_reference,cme_overlap_pct_of_bar_days,0.807632398753894,>=,0.7,True,blocker,
 cme_reference,cme_return_corr,0.8445723130581777,>=,0.65,True,blocker,CME/Yahoo GC reference must be aligned enough to support reference-feed sanity checks.
 cme_reference,cme_return_sign_agreement_pct,0.8658301158301158,>=,0.6,True,blocker,CME/Yahoo GC reference must be aligned enough to support reference-feed sanity checks.
 news_blackout,selected_blackout_variant,macro_usd_or_unknown,in,macro_usd_or_unknown|macro_semantic_only,True,warning,Use a macro-focused variant rather than all news/generic gold news.
-news_blackout,selected_blackout_coverage_pct,0.5558818651029827,>=,0.001,True,blocker,Blackout must cover at least a small non-zero share of bars.
-news_blackout,selected_blackout_coverage_pct,0.5558818651029827,<=,0.25,False,blocker,"If blackout removes too many bars, the calendar is not suitable for baseline design."
+news_blackout,selected_blackout_coverage_pct,0.0792444362053994,>=,0.001,True,blocker,Blackout must cover at least a small non-zero share of bars.
+news_blackout,selected_blackout_coverage_pct,0.0792444362053994,<=,0.25,True,blocker,"If blackout removes too many bars, the calendar is not suitable for baseline design."
 news_semantics,mixed_numeric_backfill_or_shock_semantics,True,==,False,False,warning,Numeric-shock backfills are useful context but too broad for scheduled macro blackout.

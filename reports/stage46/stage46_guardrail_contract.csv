@@ -1,0 +1,8 @@
+guardrail,rule,severity
+no_archived_candidate_rescue,Do not evaluate Stage41/42/43 rows with new filters,hard
+daily_context_no_lookahead,DXY/yields/real yield available only with lag1 daily forward-fill,hard
+news_blackout_predefined,Use pre-materialized UTC windows only; no optimizing event windows on outcomes,hard
+reference_feed_not_execution,GC=F/yfinance reference can tag market-wide agreement only; not settlement/execution,hard
+cost_aware_first,Observed spread/cost assumptions remain first-class in every implementation,hard
+stability_before_promotion,Quarter and bootstrap stability required before any promotion discussion,hard
+no_ml,No ML until robust cost-aware rule baselines survive,hard

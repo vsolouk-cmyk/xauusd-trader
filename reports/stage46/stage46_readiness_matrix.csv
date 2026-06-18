@@ -1,0 +1,9 @@
+area,check,value,ok,severity,note
+stage_chain,stage45b3_ready_for_stage46,True,True,blocker,status=EXTERNAL_CONTEXT_BASELINE_DESIGN_PRECHECK_READY_NO_PROMOTION; next=Stage46_EXTERNAL_CONTEXT_BASELINE_SCAN_DESIGN
+bars,m15_xauusd_bars_loaded,102493,True,blocker,start=2022-05-01T23:00:00+00:00; end=2026-06-16T12:15:00+00:00; error=None
+external_file,data/external/dxy.csv,1025,True,blocker,schema_ok=True; start=2022-05-02T00:00:00+00:00; end=2026-06-05T00:00:00+00:00; error=None
+external_file,data/external/us10y_yield.csv,1028,True,blocker,schema_ok=True; start=2022-05-02T00:00:00+00:00; end=2026-06-11T00:00:00+00:00; error=None
+external_file,data/external/real_yield.csv,1028,True,warning,schema_ok=True; start=2022-05-02T00:00:00+00:00; end=2026-06-11T00:00:00+00:00; error=None
+external_file,data/reference/cme_gc.csv,1039,True,blocker,schema_ok=True; start=2022-05-02T00:00:00+00:00; end=2026-06-18T00:00:00+00:00; error=None
+external_file,data/external/news_calendar.csv,47,True,blocker,schema_ok=True; start=2026-01-08T19:00:00+00:00; end=2026-12-30T19:00:00+00:00; error=None
+external_file,data/external/news_blackout_windows.csv,47,True,blocker,schema_ok=True; start=None; end=None; error=None

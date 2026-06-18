@@ -1,0 +1,12 @@
+item_type,key,status,reason,archive_action
+recommendation,do_not_promote_stage46a,required,strict_count=0 and soft_count=0; all tested candidates remain research-only failures,preserve_as_decision_record
+recommendation,do_not_rescue_stage41_42_43,required,Stage46A was a fresh pass; archived candidate rescue remains prohibited,preserve_as_decision_record
+recommendation,archive_stage46_branch_if_no_new_thesis,recommended,external context design did not overcome observed costs or stability constraints,preserve_as_decision_record
+recommendation,new_thesis_only_if_structurally_distinct,optional_future_research,"Any next scan must be based on a predefined structurally new thesis, not post-hoc filters",preserve_as_decision_record
+failure_bucket,no_survivors,True,strict_count=0; soft_count=0; candidate_rows=132,No Stage46B audit is justified because there are no strict or soft survivors.
+failure_bucket,no_positive_net_edge,True,positive_mean_net_candidates=0; best_mean_net=-10.819902352342146,The external-context rules do not overcome observed transaction costs.
+failure_bucket,cost_overwhelms_gross_edge,True,median_mean_gross=-0.5240225817385625; median_mean_cost=14.497748675966793; median_gross_minus_cost=-15.021771257705355,The raw directional context is too weak relative to cost assumptions.
+failure_bucket,oos_negative,True,positive_oos_candidates=0; best_oos_mean_net=-8.862651965584801,No candidate shows positive out-of-sample net performance.
+failure_bucket,quarter_stability_negative,True,positive_worst_quarter_candidates=0; best_worst_quarter=-17.840407295159622,Quarter-level stability remains negative even for the best candidates.
+failure_bucket,bootstrap_floor_negative,True,positive_bootstrap_p05_candidates=0; best_bootstrap_p05=-11.540569046215914,Bootstrap lower-tail evidence does not support promotion.
+failure_bucket,benchmark_residual_too_small,True,residual_ge_1bps_candidates=0; best_residual=0.4808644418521322,Residual edge versus simple benchmark is too small to justify continuing this scan branch.

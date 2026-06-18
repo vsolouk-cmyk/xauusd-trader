@@ -1,0 +1,2 @@
+key,path,exists,schema_ok,required_ok,row_count,timestamp_column,start,end,error,overlap_rows,overlap_pct_of_bar_days,return_corr,return_sign_agreement_pct,same_day_return_rows
+cme_gc_reference,/Users/vahid/Desktop/xauusd-trader/data/reference/cme_gc.csv,True,True,True,1039,timestamp,2022-05-02T00:00:00+00:00,2026-06-18T00:00:00+00:00,,1037,0.807632398753894,0.8445723130581777,0.8658301158301158,1036

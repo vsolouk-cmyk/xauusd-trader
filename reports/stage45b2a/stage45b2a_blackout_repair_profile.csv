@@ -1,0 +1,4 @@
+variant,event_count,bars_in_blackout,bars_in_blackout_pct,events_with_at_least_one_bar,bars_per_event_median,windows_csv
+all_events,515,73958,72.1590742782434,459,736.0,/Users/vahid/Desktop/xauusd-trader/reports/stage45b2a/stage45b2a_news_blackout_windows_all_events.csv
+macro_semantic_only,288,56974,55.588186510298264,255,734.5,/Users/vahid/Desktop/xauusd-trader/reports/stage45b2a/stage45b2a_news_blackout_windows_macro_semantic_only.csv
+macro_usd_or_unknown,288,56974,55.588186510298264,255,734.5,/Users/vahid/Desktop/xauusd-trader/reports/stage45b2a/stage45b2a_news_blackout_windows_macro_usd_or_unknown.csv

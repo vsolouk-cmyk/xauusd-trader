@@ -1,0 +1,457 @@
+{
+  "stage": "Stage45B2_EXTERNAL_CONTEXT_ALIGNMENT_AUDIT",
+  "settings": {
+    "repo_root": "/Users/vahid/Desktop/xauusd-trader",
+    "db_path": "data/local/xauusd_local_store.sqlite",
+    "table": "bars",
+    "source": "amarkets_mt5",
+    "symbol": "XAUUSD",
+    "timeframe": "M15",
+    "outdir": "reports/stage45b2",
+    "daily_safe_lag_days": 1,
+    "news_blackout_window_hours": {
+      "pre": 2.0,
+      "post": 2.0
+    }
+  },
+  "bar_load_meta": {
+    "db_path": "/Users/vahid/Desktop/xauusd-trader/data/local/xauusd_local_store.sqlite",
+    "table": "bars",
+    "requested_source": "amarkets_mt5",
+    "requested_symbol": "XAUUSD",
+    "requested_timeframe": "M15",
+    "columns": [
+      "source",
+      "symbol",
+      "timeframe",
+      "utc_time",
+      "open",
+      "high",
+      "low",
+      "close",
+      "tick_volume",
+      "spread",
+      "real_volume",
+      "source_time",
+      "imported_utc",
+      "raw_json",
+      "volume",
+      "ingested_at"
+    ],
+    "pre_filter_rows": 1971743,
+    "post_filter_rows_before_clean": 102493,
+    "loaded_rows": 102493,
+    "loaded_start": "2022-05-01T23:00:00+00:00",
+    "loaded_end": "2026-06-16T12:15:00+00:00"
+  },
+  "daily_bar_profile": {
+    "rows": 1284,
+    "start": "2022-05-01T00:00:00+00:00",
+    "end": "2026-06-16T00:00:00+00:00",
+    "bar_count_profile": {
+      "n": 1284,
+      "min": 4.0,
+      "p10": 4.0,
+      "median": 96.0,
+      "p90": 96.0,
+      "p95": 96.0,
+      "p99": 96.0,
+      "max": 96.0,
+      "mean": 79.82320872274143
+    },
+    "daily_ret_bps_profile": {
+      "n": 1283,
+      "min": -1019.3465105117683,
+      "p10": -100.89034687090125,
+      "median": 5.207334829038235,
+      "p90": 124.73129690838068,
+      "p95": 168.46706755797058,
+      "p99": 313.9033477704071,
+      "max": 658.7164406497848,
+      "mean": 7.044921546298469
+    }
+  },
+  "p0_schema_ok_keys": [
+    "dxy",
+    "us10y_yield",
+    "cme_gc_reference",
+    "news_calendar"
+  ],
+  "p0_missing_or_invalid_keys": [],
+  "context_coverage": {
+    "dxy": {
+      "key": "dxy",
+      "path": "/Users/vahid/Desktop/xauusd-trader/data/external/dxy.csv",
+      "exists": true,
+      "schema_ok": true,
+      "row_count": 1025,
+      "timestamp_column": "timestamp",
+      "value_column": "close",
+      "start": "2022-05-02T00:00:00+00:00",
+      "end": "2026-06-05T00:00:00+00:00",
+      "columns": [
+        "timestamp",
+        "close",
+        "source"
+      ],
+      "numeric_profile": {
+        "n": 1025,
+        "min": 117.0264,
+        "p10": 118.9568,
+        "median": 121.102,
+        "p90": 126.6186,
+        "p95": 127.73108,
+        "p99": 129.10168000000002,
+        "max": 130.0413,
+        "mean": 121.83469512195121
+      },
+      "error": null,
+      "safe_lag_days": 1,
+      "bar_date_count": 1284,
+      "same_day_coverage_pct": 0.7951713395638629,
+      "safe_lag_coverage_pct": 0.9984423676012462,
+      "staleness_days_profile": {
+        "n": 1282,
+        "min": 0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 2.0,
+        "p95": 2.0,
+        "p99": 3.0,
+        "max": 10.0,
+        "mean": 0.609204368174727
+      }
+    },
+    "us10y_yield": {
+      "key": "us10y_yield",
+      "path": "/Users/vahid/Desktop/xauusd-trader/data/external/us10y_yield.csv",
+      "exists": true,
+      "schema_ok": true,
+      "row_count": 1028,
+      "timestamp_column": "timestamp",
+      "value_column": "yield",
+      "start": "2022-05-02T00:00:00+00:00",
+      "end": "2026-06-11T00:00:00+00:00",
+      "columns": [
+        "timestamp",
+        "yield",
+        "source"
+      ],
+      "numeric_profile": {
+        "n": 1028,
+        "min": 2.6,
+        "p10": 3.397,
+        "median": 4.16,
+        "p90": 4.513000000000001,
+        "p95": 4.61,
+        "p99": 4.8246,
+        "max": 4.98,
+        "mean": 4.0377626459143965
+      },
+      "error": null,
+      "safe_lag_days": 1,
+      "bar_date_count": 1284,
+      "same_day_coverage_pct": 0.7990654205607477,
+      "safe_lag_coverage_pct": 0.9984423676012462,
+      "staleness_days_profile": {
+        "n": 1282,
+        "min": 0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 2.0,
+        "p95": 2.0,
+        "p99": 3.0,
+        "max": 4.0,
+        "mean": 0.5873634945397815
+      }
+    },
+    "real_yield_optional": {
+      "key": "real_yield",
+      "path": "/Users/vahid/Desktop/xauusd-trader/data/external/real_yield.csv",
+      "exists": true,
+      "schema_ok": true,
+      "row_count": 1028,
+      "timestamp_column": "timestamp",
+      "value_column": "yield",
+      "start": "2022-05-02T00:00:00+00:00",
+      "end": "2026-06-11T00:00:00+00:00",
+      "columns": [
+        "timestamp",
+        "yield",
+        "source"
+      ],
+      "numeric_profile": {
+        "n": 1028,
+        "min": 0.07,
+        "p10": 1.14,
+        "median": 1.86,
+        "p90": 2.16,
+        "p95": 2.24,
+        "p99": 2.4273000000000002,
+        "max": 2.52,
+        "mean": 1.7111575875486382
+      },
+      "error": null,
+      "safe_lag_days": 1,
+      "bar_date_count": 1284,
+      "same_day_coverage_pct": 0.7990654205607477,
+      "safe_lag_coverage_pct": 0.9984423676012462,
+      "staleness_days_profile": {
+        "n": 1282,
+        "min": 0.0,
+        "p10": 0.0,
+        "median": 0.0,
+        "p90": 2.0,
+        "p95": 2.0,
+        "p99": 3.0,
+        "max": 4.0,
+        "mean": 0.5873634945397815
+      }
+    },
+    "us02y_yield_optional": {
+      "key": "us02y_yield",
+      "path": "/Users/vahid/Desktop/xauusd-trader/data/external/us02y_yield.csv",
+      "exists": false,
+      "schema_ok": false,
+      "row_count": 0,
+      "timestamp_column": null,
+      "value_column": null,
+      "start": null,
+      "end": null,
+      "columns": [],
+      "numeric_profile": {},
+      "error": "missing",
+      "safe_lag_days": 1,
+      "bar_date_count": 1284,
+      "same_day_coverage_pct": null,
+      "safe_lag_coverage_pct": null,
+      "staleness_days_profile": {
+        "n": 0
+      }
+    }
+  },
+  "cme_reference_alignment": {
+    "key": "cme_gc_reference",
+    "path": "/Users/vahid/Desktop/xauusd-trader/data/reference/cme_gc.csv",
+    "exists": true,
+    "schema_ok": true,
+    "required_ok": true,
+    "row_count": 1039,
+    "timestamp_column": "timestamp",
+    "start": "2022-05-02T00:00:00+00:00",
+    "end": "2026-06-18T00:00:00+00:00",
+    "columns": [
+      "timestamp",
+      "open",
+      "high",
+      "low",
+      "close",
+      "volume",
+      "contract",
+      "source"
+    ],
+    "numeric_profiles": {
+      "open": {
+        "n": 1039,
+        "min": 1620.4000244140625,
+        "p10": 1785.4400390625,
+        "median": 2336.89990234375,
+        "p90": 4442.67998046875,
+        "p95": 4715.229931640624,
+        "p99": 5157.35587890625,
+        "max": 5415.7001953125,
+        "mean": 2696.1746896664836
+      },
+      "high": {
+        "n": 1039,
+        "min": 1623.300048828125,
+        "p10": 1794.2200439453125,
+        "median": 2354.0,
+        "p90": 4452.2599609375,
+        "p95": 4764.120019531249,
+        "p99": 5187.081953124999,
+        "max": 5586.2001953125,
+        "mean": 2712.8829653522394
+      },
+      "low": {
+        "n": 1039,
+        "min": 1615.0999755859375,
+        "p10": 1774.3599609375,
+        "median": 2326.89990234375,
+        "p90": 4377.359960937501,
+        "p95": 4677.790087890625,
+        "p99": 5106.924121093748,
+        "max": 5301.60009765625,
+        "mean": 2679.3030804954433
+      },
+      "close": {
+        "n": 1039,
+        "min": 1623.300048828125,
+        "p10": 1786.5400390625,
+        "median": 2336.0,
+        "p90": 4438.43994140625,
+        "p95": 4718.870166015625,
+        "p99": 5136.258134765622,
+        "max": 5318.39990234375,
+        "mean": 2696.3892157282016
+      }
+    },
+    "error": null,
+    "overlap_rows": 1037,
+    "overlap_pct_of_bar_days": 0.807632398753894,
+    "close_diff_bps_profile": {
+      "n": 1037,
+      "min": 0.0002795289961385089,
+      "p10": 3.252637188097828,
+      "median": 16.231512465756374,
+      "p90": 64.90400615096044,
+      "p95": 87.89447505353998,
+      "p99": 201.0320794145893,
+      "max": 383.2477803684283,
+      "mean": 27.405348492700625
+    },
+    "return_corr": 0.8445723130581777,
+    "return_sign_agreement_pct": 0.8658301158301158,
+    "same_day_return_rows": 1036
+  },
+  "news_calendar_alignment": {
+    "key": "news_calendar",
+    "path": "/Users/vahid/Desktop/xauusd-trader/data/external/news_calendar.csv",
+    "exists": true,
+    "schema_ok": true,
+    "blackout_ready": false,
+    "row_count": 515,
+    "timestamp_column": "timestamp",
+    "event_column": "event",
+    "currency_column": "currency",
+    "impact_column": "impact",
+    "category_column": "category",
+    "start": "2022-01-10T13:30:00+00:00",
+    "end": "2026-12-09T19:00:00+00:00",
+    "columns": [
+      "timestamp",
+      "event",
+      "currency",
+      "impact",
+      "category",
+      "actual",
+      "forecast",
+      "previous",
+      "source"
+    ],
+    "macro_semantic_hits": 233,
+    "central_bank_gold_only_hits": 10,
+    "usd_or_unknown_rows": 515,
+    "blackout_window": {
+      "pre_hours": 2.0,
+      "post_hours": 2.0
+    },
+    "bars_in_blackout": 0,
+    "bars_in_blackout_pct": 0.0,
+    "event_category_counts_top20": [
+      {
+        "category": "oil_supply_shock",
+        "n": 217
+      },
+      {
+        "category": "real_yield_shock",
+        "n": 143
+      },
+      {
+        "category": "usd_shock",
+        "n": 55
+      },
+      {
+        "category": "front_end_yield_shock",
+        "n": 52
+      },
+      {
+        "category": "nominal_yield_shock",
+        "n": 33
+      },
+      {
+        "category": "central_bank_gold_demand",
+        "n": 10
+      },
+      {
+        "category": "fomc_statement",
+        "n": 5
+      }
+    ],
+    "event_source_counts_top20": [
+      {
+        "source": "fred_numeric_backfill",
+        "n": 500
+      },
+      {
+        "source": "scheduled_seed",
+        "n": 5
+      },
+      {
+        "source": "gdelt:cfi.net.cn",
+        "n": 2
+      },
+      {
+        "source": "gdelt:news.china.com",
+        "n": 2
+      },
+      {
+        "source": "gdelt:gold.cnfol.com",
+        "n": 1
+      },
+      {
+        "source": "gdelt:ec.ltn.com.tw",
+        "n": 1
+      },
+      {
+        "source": "gdelt:money.hangzhou.com.cn",
+        "n": 1
+      },
+      {
+        "source": "gdelt:news.china.com.cn",
+        "n": 1
+      },
+      {
+        "source": "gdelt:nbd.com.cn",
+        "n": 1
+      },
+      {
+        "source": "gdelt:cqnews.net",
+        "n": 1
+      }
+    ],
+    "decision_reason": "schema_ok_but_no_bars_in_blackout_window",
+    "error": null
+  },
+  "decision": {
+    "status": "EXTERNAL_CONTEXT_ALIGNMENT_AUDIT_BLOCKED_NO_PROMOTION",
+    "promotion": "NO_GO",
+    "EA": "NO_GO",
+    "paper_live": "NO_GO",
+    "live": "NO_GO",
+    "blockers": [
+      "news_blackout_windows_do_not_cover_any_bars"
+    ],
+    "warnings": [
+      "news_calendar_schema_ok_but_semantic_blackout_review_recommended"
+    ],
+    "recommended_next_stage": "Stage45B2A_EXTERNAL_CONTEXT_ALIGNMENT_REPAIR",
+    "rationale": [
+      "P0 external context is evaluated for timestamp coverage, no-lookahead daily alignment, reference-feed overlap, and news blackout coverage.",
+      "This stage does not create signals, rescue Stage41/42/43 candidates, or authorize EA/paper/live.",
+      "If alignment is ready, the next stage may design a predefined external-context baseline; otherwise repair alignment first."
+    ],
+    "not_allowed": [
+      "candidate_rescue_from_stage41_42_43",
+      "post_hoc_filtering_of_bad_hours_months_years_quarters_contexts_or_spread_buckets",
+      "EA_paper_live_live_from_archived_rows",
+      "ML_before_robust_cost_aware_baseline",
+      "new_candle_only_blind_megascan_before_external_context_alignment_is_audited"
+    ]
+  },
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "next_allowed_step": "Stage45B2A_EXTERNAL_CONTEXT_ALIGNMENT_REPAIR"
+}

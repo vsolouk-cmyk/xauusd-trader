@@ -18,8 +18,8 @@ Stage45B1B is a gap-closure diagnostic for the remaining P0 external-context inp
 | :-- | :-- | --: | :-- | :-- | :-- |
 | dxy | True | 1025 | 2022-05-02T00:00:00+00:00 | 2026-06-05T00:00:00+00:00 | data/external/dxy.csv |
 | us10y_yield | True | 1028 | 2022-05-02T00:00:00+00:00 | 2026-06-11T00:00:00+00:00 | data/external/us10y_yield.csv |
-| cme_gc_reference | False | 0 |  |  | data/reference/cme_gc.csv |
-| news_calendar | False | 0 |  |  | data/external/news_calendar.csv |
+| cme_gc_reference | True | 1039 | 2022-05-02T00:00:00+00:00 | 2026-06-18T00:00:00+00:00 | data/reference/cme_gc.csv |
+| news_calendar | False | 515 | 2022-01-10T13:30:00+00:00 | 2026-12-09T19:00:00+00:00 | data/external/news_calendar.csv |
 
 ## Optional readiness
 
@@ -29,15 +29,14 @@ Stage45B1B is a gap-closure diagnostic for the remaining P0 external-context inp
 
 ## Candidate scan summary
 
-- CME schema-ready candidate count: `0`
+- CME schema-ready candidate count: `1`
 - News blackout-ready candidate count: `2`
-- Partial/schema-only news candidate count: `0`
+- Partial/schema-only news candidate count: `1`
 
 ## Acquisition tasks
 
 | key | canonical_path | required_columns | next_action |
 | :-- | :-- | :-- | :-- |
-| cme_gc_reference | data/reference/cme_gc.csv | timestamp,open,high,low,close[,volume,contract,source] | recover prior GC/MGC file from archive/git or acquire a clean GC/MGC continuous futures reference feed |
 | news_calendar | data/external/news_calendar.csv | timestamp,event,currency,impact,category,actual,forecast,previous,source | build/import CPI/FOMC/NFP/PCE/jobs/rate-event calendar; do not use generic GDELT gold news as blackout calendar |
 
 ## Rationale

@@ -7,7 +7,7 @@ promotion = NO_GO
 EA = NO_GO
 paper_live = NO_GO
 live = NO_GO
-recommended_next_stage = Stage45B1_CONTINUE_EXTERNAL_CONTEXT_DATA_ACQUISITION
+recommended_next_stage = Stage45B2_EXTERNAL_CONTEXT_ALIGNMENT_AUDIT
 ```
 
 Stage45B1A only imports, normalizes, and validates external context files. It does not create signals, shortlist candidates, or promote archived rows.
@@ -18,8 +18,8 @@ Stage45B1A only imports, normalizes, and validates external context files. It do
 | :-- | :-- | --: | :-- | :-- | :-- |
 | dxy | True | 1025 | 2022-05-02T00:00:00+00:00 | 2026-06-05T00:00:00+00:00 | /Users/vahid/Desktop/xauusd-trader/data/external/dxy.csv |
 | us10y_yield | True | 1028 | 2022-05-02T00:00:00+00:00 | 2026-06-11T00:00:00+00:00 | /Users/vahid/Desktop/xauusd-trader/data/external/us10y_yield.csv |
-| cme_gc_reference | False | 0 |  |  | /Users/vahid/Desktop/xauusd-trader/data/reference/cme_gc.csv |
-| news_calendar | False | 0 |  |  | /Users/vahid/Desktop/xauusd-trader/data/external/news_calendar.csv |
+| cme_gc_reference | True | 1039 | 2022-05-02T00:00:00+00:00 | 2026-06-18T00:00:00+00:00 | /Users/vahid/Desktop/xauusd-trader/data/reference/cme_gc.csv |
+| news_calendar | True | 515 | 2022-01-10T13:30:00+00:00 | 2026-12-09T19:00:00+00:00 | /Users/vahid/Desktop/xauusd-trader/data/external/news_calendar.csv |
 
 ## Optional readiness
 
@@ -36,7 +36,7 @@ Stage45B1A only imports, normalizes, and validates external context files. It do
 
 ## Decision rationale
 
-- P0 external context files are still missing or schema-invalid; continue acquisition/import.
+- P0 external context files validate successfully; the next step is alignment auditing.
 - This step only normalizes and validates external files; it does not authorize candle-only scans or candidate rescue.
 
 ## Next command pattern

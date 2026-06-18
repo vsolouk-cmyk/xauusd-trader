@@ -75,6 +75,26 @@ def _norm_col(c: str) -> str:
     return re.sub(r"[^a-z0-9]+", "_", str(c).strip().lower()).strip("_")
 
 
+
+
+def _bool_sum(values: Any) -> int:
+    """Return a safe integer count for pandas/object boolean-like values.
+
+    Some pandas/runtime combinations can coerce apply/sum results through object
+    paths when empty strings or extension dtypes are present.  Stage45B1B is a
+    diagnostic and should never crash because a candidate calendar contains
+    blank cells.
+    """
+    try:
+        return int(sum(1 for v in values if bool(v)))
+    except TypeError:
+        return int(bool(values))
+
+
+def _series_text(df: pd.DataFrame, column: str) -> pd.Series:
+    return df[column].fillna("").astype(str).str.lower()
+
+
 def _read_csv_head(path: Path, n: Optional[int] = None) -> Tuple[Optional[pd.DataFrame], Optional[str]]:
     try:
         if n is None:
@@ -249,7 +269,7 @@ def classify_news_calendar(repo_root: Path, path: Path, min_rows: int = 10) -> D
     if not ts_col or not event_col:
         out["decision_reason"] = "missing_timestamp_or_event_column"
         return out
-    text = df[event_col].astype(str).str.lower()
+    text = _series_text(df, event_col)
     extra_cols = []
     for maybe in ["event_class", "event_channel", "manual_tags", "notes", "category"]:
         c = _pick_col(cols_norm, [maybe])
@@ -258,16 +278,17 @@ def classify_news_calendar(repo_root: Path, path: Path, min_rows: int = 10) -> D
     if extra_cols:
         combined = text.copy()
         for c in extra_cols:
-            combined = combined + " " + df[c].astype(str).str.lower()
+            combined = combined + " " + _series_text(df, c)
     else:
         combined = text
-    macro_mask = combined.apply(lambda s: any(k in s for k in MACRO_KEYWORDS))
-    gold_only_mask = combined.apply(lambda s: any(k.lower() in s for k in CENTRAL_BANK_GOLD_ONLY_KEYWORDS))
-    out["macro_keyword_hits"] = int(macro_mask.sum())
-    out["central_bank_gold_only_hits"] = int(gold_only_mask.sum())
+    macro_mask = combined.apply(lambda s: any(k in str(s) for k in MACRO_KEYWORDS))
+    gold_only_mask = combined.apply(lambda s: any(k.lower() in str(s) for k in CENTRAL_BANK_GOLD_ONLY_KEYWORDS))
+    out["macro_keyword_hits"] = _bool_sum(macro_mask)
+    out["central_bank_gold_only_hits"] = _bool_sum(gold_only_mask)
     if currency_col:
-        ccy = df[currency_col].astype(str).str.upper().str.strip()
-        out["usd_or_unknown_rows"] = int((ccy.isin(["USD", "US", "USA", ""]) | ccy.isna()).sum())
+        ccy = df[currency_col].fillna("").astype(str).str.upper().str.strip()
+        usd_mask = ccy.isin(["USD", "US", "USA", ""]) | ccy.isna()
+        out["usd_or_unknown_rows"] = _bool_sum(usd_mask)
     else:
         out["usd_or_unknown_rows"] = int(df.shape[0])
 

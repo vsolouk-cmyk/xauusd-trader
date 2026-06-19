@@ -1,0 +1,142 @@
+{
+  "stage": "Stage48F_BROKER_REFERENCE_ALIGNMENT_AND_COST_MODEL_CALIBRATION",
+  "patch": "Stage48F_BROKER_REFERENCE_ALIGNMENT_COST_MODEL_NO_TRADING_SCAN",
+  "status": "COST_MODEL_INSUFFICIENT_NO_PROMOTION",
+  "broker_csv": "/Users/vahid/Downloads/amarkets_xauusd_5m.csv",
+  "reference_csv": "/Users/vahid/Desktop/xauusd-trader/data/normalized/normalized_twelvedata_XAU_USD_5min_backfill_20260619T051819Z.csv",
+  "timeframe": "M5",
+  "point_size": 0.01,
+  "selected_broker_time_offset_hours": 4,
+  "spread_points": {
+    "count": 17443,
+    "mean": 37.72579258155134,
+    "median": 37.0,
+    "p90": 44.0,
+    "p95": 44.0,
+    "p99": 45.0,
+    "min": 32.0,
+    "max": 55.0
+  },
+  "spread_price": {
+    "count": 17443,
+    "mean": 0.3772579258155134,
+    "median": 0.37,
+    "p90": 0.44,
+    "p95": 0.44,
+    "p99": 0.45000000000000007,
+    "min": 0.32,
+    "max": 0.55
+  },
+  "spread_cost_bps": {
+    "count": 17443,
+    "mean": 0.8277545737314971,
+    "median": 0.8088324503579083,
+    "p90": 0.950101302391308,
+    "p95": 0.9820118106698879,
+    "p99": 1.0380128637678558,
+    "min": 0.7071479397686742,
+    "max": 1.2548339626515783
+  },
+  "basis_bps": {
+    "count": 17443,
+    "mean": -1.1579947042692758,
+    "median": -1.2856841876238223,
+    "p90": 36.50927678674153,
+    "p95": 55.376907520105995,
+    "p99": 130.96135228543886,
+    "min": -570.7960973559376,
+    "max": 493.76721730156726
+  },
+  "abs_basis_bps": {
+    "count": 17443,
+    "mean": 26.677747427789633,
+    "median": 17.096707729293314,
+    "p90": 55.74449729127109,
+    "p95": 81.7316482647209,
+    "p99": 181.14383340918133,
+    "min": 0.00012500364623924256,
+    "max": 570.7960973559376
+  },
+  "slippage_buffer_bps": 2.0,
+  "recommended_cost_bps": 2.950101302391308,
+  "stress_cost_bps": 2.9820118106698876,
+  "extreme_cost_bps": 3.0380128637678556,
+  "recommended_usage": {
+    "default_scan_cost_bps": 2.950101302391308,
+    "stress_scan_cost_bps": 2.9820118106698876,
+    "extreme_spread_filter_reference_bps": 3.0380128637678556,
+    "note": "Use this for broker-real backtests only. This does not authorize EA, paper-live, or live trading."
+  },
+  "session_cost_profile": [
+    {
+      "session_utc": "asia",
+      "rows": 5352,
+      "median_spread_points": 38.0,
+      "p90_spread_points": 44.0,
+      "p95_spread_points": 45.0,
+      "p99_spread_points": 48.0,
+      "median_spread_cost_bps": 0.8362326399244755,
+      "p90_spread_cost_bps": 0.9693023141564288,
+      "p95_spread_cost_bps": 0.9951403107317746,
+      "p99_spread_cost_bps": 1.0887325710422173,
+      "median_abs_basis_bps": 18.027441311361212,
+      "p95_abs_basis_bps": 75.7342835347601
+    },
+    {
+      "session_utc": "late_us",
+      "rows": 2304,
+      "median_spread_points": 41.0,
+      "p90_spread_points": 44.0,
+      "p95_spread_points": 45.0,
+      "p99_spread_points": 53.0,
+      "median_spread_cost_bps": 0.9051011925184512,
+      "p90_spread_cost_bps": 0.9802667647151044,
+      "p95_spread_cost_bps": 1.0130251555695873,
+      "p99_spread_cost_bps": 1.1368549591447896,
+      "median_abs_basis_bps": 15.3510588325337,
+      "p95_abs_basis_bps": 108.7450897495625
+    },
+    {
+      "session_utc": "london",
+      "rows": 3780,
+      "median_spread_points": 35.0,
+      "p90_spread_points": 39.0,
+      "p95_spread_points": 43.0,
+      "p99_spread_points": 45.0,
+      "median_spread_cost_bps": 0.7744504875330532,
+      "p90_spread_cost_bps": 0.8633864579547568,
+      "p95_spread_cost_bps": 0.9443621394131902,
+      "p99_spread_cost_bps": 1.0191252503040324,
+      "median_abs_basis_bps": 14.98698365705515,
+      "p95_abs_basis_bps": 64.53395571831342
+    },
+    {
+      "session_utc": "london_ny_overlap",
+      "rows": 3024,
+      "median_spread_points": 35.0,
+      "p90_spread_points": 39.0,
+      "p95_spread_points": 41.0,
+      "p99_spread_points": 45.0,
+      "median_spread_cost_bps": 0.7720866419918948,
+      "p90_spread_cost_bps": 0.8627409912473767,
+      "p95_spread_cost_bps": 0.9302825364333848,
+      "p99_spread_cost_bps": 1.019439949654564,
+      "median_abs_basis_bps": 23.979890638527973,
+      "p95_abs_basis_bps": 102.70872646443306
+    },
+    {
+      "session_utc": "new_york",
+      "rows": 2983,
+      "median_spread_points": 35.0,
+      "p90_spread_points": 42.0,
+      "p95_spread_points": 44.0,
+      "p99_spread_points": 45.0,
+      "median_spread_cost_bps": 0.7714518724239019,
+      "p90_spread_cost_bps": 0.9338974682021467,
+      "p95_spread_cost_bps": 0.9708358651710342,
+      "p99_spread_cost_bps": 1.0229470204992075,
+      "median_abs_basis_bps": 14.225099058385016,
+      "p95_abs_basis_bps": 66.63667624292981
+    }
+  ]
+}

@@ -1,0 +1,194 @@
+{
+  "stage": "Stage48F_BROKER_REFERENCE_ALIGNMENT_AND_COST_MODEL_CALIBRATION",
+  "patch": "Stage48F_BROKER_REFERENCE_ALIGNMENT_COST_MODEL_NO_TRADING_SCAN",
+  "status": "COST_MODEL_INSUFFICIENT_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "next_allowed_step": "FIX_ALIGNMENT_OR_BROKER_EXPORT_NO_PROMOTION",
+  "broker_csv": "/Users/vahid/Downloads/amarkets_xauusd_5m.csv",
+  "reference_csv": "/Users/vahid/Desktop/xauusd-trader/data/normalized/normalized_twelvedata_XAU_USD_5min_backfill_20260619T051819Z.csv",
+  "broker_rows": 292435,
+  "broker_start_utc": "2022-05-01T21:00:00Z",
+  "broker_end_utc": "2026-06-19T04:55:00Z",
+  "broker_coverage_days": 1509.329861111111,
+  "broker_spread_coverage_pct": 5.964744302152615,
+  "reference_rows": 25905,
+  "aligned_rows": 17443,
+  "aligned_coverage_days": 88.37152777777777,
+  "selected_broker_time_offset_hours": 4,
+  "offset_meta": {
+    "offset_scores": [
+      {
+        "offset_hours": -6,
+        "matched_timestamps": 17339,
+        "broker_rows": 292435
+      },
+      {
+        "offset_hours": -5,
+        "matched_timestamps": 17347,
+        "broker_rows": 292435
+      },
+      {
+        "offset_hours": -4,
+        "matched_timestamps": 17351,
+        "broker_rows": 292435
+      },
+      {
+        "offset_hours": -3,
+        "matched_timestamps": 17363,
+        "broker_rows": 292435
+      },
+      {
+        "offset_hours": -2,
+        "matched_timestamps": 17375,
+        "broker_rows": 292435
+      },
+      {
+        "offset_hours": -1,
+        "matched_timestamps": 17387,
+        "broker_rows": 292435
+      },
+      {
+        "offset_hours": 0,
+        "matched_timestamps": 17399,
+        "broker_rows": 292435
+      },
+      {
+        "offset_hours": 1,
+        "matched_timestamps": 17411,
+        "broker_rows": 292435
+      },
+      {
+        "offset_hours": 2,
+        "matched_timestamps": 17423,
+        "broker_rows": 292435
+      },
+      {
+        "offset_hours": 3,
+        "matched_timestamps": 17435,
+        "broker_rows": 292435
+      },
+      {
+        "offset_hours": 4,
+        "matched_timestamps": 17443,
+        "broker_rows": 292435
+      },
+      {
+        "offset_hours": 5,
+        "matched_timestamps": 17443,
+        "broker_rows": 292435
+      },
+      {
+        "offset_hours": 6,
+        "matched_timestamps": 17443,
+        "broker_rows": 292435
+      }
+    ],
+    "selected_offset_hours": 4,
+    "selected_match_count": 17443,
+    "auto_offset_search": true
+  },
+  "point_size": 0.01,
+  "spread_cost_bps": {
+    "count": 17443,
+    "mean": 0.8277545737314971,
+    "median": 0.8088324503579083,
+    "p90": 0.950101302391308,
+    "p95": 0.9820118106698879,
+    "p99": 1.0380128637678558,
+    "min": 0.7071479397686742,
+    "max": 1.2548339626515783
+  },
+  "abs_basis_bps": {
+    "count": 17443,
+    "mean": 26.677747427789633,
+    "median": 17.096707729293314,
+    "p90": 55.74449729127109,
+    "p95": 81.7316482647209,
+    "p99": 181.14383340918133,
+    "min": 0.00012500364623924256,
+    "max": 570.7960973559376
+  },
+  "recommended_cost_bps": 2.950101302391308,
+  "stress_cost_bps": 2.9820118106698876,
+  "extreme_cost_bps": 3.0380128637678556,
+  "ready_failure_reasons": [
+    "broker_spread_coverage_lt_80pct"
+  ],
+  "broker_load_meta": {
+    "path": "/Users/vahid/Downloads/amarkets_xauusd_5m.csv",
+    "raw_rows": 292435,
+    "accepted_rows": 292435,
+    "parse_fail_rows": 0,
+    "bad_ohlc_rows": 0,
+    "bad_timestamp_rows": 0,
+    "numeric_spread_rows": 292435,
+    "delimiter": "\t",
+    "fieldnames": [
+      "<DATE>",
+      "<TIME>",
+      "<OPEN>",
+      "<HIGH>",
+      "<LOW>",
+      "<CLOSE>",
+      "<TICKVOL>",
+      "<VOL>",
+      "<SPREAD>"
+    ],
+    "mapping": {
+      "date": "<DATE>",
+      "time": "<TIME>",
+      "ts": null,
+      "open": "<OPEN>",
+      "high": "<HIGH>",
+      "low": "<LOW>",
+      "close": "<CLOSE>",
+      "spread": "<SPREAD>",
+      "timeframe": null
+    },
+    "time_offset_hours_applied": 4,
+    "duplicates_removed": 0,
+    "start_utc": "2022-05-01T21:00:00Z",
+    "end_utc": "2026-06-19T04:55:00Z",
+    "coverage_days": 1509.329861111111
+  },
+  "reference_load_meta": {
+    "path": "/Users/vahid/Desktop/xauusd-trader/data/normalized/normalized_twelvedata_XAU_USD_5min_backfill_20260619T051819Z.csv",
+    "raw_rows": 25905,
+    "accepted_rows": 25905,
+    "bad_timestamp_rows": 0,
+    "bad_ohlc_rows": 0,
+    "fieldnames": [
+      "time_utc",
+      "open",
+      "high",
+      "low",
+      "close",
+      "volume",
+      "symbol",
+      "interval",
+      "provider",
+      "source_file",
+      "fetched_at_utc",
+      "spread_available",
+      "spread_close",
+      "session_utc"
+    ],
+    "delimiter": ",",
+    "mapping": {
+      "ts": "time_utc",
+      "open": "open",
+      "high": "high",
+      "low": "low",
+      "close": "close",
+      "timeframe": "interval",
+      "session": "session_utc"
+    },
+    "start_utc": "2026-03-21T05:20:00Z",
+    "end_utc": "2026-06-19T05:15:00Z",
+    "coverage_days": 89.99652777777777,
+    "found": true
+  }
+}

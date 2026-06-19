@@ -1,0 +1,10 @@
+{
+  "stage": "Stage48F_BROKER_REFERENCE_ALIGNMENT_AND_COST_MODEL_CALIBRATION",
+  "patch": "Stage48F_BROKER_REFERENCE_ALIGNMENT_COST_MODEL_NO_TRADING_SCAN",
+  "status": "PATCH_READY_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "note": "Combines broker-realism decision continuation with executable broker/reference alignment and cost-model calibration."
+}

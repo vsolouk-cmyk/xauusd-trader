@@ -1,0 +1,5 @@
+stage,candidate_id,idea,verdict,next_action
+Stage48A,S48_CAND_A_EVENT_ANCHORED_SHOCK_RESPONSE,Macro-news shock response,DEFER_NOT_SCANNABLE_WITH_CURRENT_DATA,Needs event timestamp data before scan
+Stage48A,S48_CAND_B_BROKER_SPREAD_MICROSTRUCTURE_GATE,Broker spread microstructure gate,VALID_DATA_PRECHECK_NOT_TRADING_SCAN,Proceed to Stage48B data feasibility
+Stage48A,S48_CAND_C_CFD_REFERENCE_FEED_DIVERGENCE,Broker/reference feed divergence,DEFER_REQUIRES_MULTI_FEED_DATA,Needs synchronized MT5 and reference feeds
+Stage48A,S48_CAND_D_CANDLE_ONLY_VOL_COMPRESSION_EXPANSION,Candle-only volatility compression/expansion,REJECT_TOO_CLOSE_TO_PRIOR_BASELINES,Do not scan

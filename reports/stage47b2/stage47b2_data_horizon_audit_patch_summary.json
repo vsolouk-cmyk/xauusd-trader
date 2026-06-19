@@ -1,0 +1,10 @@
+{
+  "stage": "Stage47B2_DATA_HORIZON_AUDIT_BEFORE_RERUN",
+  "status": "PATCH_READY_NO_PROMOTION",
+  "reason": "Stage47B scan loaded only 500 M5 candles and produced only 3 trades; this is insufficient for thesis-level judgment.",
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "next_allowed_step": "RUN_STAGE47B2_DATA_HORIZON_AUDIT"
+}

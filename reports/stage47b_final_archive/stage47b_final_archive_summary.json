@@ -1,0 +1,71 @@
+{
+  "stage": "Stage47B_FINAL_ARCHIVE_LIQUIDITY_SWEEP_REVERSAL",
+  "status": "ARCHIVE_COMPLETE_NO_PROMOTION",
+  "source_stage_status": "SCAN_COMPLETE_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "rows_loaded": 500,
+  "candidate_count": 27,
+  "trade_count": 3,
+  "strict_survivor_count": 0,
+  "soft_survivor_count": 0,
+  "cost_bps": 8.0,
+  "data_source": "data/normalized/normalized_twelvedata_XAU_USD_5min_20260604T060243Z.csv",
+  "decision": "ARCHIVE_STAGE47B_THESIS_NO_STAGE47C_AUDIT",
+  "rationale": [
+    "No strict survivor and no soft survivor after adequate 90-day M5 history rerun.",
+    "All candidates have negative OOS mean net bps; in-sample positives do not survive OOS.",
+    "No EA, paper-live, live, or promotion is allowed."
+  ],
+  "candidate_stats": {
+    "positive_in_sample_count": 0,
+    "positive_oos_count": 0,
+    "positive_both_count": 0,
+    "best_mean_net_candidate": {
+      "candidate_id": "ST47B_GRID01_LB24_H12_SW6",
+      "classification": "FAIL_RESEARCH_ONLY_NO_PROMOTION",
+      "lookback": 24,
+      "horizon": 12,
+      "min_sweep_bps": 6.0,
+      "trades": 0,
+      "mean_net_bps": 0.0,
+      "median_net_bps": 0.0,
+      "win_rate": 0.0,
+      "oos_mean_net_bps": NaN,
+      "strict_survivor": false,
+      "soft_survivor": false
+    },
+    "best_oos_candidate": {
+      "candidate_id": "ST47B_GRID01_LB24_H12_SW6",
+      "classification": "FAIL_RESEARCH_ONLY_NO_PROMOTION",
+      "lookback": 24,
+      "horizon": 12,
+      "min_sweep_bps": 6.0,
+      "trades": 0,
+      "mean_net_bps": 0.0,
+      "median_net_bps": 0.0,
+      "win_rate": 0.0,
+      "oos_mean_net_bps": NaN,
+      "strict_survivor": false,
+      "soft_survivor": false
+    },
+    "worst_oos_candidate": {
+      "candidate_id": "ST47B_GRID01_LB24_H12_SW6",
+      "classification": "FAIL_RESEARCH_ONLY_NO_PROMOTION",
+      "lookback": 24,
+      "horizon": 12,
+      "min_sweep_bps": 6.0,
+      "trades": 0,
+      "mean_net_bps": 0.0,
+      "median_net_bps": 0.0,
+      "win_rate": 0.0,
+      "oos_mean_net_bps": NaN,
+      "strict_survivor": false,
+      "soft_survivor": false
+    },
+    "total_trades_from_candidates": 3
+  },
+  "next_allowed_step": "NEW_STRUCTURAL_THESIS_DECISION_OR_PAUSE_ARCHIVE"
+}

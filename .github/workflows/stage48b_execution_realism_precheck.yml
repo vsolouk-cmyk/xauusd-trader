@@ -1,0 +1,23 @@
+name: Stage48B Execution Realism Precheck
+
+on:
+  workflow_dispatch:
+
+jobs:
+  stage48b-precheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run Stage48B precheck
+        run: |
+          python app/stage48b_execution_realism_precheck.py             --root .             --out reports/stage48b
+      - name: Upload Stage48B reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage48b-execution-realism-precheck
+          path: reports/stage48b

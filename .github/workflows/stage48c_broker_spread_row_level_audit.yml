@@ -1,0 +1,34 @@
+name: Stage48C Broker Spread Row-Level Audit
+
+on:
+  workflow_dispatch:
+    inputs:
+      db_path:
+        description: "Optional explicit SQLite DB path"
+        required: false
+        default: ""
+      timeframe:
+        description: "Timeframe to audit"
+        required: false
+        default: "M5"
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run Stage48C broker spread row-level audit
+        run: |
+          if [ -n "${{ github.event.inputs.db_path }}" ]; then
+            python3 app/stage48c_broker_spread_row_level_audit.py --root . --db "${{ github.event.inputs.db_path }}" --timeframe "${{ github.event.inputs.timeframe }}" --out reports/stage48c
+          else
+            python3 app/stage48c_broker_spread_row_level_audit.py --root . --timeframe "${{ github.event.inputs.timeframe }}" --out reports/stage48c
+          fi
+      - name: Upload Stage48C reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage48c-broker-spread-row-level-audit
+          path: reports/stage48c/

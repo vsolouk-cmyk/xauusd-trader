@@ -1,0 +1,8 @@
+stage,item,value,decision_note
+Stage48E,broker_spread_data_ready,true,Stage48D readiness threshold passed
+Stage48E,row_count,292435,sufficient
+Stage48E,coverage_days,1509.329861111111,sufficient
+Stage48E,numeric_spread_coverage_pct,99.99692239301041,sufficient
+Stage48E,median_spread,32.0,requires unit calibration
+Stage48E,p99_spread,53.0,requires spike/rollover audit
+Stage48E,next_allowed_step,STAGE48F_BROKER_REFERENCE_ALIGNMENT_AND_COST_MODEL_CALIBRATION,no trading scan yet

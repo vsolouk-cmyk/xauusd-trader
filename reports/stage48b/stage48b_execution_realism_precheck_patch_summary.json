@@ -1,0 +1,10 @@
+{
+  "stage": "Stage48B_EXECUTION_REALISM_AND_DATA_SOURCE_FEASIBILITY_PRECHECK",
+  "patch": "Stage48B_REPOSITORY_DATA_FEASIBILITY_PRECHECK_NO_TRADING_SCAN",
+  "status": "PATCH_READY_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "next_allowed_step": "RUN_STAGE48B_PRECHECK_ON_REPO"
+}

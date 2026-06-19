@@ -1,0 +1,17 @@
+{
+  "stage": "Stage48C_BROKER_SPREAD_ROW_LEVEL_AUDIT",
+  "patch": "Stage48C_SQLITE_ROW_LEVEL_SPREAD_AUDIT_NO_TRADING_SCAN",
+  "status": "PATCH_READY_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "next_allowed_step_after_run": "depends_on_audit_result",
+  "files": [
+    "app/stage48c_broker_spread_row_level_audit.py",
+    "reports/stage48c/stage48c_broker_spread_row_level_audit_design.md",
+    "reports/stage48c/stage48c_broker_spread_row_level_audit_patch_summary.json",
+    "reports/stage48c/stage48c_next_step_prompt.md",
+    ".github/workflows/stage48c_broker_spread_row_level_audit.yml"
+  ]
+}

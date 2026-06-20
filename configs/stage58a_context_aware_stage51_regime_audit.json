@@ -1,0 +1,44 @@
+{
+  "stage": "Stage58A_CONTEXT_AWARE_STAGE51_REGIME_AUDIT_NO_PROMOTION",
+  "purpose": "Apply bounded context/regime overlays to Stage51 hard-audit pass candidates using broker-real AMarkets data and Stage57A derived regime context. This is not forward evidence.",
+  "thresholds": {
+    "min_trade_count": 80,
+    "min_oos_trade_count": 20,
+    "min_mean_stress_bps": 2.0,
+    "min_median_stress_bps": 0.0,
+    "min_win_rate": 0.53,
+    "min_oos_mean_stress_bps": 0.0,
+    "min_oos_win_rate": 0.52,
+    "min_positive_years": 4,
+    "max_negative_years": 1,
+    "min_worst_year_mean_stress_bps": 0.0,
+    "min_cost_x2_mean_stress_bps": 0.0,
+    "max_direction_share": 0.70,
+    "max_day_share": 0.35,
+    "min_declustered_trade_count": 40,
+    "min_declustered_mean_stress_bps": 0.0,
+    "min_declustered_win_rate": 0.50
+  },
+  "context_variants": [
+    "CTX_ALL",
+    "CTX_NO_ASIA_LATEUS",
+    "CTX_LONDON_OVERLAP_NY",
+    "CTX_OVERLAP_NY",
+    "CTX_SPREAD_LE90",
+    "CTX_SPREAD_LE75",
+    "CTX_NO_ROLLOVER",
+    "CTX_RANGE_GT50",
+    "CTX_RANGE_50_90",
+    "CTX_LON_OV_NY_SPREAD_LE90",
+    "CTX_NO_ASIA_LATEUS_SPREAD_LE90",
+    "CTX_LON_OV_NY_NO_ROLLOVER",
+    "CTX_LON_OV_NY_SPREAD_LE90_RANGE_GT50"
+  ],
+  "max_exported_candidates": 100,
+  "hard_blocks": [
+    "NO_EA",
+    "NO_PAPER_LIVE",
+    "NO_LIVE",
+    "NO_ORDER_SUBMISSION"
+  ]
+}

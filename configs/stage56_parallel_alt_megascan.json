@@ -1,0 +1,60 @@
+{
+  "stage": "Stage56_PARALLEL_ALTERNATIVE_MEGASCAN_NO_PROMOTION",
+  "families": [
+    "ALT_A_PULLBACK_AFTER_SQUEEZE_FAILURE",
+    "ALT_B_INTRADAY_TREND_PULLBACK_TO_M15_VALUE_AREA",
+    "ALT_C_SESSION_RANGE_REVERSION_AFTER_EXHAUSTION"
+  ],
+  "cost_model_fallbacks": {
+    "stress_cost_bps": 2.982003733153722,
+    "extreme_cost_bps": 3.0380209087577326
+  },
+  "scan_limits": {
+    "max_workers": 1,
+    "min_trade_count": 150,
+    "min_oos_trade_count": 30,
+    "top_n_per_family": 40,
+    "top_n_global": 80,
+    "event_sample_per_candidate": 10
+  },
+  "audit_thresholds": {
+    "min_mean_stress_bps": 1.0,
+    "min_median_stress_bps": 0.0,
+    "min_win_rate": 0.52,
+    "min_oos_mean_stress_bps": 0.5,
+    "min_oos_win_rate": 0.52,
+    "min_positive_years": 3,
+    "max_negative_years": 1,
+    "min_worst_year_stress_bps": -2.0,
+    "min_cost_x2_mean_stress_bps": 0.0,
+    "min_declustered_mean_stress_bps": 0.5,
+    "max_direction_imbalance": 0.85
+  },
+  "alt_a": {
+    "compression_windows": [48, 96, 192],
+    "compression_percentiles": [20, 30],
+    "breakout_buffers_bps": [3, 5, 8],
+    "failure_confirm_bars": [1, 2, 3],
+    "m30_sma_windows": [20, 40],
+    "horizon_m5_bars": [6, 12]
+  },
+  "alt_b": {
+    "m30_sma_windows": [20, 40, 80],
+    "m15_value_sma_windows": [16, 32, 48],
+    "impulse_lookback_m15_bars": [2, 4, 8],
+    "impulse_min_bps": [8, 12, 18],
+    "pullback_max_distance_bps": [3, 6, 10],
+    "horizon_m5_bars": [6, 12, 18]
+  },
+  "alt_c": {
+    "sessions": {
+      "london": [7, 11],
+      "new_york": [12, 16],
+      "london_ny_overlap": [12, 15]
+    },
+    "rolling_days": [20, 40],
+    "extension_percentiles": [80, 90],
+    "reversal_confirm_bps": [3, 5, 8],
+    "horizon_m5_bars": [6, 12]
+  }
+}

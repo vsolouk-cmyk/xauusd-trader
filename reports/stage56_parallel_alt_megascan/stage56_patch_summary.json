@@ -1,0 +1,15 @@
+{
+  "stage": "Stage56_PARALLEL_ALTERNATIVE_MEGASCAN_NO_PROMOTION",
+  "status": "PATCH_READY",
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "files": [
+    "app/stage56_parallel_alt_megascan.py",
+    "configs/stage56_parallel_alt_megascan.json",
+    "reports/stage56_parallel_alt_megascan/stage56_design.md",
+    "reports/stage56_parallel_alt_megascan/stage56_patch_summary.json",
+    ".github/workflows/stage56_parallel_alt_megascan.yml"
+  ]
+}

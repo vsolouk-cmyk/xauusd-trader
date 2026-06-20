@@ -1,0 +1,29 @@
+name: Stage56 Parallel Alternative Megascan
+
+on:
+  workflow_dispatch:
+
+jobs:
+  stage56:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas numpy
+      - name: Run Stage56 if local data exists
+        run: |
+          if [ -f data/broker_normalized/amarkets_multitf.sqlite ]; then
+            python app/stage56_parallel_alt_megascan.py \
+              --root . \
+              --db data/broker_normalized/amarkets_multitf.sqlite \
+              --cost-model reports/stage48f/stage48f_cost_model.json \
+              --config configs/stage56_parallel_alt_megascan.json \
+              --out reports/stage56_parallel_alt_megascan
+          else
+            echo "Local AMarkets DB is ignored by git and not available in GitHub Actions. Run Stage56 locally."
+          fi

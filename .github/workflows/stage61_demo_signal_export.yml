@@ -1,0 +1,20 @@
+name: Stage61 Demo Signal Export
+
+on:
+  workflow_dispatch:
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Export Stage61 demo signals
+        run: |
+          python3 app/stage61_demo_signal_exporter.py \
+            --root . \
+            --state-db data/shadow/stage58b_context_forward_shadow.sqlite \
+            --config configs/stage61_demo_execution_sandbox.json \
+            --out reports/stage61_demo_execution_sandbox

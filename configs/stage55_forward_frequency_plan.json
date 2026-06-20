@@ -1,0 +1,35 @@
+{
+  "stage": "Stage55_FORWARD_FREQUENCY_AND_ALTERNATIVE_PATH_NO_PROMOTION",
+  "min_true_forward_signals": 100,
+  "min_evaluated_signals": 60,
+  "max_wait_days_before_parallel_scan": 21,
+  "cadence_prior_overlap_discount_low": 0.2,
+  "cadence_prior_overlap_discount_base": 0.35,
+  "cadence_prior_overlap_discount_high": 0.6,
+  "min_expected_true_forward_signals_per_week_warning": 8,
+  "alternative_path_policy": {
+    "start_parallel_design_if_forecast_days_gt": 21,
+    "start_parallel_megascan_if_after_market_reopen_forward_rate_lt_per_week": 5,
+    "do_not_archive_stage51_until_forward_gate_fail_or_timeout": true
+  },
+  "alternative_thesis_queue": [
+    {
+      "id": "ALT_A_PULLBACK_AFTER_SQUEEZE_FAILURE",
+      "description": "After volatility squeeze breakout fails to follow through, test controlled mean-reversion/pullback continuation with cost-aware broker data.",
+      "why": "If forward frequency is too sparse, failed-breakout reactions may occur more often than clean breakouts.",
+      "status": "DESIGN_ONLY_NO_SCAN_YET"
+    },
+    {
+      "id": "ALT_B_INTRADAY_TREND_PULLBACK_TO_M15_VALUE_AREA",
+      "description": "Trend-confirmed M15/M30 pullback after active-session directional impulse, avoiding pure breakout chasing.",
+      "why": "Could produce higher frequency than squeeze breakout while keeping structural trend context.",
+      "status": "DESIGN_ONLY_NO_SCAN_YET"
+    },
+    {
+      "id": "ALT_C_SESSION_RANGE_REVERSION_AFTER_EXHAUSTION",
+      "description": "Broker-real intraday exhaustion/reversion only after range extension and spread-safe session filters.",
+      "why": "A non-breakout family for diversification if Stage51 forward cadence or edge collapses.",
+      "status": "DESIGN_ONLY_NO_SCAN_YET"
+    }
+  ]
+}

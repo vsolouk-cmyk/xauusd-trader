@@ -66,3 +66,21 @@ data/exports/
 # Stage 9 macro runtime outputs
 data/macro/
 data/reports/stage9b_*/
+
+# Local broker/export databases and runtime state
+data/broker_normalized/
+data/shadow/
+*.sqlite
+*.sqlite3
+*.sqlite-*
+*.db
+*.db-*
+*.duckdb
+*.parquet
+
+# Local transfer/runtime artifacts
+*.zip
+_incoming*/
+__pycache__/
+*.pyc
+.DS_Store

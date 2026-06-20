@@ -1,0 +1,18 @@
+{
+  "stage": "Stage50_ARCHIVE_AND_STAGE51_SETUP",
+  "status": "STAGE50_ARCHIVED_STAGE51_READY_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "archived_stage": "Stage50_BROKER_REAL_SESSION_OPEN_RANGE_BREAKOUT_AUDIT",
+  "archived_status": "SESSION_OPEN_RANGE_HARD_AUDIT_COMPLETE_NO_PASS_NO_PROMOTION",
+  "archived_reason": "hard_audit_pass_count=0; top candidates failed on overall mean/win-rate/fold/cost stress conditions",
+  "next_thesis": "STAGE51_BROKER_REAL_VOLATILITY_SQUEEZE_BREAKOUT_AUDIT",
+  "next_thesis_is_rescue": false,
+  "notes": [
+    "Stage51 is not an open-range breakout rescue.",
+    "Stage51 is not a liquidity-sweep or H1 expansion persistence rescue.",
+    "Stage51 uses broker-real AMarkets persistent SQLite and Stage48F cost model."
+  ]
+}

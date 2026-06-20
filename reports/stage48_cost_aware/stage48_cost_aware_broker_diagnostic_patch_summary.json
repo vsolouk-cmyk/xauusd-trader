@@ -1,0 +1,17 @@
+{
+  "stage": "Stage48_COST_AWARE_BROKER_DIAGNOSTIC",
+  "patch": "STAGE48_COST_AWARE_BROKER_DIAGNOSTIC_NO_PROMOTION",
+  "status": "PATCH_READY_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "files": [
+    "app/stage48_cost_aware_broker_diagnostic.py",
+    "reports/stage48_cost_aware/stage48_cost_aware_broker_diagnostic_design.md",
+    "reports/stage48_cost_aware/stage48_cost_aware_broker_diagnostic_patch_summary.json",
+    "reports/stage48_cost_aware/stage48_cost_aware_next_step_prompt.md",
+    ".github/workflows/stage48_cost_aware_broker_diagnostic.yml"
+  ],
+  "note": "Continues Stage48 directly after Stage48F COST_MODEL_READY_NO_PROMOTION. No memo-only stage is added."
+}

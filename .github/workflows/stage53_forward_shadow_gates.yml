@@ -1,0 +1,34 @@
+name: Stage53 Forward Shadow Gates
+
+on:
+  workflow_dispatch:
+
+jobs:
+  stage53-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run Stage53 gate report
+        run: |
+          python app/stage53_forward_shadow_gate_report.py \
+            --root . \
+            --state-db data/shadow/stage52_forward_shadow.sqlite \
+            --stage52-summary reports/stage52_forward_shadow/stage52_volatility_squeeze_forward_shadow_summary.json \
+            --runner-summary reports/stage52_forward_shadow/stage52_import_then_forward_shadow_summary.json \
+            --gates configs/stage53_forward_shadow_gates.json \
+            --out reports/stage53_forward_shadow_prep
+      - name: Run paper-order skeleton report
+        run: |
+          python app/stage53_paper_order_simulator_skeleton.py \
+            --root . \
+            --gate-summary reports/stage53_forward_shadow_prep/stage53_forward_shadow_gate_summary.json \
+            --out reports/stage53_forward_shadow_prep \
+            --force-skeleton-report
+      - name: Upload Stage53 reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage53-forward-shadow-gates
+          path: reports/stage53_forward_shadow_prep/*

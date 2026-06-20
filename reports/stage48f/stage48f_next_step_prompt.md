@@ -1,12 +1,21 @@
-چپ‌چین ادامه بده.
+# Stage48F LoaderFix1 Next Step
 
-Stage48F broker/reference alignment and cost-model calibration را اجرا کردم. خروجی‌های زیر را مبنا قرار بده:
+Run the fixed Stage48F script on the AMarkets M5 export:
 
-```text
-reports/stage48f/stage48f_broker_reference_alignment_cost_model_summary.json
-reports/stage48f/stage48f_broker_reference_alignment_cost_model_report.md
-reports/stage48f/stage48f_cost_model.json
-reports/stage48f/stage48f_session_cost_profile.csv
+```bash
+python3 app/stage48f_broker_reference_alignment_cost_model.py \
+  --broker-csv ~/Downloads/amarkets_xauusd_5m.csv \
+  --timeframe M5 \
+  --point-size 0.01 \
+  --slippage-buffer-bps 2 \
+  --out reports/stage48f
 ```
 
-اگر status برابر `COST_MODEL_READY_NO_PROMOTION` بود، مرحله بعدی باید طراحی یک broker-real cost-aware thesis یا rerun محدود با cost model جدید باشد. اگر insufficient بود، ابتدا alignment/time-offset/point-size/export را اصلاح کن. هیچ EA، paper-live یا live مجاز نیست.
+Send back:
+
+- reports/stage48f/stage48f_broker_reference_alignment_cost_model_summary.json
+- reports/stage48f/stage48f_broker_reference_alignment_cost_model_report.md
+- reports/stage48f/stage48f_cost_model.json
+- reports/stage48f/stage48f_session_cost_profile.csv
+
+No trading scan is authorized by this patch alone.

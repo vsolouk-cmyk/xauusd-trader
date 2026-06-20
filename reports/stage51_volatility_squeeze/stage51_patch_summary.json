@@ -1,0 +1,17 @@
+{
+  "stage": "Stage51_BROKER_REAL_VOLATILITY_SQUEEZE_BREAKOUT_AUDIT",
+  "patch": "STAGE51_VOLATILITY_SQUEEZE_BREAKOUT_HARD_AUDIT_NO_PROMOTION",
+  "files": [
+    "app/stage51_volatility_squeeze_breakout_audit.py",
+    "reports/stage50_archive/stage50_final_archive_and_stage51_summary.json",
+    "reports/stage50_archive/stage50_final_archive_and_stage51.md",
+    "reports/stage50_archive/stage50_archive_register.csv",
+    "reports/stage51_volatility_squeeze/stage51_volatility_squeeze_breakout_design.md",
+    "reports/stage51_volatility_squeeze/stage51_patch_summary.json",
+    ".github/workflows/stage51_volatility_squeeze_breakout.yml"
+  ],
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO"
+}

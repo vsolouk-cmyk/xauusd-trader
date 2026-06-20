@@ -1,0 +1,15 @@
+{
+  "stage": "Stage52_LOADERFIX2_COMBINED_IMPORT_AND_FORWARD_RUNNER",
+  "status": "PATCH_READY_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "files": [
+    "app/stage52_import_then_forward_shadow.py",
+    "reports/stage52_forward_shadow/stage52_loaderfix2_combined_import_and_forward_runner.md",
+    "reports/stage52_forward_shadow/stage52_loaderfix2_patch_summary.json",
+    ".github/workflows/stage52_import_then_forward_shadow.yml"
+  ],
+  "purpose": "Avoid order-of-operations errors by running the fast persistent AMarkets importer before Stage52 true-forward shadow."
+}

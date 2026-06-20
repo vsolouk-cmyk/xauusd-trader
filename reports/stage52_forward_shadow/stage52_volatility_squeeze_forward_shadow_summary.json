@@ -1,0 +1,44 @@
+{
+  "stage": "Stage52_VOLATILITY_SQUEEZE_TRUE_FORWARD_SHADOW_NO_PROMOTION",
+  "patch": "Stage52_LOADERFIX1_TRUE_FORWARD_NO_INITIAL_BACKFILL",
+  "status": "TRUE_FORWARD_SHADOW_UPDATED_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "next_allowed_step": "CONTINUE_TRUE_FORWARD_SHADOW_UNTIL_MIN_EVIDENCE_NO_PROMOTION",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "db": "/Users/vahid/Desktop/xauusd-trader/data/broker_normalized/amarkets_multitf.sqlite",
+  "cost_model": "/Users/vahid/Desktop/xauusd-trader/reports/stage48f/stage48f_cost_model.json",
+  "state_db": "/Users/vahid/Desktop/xauusd-trader/data/shadow/stage52_forward_shadow.sqlite",
+  "candidates_loaded": 12,
+  "rows": {
+    "M5": 292567,
+    "M15": 97573,
+    "M30": 48793
+  },
+  "costs": {
+    "stress_cost_bps": 2.982003733153722,
+    "extreme_cost_bps": 3.0380209087577326
+  },
+  "mode": "true_forward_update",
+  "previous_watermark_utc": "2026-06-19T16:45:00Z",
+  "latest_m15_time_utc": "2026-06-19T16:45:00Z",
+  "new_watermark_utc": "2026-06-19T16:45:00Z",
+  "generated_signals_this_run": 0,
+  "inserted_new_signals": 0,
+  "newly_evaluated_signals": 0,
+  "state": {
+    "total_signals": 0,
+    "pending_signals": 0,
+    "evaluated_signals": 0,
+    "backfill_signals": 0,
+    "true_forward_signals": 0,
+    "evaluated_mean_stress_bps": null,
+    "evaluated_win_rate": null
+  },
+  "notes": [
+    "no new M15 bars beyond forward watermark"
+  ],
+  "generated_utc": "2026-06-20T11:37:56Z"
+}

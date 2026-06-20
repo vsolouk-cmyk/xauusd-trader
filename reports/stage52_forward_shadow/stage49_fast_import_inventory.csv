@@ -1,0 +1,6 @@
+timeframe,status,mode,changed,rows_in_db,raw_rows_read_this_run,accepted_rows_this_run,path
+M1,UNCHANGED_SKIPPED,,False,1461262,,,/Users/vahid/Downloads/amarkets_xauusd_1m.csv
+M5,UNCHANGED_SKIPPED,,False,292567,,,/Users/vahid/Downloads/amarkets_xauusd_5m.csv
+M15,UNCHANGED_SKIPPED,,False,97573,,,/Users/vahid/Downloads/amarkets_xauusd_15m.csv
+M30,UNCHANGED_SKIPPED,,False,48793,,,/Users/vahid/Downloads/amarkets_xauusd_30m.csv
+H1,UNCHANGED_SKIPPED,,False,24415,,,/Users/vahid/Downloads/amarkets_xauusd_1h.csv

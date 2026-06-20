@@ -1,0 +1,21 @@
+{
+  "stage": "Stage49B_FINAL_ARCHIVE_AND_STAGE50_SESSION_OPEN_RANGE_BREAKOUT_AUDIT",
+  "status": "STAGE49B_ARCHIVED_STAGE50_READY_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "stage49b_decision": {
+    "status": "HARD_AUDIT_COMPLETE_NO_PASS_NO_PROMOTION",
+    "diagnostic_candidates_loaded": 24,
+    "audited_candidates": 24,
+    "hard_audit_pass_count": 0,
+    "archive_reason": "all diagnostic survivors failed hard audit; mean/win-rate/folds/cost-stress/declustered/direction-split gates failed"
+  },
+  "stage50_thesis": {
+    "id": "BROKER_REAL_SESSION_OPEN_RANGE_BREAKOUT_AUDIT",
+    "description": "Session open range breakout continuation on broker-real AMarkets M5 with M15 trend confirmation and Stage48F cost model.",
+    "not_rescue_of": "Stage49 H1 expansion persistence; no long-only/short-only post-hoc filtering of failed candidates",
+    "script": "app/stage50_session_open_range_breakout_audit.py"
+  }
+}

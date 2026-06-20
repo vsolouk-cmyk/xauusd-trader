@@ -1,0 +1,41 @@
+name: Stage52 Import Then Forward Shadow
+
+on:
+  workflow_dispatch:
+    inputs:
+      input_dir:
+        description: "Directory containing AMarkets CSV exports on the runner"
+        required: false
+        default: "~/Downloads"
+      reset_forward_state:
+        description: "Reset Stage52 forward state and initialize watermark only. Use once, not routinely."
+        required: false
+        default: "false"
+
+jobs:
+  stage52-import-forward:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run Stage52 import then forward-shadow
+        run: |
+          RESET_FLAG=""
+          if [ "${{ github.event.inputs.reset_forward_state }}" = "true" ]; then
+            RESET_FLAG="--reset-forward-state"
+          fi
+          python app/stage52_import_then_forward_shadow.py \
+            --root . \
+            --input-dir "${{ github.event.inputs.input_dir }}" \
+            --db data/broker_normalized/amarkets_multitf.sqlite \
+            --cost-model reports/stage48f/stage48f_cost_model.json \
+            --candidates reports/stage51_volatility_squeeze/stage51_volatility_squeeze_breakout_candidates.csv \
+            --out reports/stage52_forward_shadow \
+            $RESET_FLAG
+      - name: Upload Stage52 reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage52-import-forward-reports
+          path: reports/stage52_forward_shadow/*

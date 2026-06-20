@@ -1,0 +1,6 @@
+timeframe,status,input_path,output_csv,raw_rows,accepted_rows,numeric_spread_rows,spread_coverage_pct,start_utc,end_utc,coverage_days,error
+M1,IMPORTED,/Users/vahid/Downloads/amarkets_xauusd_1m.csv,/Users/vahid/Desktop/xauusd-trader/data/broker_normalized/amarkets/amarkets_xauusd_m1_normalized.csv,1460599,1460599,1460599,100.0,2022-05-01T22:01:00Z,2026-06-19T05:56:00Z,1509.329861111111,
+M5,IMPORTED,/Users/vahid/Downloads/amarkets_xauusd_5m.csv,/Users/vahid/Desktop/xauusd-trader/data/broker_normalized/amarkets/amarkets_xauusd_m5_normalized.csv,292435,292435,292435,100.0,2022-05-01T22:00:00Z,2026-06-19T05:55:00Z,1509.329861111111,
+M15,IMPORTED,/Users/vahid/Downloads/amarkets_xauusd_15m.csv,/Users/vahid/Desktop/xauusd-trader/data/broker_normalized/amarkets/amarkets_xauusd_m15_normalized.csv,97529,97529,97529,100.0,2022-05-01T22:00:00Z,2026-06-19T05:45:00Z,1509.3229166666667,
+M30,IMPORTED,/Users/vahid/Downloads/amarkets_xauusd_30m.csv,/Users/vahid/Desktop/xauusd-trader/data/broker_normalized/amarkets/amarkets_xauusd_m30_normalized.csv,48771,48771,48771,100.0,2022-05-01T22:00:00Z,2026-06-19T05:30:00Z,1509.3125,
+H1,IMPORTED,/Users/vahid/Downloads/amarkets_xauusd_1h.csv,/Users/vahid/Desktop/xauusd-trader/data/broker_normalized/amarkets/amarkets_xauusd_h1_normalized.csv,24404,24404,24404,100.0,2022-05-01T22:00:00Z,2026-06-19T05:00:00Z,1509.2916666666667,

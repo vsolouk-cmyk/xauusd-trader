@@ -1,0 +1,15 @@
+{
+  "stage": "Stage49B_ARCHIVE_AND_STAGE50_SESSION_OPEN_RANGE_BREAKOUT_AUDIT",
+  "status": "PATCH_READY_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "files": [
+    "app/stage50_session_open_range_breakout_audit.py",
+    "reports/stage49_archive/*",
+    "reports/stage50_session_open_range/stage50_session_open_range_breakout_design.md",
+    "reports/stage50_session_open_range/stage50_patch_summary.json",
+    ".github/workflows/stage50_session_open_range_breakout.yml"
+  ]
+}

@@ -32,7 +32,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 STAGE = "Stage48F_BROKER_REFERENCE_ALIGNMENT_AND_COST_MODEL_CALIBRATION"
-PATCH = "Stage48F_BROKER_REFERENCE_ALIGNMENT_COST_MODEL_NO_TRADING_SCAN"
+PATCH = "Stage48F_LOADERFIX1_SPREAD_COVERAGE_DENOMINATOR_AND_OFFSET_QUALITY"
 
 
 @dataclass
@@ -302,18 +302,59 @@ def discover_reference(root: Path) -> Optional[Path]:
 
 
 def choose_offset(broker_path: Path, ref_by_ts: Dict[datetime, Candle], timeframe: str, min_offset: int, max_offset: int) -> Tuple[int, Dict[str, Any]]:
-    scores = []
-    best_offset = 0
-    best_score = -1
-    # Load once per offset; acceptable for ~300k rows * 15 offsets on local, but keep bounded by metadata only.
+    """Choose broker server-time offset using match count plus price-alignment quality.
+
+    LoaderFix1 changes the offset rule from pure timestamp match count to a quality-aware
+    score. Timestamp count alone can tie across adjacent offsets when the reference file
+    has a continuous M5 grid; in that case the selected offset can be arbitrary.
+    We first keep offsets with enough timestamp overlap, then prefer the offset with
+    the lowest median absolute close basis against the reference feed.
+    """
+    scores: List[Dict[str, Any]] = []
+    max_match = 0
     for off in range(min_offset, max_offset + 1):
-        bc, bm = load_broker_csv(broker_path, timeframe, offset_hours=off)
-        score = sum(1 for c in bc if c.ts in ref_by_ts)
-        scores.append({"offset_hours": off, "matched_timestamps": score, "broker_rows": len(bc)})
-        if score > best_score:
-            best_score = score
-            best_offset = off
-    return best_offset, {"offset_scores": scores, "selected_offset_hours": best_offset, "selected_match_count": best_score}
+        bc, _bm = load_broker_csv(broker_path, timeframe, offset_hours=off)
+        basis_abs: List[float] = []
+        matched = 0
+        for c in bc:
+            r = ref_by_ts.get(c.ts)
+            if r is None:
+                continue
+            matched += 1
+            if r.close:
+                basis_abs.append(abs((c.close - r.close) / r.close * 10000.0))
+        max_match = max(max_match, matched)
+        scores.append({
+            "offset_hours": off,
+            "matched_timestamps": matched,
+            "broker_rows": len(bc),
+            "median_abs_basis_bps": percentile(basis_abs, 50),
+            "p90_abs_basis_bps": percentile(basis_abs, 90),
+            "basis_sample_count": len(basis_abs),
+        })
+
+    # Keep offsets that do not sacrifice too much overlap; then optimize quality.
+    min_acceptable_match = max(1, int(max_match * 0.98)) if max_match else 1
+    eligible = [x for x in scores if x.get("matched_timestamps", 0) >= min_acceptable_match and x.get("median_abs_basis_bps") is not None]
+    if not eligible:
+        eligible = [x for x in scores if x.get("median_abs_basis_bps") is not None] or scores
+
+    def sort_key(x: Dict[str, Any]) -> Tuple[float, int, int]:
+        mab = x.get("median_abs_basis_bps")
+        if mab is None:
+            mab = float("inf")
+        return (float(mab), -int(x.get("matched_timestamps", 0)), abs(int(x.get("offset_hours", 0))))
+
+    best = sorted(eligible, key=sort_key)[0] if eligible else {"offset_hours": 0, "matched_timestamps": 0}
+    return int(best.get("offset_hours", 0)), {
+        "offset_scores": scores,
+        "selected_offset_hours": int(best.get("offset_hours", 0)),
+        "selected_match_count": int(best.get("matched_timestamps", 0)),
+        "selected_median_abs_basis_bps": best.get("median_abs_basis_bps"),
+        "max_match_count": max_match,
+        "min_acceptable_match_for_quality_selection": min_acceptable_match,
+        "selection_rule": "eligible_offsets_within_98pct_of_max_match_then_min_median_abs_basis_bps",
+    }
 
 
 def write_csv(path: Path, rows: Iterable[Dict[str, Any]], fieldnames: List[str]) -> None:
@@ -426,8 +467,13 @@ def main(argv: Optional[List[str]] = None) -> int:
     if common_ts:
         aligned_days = (common_ts[-1] - common_ts[0]).total_seconds() / 86400.0
 
-    spread_coverage_pct = (len(spread_cost_bps_values) / max(1, len(broker_candles))) * 100.0
+    # LoaderFix1: raw broker spread coverage must be measured on the full accepted
+    # broker export, not on the aligned subset divided by all broker rows. The
+    # previous denominator incorrectly reported ~6% coverage when the AMarkets
+    # file actually had ~100% row-level spread. Keep aligned coverage separately.
+    broker_raw_spread_coverage_pct = (float(broker_meta.get("numeric_spread_rows", 0)) / max(1, len(broker_candles))) * 100.0
     aligned_spread_coverage_pct = (len(spread_cost_bps_values) / max(1, aligned_count)) * 100.0 if aligned_count else 0.0
+    spread_coverage_pct = broker_raw_spread_coverage_pct
 
     spread_cost_desc = describe(spread_cost_bps_values)
     spread_points_desc = describe(spread_points_values)
@@ -468,12 +514,14 @@ def main(argv: Optional[List[str]] = None) -> int:
         ready_reasons.append("no_broker_rows")
     if len(broker_candles) < 5000:
         ready_reasons.append("broker_rows_lt_5000")
-    if spread_coverage_pct < 80:
-        ready_reasons.append("broker_spread_coverage_lt_80pct")
+    if broker_raw_spread_coverage_pct < 80:
+        ready_reasons.append("broker_raw_spread_coverage_lt_80pct")
     if reference_candles and aligned_count < args.min_aligned_rows:
         ready_reasons.append(f"aligned_rows_lt_{args.min_aligned_rows}")
     if reference_candles and aligned_days < args.min_aligned_days:
         ready_reasons.append(f"aligned_days_lt_{args.min_aligned_days}")
+    if reference_candles and aligned_spread_coverage_pct < 80:
+        ready_reasons.append("aligned_spread_coverage_lt_80pct")
 
     status = "COST_MODEL_READY_NO_PROMOTION" if not ready_reasons else "COST_MODEL_INSUFFICIENT_NO_PROMOTION"
     next_allowed = "BROKER_REAL_COST_AWARE_THESIS_DESIGN_OR_RERUN_NO_PROMOTION" if status.startswith("COST_MODEL_READY") else "FIX_ALIGNMENT_OR_BROKER_EXPORT_NO_PROMOTION"
@@ -487,6 +535,10 @@ def main(argv: Optional[List[str]] = None) -> int:
         "timeframe": args.timeframe,
         "point_size": args.point_size,
         "selected_broker_time_offset_hours": selected_offset,
+        "broker_raw_spread_coverage_pct": broker_raw_spread_coverage_pct,
+        "aligned_spread_coverage_pct": aligned_spread_coverage_pct,
+        "aligned_rows": aligned_count,
+        "aligned_coverage_days": aligned_days,
         "spread_points": spread_points_desc,
         "spread_price": describe(spread_price_values),
         "spread_cost_bps": spread_cost_desc,
@@ -521,6 +573,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         "broker_end_utc": broker_meta.get("end_utc"),
         "broker_coverage_days": broker_meta.get("coverage_days"),
         "broker_spread_coverage_pct": spread_coverage_pct,
+        "broker_raw_spread_coverage_pct": broker_raw_spread_coverage_pct,
+        "aligned_spread_coverage_pct": aligned_spread_coverage_pct,
         "reference_rows": len(reference_candles),
         "aligned_rows": aligned_count,
         "aligned_coverage_days": aligned_days,
@@ -576,7 +630,8 @@ def main(argv: Optional[List[str]] = None) -> int:
 
 - broker_rows: `{len(broker_candles)}`
 - broker_coverage_days: `{fmt(broker_meta.get('coverage_days'))}`
-- broker_spread_coverage_pct: `{fmt(spread_coverage_pct)}`
+- broker_raw_spread_coverage_pct: `{fmt(broker_raw_spread_coverage_pct)}`
+- aligned_spread_coverage_pct: `{fmt(aligned_spread_coverage_pct)}`
 - reference_rows: `{len(reference_candles)}`
 - aligned_rows: `{aligned_count}`
 - aligned_coverage_days: `{fmt(aligned_days)}`
@@ -606,6 +661,8 @@ def main(argv: Optional[List[str]] = None) -> int:
 ## Decision
 
 ready_failure_reasons: `{ready_reasons}`
+
+LoaderFix1 note: broker raw spread coverage is measured on accepted broker rows; aligned spread coverage is measured on aligned rows. Price basis is diagnostic and does not by itself authorize trading.
 
 This stage calibrates cost and alignment only. It does not generate trading signals and does not allow EA, paper-live, or live action.
 """

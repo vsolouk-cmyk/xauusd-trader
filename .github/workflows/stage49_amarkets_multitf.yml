@@ -1,0 +1,31 @@
+name: Stage49 AMarkets MultiTF Importer and Thesis
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_thesis:
+        description: "Run thesis diagnostic after import"
+        required: false
+        default: "true"
+
+jobs:
+  stage49:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run importer if broker files are committed
+        run: |
+          python3 app/stage49_amarkets_multitf_importer.py --root . --input-dir data/broker_export --out reports/stage49_broker_multitf || true
+      - name: Run thesis diagnostic
+        if: ${{ github.event.inputs.run_thesis == 'true' }}
+        run: |
+          python3 app/stage49_multitf_trend_persistence_thesis.py --root . --out reports/stage49_broker_multitf || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: stage49-amarkets-multitf
+          path: |
+            reports/stage49_broker_multitf/**
+            data/broker_normalized/**

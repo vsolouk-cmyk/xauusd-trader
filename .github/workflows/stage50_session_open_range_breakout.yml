@@ -1,0 +1,20 @@
+name: Stage50 Session Open Range Breakout Audit
+
+on:
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run Stage50 audit
+        run: |
+          python app/stage50_session_open_range_breakout_audit.py \
+            --root . \
+            --db data/broker_normalized/amarkets_multitf.sqlite \
+            --cost-model reports/stage48f/stage48f_cost_model.json \
+            --out reports/stage50_session_open_range

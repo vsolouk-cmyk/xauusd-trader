@@ -1,0 +1,1 @@
+signal_id,candidate_id,base_candidate_id,context_tag,signal_time_utc,entry_time_utc,direction,entry_price,horizon_m5_bars,stress_cost_bps,spread_cost_bps,status,planned_exit_time_utc,exit_time_utc,exit_price,gross_bps,stress_bps,created_utc,evaluated_utc,is_backfill,source_run_id,params_json,context_json

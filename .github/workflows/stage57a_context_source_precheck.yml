@@ -1,0 +1,30 @@
+name: Stage57A Context Source Precheck
+
+on:
+  workflow_dispatch:
+
+jobs:
+  stage57a-context-precheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pandas
+      - name: Run Stage57A context source precheck
+        run: |
+          python app/stage57a_context_source_precheck.py \
+            --root . \
+            --db data/broker_normalized/amarkets_multitf.sqlite \
+            --context-manifest configs/stage57_context_source_manifest.json \
+            --config configs/stage57a_context_source_precheck.json \
+            --out reports/stage57_context_precheck
+      - name: Upload Stage57A reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage57a-context-precheck
+          path: reports/stage57_context_precheck/

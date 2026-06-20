@@ -1,0 +1,16 @@
+{
+  "stage": "Stage57A_CONTEXT_SOURCE_PRECHECK_AND_DERIVED_REGIME_TABLE_NO_PROMOTION",
+  "primary_timeframe": "M15",
+  "derived_timeframes": ["M15", "M5"],
+  "session_utc_windows": [
+    {"label": "asia", "start_hour": 0, "end_hour": 6},
+    {"label": "london", "start_hour": 7, "end_hour": 12},
+    {"label": "london_ny_overlap", "start_hour": 13, "end_hour": 16},
+    {"label": "new_york", "start_hour": 17, "end_hour": 21},
+    {"label": "late_us", "start_hour": 22, "end_hour": 23}
+  ],
+  "spread_regime_quantiles": [0.50, 0.75, 0.90, 0.95, 0.99],
+  "volatility_regime_quantiles": [0.25, 0.50, 0.75, 0.90],
+  "ret_regime_quantiles": [0.25, 0.50, 0.75, 0.90],
+  "note": "Derived context is regime/exclusion information only. It is not forward evidence and does not authorize any promotion."
+}

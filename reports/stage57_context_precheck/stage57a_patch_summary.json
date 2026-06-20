@@ -1,0 +1,16 @@
+{
+  "stage": "Stage57A_CONTEXT_SOURCE_PRECHECK_AND_DERIVED_REGIME_TABLE_NO_PROMOTION",
+  "status": "PATCH_READY",
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "files": [
+    "app/stage57a_context_source_precheck.py",
+    "configs/stage57a_context_source_precheck.json",
+    "reports/stage57_context_precheck/stage57a_context_source_precheck_design.md",
+    "reports/stage57_context_precheck/stage57a_patch_summary.json",
+    ".github/workflows/stage57a_context_source_precheck.yml"
+  ],
+  "purpose": "Inventory available context sources and derive M15/M5 session/spread/volatility regime tables from broker-real AMarkets DB."
+}

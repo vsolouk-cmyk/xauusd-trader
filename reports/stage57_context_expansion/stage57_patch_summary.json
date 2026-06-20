@@ -1,0 +1,15 @@
+{
+  "stage": "Stage56_ARCHIVE_STAGE57_CONTEXT_DECISION_NO_PROMOTION",
+  "status": "PATCH_READY",
+  "files": [
+    "app/stage56_archive_and_stage57_context_decision.py",
+    "configs/stage57_context_source_manifest.json",
+    "reports/stage56_archive/stage56_archive_policy.md",
+    "reports/stage57_context_expansion/stage57_context_expansion_design.md",
+    ".github/workflows/stage57_context_expansion.yml"
+  ],
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO"
+}

@@ -1,0 +1,66 @@
+{
+  "stage": "Stage57_CONTEXT_SOURCE_PRECHECK_NO_PROMOTION",
+  "purpose": "Prepare context-aware research after price-action-only alternative megascan produced no hard-audit survivors.",
+  "policy": {
+    "stage51_forward_shadow_continues": true,
+    "stage56_price_action_alternatives_archived_if_no_pass": true,
+    "no_promotion": true,
+    "no_EA": true,
+    "no_paper_live": true,
+    "no_live": true
+  },
+  "context_sources": [
+    {
+      "id": "CTX_SESSION_AND_SPREAD_REGIME",
+      "priority": 1,
+      "status": "AVAILABLE_DERIVED_FROM_BROKER_DB",
+      "derived_from_existing_broker_db": true,
+      "description": "Session, weekday, spread-cost, rollover, and realized-volatility regimes derived from AMarkets broker bars."
+    },
+    {
+      "id": "CTX_NEWS_BLACKOUT_CALENDAR",
+      "priority": 2,
+      "status": "NEEDS_MANUAL_OR_EXTERNAL_CSV",
+      "candidate_paths": [
+        "data/context/news_blackout_calendar.csv",
+        "data/calendar/economic_calendar.csv",
+        "data/macro/economic_calendar.csv"
+      ],
+      "description": "High-impact macro/news windows used as exclusion or regime labels, not as direct prediction labels."
+    },
+    {
+      "id": "CTX_USD_RATE_PROXY",
+      "priority": 3,
+      "status": "NEEDS_EXTERNAL_CSV_OR_EXISTING_PROXY",
+      "candidate_paths": [
+        "data/context/dxy.csv",
+        "data/context/us10y.csv",
+        "data/context/us02y.csv",
+        "data/macro/dxy.csv",
+        "data/macro/us10y.csv"
+      ],
+      "description": "DXY and US yield proxies for gold regime filtering."
+    },
+    {
+      "id": "CTX_COT_WEEKLY_POSITIONING",
+      "priority": 4,
+      "status": "MAY_EXIST_LOCALLY_BUT_NOT_REQUIRED_FOR_INTRADAY_FIRST_PASS",
+      "candidate_paths": [
+        "data/cot/cftc",
+        "data/cot/cftc/artifacts",
+        "data/cot/gold_cot.csv"
+      ],
+      "description": "Weekly COT context for broad positioning regime; not suitable for intraday timing by itself."
+    },
+    {
+      "id": "CTX_REFERENCE_PRICE_BASIS",
+      "priority": 5,
+      "status": "OPTIONAL_ALREADY_PARTLY_USED_IN_STAGE48F",
+      "candidate_paths": [
+        "data/normalized/normalized_twelvedata_XAU_USD_5min_backfill_20260619T051819Z.csv",
+        "data/normalized"
+      ],
+      "description": "Reference-vs-broker basis diagnostics and data-quality regime labels."
+    }
+  ]
+}

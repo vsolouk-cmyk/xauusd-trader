@@ -1,0 +1,29 @@
+{
+  "stage": "Stage61D_TINY_DEMO_ORDER_TEST_NO_PROMOTION",
+  "symbol": "XAUUSD",
+  "direction": "BUY",
+  "lot": 0.01,
+  "max_spread_cost_bps": 3.5,
+  "horizon_m5_bars": 1,
+  "expires_minutes": 60,
+  "signal_file_name": "stage61_demo_signals.csv",
+  "require_stage61c2_parse_ok": true,
+  "required_stage61c2_statuses": [
+    "PARSE_OK_TRADING_DISABLED_NO_ORDER",
+    "PARSE_OK_EMPTY_NO_ORDER"
+  ],
+  "hard_blocks": {
+    "allow_live": false,
+    "allow_paper_live": false,
+    "allow_non_demo": false,
+    "max_orders_in_file": 1,
+    "max_lot": 0.01
+  },
+  "ea_settings_required": {
+    "RequireDemoAccount": true,
+    "AllowTrading": true,
+    "FixedLot": 0.01,
+    "MaxOpenPositions": 1,
+    "MaxOrdersPerDay": 1
+  }
+}

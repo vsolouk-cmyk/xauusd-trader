@@ -1,0 +1,9 @@
+check,passed,severity,observed,expected
+signal_csv_exists,True,HIGH,/Users/vahid/Desktop/xauusd-trader/reports/stage61_demo_tiny_order/mt5_files/stage61_demo_signals.csv,file exists
+signal_csv_nonzero_size,True,HIGH,464,>0 bytes
+ea_compatible_16_column_header,True,HIGH,"['signal_id', 'candidate_id', 'base_candidate_id', 'context_tag', 'signal_time_utc', 'entry_time_utc', 'symbol', 'side', 'lot', 'sl_points', 'tp_points', 'max_spread_points', 'max_hold_minutes', 'expiry_utc', 'magic', 'comment']","['signal_id', 'candidate_id', 'base_candidate_id', 'context_tag', 'signal_time_utc', 'entry_time_utc', 'symbol', 'side', 'lot', 'sl_points', 'tp_points', 'max_spread_points', 'max_hold_minutes', 'expiry_utc', 'magic', 'comment']"
+exactly_one_signal_row,True,HIGH,1,1
+side_supported_by_ea,True,HIGH,BUY,BUY or SELL
+symbol_is_xauusd,True,HIGH,XAUUSD,XAUUSD
+tiny_lot,True,HIGH,0.01,0 < lot <= 0.01
+expiry_in_future,True,HIGH,2026-06-21T18:31:55Z,future UTC expiry

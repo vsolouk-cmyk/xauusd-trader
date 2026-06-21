@@ -1,0 +1,15 @@
+{
+  "stage": "Stage58B_CONTEXT_AWARE_STAGE51_TRUE_FORWARD_SHADOW_NO_PROMOTION",
+  "status": "PATCH_READY",
+  "files": [
+    "app/stage58b_context_forward_shadow.py",
+    "configs/stage58b_context_forward_shadow.json",
+    "reports/stage58_context_forward_shadow/stage58b_design.md",
+    "reports/stage58_context_forward_shadow/stage58b_patch_summary.json",
+    ".github/workflows/stage58b_context_forward_shadow.yml"
+  ],
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO"
+}

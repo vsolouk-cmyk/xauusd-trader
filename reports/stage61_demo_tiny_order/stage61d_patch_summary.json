@@ -1,0 +1,11 @@
+{
+  "stage": "Stage61D_TINY_DEMO_ORDER_TEST_NO_PROMOTION",
+  "artifact_type": "demo_execution_sandbox_signal_generator",
+  "promotion": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "python_connects_to_broker": false,
+  "creates_order_file_only_when_armed": true,
+  "requires_explicit_ack": true,
+  "default_mode": "preview_only"
+}

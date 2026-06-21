@@ -1,0 +1,2 @@
+signal_id,candidate_id,base_candidate_id,context_tag,entry_time_utc,direction,symbol,lot,max_spread_cost_bps,horizon_m5_bars,expires_utc,status,comment
+S61D_TINY_DEMO_20260621T112840Z,S61D_TINY_DEMO_ORDER_TEST_SIGNAL,STAGE61D_EXECUTION_PLUMBING_ONLY,DEMO_EXECUTION_SANDBOX_ONLY_NO_EDGE,2026-06-21T11:28:40Z,BUY,XAUUSD,0.01,3.5,1,2026-06-21T12:28:40Z,READY,Stage61D tiny demo order plumbing test only; no edge promotion; demo account only

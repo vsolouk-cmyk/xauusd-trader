@@ -1,0 +1,2 @@
+signal_id,candidate_id,base_candidate_id,context_tag,entry_time_utc,direction,symbol,lot,max_spread_cost_bps,horizon_m5_bars,expires_utc,status,comment
+STAGE61C_PARSE_TEST_001,STAGE61C_PARSE_TEST_CANDIDATE,STAGE58B_CONTEXT_AWARE_STAGE51,PARSE_TEST_ONLY_ALLOWTRADING_FALSE,2026-06-21T10:42:12Z,BUY,XAUUSD,0.01,3.038021,12,2026-06-21T11:37:12Z,PENDING,STAGE61C_PARSE_ONLY_KEEP_ALLOWTRADING_FALSE

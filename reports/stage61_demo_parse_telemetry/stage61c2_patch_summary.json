@@ -1,0 +1,13 @@
+{
+  "stage": "Stage61C2_DEMO_EA_PARSE_TELEMETRY_NO_PROMOTION",
+  "files": [
+    "mql5/Experts/Stage61_DemoExecutionHarness_Telemetry.mq5",
+    "app/stage61c2_demo_ea_telemetry_validator.py",
+    "configs/stage61c2_demo_parse_telemetry.json"
+  ],
+  "safety": {
+    "orders_allowed": false,
+    "paper_live_allowed": false,
+    "live_allowed": false
+  }
+}

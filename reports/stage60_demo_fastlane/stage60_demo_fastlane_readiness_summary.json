@@ -1,0 +1,31 @@
+{
+  "stage": "Stage60_DEMO_FASTLANE_READINESS_NO_PROMOTION",
+  "status": "DEMO_FASTLANE_READINESS_COMPLETE_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "decision": "DEMO_EXECUTION_SANDBOX_DESIGN_ALLOWED_NO_EDGE_PROMOTION",
+  "next_allowed_step": "DESIGN_DEMO_EXECUTION_SANDBOX_WITH_DISABLED_LIVE_AND_TINY_RISK_NO_PROMOTION",
+  "state_meta": {
+    "path": "/Users/vahid/Desktop/xauusd-trader/data/shadow/stage58b_context_forward_shadow.sqlite",
+    "found": true,
+    "schema_ok": true,
+    "total_signals": 0,
+    "backfill_signals": 0,
+    "true_forward_signals": 0,
+    "evaluated_signals": 0,
+    "pending_signals": 0
+  },
+  "stage59_decision": "WAIT_FOR_CONTEXT_TRUE_FORWARD_EVIDENCE_NO_PROMOTION",
+  "important_policy": {
+    "demo_replaces_forward_shadow_for_edge": false,
+    "demo_can_run_in_parallel_for_execution_plumbing": true,
+    "live_requires_forward_and_demo_evidence": true,
+    "paper_live_or_live_order_submission_allowed": false,
+    "broker_connection_default": "DISABLED_UNTIL_EXPLICIT_DEMO_SANDBOX_STAGE"
+  },
+  "blockers": [],
+  "allow_design_demo_sandbox": true,
+  "generated_utc": "2026-06-20T19:43:27Z"
+}

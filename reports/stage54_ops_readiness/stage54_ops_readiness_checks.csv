@@ -1,0 +1,26 @@
+check,passed,observed,expected,severity
+gitignore_contains_local_data_patterns,True,[],no missing .gitignore data patterns,HIGH
+no_local_data_tracked_by_git,True,[],no tracked DB/zip/runtime local data,HIGH
+broker_db_schema_ok,True,,amarkets_bars schema is readable,HIGH
+export_M1_present,True,/Users/vahid/Downloads/amarkets_xauusd_1m.csv,AMarkets export file found,MEDIUM
+export_M1_tail_parse_ok,True,,last row timestamp parseable,MEDIUM
+db_M1_present,True,"{'rows': 1461262, 'start_utc': '2022-05-01T22:01:00Z', 'end_utc': '2026-06-19T16:59:00Z'}",timeframe exists in broker DB,MEDIUM
+export_M5_present,True,/Users/vahid/Downloads/amarkets_xauusd_5m.csv,AMarkets export file found,MEDIUM
+export_M5_tail_parse_ok,True,,last row timestamp parseable,MEDIUM
+db_M5_present,True,"{'rows': 292567, 'start_utc': '2022-05-01T22:00:00Z', 'end_utc': '2026-06-19T16:55:00Z'}",timeframe exists in broker DB,MEDIUM
+export_M15_present,True,/Users/vahid/Downloads/amarkets_xauusd_15m.csv,AMarkets export file found,MEDIUM
+export_M15_tail_parse_ok,True,,last row timestamp parseable,MEDIUM
+db_M15_present,True,"{'rows': 97573, 'start_utc': '2022-05-01T22:00:00Z', 'end_utc': '2026-06-19T16:45:00Z'}",timeframe exists in broker DB,MEDIUM
+export_M30_present,True,/Users/vahid/Downloads/amarkets_xauusd_30m.csv,AMarkets export file found,MEDIUM
+export_M30_tail_parse_ok,True,,last row timestamp parseable,MEDIUM
+db_M30_present,True,"{'rows': 48793, 'start_utc': '2022-05-01T22:00:00Z', 'end_utc': '2026-06-19T16:30:00Z'}",timeframe exists in broker DB,MEDIUM
+export_H1_present,True,/Users/vahid/Downloads/amarkets_xauusd_1h.csv,AMarkets export file found,MEDIUM
+export_H1_tail_parse_ok,True,,last row timestamp parseable,MEDIUM
+db_H1_present,True,"{'rows': 24415, 'start_utc': '2022-05-01T22:00:00Z', 'end_utc': '2026-06-19T16:00:00Z'}",timeframe exists in broker DB,MEDIUM
+shadow_state_schema_ok,True,,Stage52 shadow DB is readable,HIGH
+shadow_state_no_backfill,True,0,backfill signal count must be zero,HIGH
+stage52_runner_available,True,RUNNER_COMPLETE_NO_PROMOTION,Stage52 runner summary exists,MEDIUM
+stage52_forward_summary_available,True,TRUE_FORWARD_SHADOW_UPDATED_NO_PROMOTION,Stage52 forward summary exists,MEDIUM
+stage53_gate_summary_available,True,WAIT_FOR_TRUE_FORWARD_EVIDENCE_NO_PROMOTION,Stage53 gate summary exists,LOW
+m15_db_not_behind_watermark,True,"{'db_m15_latest': '2026-06-19T16:45:00Z', 'watermark': '2026-06-19T16:45:00Z'}",DB M15 latest should be >= watermark when comparable,MEDIUM
+m15_export_not_older_than_db,True,"{'export_m15_latest': '2026-06-19T16:45:00Z', 'db_m15_latest': '2026-06-19T16:45:00Z'}",export M15 latest should be >= DB M15 latest when comparable,MEDIUM

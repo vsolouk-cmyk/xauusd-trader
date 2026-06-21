@@ -1,0 +1,5 @@
+check,passed,severity,observed,expected
+ea_source_present,True,HIGH,/Users/vahid/Desktop/xauusd-trader/mql5/Experts/Stage61_DemoExecutionHarness.mq5,Stage61_DemoExecutionHarness.mq5 exists in repo
+metaeditor_compile_confirmed_by_user,True,HIGH,true,Use --compiled-ok after successful MetaEditor compile
+no_order_healthcheck_file_created,True,HIGH,/Users/vahid/Desktop/xauusd-trader/reports/stage61_demo_healthcheck/mt5_files/stage61_demo_signals.csv,"Empty CSV with header only, safe for EA parse test"
+stage61_export_summary_optional,False,LOW,/Users/vahid/Desktop/xauusd-trader/reports/stage61_demo_execution_sandbox/stage61_demo_signal_exporter_summary.json,Optional exporter summary exists if Stage61 exporter has run

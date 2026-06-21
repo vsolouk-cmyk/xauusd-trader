@@ -1,0 +1,6 @@
+check,passed,severity,observed,expected
+status_file_present,True,HIGH,/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/stage61_ea_status.csv,stage61_ea_status.csv exists
+status_parse_ok,True,HIGH,PARSE_OK_TRADING_DISABLED_NO_ORDER,"one of ['PARSE_OK_EMPTY_NO_ORDER', 'PARSE_OK_TRADING_DISABLED_NO_ORDER']"
+require_demo_account_true,True,HIGH,true,true
+allow_trading_false,True,HIGH,false,false during parse test
+valid_rows_nonnegative,True,MEDIUM,1,>=0

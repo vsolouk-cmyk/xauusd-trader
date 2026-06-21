@@ -1,0 +1,15 @@
+{
+  "stage": "Stage62_MARKET_OPEN_OPS_RUNNER_NO_PROMOTION",
+  "contains": [
+    "app/stage62_market_open_ops_runner.py",
+    "configs/stage62_market_open_ops.json",
+    "reports/stage62_market_open_ops/stage62_design.md",
+    "reports/stage62_market_open_ops/stage62_patch_summary.json",
+    ".github/workflows/stage62_market_open_ops_runner.yml"
+  ],
+  "promotion": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "broker_connection_in_python": "DISABLED",
+  "order_submission_in_python": "DISABLED"
+}

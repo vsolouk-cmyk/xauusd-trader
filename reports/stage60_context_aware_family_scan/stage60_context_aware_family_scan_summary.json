@@ -1,0 +1,66 @@
+{
+  "stage": "Stage60_CONTEXT_AWARE_PARALLEL_FAMILY_SCAN_NO_PROMOTION",
+  "status": "CONTEXT_AWARE_PARALLEL_SCAN_COMPLETE_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "decision": "CONTEXT_AWARE_PARALLEL_SCAN_COMPLETE_NO_PASS_NO_PROMOTION",
+  "next_allowed_step": "ARCHIVE_STAGE60_CONTEXT_FAMILIES_OR_EXPAND_EXTERNAL_CONTEXT_NO_PROMOTION",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "db": "/Users/vahid/Desktop/xauusd-trader/data/broker_normalized/amarkets_multitf.sqlite",
+  "cost_model": "/Users/vahid/Desktop/xauusd-trader/reports/stage48f/stage48f_cost_model.json",
+  "m15_context": "/Users/vahid/Desktop/xauusd-trader/reports/stage57_context_precheck/stage57a_m15_context_regime_table.csv",
+  "rows": {
+    "M15": 97573,
+    "M30": 48793,
+    "M5": 292567,
+    "M15_context": 97573
+  },
+  "costs": {
+    "stress_cost_bps": 2.982003733153722,
+    "extreme_cost_bps": 3.0380209087577326
+  },
+  "family_summary": {
+    "CTX_MOMENTUM_CONTINUATION": {
+      "raw_events": 2385129,
+      "evaluated_trade_rows": 250000,
+      "candidate_count": 648,
+      "hard_audit_pass_count": 0
+    },
+    "CTX_TREND_PULLBACK_CONTINUATION": {
+      "raw_events": 1268913,
+      "evaluated_trade_rows": 249919,
+      "candidate_count": 729,
+      "hard_audit_pass_count": 0
+    },
+    "CTX_EXHAUSTION_REVERSAL": {
+      "raw_events": 679725,
+      "evaluated_trade_rows": 250000,
+      "candidate_count": 162,
+      "hard_audit_pass_count": 0
+    }
+  },
+  "total_trade_rows": 749919,
+  "total_candidates": 1539,
+  "hard_audit_pass_count": 0,
+  "audit_thresholds": {
+    "min_trade_count": 120,
+    "min_oos_trade_count": 30,
+    "min_mean_stress_bps": 2.0,
+    "min_median_stress_bps": 0.0,
+    "min_win_rate": 0.53,
+    "min_oos_mean_stress_bps": 0.0,
+    "min_oos_win_rate": 0.52,
+    "min_positive_years": 4,
+    "max_negative_years": 1,
+    "min_worst_year_mean_stress_bps": 0.0,
+    "min_cost_x2_mean_stress_bps": 0.0,
+    "max_direction_share": 0.7,
+    "max_day_share": 0.35,
+    "min_declustered_trade_count": 50,
+    "min_declustered_mean_stress_bps": 0.0,
+    "min_declustered_win_rate": 0.5
+  },
+  "generated_utc": "2026-06-20T19:48:35Z"
+}

@@ -1,0 +1,28 @@
+name: Stage62 Market Open Ops Runner
+
+on:
+  workflow_dispatch:
+    inputs:
+      execute:
+        description: "Run scripts instead of preflight only"
+        required: false
+        default: "false"
+      prepare_demo_signal:
+        description: "Also prepare fresh Stage61D3 demo signal file"
+        required: false
+        default: "false"
+
+jobs:
+  stage62:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Stage62 preflight or execution
+        run: |
+          ARGS="--root . --config configs/stage62_market_open_ops.json --out reports/stage62_market_open_ops"
+          if [ "${{ github.event.inputs.execute }}" = "true" ]; then ARGS="$ARGS --execute"; fi
+          if [ "${{ github.event.inputs.prepare_demo_signal }}" = "true" ]; then ARGS="$ARGS --prepare-demo-signal"; fi
+          python3 app/stage62_market_open_ops_runner.py $ARGS

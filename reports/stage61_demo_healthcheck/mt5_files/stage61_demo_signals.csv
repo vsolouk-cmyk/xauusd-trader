@@ -1,0 +1,1 @@
+signal_id,candidate_id,base_candidate_id,context_tag,entry_time_utc,direction,symbol,lot,max_spread_cost_bps,horizon_m5_bars,expires_utc,status,comment

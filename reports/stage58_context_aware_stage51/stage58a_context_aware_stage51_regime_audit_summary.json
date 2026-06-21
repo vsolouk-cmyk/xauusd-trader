@@ -1,0 +1,118 @@
+{
+  "stage": "Stage58A_CONTEXT_AWARE_STAGE51_REGIME_AUDIT_NO_PROMOTION",
+  "status": "CONTEXT_AWARE_STAGE51_AUDIT_COMPLETE_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "decision": "CONTEXT_AWARE_STAGE51_AUDIT_PASS_NEEDS_FORWARD_SHADOW_DESIGN_NO_PROMOTION",
+  "next_allowed_step": "DESIGN_STAGE58B_CONTEXT_FORWARD_SHADOW_NO_PROMOTION",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "inputs": {
+    "db": "/Users/vahid/Desktop/xauusd-trader/data/broker_normalized/amarkets_multitf.sqlite",
+    "cost_model": "/Users/vahid/Desktop/xauusd-trader/reports/stage48f/stage48f_cost_model.json",
+    "stage51_candidates": "/Users/vahid/Desktop/xauusd-trader/reports/stage51_volatility_squeeze/stage51_volatility_squeeze_breakout_candidates.csv",
+    "m15_context": "/Users/vahid/Desktop/xauusd-trader/reports/stage57_context_precheck/stage57a_m15_context_regime_table.csv",
+    "m5_context": "/Users/vahid/Desktop/xauusd-trader/reports/stage57_context_precheck/stage57a_m5_context_regime_table.csv",
+    "config": "/Users/vahid/Desktop/xauusd-trader/configs/stage58a_context_aware_stage51_regime_audit.json"
+  },
+  "rows": {
+    "M15": 97573,
+    "M30": 48793,
+    "M5": 292567,
+    "M15_context": 97573,
+    "M5_context": 292567
+  },
+  "costs": {
+    "stress_cost_bps": 2.982003733153722,
+    "extreme_cost_bps": 3.0380209087577326
+  },
+  "stage51_candidates_meta": {
+    "path": "/Users/vahid/Desktop/xauusd-trader/reports/stage51_volatility_squeeze/stage51_volatility_squeeze_breakout_candidates.csv",
+    "found": true,
+    "rows": 108,
+    "pass_rows": 108,
+    "parse_failures": []
+  },
+  "audit_thresholds": {
+    "min_trade_count": 80,
+    "min_oos_trade_count": 20,
+    "min_mean_stress_bps": 2.0,
+    "min_median_stress_bps": 0.0,
+    "min_win_rate": 0.53,
+    "min_oos_mean_stress_bps": 0.0,
+    "min_oos_win_rate": 0.52,
+    "min_positive_years": 4,
+    "max_negative_years": 1,
+    "min_worst_year_mean_stress_bps": 0.0,
+    "min_cost_x2_mean_stress_bps": 0.0,
+    "max_direction_share": 0.7,
+    "max_day_share": 0.35,
+    "min_declustered_trade_count": 40,
+    "min_declustered_mean_stress_bps": 0.0,
+    "min_declustered_win_rate": 0.5
+  },
+  "summary": {
+    "base_candidates_loaded": 12,
+    "context_audit_candidates": 156,
+    "hard_audit_pass_count": 4,
+    "signal_counts_by_base_candidate": {
+      "S51_VSQ_CW48_P20_B5_M3020_H24": 2535,
+      "S51_VSQ_CW48_P20_B5_M3040_H24": 2307,
+      "S51_VSQ_CW96_P20_B3_M3020_H24": 3748,
+      "S51_VSQ_CW96_P20_B3_M3040_H24": 3373,
+      "S51_VSQ_CW96_P20_B5_M3020_H12": 2446,
+      "S51_VSQ_CW96_P20_B5_M3040_H12": 2193,
+      "S51_VSQ_CW96_P20_B5_M3020_H24": 2446,
+      "S51_VSQ_CW96_P20_B5_M3040_H24": 2193,
+      "S51_VSQ_CW48_P20_B5_M3040_H12": 2307,
+      "S51_VSQ_CW48_P20_B5_M3020_H12": 2535,
+      "S51_VSQ_CW48_P20_B3_M3020_H24": 3883,
+      "S51_VSQ_CW96_P20_B3_M3020_H12": 3749
+    },
+    "errors": []
+  },
+  "failed_checks": [],
+  "checks": [
+    {
+      "check": "broker_db_timeframes_loaded",
+      "passed": true,
+      "severity": "HIGH",
+      "observed": {
+        "M15": 97573,
+        "M30": 48793,
+        "M5": 292567
+      }
+    },
+    {
+      "check": "m15_context_available_or_derived",
+      "passed": true,
+      "severity": "HIGH",
+      "observed": 97573
+    },
+    {
+      "check": "m5_context_available_or_derived",
+      "passed": true,
+      "severity": "MEDIUM",
+      "observed": 292567
+    },
+    {
+      "check": "stage51_pass_candidates_loaded",
+      "passed": true,
+      "severity": "HIGH",
+      "observed": {
+        "loaded": 12,
+        "path": "/Users/vahid/Desktop/xauusd-trader/reports/stage51_volatility_squeeze/stage51_volatility_squeeze_breakout_candidates.csv",
+        "found": true,
+        "rows": 108,
+        "pass_rows": 108,
+        "parse_failures": []
+      }
+    }
+  ],
+  "outputs": {
+    "candidates": "/Users/vahid/Desktop/xauusd-trader/reports/stage58_context_aware_stage51/stage58a_context_aware_stage51_regime_audit_candidates.csv",
+    "event_sample": "/Users/vahid/Desktop/xauusd-trader/reports/stage58_context_aware_stage51/stage58a_context_aware_stage51_regime_audit_event_sample.csv"
+  },
+  "generated_utc": "2026-06-20T19:05:42Z"
+}

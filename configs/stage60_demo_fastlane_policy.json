@@ -1,0 +1,15 @@
+{
+  "stage": "Stage60_DEMO_FASTLANE_POLICY_NO_PROMOTION",
+  "policy": {
+    "demo_replaces_forward_shadow_for_edge": false,
+    "demo_can_run_in_parallel_for_execution_plumbing": true,
+    "allowed_before_full_forward_gate": "only as a disabled-live demo execution sandbox",
+    "minimum_conditions_to_design_demo_sandbox": [
+      "Stage58B state DB exists and has clean no-backfill schema",
+      "broker/live connection remains disabled by default",
+      "orders are demo-only and tiny-risk after a separate explicit stage",
+      "edge promotion still requires true-forward evidence"
+    ],
+    "hard_blocks": ["NO_LIVE", "NO_PAPER_LIVE", "NO_EA_PROMOTION", "NO_REAL_ORDER_SUBMISSION"]
+  }
+}

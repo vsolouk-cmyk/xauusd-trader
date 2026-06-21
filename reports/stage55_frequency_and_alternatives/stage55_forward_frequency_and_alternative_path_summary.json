@@ -1,0 +1,205 @@
+{
+  "stage": "Stage55_FORWARD_FREQUENCY_AND_ALTERNATIVE_PATH_NO_PROMOTION",
+  "status": "FORWARD_FREQUENCY_AND_ALT_PATH_REPORT_COMPLETE_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "EA": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "decision": "CONTINUE_STAGE52_BUT_PREPARE_PARALLEL_ALTERNATIVE_SCAN_NO_PROMOTION",
+  "next_allowed_step": "AFTER_MARKET_REOPEN_RUN_STAGE52_STAGE53_AND_OPTIONALLY_START_ALT_MEGASCAN_DESIGN_NO_PROMOTION",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "inputs": {
+    "db": "/Users/vahid/Desktop/xauusd-trader/data/broker_normalized/amarkets_multitf.sqlite",
+    "state_db": "/Users/vahid/Desktop/xauusd-trader/data/shadow/stage52_forward_shadow.sqlite",
+    "stage51_candidates": "/Users/vahid/Desktop/xauusd-trader/reports/stage51_volatility_squeeze/stage51_volatility_squeeze_breakout_candidates.csv",
+    "stage54_summary": "/Users/vahid/Desktop/xauusd-trader/reports/stage54_ops_readiness/stage54_ops_readiness_summary.json",
+    "config": "/Users/vahid/Desktop/xauusd-trader/configs/stage55_forward_frequency_plan.json"
+  },
+  "decision_reasons": [
+    "no_true_forward_signals_yet",
+    "forecast_to_min_evidence_exceeds_wait_threshold"
+  ],
+  "stage54_decision": "OPS_READY_WAIT_FOR_NEW_AMARKETS_M15_BARS_NO_PROMOTION",
+  "broker_m15_span": {
+    "found": true,
+    "schema_ok": true,
+    "rows": 97573,
+    "start_utc": "2022-05-01T22:00:00Z",
+    "end_utc": "2026-06-19T16:45:00Z",
+    "span_days": 1509.78125,
+    "error": null
+  },
+  "stage51_candidates": {
+    "found": true,
+    "rows": 108,
+    "pass_rows": 12,
+    "total_pass_trade_count": 3605,
+    "best_single_candidate_trade_count": 456,
+    "candidate_ids": [
+      "S51_VSQ_CW96_P30_B5_M3020_H12",
+      "S51_VSQ_CW96_P30_B5_M3040_H12",
+      "S51_VSQ_CW48_P20_B5_M3040_H6",
+      "S51_VSQ_CW96_P20_B3_M3020_H6",
+      "S51_VSQ_CW96_P20_B3_M3040_H6",
+      "S51_VSQ_CW96_P30_B5_M3020_H6",
+      "S51_VSQ_CW96_P30_B5_M3040_H6",
+      "S51_VSQ_CW48_P30_B5_M3020_H6",
+      "S51_VSQ_CW48_P30_B5_M3040_H6",
+      "S51_VSQ_CW96_P30_B3_M3020_H6",
+      "S51_VSQ_CW192_P30_B5_M3020_H6",
+      "S51_VSQ_CW192_P30_B5_M3040_H6"
+    ],
+    "sample": [
+      {
+        "candidate_id": "S51_VSQ_CW96_P30_B5_M3020_H12",
+        "trade_count": 282,
+        "status": "HARD_AUDIT_PASS_NEEDS_FORWARD_SHADOW_DESIGN",
+        "mean_stress_bps": 0.0,
+        "win_rate": 0.5460992907801419
+      },
+      {
+        "candidate_id": "S51_VSQ_CW96_P30_B5_M3040_H12",
+        "trade_count": 283,
+        "status": "HARD_AUDIT_PASS_NEEDS_FORWARD_SHADOW_DESIGN",
+        "mean_stress_bps": 0.0,
+        "win_rate": 0.5441696113074205
+      },
+      {
+        "candidate_id": "S51_VSQ_CW48_P20_B5_M3040_H6",
+        "trade_count": 282,
+        "status": "HARD_AUDIT_PASS_NEEDS_FORWARD_SHADOW_DESIGN",
+        "mean_stress_bps": 0.0,
+        "win_rate": 0.5390070921985816
+      },
+      {
+        "candidate_id": "S51_VSQ_CW96_P20_B3_M3020_H6",
+        "trade_count": 251,
+        "status": "HARD_AUDIT_PASS_NEEDS_FORWARD_SHADOW_DESIGN",
+        "mean_stress_bps": 0.0,
+        "win_rate": 0.549800796812749
+      },
+      {
+        "candidate_id": "S51_VSQ_CW96_P20_B3_M3040_H6",
+        "trade_count": 251,
+        "status": "HARD_AUDIT_PASS_NEEDS_FORWARD_SHADOW_DESIGN",
+        "mean_stress_bps": 0.0,
+        "win_rate": 0.549800796812749
+      },
+      {
+        "candidate_id": "S51_VSQ_CW96_P30_B5_M3020_H6",
+        "trade_count": 282,
+        "status": "HARD_AUDIT_PASS_NEEDS_FORWARD_SHADOW_DESIGN",
+        "mean_stress_bps": 0.0,
+        "win_rate": 0.5851063829787234
+      },
+      {
+        "candidate_id": "S51_VSQ_CW96_P30_B5_M3040_H6",
+        "trade_count": 283,
+        "status": "HARD_AUDIT_PASS_NEEDS_FORWARD_SHADOW_DESIGN",
+        "mean_stress_bps": 0.0,
+        "win_rate": 0.5830388692579506
+      },
+      {
+        "candidate_id": "S51_VSQ_CW48_P30_B5_M3020_H6",
+        "trade_count": 456,
+        "status": "HARD_AUDIT_PASS_NEEDS_FORWARD_SHADOW_DESIGN",
+        "mean_stress_bps": 0.0,
+        "win_rate": 0.5635964912280702
+      },
+      {
+        "candidate_id": "S51_VSQ_CW48_P30_B5_M3040_H6",
+        "trade_count": 438,
+        "status": "HARD_AUDIT_PASS_NEEDS_FORWARD_SHADOW_DESIGN",
+        "mean_stress_bps": 0.0,
+        "win_rate": 0.5639269406392694
+      },
+      {
+        "candidate_id": "S51_VSQ_CW96_P30_B3_M3020_H6",
+        "trade_count": 391,
+        "status": "HARD_AUDIT_PASS_NEEDS_FORWARD_SHADOW_DESIGN",
+        "mean_stress_bps": 0.0,
+        "win_rate": 0.5370843989769821
+      },
+      {
+        "candidate_id": "S51_VSQ_CW192_P30_B5_M3020_H6",
+        "trade_count": 203,
+        "status": "HARD_AUDIT_PASS_NEEDS_FORWARD_SHADOW_DESIGN",
+        "mean_stress_bps": 0.0,
+        "win_rate": 0.5862068965517241
+      },
+      {
+        "candidate_id": "S51_VSQ_CW192_P30_B5_M3040_H6",
+        "trade_count": 203,
+        "status": "HARD_AUDIT_PASS_NEEDS_FORWARD_SHADOW_DESIGN",
+        "mean_stress_bps": 0.0,
+        "win_rate": 0.5862068965517241
+      }
+    ],
+    "error": null
+  },
+  "shadow_state": {
+    "found": true,
+    "schema_ok": true,
+    "total": 0,
+    "true_forward": 0,
+    "backfill": 0,
+    "pending": 0,
+    "evaluated": 0,
+    "first_entry_utc": null,
+    "last_entry_utc": null,
+    "span_days": 0.0,
+    "watermark_utc": "2026-06-19T16:45:00Z",
+    "error": null
+  },
+  "frequency_prior": {
+    "basis": "HISTORICAL_CADENCE_PRIOR_ONLY_NOT_FORWARD_EVIDENCE",
+    "broker_span_days": 1509.78125,
+    "pass_candidate_count": 12,
+    "historical_total_pass_trade_count_sum": 3605,
+    "best_single_candidate_trade_count": 456,
+    "raw_summed_candidate_signals_per_day": 2.38776312793658,
+    "best_single_candidate_signals_per_day": 0.3020305093867075,
+    "overlap_adjusted_signals_per_day_low": 0.47755262558731604,
+    "overlap_adjusted_signals_per_day_base": 0.835717094777803,
+    "overlap_adjusted_signals_per_day_high": 1.432657876761948,
+    "overlap_adjusted_signals_per_week_base": 5.850019663444621,
+    "forecast_days_to_min_true_forward_base": 119.65771745591442,
+    "forecast_days_to_min_evaluated_base": 71.79463047354865
+  },
+  "config": {
+    "stage": "Stage55_FORWARD_FREQUENCY_AND_ALTERNATIVE_PATH_NO_PROMOTION",
+    "min_true_forward_signals": 100,
+    "min_evaluated_signals": 60,
+    "max_wait_days_before_parallel_scan": 21,
+    "cadence_prior_overlap_discount_base": 0.35,
+    "cadence_prior_overlap_discount_low": 0.2,
+    "cadence_prior_overlap_discount_high": 0.6,
+    "min_expected_true_forward_signals_per_week_warning": 8,
+    "alternative_path_policy": {
+      "start_parallel_design_if_forecast_days_gt": 21,
+      "start_parallel_megascan_if_after_market_reopen_forward_rate_lt_per_week": 5,
+      "do_not_archive_stage51_until_forward_gate_fail_or_timeout": true
+    },
+    "alternative_thesis_queue": [
+      {
+        "id": "ALT_A_PULLBACK_AFTER_SQUEEZE_FAILURE",
+        "description": "After volatility squeeze breakout fails to follow through, test controlled mean-reversion/pullback continuation with cost-aware broker data.",
+        "why": "If forward frequency is too sparse, failed-breakout reactions may occur more often than clean breakouts.",
+        "status": "DESIGN_ONLY_NO_SCAN_YET"
+      },
+      {
+        "id": "ALT_B_INTRADAY_TREND_PULLBACK_TO_M15_VALUE_AREA",
+        "description": "Trend-confirmed M15/M30 pullback after active-session directional impulse, avoiding pure breakout chasing.",
+        "why": "Could produce higher frequency than squeeze breakout while keeping structural trend context.",
+        "status": "DESIGN_ONLY_NO_SCAN_YET"
+      },
+      {
+        "id": "ALT_C_SESSION_RANGE_REVERSION_AFTER_EXHAUSTION",
+        "description": "Broker-real intraday exhaustion/reversion only after range extension and spread-safe session filters.",
+        "why": "A non-breakout family for diversification if Stage51 forward cadence or edge collapses.",
+        "status": "DESIGN_ONLY_NO_SCAN_YET"
+      }
+    ]
+  },
+  "generated_utc": "2026-06-20T15:00:00Z"
+}

@@ -1,0 +1,127 @@
+{
+  "stage": "Stage61D3_EA_COMPATIBLE_TINY_DEMO_SIGNAL_NO_PROMOTION",
+  "status": "EA_COMPATIBLE_TINY_DEMO_SIGNAL_READY_NO_PROMOTION",
+  "promotion": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "decision": "COPY_EA_COMPATIBLE_SIGNAL_TO_MT5_FILES_AND_RUN_STAGE61_DEMOEXECUTIONHARNESS",
+  "next_allowed_step": "MT5_TINY_DEMO_ORDER_TEST_WITH_STAGE61_DEMOEXECUTIONHARNESS_ALLOWTRADING_TRUE",
+  "signal_csv": "/Users/vahid/Desktop/xauusd-trader/reports/stage61_demo_tiny_order/mt5_files/stage61_demo_signals.csv",
+  "mt5_destination_file_name": "stage61_demo_signals.csv",
+  "required_ea": "Stage61_DemoExecutionHarness",
+  "do_not_use_ea": "Stage61_DemoExecutionHarness_Telemetry",
+  "schema_contract": "16-column EA-compatible CSV: side is column 8, lot is column 9",
+  "signal_row": {
+    "signal_id": "S61D3_TINY_DEMO_20260621T123155Z",
+    "candidate_id": "S61D3_TINY_DEMO_ORDER_TEST_SIGNAL",
+    "base_candidate_id": "STAGE61D3_EXECUTION_PLUMBING_ONLY",
+    "context_tag": "DEMO_EXECUTION_SANDBOX_ONLY_NO_EDGE",
+    "signal_time_utc": "2026-06-21T12:31:55Z",
+    "entry_time_utc": "2026-06-21T12:31:55Z",
+    "symbol": "XAUUSD",
+    "side": "BUY",
+    "lot": "0.01",
+    "sl_points": 500,
+    "tp_points": 500,
+    "max_spread_points": 80,
+    "max_hold_minutes": 10,
+    "expiry_utc": "2026-06-21T18:31:55Z",
+    "magic": 610058,
+    "comment": "Stage61D3 tiny demo order plumbing test only"
+  },
+  "checks": [
+    {
+      "check": "signal_csv_exists",
+      "passed": true,
+      "severity": "HIGH",
+      "observed": "/Users/vahid/Desktop/xauusd-trader/reports/stage61_demo_tiny_order/mt5_files/stage61_demo_signals.csv",
+      "expected": "file exists"
+    },
+    {
+      "check": "signal_csv_nonzero_size",
+      "passed": true,
+      "severity": "HIGH",
+      "observed": 464,
+      "expected": ">0 bytes"
+    },
+    {
+      "check": "ea_compatible_16_column_header",
+      "passed": true,
+      "severity": "HIGH",
+      "observed": [
+        "signal_id",
+        "candidate_id",
+        "base_candidate_id",
+        "context_tag",
+        "signal_time_utc",
+        "entry_time_utc",
+        "symbol",
+        "side",
+        "lot",
+        "sl_points",
+        "tp_points",
+        "max_spread_points",
+        "max_hold_minutes",
+        "expiry_utc",
+        "magic",
+        "comment"
+      ],
+      "expected": [
+        "signal_id",
+        "candidate_id",
+        "base_candidate_id",
+        "context_tag",
+        "signal_time_utc",
+        "entry_time_utc",
+        "symbol",
+        "side",
+        "lot",
+        "sl_points",
+        "tp_points",
+        "max_spread_points",
+        "max_hold_minutes",
+        "expiry_utc",
+        "magic",
+        "comment"
+      ]
+    },
+    {
+      "check": "exactly_one_signal_row",
+      "passed": true,
+      "severity": "HIGH",
+      "observed": 1,
+      "expected": 1
+    },
+    {
+      "check": "side_supported_by_ea",
+      "passed": true,
+      "severity": "HIGH",
+      "observed": "BUY",
+      "expected": "BUY or SELL"
+    },
+    {
+      "check": "symbol_is_xauusd",
+      "passed": true,
+      "severity": "HIGH",
+      "observed": "XAUUSD",
+      "expected": "XAUUSD"
+    },
+    {
+      "check": "tiny_lot",
+      "passed": true,
+      "severity": "HIGH",
+      "observed": 0.01,
+      "expected": "0 < lot <= 0.01"
+    },
+    {
+      "check": "expiry_in_future",
+      "passed": true,
+      "severity": "HIGH",
+      "observed": "2026-06-21T18:31:55Z",
+      "expected": "future UTC expiry"
+    }
+  ],
+  "failed_high_checks": [],
+  "orders_created_by_python": 0,
+  "generated_utc": "2026-06-21T12:31:55.558999Z"
+}

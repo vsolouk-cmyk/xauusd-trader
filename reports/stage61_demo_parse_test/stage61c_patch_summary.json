@@ -1,0 +1,15 @@
+{
+  "stage": "Stage61C_DEMO_SIGNAL_PARSE_TEST_NO_PROMOTION",
+  "files": [
+    "app/stage61c_demo_signal_parse_test.py",
+    "configs/stage61c_demo_signal_parse_test.json",
+    "reports/stage61_demo_parse_test/stage61c_design.md",
+    "reports/stage61_demo_parse_test/stage61c_patch_summary.json",
+    ".github/workflows/stage61c_demo_signal_parse_test.yml"
+  ],
+  "promotion": "NO_GO",
+  "paper_live": "NO_GO",
+  "live": "NO_GO",
+  "orders_created": 0,
+  "purpose": "Create a synthetic signal file for MT5 parse-only test with AllowTrading=false."
+}

@@ -1,2 +1,0 @@
-signal_id,candidate_id,base_candidate_id,context_tag,signal_time_utc,entry_time_utc,symbol,side,lot,sl_points,tp_points,max_spread_points,max_hold_minutes,expiry_utc,magic,comment
-S61D3_TINY_DEMO_20260621T123155Z,S61D3_TINY_DEMO_ORDER_TEST_SIGNAL,STAGE61D3_EXECUTION_PLUMBING_ONLY,DEMO_EXECUTION_SANDBOX_ONLY_NO_EDGE,2026-06-21T12:31:55Z,2026-06-21T12:31:55Z,XAUUSD,BUY,0.01,500,500,80,10,2026-06-21T18:31:55Z,610058,Stage61D3 tiny demo order plumbing test only

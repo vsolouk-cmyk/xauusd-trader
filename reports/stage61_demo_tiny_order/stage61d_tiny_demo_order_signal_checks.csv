@@ -1,8 +1,0 @@
-check,passed,severity,observed,expected
-stage61c2_summary_found,True,HIGH,/Users/vahid/Desktop/xauusd-trader/reports/stage61_demo_parse_telemetry/stage61c2_demo_ea_telemetry_summary.json,Stage61C2 telemetry summary exists before tiny demo order design
-stage61c2_parse_status_ok,True,HIGH,PARSE_OK_TRADING_DISABLED_NO_ORDER,"[""PARSE_OK_EMPTY_NO_ORDER"", ""PARSE_OK_TRADING_DISABLED_NO_ORDER""]"
-stage61c2_no_orders_created,True,HIGH,0,0
-live_blocked_by_policy,True,HIGH,False,False
-paper_live_blocked_by_policy,True,HIGH,False,False
-non_demo_blocked_by_policy,True,HIGH,False,False
-single_order_file_limit,True,HIGH,1,1

@@ -1,2 +1,0 @@
-key,path,exists,schema_ok,blackout_ready,row_count,timestamp_column,event_column,currency_column,impact_column,category_column,start,end,macro_semantic_hits,central_bank_gold_only_hits,usd_or_unknown_rows,bars_in_blackout,bars_in_blackout_pct,decision_reason,error
-news_calendar,/Users/vahid/Desktop/xauusd-trader/data/external/news_calendar.csv,True,True,False,515,timestamp,event,currency,impact,category,2022-01-10T13:30:00+00:00,2026-12-09T19:00:00+00:00,233,10,515,0,0.0,schema_ok_but_no_bars_in_blackout_window,

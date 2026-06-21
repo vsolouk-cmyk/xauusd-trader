@@ -1,5 +1,0 @@
-key,path,schema_ok,row_count,start,end,same_day_coverage_pct,safe_lag_coverage_pct,staleness_median_days,staleness_p90_days
-dxy,/Users/vahid/Desktop/xauusd-trader/data/external/dxy.csv,True,1025,2022-05-02T00:00:00+00:00,2026-06-05T00:00:00+00:00,0.7951713395638629,0.9984423676012462,0.0,2.0
-us10y_yield,/Users/vahid/Desktop/xauusd-trader/data/external/us10y_yield.csv,True,1028,2022-05-02T00:00:00+00:00,2026-06-11T00:00:00+00:00,0.7990654205607477,0.9984423676012462,0.0,2.0
-real_yield_optional,/Users/vahid/Desktop/xauusd-trader/data/external/real_yield.csv,True,1028,2022-05-02T00:00:00+00:00,2026-06-11T00:00:00+00:00,0.7990654205607477,0.9984423676012462,0.0,2.0
-us02y_yield_optional,/Users/vahid/Desktop/xauusd-trader/data/external/us02y_yield.csv,False,0,,,,,,

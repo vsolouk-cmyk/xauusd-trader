@@ -1,1 +1,0 @@
-signal_id,candidate_id,base_candidate_id,context_tag,signal_time_utc,entry_time_utc,symbol,side,lot,sl_points,tp_points,max_spread_points,max_hold_minutes,expiry_utc,magic,comment

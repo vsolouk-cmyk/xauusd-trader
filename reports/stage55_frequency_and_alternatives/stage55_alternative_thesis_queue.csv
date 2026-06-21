@@ -1,4 +1,0 @@
-id,description,why,status
-ALT_A_PULLBACK_AFTER_SQUEEZE_FAILURE,"After volatility squeeze breakout fails to follow through, test controlled mean-reversion/pullback continuation with cost-aware broker data.","If forward frequency is too sparse, failed-breakout reactions may occur more often than clean breakouts.",DESIGN_ONLY_NO_SCAN_YET
-ALT_B_INTRADAY_TREND_PULLBACK_TO_M15_VALUE_AREA,"Trend-confirmed M15/M30 pullback after active-session directional impulse, avoiding pure breakout chasing.",Could produce higher frequency than squeeze breakout while keeping structural trend context.,DESIGN_ONLY_NO_SCAN_YET
-ALT_C_SESSION_RANGE_REVERSION_AFTER_EXHAUSTION,Broker-real intraday exhaustion/reversion only after range extension and spread-safe session filters.,A non-breakout family for diversification if Stage51 forward cadence or edge collapses.,DESIGN_ONLY_NO_SCAN_YET

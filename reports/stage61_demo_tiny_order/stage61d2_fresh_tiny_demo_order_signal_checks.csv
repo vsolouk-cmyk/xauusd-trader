@@ -1,8 +1,0 @@
-check,passed,severity,observed,expected
-signal_csv_exists,True,HIGH,/Users/vahid/Desktop/xauusd-trader/reports/stage61_demo_tiny_order/mt5_files/stage61_demo_signals.csv,file exists
-signal_csv_nonzero_size,True,HIGH,450,>0 bytes
-signal_csv_header_exact,True,HIGH,"['signal_id', 'candidate_id', 'base_candidate_id', 'context_tag', 'entry_time_utc', 'direction', 'symbol', 'lot', 'max_spread_cost_bps', 'horizon_m5_bars', 'expires_utc', 'status', 'comment']","['signal_id', 'candidate_id', 'base_candidate_id', 'context_tag', 'entry_time_utc', 'direction', 'symbol', 'lot', 'max_spread_cost_bps', 'horizon_m5_bars', 'expires_utc', 'status', 'comment']"
-signal_csv_one_row,True,HIGH,1,1
-signal_status_ready,True,HIGH,READY,READY
-signal_lot_tiny,True,HIGH,0.01,<=0.01
-signal_not_expired_at_generation,True,HIGH,2026-06-21T16:02:20Z,future expiry

@@ -84,3 +84,6 @@ _incoming*/
 __pycache__/
 *.pyc
 .DS_Store
+
+# Generated reports and heavy outputs
+reports/

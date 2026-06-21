@@ -1,5 +1,0 @@
-check,passed,severity,observed,expected
-signal_csv_created,True,HIGH,/Users/vahid/Desktop/xauusd-trader/reports/stage61_demo_parse_test/mt5_files/stage61_demo_signals.csv,CSV exists
-signal_csv_has_one_row,True,HIGH,1,one synthetic parse-only signal
-allow_trading_required_false_in_mt5,True,HIGH,False,User keeps EA AllowTrading=false
-python_broker_connection_disabled,True,HIGH,DISABLED,Python does not connect to broker

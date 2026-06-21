@@ -1,6 +1,0 @@
-year,url,fetched,error,rows_seen,events
-2022,https://www.bls.gov/schedule/2022/home.htm,False,<HTTPError 403: 'Forbidden'>,0,0
-2023,https://www.bls.gov/schedule/2023/home.htm,False,<HTTPError 403: 'Forbidden'>,0,0
-2024,https://www.bls.gov/schedule/2024/home.htm,False,<HTTPError 403: 'Forbidden'>,0,0
-2025,https://www.bls.gov/schedule/2025/home.htm,False,<HTTPError 403: 'Forbidden'>,0,0
-2026,https://www.bls.gov/schedule/2026/home.htm,False,<HTTPError 403: 'Forbidden'>,0,0

@@ -1,11 +1,4 @@
 #!/usr/bin/env python3
-"""
-Stage64D4 source-file import preflight.
-
-Checks only raw macro-regime files before normalization/import.
-No thesis validation, no signal generation, no order path.
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -13,55 +6,154 @@ import csv
 import datetime as dt
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Optional
 
-UTC = dt.timezone.utc
+DEFAULT_TARGETS = [
+    {
+        "manifest_id": "SRC_GOLD_D1_OHLC_2011_PRESENT",
+        "priority": "P0_CRITICAL",
+        "target_file": "data/macro_regime/raw/gold_d1_ohlc_2011_present.csv",
+        "required_columns": ["date_utc", "open", "high", "low", "close", "volume", "source", "available_after_utc"],
+        "time_column": "date_utc",
+        "primary_key": ["date_utc", "source"],
+        "min_start_date": "2011-01-01",
+        "start_grace_days": 7,
+        "source_policy": "GOLD_SPOT_OR_REFERENCE_ALLOWED",
+    },
+    {
+        "manifest_id": "SRC_DXY_D1_2011_PRESENT",
+        "priority": "P0_CRITICAL",
+        "target_file": "data/macro_regime/raw/dxy_daily_2011_present.csv",
+        "required_columns": ["date_utc", "close", "source", "available_after_utc"],
+        "time_column": "date_utc",
+        "primary_key": ["date_utc", "source"],
+        "min_start_date": "2011-01-01",
+        "start_grace_days": 7,
+        "source_policy": "EXACT_DXY_REQUIRED_UNLESS_CONFIG_ACCEPTS_USD_PROXY",
+    },
+    {
+        "manifest_id": "SRC_REAL_YIELD_OR_PROXY_2011_PRESENT",
+        "priority": "P0_CRITICAL",
+        "target_file": "data/macro_regime/raw/real_yield_or_proxy_daily_2011_present.csv",
+        "required_columns": ["date_utc", "value", "source", "available_after_utc", "proxy_method"],
+        "time_column": "date_utc",
+        "primary_key": ["date_utc", "source", "proxy_method"],
+        "min_start_date": "2011-01-01",
+        "start_grace_days": 7,
+        "source_policy": "REAL_YIELD_OR_APPROVED_PROXY",
+    },
+    {
+        "manifest_id": "SRC_VIX_OR_VOL_PROXY_2011_PRESENT",
+        "priority": "P1_HIGH",
+        "target_file": "data/macro_regime/raw/vix_daily_2011_present.csv",
+        "required_columns": ["date_utc", "close", "source", "available_after_utc"],
+        "time_column": "date_utc",
+        "primary_key": ["date_utc", "source"],
+        "min_start_date": "2011-01-01",
+        "start_grace_days": 7,
+        "source_policy": "VIX_OR_APPROVED_VOL_PROXY",
+    },
+    {
+        "manifest_id": "SRC_GOLD_ETF_HOLDINGS_FLOWS",
+        "priority": "P1_HIGH",
+        "target_file": "data/macro_regime/raw/gold_etf_holdings_or_flows.csv",
+        "required_columns": ["date_utc", "etf_id", "holdings_tonnes_or_flow", "source", "release_time_utc", "available_after_utc"],
+        "time_column": "date_utc",
+        "primary_key": ["date_utc", "etf_id", "source"],
+        "min_start_date": "2011-01-01",
+        "start_grace_days": 7,
+        "source_policy": "ETF_FLOW_OR_HOLDINGS_RELEASE_LAG_REQUIRED",
+    },
+    {
+        "manifest_id": "SRC_CENTRAL_BANK_GOLD_DEMAND",
+        "priority": "P1_HIGH",
+        "target_file": "data/macro_regime/raw/central_bank_gold_demand_monthly_quarterly.csv",
+        "required_columns": ["period_start", "period_end", "demand_value", "unit", "source", "release_date_utc", "available_after_utc"],
+        "time_column": "period_start",
+        "primary_key": ["period_start", "period_end", "source"],
+        "min_start_date": "2011-01-01",
+        "start_grace_days": 31,
+        "source_policy": "CENTRAL_BANK_DEMAND_RELEASE_LAG_REQUIRED_SLOW_PRIOR_ONLY",
+    },
+    {
+        "manifest_id": "SRC_MACRO_EVENT_CALENDAR_ARCHIVE",
+        "priority": "P2_MEDIUM",
+        "target_file": "data/macro_regime/raw/macro_event_calendar_archive.csv",
+        "required_columns": ["scheduled_time_utc", "event_type", "importance", "country", "known_before_event", "source", "available_after_utc"],
+        "time_column": "scheduled_time_utc",
+        "primary_key": ["scheduled_time_utc", "event_type", "country", "source"],
+        "min_start_date": "2011-01-01",
+        "start_grace_days": 31,
+        "source_policy": "KNOWN_BEFORE_EVENT_ONLY",
+    },
+]
 
 
-def utc_now_iso() -> str:
-    return dt.datetime.now(tz=UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+def parse_args() -> argparse.Namespace:
+    p = argparse.ArgumentParser()
+    p.add_argument("--root", default=".")
+    p.add_argument("--config", default="configs/stage64d4_source_file_import_preflight.json")
+    p.add_argument("--out", default="reports/stage64d4_source_file_import_preflight")
+    return p.parse_args()
 
 
-def parse_dt(value: str) -> dt.datetime | None:
-    value = str(value or "").strip()
-    if not value:
+def load_config(root: Path, config_path: str) -> dict[str, Any]:
+    p = root / config_path
+    if not p.exists():
+        return {}
+    with p.open("r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def parse_date_any(v: str) -> Optional[dt.datetime]:
+    if v is None:
         return None
-    if value.endswith("Z"):
-        value = value[:-1] + "+00:00"
+    s = str(v).strip()
+    if not s:
+        return None
     try:
-        parsed = dt.datetime.fromisoformat(value)
-        if parsed.tzinfo is None:
-            parsed = parsed.replace(tzinfo=UTC)
-        return parsed.astimezone(UTC)
-    except ValueError:
-        try:
-            d = dt.date.fromisoformat(value[:10])
-            return dt.datetime(d.year, d.month, d.day, tzinfo=UTC)
-        except ValueError:
-            return None
+        if s.endswith("Z"):
+            return dt.datetime.fromisoformat(s.replace("Z", "+00:00")).astimezone(dt.timezone.utc)
+        if "T" in s:
+            x = dt.datetime.fromisoformat(s)
+            if x.tzinfo is None:
+                x = x.replace(tzinfo=dt.timezone.utc)
+            return x.astimezone(dt.timezone.utc)
+        return dt.datetime.combine(dt.date.fromisoformat(s[:10]), dt.time(0, 0), tzinfo=dt.timezone.utc)
+    except Exception:
+        return None
 
 
-def read_csv_head(path: Path) -> Tuple[List[str], List[Dict[str, str]], int]:
-    with path.open("r", newline="", encoding="utf-8-sig") as f:
-        reader = csv.DictReader(f)
-        fields = list(reader.fieldnames or [])
-        rows: List[Dict[str, str]] = []
-        count = 0
-        for row in reader:
-            count += 1
-            if len(rows) < 200000:
-                rows.append(row)
-        return fields, rows, count
+def row_key(row: dict[str, str], fields: list[str]) -> tuple[str, ...]:
+    return tuple((row.get(f) or "").strip() for f in fields)
 
 
-def audit_target(root: Path, target: Dict[str, Any], minimum_start: str) -> Dict[str, Any]:
-    rel = target["target_file"]
-    path = root / rel
-    required = list(target.get("required_columns", []))
-    result: Dict[str, Any] = {
-        "manifest_id": target.get("manifest_id"),
-        "priority": target.get("priority"),
-        "target_file": rel,
+def evaluate_source_policy(target: dict[str, Any], rows: list[dict[str, str]], config: dict[str, Any]) -> tuple[bool, list[str], list[str]]:
+    if not rows:
+        return False, [], []
+    policy = target.get("source_policy", "")
+    sources = sorted({(r.get("source") or "").strip() for r in rows if (r.get("source") or "").strip()})
+    source_blob = "|".join(sources).upper()
+    warnings: list[str] = []
+    issues: list[str] = []
+
+    if policy == "EXACT_DXY_REQUIRED_UNLESS_CONFIG_ACCEPTS_USD_PROXY":
+        if "PROXY_NOT_DXY" in source_blob or "DTWEXBGS" in source_blob:
+            if config.get("allow_usd_proxy_for_dxy_preflight", False):
+                warnings.append("DXY target uses broad USD proxy accepted by config; validation must record reduced-source scope")
+                return True, issues, warnings
+            issues.append("DXY target uses broad USD proxy, not exact DXY; set allow_usd_proxy_for_dxy_preflight=true only after explicit scope approval")
+            return False, issues, warnings
+    return True, issues, warnings
+
+
+def check_file(root: Path, target: dict[str, Any], config: dict[str, Any]) -> dict[str, Any]:
+    path = root / target["target_file"]
+    required = target["required_columns"]
+    result: dict[str, Any] = {
+        "manifest_id": target["manifest_id"],
+        "priority": target["priority"],
+        "target_file": target["target_file"],
         "found": path.exists(),
         "required_columns": required,
         "missing_columns": [],
@@ -73,126 +165,172 @@ def audit_target(root: Path, target: Dict[str, Any], minimum_start: str) -> Dict
         "available_after_parse_error_count": None,
         "start_coverage_ok": False,
         "schema_ok": False,
+        "source_policy_ok": False,
         "preflight_ok": False,
         "issues": [],
+        "warnings": [],
     }
     if not path.exists():
         result["issues"].append("file missing")
         return result
 
-    fields, rows, count = read_csv_head(path)
-    result["row_count"] = count
-    missing = [c for c in required if c not in fields]
-    result["missing_columns"] = missing
-    if missing:
-        result["issues"].append("missing columns: " + ",".join(missing))
-    result["schema_ok"] = not missing
-    if count <= 0:
+    try:
+        with path.open("r", encoding="utf-8-sig", newline="") as f:
+            reader = csv.DictReader(f)
+            columns = reader.fieldnames or []
+            missing = [c for c in required if c not in columns]
+            result["missing_columns"] = missing
+            result["schema_ok"] = not missing
+            rows = list(reader)
+    except Exception as e:
+        result["issues"].append(f"csv read error: {e}")
+        return result
+
+    result["row_count"] = len(rows)
+    if not rows:
         result["issues"].append("no data rows")
 
-    time_cols = [c for c in ["date_utc", "period_start", "scheduled_time_utc"] if c in fields]
-    key_cols = []
-    if "date_utc" in fields and "source" in fields:
-        key_cols = ["date_utc", "source"]
-        if "etf_id" in fields:
-            key_cols = ["date_utc", "etf_id", "source"]
-        if "proxy_method" in fields:
-            key_cols = ["date_utc", "source", "proxy_method"]
-    elif "period_start" in fields and "period_end" in fields and "source" in fields:
-        key_cols = ["period_start", "period_end", "source"]
-    elif "scheduled_time_utc" in fields and "event_type" in fields and "country" in fields and "source" in fields:
-        key_cols = ["scheduled_time_utc", "event_type", "country", "source"]
-
-    seen: set[tuple[str, ...]] = set()
-    dup = 0
-    parsed_times: List[dt.datetime] = []
-    aa_missing = 0
-    aa_parse_err = 0
-    for row in rows:
-        if key_cols:
-            key = tuple(str(row.get(c, "")).strip() for c in key_cols)
-            if key in seen:
-                dup += 1
-            seen.add(key)
-        if time_cols:
-            t = parse_dt(row.get(time_cols[0], ""))
-            if t:
-                parsed_times.append(t)
-        if "available_after_utc" in fields:
-            raw = str(row.get("available_after_utc", "")).strip()
-            if not raw:
-                aa_missing += 1
-            elif parse_dt(raw) is None:
-                aa_parse_err += 1
-
-    result["duplicate_key_count"] = dup
-    if "available_after_utc" in fields:
-        result["available_after_missing_count"] = aa_missing
-        result["available_after_parse_error_count"] = aa_parse_err
-    if parsed_times:
-        first = min(parsed_times)
-        last = max(parsed_times)
+    time_col = target["time_column"]
+    times = []
+    for r in rows:
+        t = parse_date_any(r.get(time_col, ""))
+        if t:
+            times.append(t)
+    if times:
+        first = min(times)
+        last = max(times)
         result["first_time_utc"] = first.isoformat().replace("+00:00", "Z")
         result["last_time_utc"] = last.isoformat().replace("+00:00", "Z")
-        min_start = parse_dt(minimum_start)
-        result["start_coverage_ok"] = bool(min_start and first <= min_start)
-        if not result["start_coverage_ok"]:
-            result["issues"].append(f"coverage starts after required minimum {minimum_start}")
+        min_start = dt.datetime.combine(dt.date.fromisoformat(target.get("min_start_date", "2011-01-01")), dt.time(0, 0), tzinfo=dt.timezone.utc)
+        grace_days = int(target.get("start_grace_days", config.get("default_start_grace_days", 7)))
+        if first <= min_start:
+            result["start_coverage_ok"] = True
+        elif first <= min_start + dt.timedelta(days=grace_days):
+            result["start_coverage_ok"] = True
+            result["warnings"].append(f"coverage starts after calendar minimum but within grace window: first={first.date()} min={min_start.date()} grace_days={grace_days}")
+        else:
+            result["issues"].append(f"coverage starts after required minimum plus grace: first={first.date()} min={min_start.date()} grace_days={grace_days}")
     else:
         result["issues"].append("no parseable time column values")
 
-    if dup:
-        result["issues"].append(f"duplicate primary-key rows: {dup}")
-    if aa_missing:
-        result["issues"].append(f"available_after_utc missing rows: {aa_missing}")
-    if aa_parse_err:
-        result["issues"].append(f"available_after_utc parse errors: {aa_parse_err}")
+    if rows and target.get("primary_key"):
+        seen = set()
+        dup = 0
+        for r in rows:
+            k = row_key(r, target["primary_key"])
+            if k in seen:
+                dup += 1
+            else:
+                seen.add(k)
+        result["duplicate_key_count"] = dup
+        if dup:
+            result["issues"].append(f"duplicate primary key rows: {dup}")
 
-    result["preflight_ok"] = bool(result["schema_ok"] and count > 0 and result["start_coverage_ok"] and dup == 0 and not aa_missing and not aa_parse_err)
+    if "available_after_utc" in required:
+        missing_av = 0
+        parse_err = 0
+        for r in rows:
+            v = (r.get("available_after_utc") or "").strip()
+            if not v:
+                missing_av += 1
+            elif parse_date_any(v) is None:
+                parse_err += 1
+        result["available_after_missing_count"] = missing_av
+        result["available_after_parse_error_count"] = parse_err
+        if missing_av:
+            result["issues"].append(f"available_after_utc missing rows: {missing_av}")
+        if parse_err:
+            result["issues"].append(f"available_after_utc parse error rows: {parse_err}")
+
+    source_policy_ok, source_issues, source_warnings = evaluate_source_policy(target, rows, config)
+    result["source_policy_ok"] = source_policy_ok
+    result["issues"].extend(source_issues)
+    result["warnings"].extend(source_warnings)
+
+    result["preflight_ok"] = bool(
+        result["found"]
+        and result["schema_ok"]
+        and result["row_count"] > 0
+        and result["start_coverage_ok"]
+        and result["duplicate_key_count"] == 0
+        and (result["available_after_missing_count"] in (None, 0))
+        and (result["available_after_parse_error_count"] in (None, 0))
+        and result["source_policy_ok"]
+        and not result["issues"]
+    )
     return result
 
 
-def write_csv(path: Path, fieldnames: List[str], rows: List[Dict[str, Any]]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        for row in rows:
-            writer.writerow({k: row.get(k, "") for k in fieldnames})
+def write_outputs(out_dir: Path, checks: list[dict[str, Any]], summary: dict[str, Any]) -> None:
+    out_dir.mkdir(parents=True, exist_ok=True)
+    csv_path = out_dir / "stage64d4_source_file_import_preflight_checks.csv"
+    fields = [
+        "manifest_id", "priority", "target_file", "found", "row_count", "first_time_utc", "last_time_utc",
+        "schema_ok", "source_policy_ok", "start_coverage_ok", "duplicate_key_count",
+        "available_after_missing_count", "available_after_parse_error_count", "preflight_ok", "issues", "warnings",
+    ]
+    with csv_path.open("w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=fields)
+        w.writeheader()
+        for c in checks:
+            row = dict(c)
+            row["issues"] = "; ".join(c.get("issues") or [])
+            row["warnings"] = "; ".join(c.get("warnings") or [])
+            w.writerow({k: row.get(k, "") for k in fields})
+
+    with (out_dir / "stage64d4_source_file_import_preflight_summary.json").open("w", encoding="utf-8") as f:
+        json.dump(summary, f, indent=2)
+
+    with (out_dir / "stage64d4_source_file_import_preflight_report.md").open("w", encoding="utf-8") as f:
+        f.write("# Stage64D4 Source File Import Preflight - LoaderFix1\n\n")
+        f.write(f"Generated UTC: `{summary['generated_utc']}`\n\n")
+        f.write(f"Status: `{summary['status']}`\n")
+        f.write(f"Decision: `{summary['decision']}`\n\n")
+        f.write("No validation or order path is authorized by this preflight.\n\n")
+        f.write("## Counts\n\n")
+        for k, v in summary["counts"].items():
+            f.write(f"- {k}: {v}\n")
+        f.write("\n## Failed or missing files\n\n")
+        failed = [c for c in checks if not c.get("preflight_ok")]
+        if failed:
+            for c in failed:
+                issue_text = "; ".join(c.get("issues") or []) or "failed without issue text"
+                f.write(f"- `{c['target_file']}`: {issue_text}\n")
+        else:
+            f.write("- none\n")
+        f.write("\n## Warnings\n\n")
+        warned = [c for c in checks if c.get("warnings")]
+        if warned:
+            for c in warned:
+                f.write(f"- `{c['target_file']}`: {'; '.join(c.get('warnings') or [])}\n")
+        else:
+            f.write("- none\n")
+        f.write("\n## Next\n\n")
+        if summary["p0_ready_for_stage64d_rerun"]:
+            f.write("P0 raw files passed preflight. Rerun Stage64D to reassess data-contract readiness. Validation remains blocked until Stage64D explicitly unlocks the selected scope.\n")
+        else:
+            f.write("P0 raw files did not pass preflight. Fix P0 raw files before rerunning Stage64D. Validation remains blocked.\n")
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="Stage64D4 source-file import preflight")
-    ap.add_argument("--root", default=".")
-    ap.add_argument("--config", default="configs/stage64d4_source_file_import_preflight.json")
-    ap.add_argument("--out", default="reports/stage64d4_source_file_import_preflight")
-    ns = ap.parse_args()
+    args = parse_args()
+    root = Path(args.root).resolve()
+    config = load_config(root, args.config)
+    targets = config.get("targets") or DEFAULT_TARGETS
+    out_dir = root / args.out
 
-    root = Path(ns.root).resolve()
-    cfg = json.loads((root / ns.config).read_text(encoding="utf-8"))
-    source_cfg = json.loads((root / cfg["source_config"]).read_text(encoding="utf-8"))
-    out_dir = root / ns.out
-    out_dir.mkdir(parents=True, exist_ok=True)
-    minimum_start = cfg.get("minimum_start_date", "2011-01-01")
+    checks = [check_file(root, target, config) for target in targets]
+    p0 = [c for c in checks if c.get("priority") == "P0_CRITICAL"]
+    p0_ok = sum(1 for c in p0 if c.get("preflight_ok"))
+    ok = sum(1 for c in checks if c.get("preflight_ok"))
+    found = sum(1 for c in checks if c.get("found"))
 
-    audits = [audit_target(root, t, minimum_start) for t in source_cfg.get("targets", [])]
-    p0_files = set(cfg.get("required_p0_files", []))
-    p0_audits = [a for a in audits if a["target_file"] in p0_files]
-    p0_ready = all(a["preflight_ok"] for a in p0_audits) and len(p0_audits) == len(p0_files)
-    all_ready = all(a["preflight_ok"] for a in audits)
-
-    validation_allowed = False
-    decision = "P0_READY_FOR_STAGE64D_RERUN_NO_VALIDATION" if p0_ready else "BLOCK_STAGE64D_RERUN_UNTIL_P0_RAW_FILES_PASS_PREFLIGHT_NO_ORDER"
-    if all_ready:
-        decision = "ALL_RAW_FILES_PASS_PREFLIGHT_RERUN_STAGE64D_NO_VALIDATION_YET"
-
-    csv_path = out_dir / "stage64d4_source_file_import_preflight_checks.csv"
-    write_csv(csv_path, [
-        "manifest_id", "priority", "target_file", "found", "schema_ok", "preflight_ok", "row_count", "first_time_utc", "last_time_utc", "duplicate_key_count", "available_after_missing_count", "available_after_parse_error_count", "issues"
-    ], [{**a, "issues": "; ".join(a.get("issues", []))} for a in audits])
+    p0_ready = p0_ok == len(p0) and len(p0) > 0
+    all_ready = ok == len(checks) and len(checks) > 0
+    decision = "P0_RAW_FILES_PASS_PREFLIGHT_RERUN_STAGE64D_NO_ORDER" if p0_ready else "BLOCK_STAGE64D_RERUN_UNTIL_P0_RAW_FILES_PASS_PREFLIGHT_NO_ORDER"
 
     summary = {
-        "stage": "Stage64D4_SOURCE_FILE_IMPORT_PREFLIGHT_NO_PROMOTION",
+        "stage": "Stage64D4_SOURCE_FILE_IMPORT_PREFLIGHT_NO_PROMOTION_LOADERFIX1",
         "status": "SOURCE_FILE_IMPORT_PREFLIGHT_COMPLETE_NO_PROMOTION",
         "decision": decision,
         "promotion": "NO_GO",
@@ -200,56 +338,33 @@ def main() -> int:
         "paper_order": "NO_GO",
         "paper_live": "NO_GO",
         "live": "NO_GO",
-        "validation_allowed": validation_allowed,
-        "generated_utc": utc_now_iso(),
+        "validation_allowed": False,
+        "generated_utc": dt.datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
         "root": str(root),
         "counts": {
-            "targets": len(audits),
-            "found": sum(1 for a in audits if a["found"]),
-            "preflight_ok": sum(1 for a in audits if a["preflight_ok"]),
-            "p0_required": len(p0_files),
-            "p0_preflight_ok": sum(1 for a in p0_audits if a["preflight_ok"]),
+            "targets": len(checks),
+            "found": found,
+            "preflight_ok": ok,
+            "p0_required": len(p0),
+            "p0_preflight_ok": p0_ok,
         },
         "p0_ready_for_stage64d_rerun": p0_ready,
         "all_raw_files_preflight_ok": all_ready,
-        "hard_blocks": cfg.get("hard_blocks", []),
+        "hard_blocks": [
+            "NO_PAPER_ORDER",
+            "NO_EA_PROMOTION",
+            "NO_PAPER_LIVE",
+            "NO_LIVE",
+            "NO_HISTORICAL_VALIDATION_SCAN",
+        ],
         "outputs": {
-            "checks_csv": str(csv_path.relative_to(root)),
-            "summary_json": str((out_dir / "stage64d4_source_file_import_preflight_summary.json").relative_to(root)),
-            "report_md": str((out_dir / "stage64d4_source_file_import_preflight_report.md").relative_to(root)),
+            "checks_csv": str(out_dir / "stage64d4_source_file_import_preflight_checks.csv"),
+            "summary_json": str(out_dir / "stage64d4_source_file_import_preflight_summary.json"),
+            "report_md": str(out_dir / "stage64d4_source_file_import_preflight_report.md"),
         },
-        "checks": audits,
+        "checks": checks,
     }
-    (out_dir / "stage64d4_source_file_import_preflight_summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
-
-    lines = [
-        "# Stage64D4 Source File Import Preflight",
-        "",
-        f"Generated UTC: `{summary['generated_utc']}`",
-        "",
-        f"Status: `{summary['status']}`",
-        f"Decision: `{decision}`",
-        "",
-        "No validation or order path is authorized by this preflight.",
-        "",
-        "## Counts",
-        "",
-        f"- targets: {summary['counts']['targets']}",
-        f"- found: {summary['counts']['found']}",
-        f"- preflight_ok: {summary['counts']['preflight_ok']}",
-        f"- p0_preflight_ok: {summary['counts']['p0_preflight_ok']} / {summary['counts']['p0_required']}",
-        "",
-        "## Failed or missing files",
-        "",
-    ]
-    failed = [a for a in audits if not a["preflight_ok"]]
-    if not failed:
-        lines.append("None.")
-    else:
-        for a in failed:
-            lines.append(f"- `{a['target_file']}`: " + "; ".join(a.get("issues", [])))
-    lines += ["", "## Next", "", "If P0 is ready, rerun Stage64D to reassess data-contract readiness. Validation is still blocked until Stage64D explicitly unlocks the selected scope."]
-    (out_dir / "stage64d4_source_file_import_preflight_report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    write_outputs(out_dir, checks, summary)
     return 0
 
 

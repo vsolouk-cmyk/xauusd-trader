@@ -1,26 +1,8 @@
 {
-  "stage": "Stage64D4_SOURCE_FILE_IMPORT_PREFLIGHT_NO_PROMOTION",
-  "raw_dir": "data/macro_regime/raw",
-  "source_config": "configs/stage64_macro_data_acquisition_sources.json",
-  "minimum_start_date": "2011-01-01",
-  "required_p0_files": [
-    "data/macro_regime/raw/gold_d1_ohlc_2011_present.csv",
-    "data/macro_regime/raw/dxy_daily_2011_present.csv",
-    "data/macro_regime/raw/real_yield_or_proxy_daily_2011_present.csv"
-  ],
-  "optional_p1_files": [
-    "data/macro_regime/raw/vix_daily_2011_present.csv",
-    "data/macro_regime/raw/gold_etf_holdings_or_flows.csv",
-    "data/macro_regime/raw/central_bank_gold_demand_monthly_quarterly.csv"
-  ],
-  "optional_p2_files": [
-    "data/macro_regime/raw/macro_event_calendar_archive.csv"
-  ],
-  "hard_blocks": [
-    "NO_PAPER_ORDER",
-    "NO_EA_PROMOTION",
-    "NO_PAPER_LIVE",
-    "NO_LIVE",
-    "NO_HISTORICAL_VALIDATION_SCAN"
+  "default_start_grace_days": 7,
+  "allow_usd_proxy_for_dxy_preflight": false,
+  "notes": [
+    "Calendar start 2011-01-01 falls on a non-trading day for most daily market series; LoaderFix1 accepts first observed date within a 7-day grace window.",
+    "DXY broad-dollar proxy is blocked by default unless explicitly accepted through allow_usd_proxy_for_dxy_preflight=true."
   ]
 }

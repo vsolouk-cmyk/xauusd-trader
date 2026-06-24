@@ -1,0 +1,20 @@
+{
+  "stage": "Stage64A_RESEARCH_FREEZE_CLEANUP_LEDGER_NO_PROMOTION",
+  "mutation_mode": "report_only_no_state_mutation",
+  "source_plan": "Stage64 Project Plan.pdf",
+  "purpose": "Freeze prior intraday candidate-first program; create active/archive/reference map; initialize experiment ledger skeleton for multiple-testing accounting.",
+  "default_out": "reports/stage64a_research_freeze_cleanup",
+  "frozen_rules": [
+    "NO_NEW_INTRADAY_SCAN",
+    "NO_RESCUE_FILTERING",
+    "NO_OLD_GATE_PROMOTION",
+    "NO_PAPER_ORDER",
+    "NO_PAPER_LIVE",
+    "NO_LIVE"
+  ],
+  "stage64_program": {
+    "main_path": "Daily/Weekly Macro-Regime Gold System",
+    "stage64b": "Stage58B corrected statistical audit; no promotion",
+    "stage64c": "Macro-regime gold thesis specification"
+  }
+}

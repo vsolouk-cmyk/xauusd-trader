@@ -1,0 +1,19 @@
+{
+  "stage": "Stage64D3_MACRO_REGIME_DATA_ACQUISITION_AND_LAG_MANIFEST_NO_PROMOTION",
+  "stage64d2_summary_path": "reports/stage64d2_macro_regime_data_gap_remediation_plan/stage64d2_macro_regime_data_gap_remediation_plan_summary.json",
+  "policy": {
+    "validation_allowed": false,
+    "paper_order": "NO_GO",
+    "paper_live": "NO_GO",
+    "live": "NO_GO",
+    "ea_promotion": "NO_GO",
+    "broker_connection": "NO_GO",
+    "reduced_scope_scan_requires_explicit_predeclaration": true
+  },
+  "target_root": "data/macro_regime",
+  "raw_dir": "data/macro_regime/raw",
+  "normalized_dir": "data/macro_regime/normalized",
+  "manifest_dir": "data/macro_regime/manifests",
+  "minimum_start_date_default": "2011-01-01",
+  "next_allowed_step": "Stage64D4_SOURCE_FILE_IMPORT_PREFLIGHT_AFTER_FILES_PROVIDED_NO_ORDER"
+}

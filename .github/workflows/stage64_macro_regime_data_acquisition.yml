@@ -1,0 +1,62 @@
+name: Stage64 Macro Regime Data Acquisition
+
+on:
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: 'Minimum start date for source history'
+        required: true
+        default: '2011-01-01'
+      offline_template_only:
+        description: 'Create templates only; do not fetch network sources'
+        required: true
+        default: '0'
+      allow_fred_graph_fallback:
+        description: 'Use FRED graph CSV fallback if FRED_API_KEY is unavailable'
+        required: true
+        default: '1'
+
+jobs:
+  acquire-macro-regime-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Stage64 macro data acquisition
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: |
+          set -euo pipefail
+          FLAGS=""
+          if [ "${{ github.event.inputs.offline_template_only }}" = "1" ]; then
+            FLAGS="$FLAGS --offline-template-only"
+          fi
+          if [ "${{ github.event.inputs.allow_fred_graph_fallback }}" = "1" ]; then
+            FLAGS="$FLAGS --allow-fred-graph-fallback"
+          fi
+          python tools/stage64_macro_data_collect.py \
+            --root . \
+            --config configs/stage64_macro_data_acquisition_sources.json \
+            --out reports/stage64_macro_data_acquisition \
+            --raw-dir data/macro_regime/raw \
+            --start-date "${{ github.event.inputs.start_date }}" \
+            $FLAGS
+
+      - name: Upload Stage64 macro data artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage64-macro-regime-data-${{ github.run_number }}
+          path: |
+            data/macro_regime/raw/*.csv
+            reports/stage64_macro_data_acquisition/*
+          if-no-files-found: error
+          retention-days: 14

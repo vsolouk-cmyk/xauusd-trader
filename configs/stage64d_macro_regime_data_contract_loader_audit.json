@@ -1,0 +1,40 @@
+{
+  "stage": "Stage64D_MACRO_REGIME_DATA_CONTRACT_AND_LOADER_AUDIT_NO_PROMOTION",
+  "policy": {
+    "mutation_mode": "report_only_no_state_mutation",
+    "promotion": "NO_GO",
+    "paper_order": "NO_GO",
+    "paper_live": "NO_GO",
+    "live": "NO_GO"
+  },
+  "inputs": {
+    "broker_db": "data/broker_normalized/amarkets_multitf.sqlite",
+    "feature_contract_json": "reports/stage64c_macro_regime_gold_thesis_spec/stage64c_macro_regime_feature_contract.json",
+    "feature_contract_csv": "reports/stage64c_macro_regime_gold_thesis_spec/stage64c_macro_regime_feature_contract.csv"
+  },
+  "source_files": {
+    "dxy": "data/exogenous/dxy.csv",
+    "real_yield": "data/exogenous/real_yield.csv",
+    "us10y": "data/exogenous/us10y.csv",
+    "vix": "data/exogenous/vix.csv",
+    "spx": "data/exogenous/spx.csv",
+    "oil": "data/exogenous/oil.csv",
+    "calendar_events": "data/exogenous/calendar_events.csv",
+    "central_bank_demand": "data/exogenous/central_bank_demand.csv",
+    "etf_flows": "data/exogenous/etf_flows.csv"
+  },
+  "source_mapping": {
+    "dxy_trend_acceleration": ["dxy"],
+    "real_yield_or_proxy": ["real_yield", "us10y"],
+    "etf_flow_divergence": ["etf_flows"],
+    "central_bank_demand_regime": ["central_bank_demand"],
+    "volatility_regime": ["vix"],
+    "event_calendar_risk": ["calendar_events"]
+  },
+  "validation_splits": [
+    {"split_id": "2011_2015", "start": "2011-01-01", "end": "2015-12-31"},
+    {"split_id": "2016_2019", "start": "2016-01-01", "end": "2019-12-31"},
+    {"split_id": "2020_2022", "start": "2020-01-01", "end": "2022-12-31"},
+    {"split_id": "2023_present", "start": "2023-01-01", "end": "2026-12-31"}
+  ]
+}

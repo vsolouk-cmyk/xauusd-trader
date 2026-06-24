@@ -87,3 +87,28 @@ __pycache__/
 
 # Generated reports and heavy outputs
 reports/
+
+# Stage64 / GitHub storage hygiene
+_archive*/
+*.zip
+*.tar
+*.tar.gz
+*.7z
+*.bak
+*.tmp
+
+# Generated reports stay local only
+reports/**
+
+# Large/local data stays local only
+data/**/*.csv
+data/**/*.sqlite
+data/**/*.sqlite-*
+data/**/*.db
+data/**/*.parquet
+data/**/*.jsonl
+data/**/*.zip
+
+# MT5 / broker exports should not enter GitHub
+amarkets_xauusd_*.csv
+stage64-macro-regime-data-*.zip

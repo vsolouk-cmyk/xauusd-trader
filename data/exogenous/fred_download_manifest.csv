@@ -1,7 +1,0 @@
-alias,filename,series_id,status,rows,existing_rows,endpoint,url,output_path,artifact_success_path,error
-dxy,dxy.csv,DTWEXBGS,downloaded,1025,1025,api,https://api.stlouisfed.org/fred/series/observations?series_id=DTWEXBGS&observation_start=2022-05-01&file_type=json&api_key=***,data/exogenous/dxy.csv,data/exogenous/_artifact_success/dxy.csv,
-us10y,us10y.csv,DGS10,downloaded,1028,1028,api,https://api.stlouisfed.org/fred/series/observations?series_id=DGS10&observation_start=2022-05-01&file_type=json&api_key=***,data/exogenous/us10y.csv,data/exogenous/_artifact_success/us10y.csv,
-real_yield,real_yield.csv,DFII10,downloaded,1028,1028,api,https://api.stlouisfed.org/fred/series/observations?series_id=DFII10&observation_start=2022-05-01&file_type=json&api_key=***,data/exogenous/real_yield.csv,data/exogenous/_artifact_success/real_yield.csv,
-vix,vix.csv,VIXCLS,downloaded,1062,1062,api,https://api.stlouisfed.org/fred/series/observations?series_id=VIXCLS&observation_start=2022-05-01&file_type=json&api_key=***,data/exogenous/vix.csv,data/exogenous/_artifact_success/vix.csv,
-spx,spx.csv,SP500,downloaded,1033,1033,api,https://api.stlouisfed.org/fred/series/observations?series_id=SP500&observation_start=2022-05-01&file_type=json&api_key=***,data/exogenous/spx.csv,data/exogenous/_artifact_success/spx.csv,
-oil,oil.csv,DCOILWTICO,downloaded,1023,1023,api,https://api.stlouisfed.org/fred/series/observations?series_id=DCOILWTICO&observation_start=2022-05-01&file_type=json&api_key=***,data/exogenous/oil.csv,data/exogenous/_artifact_success/oil.csv,

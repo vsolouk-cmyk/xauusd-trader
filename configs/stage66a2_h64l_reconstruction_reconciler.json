@@ -1,0 +1,75 @@
+{
+  "stage": "Stage66A2_H64L_RECONSTRUCTION_RECONCILER",
+  "macro_dataset_path": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "external_d1_path": "data/macro_regime/raw/broker_or_spot_gold_d1_ohlc_2011_present.csv",
+  "base_locked_rule_path": "configs/h64l_locked_rule_v1.json",
+  "stage66a_config_path": "configs/stage66a_h64l_concentration_audit.json",
+  "proposed_locked_rule_path": "configs/h64l_locked_rule_v2_stage66a2_proposed.json",
+  "proposed_stage66a_config_path": "configs/stage66a_h64l_concentration_audit_reconciled_v2.json",
+  "feature_date_col": "feature_date_utc",
+  "external_date_col": "date_utc",
+  "external_close_col": "close",
+  "horizon_trading_days": 120,
+  "expected_stage64r_candidate_active_days": 336,
+  "reconstruction_tolerance_pct": 2.0,
+  "write_proposed_rule_if_unique_match": true,
+  "top_n_variants_in_summary": 20,
+  "max_extra_conditions_per_variant": 2,
+  "candidate_extra_conditions": [
+    {
+      "field": "central_bank_demand_tonnes_1m",
+      "operator": ">",
+      "threshold": 0.0,
+      "meaning": "Central bank demand is positive over 1 month; diagnostic only."
+    },
+    {
+      "field": "central_bank_demand_tonnes_3m",
+      "operator": ">",
+      "threshold": 0.0,
+      "meaning": "Central bank demand is positive over 3 months; diagnostic only."
+    },
+    {
+      "field": "central_bank_demand_tonnes_6m",
+      "operator": ">",
+      "threshold": 0.0,
+      "meaning": "Central bank demand is positive over 6 months; diagnostic only."
+    },
+    {
+      "field": "central_bank_demand_tonnes_12m",
+      "operator": ">",
+      "threshold": 0.0,
+      "meaning": "Central bank demand is positive over 12 months; diagnostic only."
+    },
+    {
+      "field": "central_bank_demand_tonnes_12m_z36",
+      "operator": ">",
+      "threshold": 0.0,
+      "meaning": "Central bank demand z-score is positive; diagnostic only."
+    },
+    {
+      "field": "gold_sma50_over_200",
+      "operator": ">",
+      "threshold": 0.0,
+      "meaning": "Gold medium trend is above long trend; diagnostic only."
+    },
+    {
+      "field": "dxy_sma20_over_50",
+      "operator": "<",
+      "threshold": 0.0,
+      "meaning": "Dollar short trend below medium trend; diagnostic only."
+    },
+    {
+      "field": "vix_sma20_over_50",
+      "operator": ">",
+      "threshold": 0.0,
+      "meaning": "VIX short trend above medium trend; diagnostic only."
+    },
+    {
+      "field": "vix_change_20d",
+      "operator": ">",
+      "threshold": 0.0,
+      "meaning": "VIX rising over 20 days; diagnostic only."
+    }
+  ],
+  "no_threshold_tuning_note": "Do not choose a variant because its returns look best. Use only exact reconstruction reconciliation against Stage64R count, and only if the match is unique within tolerance."
+}

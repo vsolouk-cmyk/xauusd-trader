@@ -1,0 +1,26 @@
+{
+  "stage": "Stage64J4_WGC_ETF_AND_CENTRAL_BANK_MAPPER_NO_VALIDATION",
+  "etf": {
+    "vendor_globs": [
+      "data/macro_regime/raw/_vendor/wgc_etf/ETF_Flows_*.xlsx"
+    ],
+    "sheet": "Demand by month",
+    "fund_start_column_1_indexed": 6,
+    "release_lag_days_after_period_end": 10,
+    "available_lag_days_after_period_end": 11,
+    "minimum_rows_for_j1_preflight": 1000
+  },
+  "central_bank": {
+    "vendor_globs": [
+      "data/macro_regime/raw/_vendor/wgc_central_bank/Changes_latest_as_of_*_IFS.xlsx"
+    ],
+    "sheet": "Monthly",
+    "first_period_column_1_indexed": 4,
+    "release_lag_days_after_period_end": 75,
+    "minimum_rows_for_j1_preflight": 40
+  },
+  "outputs": {
+    "etf_target_file": "data/macro_regime/raw/gold_etf_holdings_or_flows.csv",
+    "central_bank_target_file": "data/macro_regime/raw/central_bank_gold_demand_monthly_quarterly.csv"
+  }
+}

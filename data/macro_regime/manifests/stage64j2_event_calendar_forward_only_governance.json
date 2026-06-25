@@ -1,0 +1,18 @@
+{
+  "stage": "Stage64J2_FULL_SCOPE_SOURCE_ACQUISITION_OPERATOR_NO_VALIDATION",
+  "generated_utc": "2026-06-25T05:52:27Z",
+  "policy": {
+    "policy_id": "EVENT_CALENDAR_FORWARD_ONLY_GOVERNANCE_NO_HISTORICAL_VALIDATION_FEATURE",
+    "historical_event_feature_allowed": false,
+    "forward_only_governance_allowed": true,
+    "allowed_use": "Future operational blackout/risk governance only after validation and only if known before event time.",
+    "blocked_use": "No historical backtest filtering, no post-hoc event exclusion, no validation uplift claim."
+  },
+  "operational_effect": "Historical event-calendar validation feature remains blocked unless real archive is acquired. Forward-only governance may be used only for future blackout/risk control after any later validation stage.",
+  "hard_blocks": [
+    "NO_HISTORICAL_EVENT_FILTER_BACKTEST_WITH_FORWARD_ONLY_GOVERNANCE",
+    "NO_POST_HOC_EVENT_EXCLUSION",
+    "NO_ORDER_AUTHORIZATION",
+    "NO_REDUCED_SCOPE_RESCUE"
+  ]
+}

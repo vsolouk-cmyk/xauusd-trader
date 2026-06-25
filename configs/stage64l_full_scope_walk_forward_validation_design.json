@@ -1,0 +1,89 @@
+{
+  "stage": "Stage64L_FULL_SCOPE_WALK_FORWARD_VALIDATION_DESIGN_NO_SCAN",
+  "inputs": {
+    "stage64k_summary": "reports/stage64k_full_scope_lag_safe_feature_dataset_preflight/stage64k_full_scope_lag_safe_feature_dataset_preflight_summary.json",
+    "stage64k_dataset": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv"
+  },
+  "validation_design": {
+    "minimum_dataset_rows": 3000,
+    "horizons_trading_days": [
+      20,
+      60,
+      120
+    ],
+    "splits": [
+      {
+        "split_id": "2011_2015",
+        "start": "2011-01-01",
+        "end": "2015-12-31",
+        "min_rows": 700
+      },
+      {
+        "split_id": "2016_2019",
+        "start": "2016-01-01",
+        "end": "2019-12-31",
+        "min_rows": 700
+      },
+      {
+        "split_id": "2020_2022",
+        "start": "2020-01-01",
+        "end": "2022-12-31",
+        "min_rows": 450
+      },
+      {
+        "split_id": "2023_present",
+        "start": "2023-01-01",
+        "end": "2026-12-31",
+        "min_rows": 450
+      }
+    ],
+    "required_feature_groups": [
+      {
+        "group_id": "P0_PRICE_TREND",
+        "feature_keys": [
+          "gold_sma20_over_50",
+          "gold_sma50_over_200",
+          "dxy_ret_20d",
+          "real_yield_change_20d"
+        ],
+        "min_present": 4
+      },
+      {
+        "group_id": "P0_VOLATILITY",
+        "feature_keys": [
+          "vix_change_20d"
+        ],
+        "min_present": 1
+      },
+      {
+        "group_id": "P1_ETF_FLOW",
+        "feature_keys": [
+          "etf_flow_3m",
+          "etf_flow_6m"
+        ],
+        "min_present": 1
+      },
+      {
+        "group_id": "P1_CENTRAL_BANK_PRIOR",
+        "feature_keys": [
+          "central_bank_demand_6m",
+          "central_bank_demand_12m"
+        ],
+        "min_present": 1
+      }
+    ],
+    "multiple_testing_rule": "Bonferroni over candidate_count * horizon_count; benchmarks are not counted as candidates.",
+    "pass_gates": [
+      "candidate_horizon_mean_excess_vs_H64L_B1_GT_0",
+      "bonferroni_corrected_one_sided_p_lt_0_05_vs_H64L_B1",
+      "positive_excess_vs_H64L_B1_in_at_least_3_of_4_splits",
+      "minimum_active_days_by_horizon: h20>=250, h60>=180, h120>=120",
+      "max_split_share_of_active_days_lte_0_45",
+      "no single calendar year contributes more than 0.40 of active days",
+      "no historical event-calendar feature/filter/post-hoc exclusion",
+      "no order/paper/live authorization even if Stage64M passes"
+    ],
+    "event_calendar_policy": "Historical event-calendar archive is absent; Stage64K accepted forward-only governance only for future operational blackout/risk control. Stage64L and Stage64M must not use event-calendar features, historical post-hoc exclusions, or validation-uplift claims.",
+    "broker_alignment_policy": "Broker/spot D1 alignment remains required before commercialization or broker XAUUSD validation claims. It does not authorize broker connection and does not block this no-order research validation design."
+  }
+}

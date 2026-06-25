@@ -1,0 +1,70 @@
+{
+  "stage": "Stage64N4_FASTLANE_REPLICATION_ALIGNMENT_AUDIT_NO_ORDER",
+  "dataset_path": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "stage64m_summary_path": "reports/stage64m_full_scope_walk_forward_validation_run/stage64m_full_scope_walk_forward_validation_run_summary.json",
+  "stage64n3_summary_path": "reports/stage64n3_corrected_survivor_replication_alignment_decision/stage64n3_corrected_survivor_replication_alignment_decision_summary.json",
+  "target_survivor": {
+    "hypothesis_id": "H64L_H1_FULL_MACRO_TAILWIND_LONG",
+    "horizon_days": 120,
+    "primary_benchmark_id": "H64L_B1_GOLD_TREND_ONLY_REFERENCE"
+  },
+  "columns": {
+    "date": "feature_date_utc",
+    "price": "gold_close"
+  },
+  "candidate_rule": {
+    "gold_sma20_over_50": {"op": ">", "value": 0},
+    "gold_sma50_over_200": {"op": ">", "value": 0},
+    "dxy_ret_20d": {"op": "<", "value": 0},
+    "real_yield_change_20d": {"op": "<", "value": 0},
+    "etf_flow_tonnes_3m": {"op": ">", "value": 0},
+    "central_bank_demand_tonnes_6m": {"op": ">", "value": 0}
+  },
+  "benchmark_rule": {
+    "gold_sma20_over_50": {"op": ">", "value": 0},
+    "gold_sma50_over_200": {"op": ">", "value": 0}
+  },
+  "splits": [
+    {"split_id": "2011_2015", "start": "2011-01-01", "end": "2015-12-31"},
+    {"split_id": "2016_2019", "start": "2016-01-01", "end": "2019-12-31"},
+    {"split_id": "2020_2022", "start": "2020-01-01", "end": "2022-12-31"},
+    {"split_id": "2023_present", "start": "2023-01-01", "end": "2026-12-31"}
+  ],
+  "tolerances": {
+    "active_days": 0,
+    "mean_bps": 0.0001,
+    "excess_bps": 0.0001,
+    "share": 0.000001,
+    "corrected_p": 0.000001
+  },
+  "expected_stage64m_headline": {
+    "candidate_active_days": 339,
+    "candidate_mean_bps": 1033.788971,
+    "primary_benchmark_active_days": 1304,
+    "primary_benchmark_mean_bps": 694.37137,
+    "mean_excess_vs_primary_benchmark_bps": 339.4176,
+    "bonferroni_corrected_p": 0.00065394,
+    "positive_excess_splits_vs_primary_benchmark": 3,
+    "max_split_share_of_active_days": 0.383481,
+    "max_year_share_of_active_days": 0.289086
+  },
+  "broker_spot_alignment_contract": {
+    "required_before": "broker_xauusd_validation_or_commercialization_claim",
+    "accepted_alignment_inputs": [
+      "broker_or_spot_gold_d1_ohlc_2011_present.csv if available",
+      "AMarkets/MT5 D1 subset alignment against reference if long history unavailable"
+    ],
+    "minimum_overlap_days_for_alignment_design": 700,
+    "predeclared_alignment_metrics": [
+      "daily_return_correlation",
+      "median_absolute_return_difference_bps",
+      "large_gap_day_count",
+      "trend_state_agreement_rate",
+      "signal_active_day_agreement_rate"
+    ],
+    "hard_blocks": [
+      "NO_BROKER_XAUUSD_CLAIM_WITHOUT_ALIGNMENT_PASS",
+      "NO_ORDER_OR_PAPER_LIVE_FROM_REFERENCE_ONLY_RESULTS"
+    ]
+  }
+}

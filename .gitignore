@@ -112,3 +112,15 @@ data/**/*.zip
 # MT5 / broker exports should not enter GitHub
 amarkets_xauusd_*.csv
 stage64-macro-regime-data-*.zip
+
+# Stage64 macro raw vendor workbooks / large source files
+data/macro_regime/raw/_vendor/**
+data/macro_regime/raw/**/*.xlsx
+data/macro_regime/raw/**/*.xlsm
+data/macro_regime/raw/**/*.xls
+data/macro_regime/raw/**/*.zip
+data/macro_regime/raw/**/*.csv
+
+# Stage64 generated normalized/manifest outputs stay local unless explicitly forced
+data/macro_regime/normalized/**
+data/macro_regime/manifests/*.json

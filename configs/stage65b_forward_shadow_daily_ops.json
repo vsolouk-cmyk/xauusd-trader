@@ -1,0 +1,28 @@
+{
+  "macro_dataset_path": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "external_d1_path": "data/macro_regime/raw/broker_or_spot_gold_d1_ohlc_2011_present.csv",
+  "macro_date_columns": [
+    "feature_date",
+    "asof_date",
+    "date",
+    "utc_time",
+    "time",
+    "timestamp"
+  ],
+  "external_d1_date_columns": [
+    "date",
+    "utc_time",
+    "time",
+    "timestamp",
+    "Date"
+  ],
+  "macro_min_rows": 1000,
+  "external_d1_min_rows": 1000,
+  "macro_max_calendar_lag_days": 14,
+  "external_d1_max_calendar_lag_days": 7,
+  "stage65_script": "app/stage65_forward_shadow_signal_ledger_fastlane.py",
+  "stage65_config": "configs/stage65_forward_shadow_signal_ledger_fastlane.json",
+  "stage65_out_dir": "reports/stage65_forward_shadow_signal_ledger_fastlane",
+  "stage65_summary_path": "reports/stage65_forward_shadow_signal_ledger_fastlane/stage65_forward_shadow_signal_ledger_summary.json",
+  "stage65_timeout_seconds": 300
+}

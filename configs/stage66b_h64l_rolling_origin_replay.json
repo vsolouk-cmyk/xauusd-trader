@@ -1,0 +1,20 @@
+{
+  "stage": "Stage66B_H64L_ROLLING_ORIGIN_REPLAY",
+  "macro_dataset_path": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "external_d1_path": "data/macro_regime/raw/broker_or_spot_gold_d1_ohlc_2011_present.csv",
+  "locked_rule_path": "configs/h64l_locked_rule_v1.json",
+  "feature_date_col": "feature_date_utc",
+  "sample_available_after_col": "sample_available_after_utc",
+  "external_date_col": "date_utc",
+  "external_close_col": "close",
+  "train_window_years": 5,
+  "origin_step_trading_days": 120,
+  "forward_window_trading_days": 120,
+  "horizon_trading_days": 120,
+  "minimum_independent_origins_for_pass_fast": 8,
+  "minimum_signal_origins_for_continue": 3,
+  "min_mean_bps_for_continue": 0.0,
+  "min_positive_origin_share_for_continue": 0.50,
+  "no_lookahead_required": true,
+  "decision_note": "If independent origins are fewer than minimum_independent_origins_for_pass_fast, decision cannot be PASS_FAST even if mean excess is high."
+}

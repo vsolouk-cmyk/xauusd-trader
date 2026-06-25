@@ -1,0 +1,65 @@
+name: Stage65 Forward Shadow Daily Operation
+
+on:
+  workflow_dispatch:
+    inputs:
+      preflight_only:
+        description: "Run only input freshness checks; do not run Stage65"
+        required: false
+        default: "false"
+      allow_stale_run:
+        description: "Run Stage65 even if freshness preflight fails; normally keep false"
+        required: false
+        default: "false"
+  schedule:
+    # GitHub cron is not precise. Treat this as a convenience check, not a trading clock.
+    - cron: "15 22 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  stage65-forward-shadow-daily:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Stage65B preflight / daily operation
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          EXTRA_ARGS=""
+          if [ "${{ github.event.inputs.preflight_only || 'false' }}" = "true" ]; then
+            EXTRA_ARGS="$EXTRA_ARGS --preflight-only"
+          fi
+          if [ "${{ github.event.inputs.allow_stale_run || 'false' }}" = "true" ]; then
+            EXTRA_ARGS="$EXTRA_ARGS --allow-stale-run"
+          fi
+
+          python3 app/stage65b_forward_shadow_daily_ops.py \
+            --root . \
+            --config configs/stage65b_forward_shadow_daily_ops.json \
+            --out reports/stage65b_forward_shadow_daily_ops \
+            $EXTRA_ARGS
+
+      - name: Upload Stage65B reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: stage65b-forward-shadow-daily-ops
+          path: |
+            reports/stage65b_forward_shadow_daily_ops/
+            reports/stage65_forward_shadow_signal_ledger_fastlane/
+            data/forward_shadow/stage65_macro_signal_ledger.csv
+            data/forward_shadow/stage65_observation_ledger.csv
+            data/forward_shadow/stage65_forward_shadow_state.json
+          if-no-files-found: warn

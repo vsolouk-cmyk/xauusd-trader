@@ -1,0 +1,24 @@
+{
+  "stage": "Stage64I_DECISION_MEMO_KILL_OR_DATA_COMPLETION_NO_ORDER",
+  "inputs": {
+    "stage64h_summary": "reports/stage64h_reduced_scope_walk_forward_validation_run/stage64h_reduced_scope_walk_forward_validation_summary.json",
+    "stage64e_summary": "reports/stage64e_reduced_scope_predeclaration/stage64e_reduced_scope_predeclaration_summary.json",
+    "stage64d5_summary": "reports/stage64d5_selected_scope_data_readiness_audit/stage64d5_selected_scope_data_readiness_audit_summary.json",
+    "stage64f_summary": "reports/stage64f_reduced_scope_lag_safe_feature_dataset_preflight/stage64f_reduced_scope_lag_safe_feature_dataset_preflight_summary.json",
+    "stage64g_summary": "reports/stage64g_walk_forward_validation_design/stage64g_walk_forward_validation_design_summary.json"
+  },
+  "policy": {
+    "no_order": true,
+    "no_paper_live": true,
+    "no_live": true,
+    "no_ea_promotion": true,
+    "no_reduced_scope_parameter_tweaking": true,
+    "no_rescue_filtering": true,
+    "no_new_intraday_scan": true
+  },
+  "decision_rules": {
+    "kill_reduced_scope_if_corrected_survivors_lte": 0,
+    "kill_reduced_scope_if_uncorrected_watch_only_lte": 0,
+    "require_full_scope_data_completion_if_full_scope_blocked": true
+  }
+}

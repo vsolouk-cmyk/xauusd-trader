@@ -1,0 +1,113 @@
+{
+  "stage": "Stage64H_REDUCED_SCOPE_WALK_FORWARD_VALIDATION_RUN_NO_ORDER",
+  "feature_dataset": "data/macro_regime/normalized/stage64f_reduced_scope_lag_safe_feature_dataset.csv",
+  "stage64g_summary": "reports/stage64g_walk_forward_validation_design/stage64g_walk_forward_validation_design_summary.json",
+  "date_column_candidates": [
+    "date_utc",
+    "feature_date_utc",
+    "sample_date_utc",
+    "time_utc"
+  ],
+  "gold_close_column_candidates": [
+    "gold_close",
+    "gold_proxy_close",
+    "gold_d1_close",
+    "gold_close_price",
+    "close"
+  ],
+  "required_features": [
+    "gold_ret_20d",
+    "gold_sma20_over_50",
+    "gold_sma50_over_200",
+    "gold_atr14_proxy_pct",
+    "dxy_ret_20d",
+    "dxy_sma20_over_50",
+    "real_yield_change_20d",
+    "vix_change_20d",
+    "vix_sma20_over_50"
+  ],
+  "hypotheses": [
+    {
+      "hypothesis_id": "H64G_B0_ALWAYS_LONG_REFERENCE",
+      "role": "benchmark_not_candidate",
+      "side": "long_only",
+      "entry_policy": "hold gold proxy unconditionally on all eligible feature dates"
+    },
+    {
+      "hypothesis_id": "H64G_B1_GOLD_TREND_ONLY_REFERENCE",
+      "role": "benchmark_not_candidate",
+      "side": "long_only_when_trend_positive_else_flat",
+      "entry_policy": "gold_sma20_over_50 > 0 and gold_sma50_over_200 > 0"
+    },
+    {
+      "hypothesis_id": "H64G_H1_MACRO_TAILWIND_TREND_LONG",
+      "role": "primary_candidate",
+      "side": "long_only_when_macro_tailwind_and_gold_trend_positive_else_flat",
+      "entry_policy": "gold_sma20_over_50 > 0 and gold_sma50_over_200 > 0 and dxy_ret_20d < 0 and real_yield_change_20d < 0"
+    },
+    {
+      "hypothesis_id": "H64G_H2_HEADWIND_AVOID_LONG_FILTER",
+      "role": "secondary_candidate",
+      "side": "long_filter_only",
+      "entry_policy": "allow trend-long only when not(dxy_ret_20d > 0 and real_yield_change_20d > 0)"
+    },
+    {
+      "hypothesis_id": "H64G_H3_VOL_SHOCK_SUPPRESSED_MACRO_LONG",
+      "role": "tertiary_candidate",
+      "side": "long_only_when_macro_tailwind_gold_trend_and_no_vix_shock_else_flat",
+      "entry_policy": "H1 condition and vix_change_20d <= 0 and vix_sma20_over_50 <= 0"
+    }
+  ],
+  "primary_benchmark_id": "H64G_B1_GOLD_TREND_ONLY_REFERENCE",
+  "horizons": [5, 10, 20],
+  "effective_test_count": 9,
+  "splits": [
+    {
+      "split_id": "2011_2015",
+      "start": "2011-01-01",
+      "end": "2015-12-31",
+      "role": "historical_regime_1_pre_2016"
+    },
+    {
+      "split_id": "2016_2019",
+      "start": "2016-01-01",
+      "end": "2019-12-31",
+      "role": "historical_regime_2_pre_covid"
+    },
+    {
+      "split_id": "2020_2022",
+      "start": "2020-01-01",
+      "end": "2022-12-31",
+      "role": "shock_and_rate_hike_transition"
+    },
+    {
+      "split_id": "2023_present",
+      "start": "2023-01-01",
+      "end": "2026-12-31",
+      "role": "recent_central_bank_accumulation_era_proxy_scope"
+    }
+  ],
+  "gates": {
+    "min_active_days_overall": 100,
+    "min_active_days_per_split": 20,
+    "min_positive_splits": 3,
+    "min_excess_splits_vs_b1": 3,
+    "min_mean_active_bps": 0.0,
+    "min_win_rate_active": 0.52,
+    "min_excess_vs_b1_bps_per_eligible_day": 0.0,
+    "bonferroni_alpha": 0.05,
+    "uncorrected_watch_alpha": 0.10
+  },
+  "source_warnings": [
+    "Gold D1 source is COMEX continuous futures reference if source contains GC_F; results are reduced-scope proxy feasibility only and not full XAUUSD/broker validation."
+  ],
+  "hard_blocks": [
+    "NO_PAPER_ORDER",
+    "NO_EA_PROMOTION",
+    "NO_PAPER_LIVE",
+    "NO_LIVE",
+    "NO_BROKER_CONNECTION",
+    "NO_FULL_SCOPE_VALIDATION_CLAIM",
+    "NO_ORDER_OR_PROMOTION_FROM_STAGE64H"
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "stage": "Stage64J_FULL_SCOPE_DATA_COMPLETION_OR_PROGRAM_STOP_DECISION_NO_ORDER",
+  "inputs": {
+    "stage64i_summary": "reports/stage64i_decision_memo_kill_or_data_completion/stage64i_decision_memo_kill_or_data_completion_summary.json"
+  },
+  "required_source_completion": [
+    {
+      "manifest_id": "SRC_GOLD_ETF_HOLDINGS_FLOWS",
+      "priority": "P1_HIGH",
+      "target_file": "data/macro_regime/raw/gold_etf_holdings_or_flows.csv",
+      "required_columns": ["date_utc", "etf_id", "holdings_tonnes_or_flow", "source", "release_time_utc", "available_after_utc"],
+      "minimum_rows_for_preflight": 1000,
+      "lag_policy": "NEXT_SESSION_AFTER_PUBLICATION_REQUIRED",
+      "required_action": "Acquire daily gold ETF holdings/flows history with explicit source and release/availability timestamps.",
+      "notes": "Needed for full macro-regime ETF-flow divergence. Reduced-scope results must not be retuned while this is missing."
+    },
+    {
+      "manifest_id": "SRC_CENTRAL_BANK_GOLD_DEMAND",
+      "priority": "P1_HIGH",
+      "target_file": "data/macro_regime/raw/central_bank_gold_demand_monthly_quarterly.csv",
+      "required_columns": ["period_start", "period_end", "demand_value", "unit", "source", "release_date_utc", "available_after_utc"],
+      "minimum_rows_for_preflight": 40,
+      "lag_policy": "OFFICIAL_RELEASE_LAG_REQUIRED_SLOW_PRIOR_ONLY",
+      "required_action": "Acquire monthly or quarterly central-bank gold demand / net purchases history with official release lag and availability date.",
+      "notes": "This is a slow regime prior only, not a timing signal."
+    },
+    {
+      "manifest_id": "SRC_MACRO_EVENT_CALENDAR_ARCHIVE",
+      "priority": "P2_MEDIUM",
+      "target_file": "data/macro_regime/raw/macro_event_calendar_archive.csv",
+      "required_columns": ["scheduled_time_utc", "event_type", "importance", "country", "known_before_event", "source", "available_after_utc"],
+      "minimum_rows_for_preflight": 500,
+      "lag_policy": "KNOWN_BEFORE_EVENT_ONLY",
+      "required_action": "Acquire historical macro event calendar archive or formally restrict event-calendar risk to forward-only governance.",
+      "notes": "Historical event filter cannot use information not known before event time."
+    },
+    {
+      "manifest_id": "SRC_BROKER_OR_SPOT_GOLD_D1_ALIGNMENT",
+      "priority": "P1_HIGH_ALIGNMENT",
+      "target_file": "data/macro_regime/raw/broker_or_spot_gold_d1_ohlc_2011_present.csv",
+      "required_columns": ["date_utc", "open", "high", "low", "close", "volume", "source", "available_after_utc"],
+      "minimum_rows_for_preflight": 3000,
+      "lag_policy": "BAR_CLOSE_OR_SESSION_CLOSE_ONLY",
+      "required_action": "Acquire broker/spot D1 backfill or run explicit COMEX-futures-vs-broker/spot alignment audit before any commercialization claim.",
+      "notes": "Not required to explain why reduced-scope failed, but required before broker XAUUSD validation claims."
+    }
+  ],
+  "program_stop_triggers": [
+    "If ETF holdings/flows and central-bank demand cannot be acquired with usable lag timestamps, stop the full macro-regime thesis instead of substituting another reduced-scope rescue.",
+    "If broker/spot alignment cannot be established before commercialization, do not convert COMEX proxy results into broker XAUUSD claims.",
+    "If full-scope lag-safe preflight fails after source acquisition, stop or redesign at the thesis level only; do not tune Stage64H reduced-scope rules.",
+    "No intraday scan, no parameter rescue, and no order path are allowed from Stage64J."
+  ]
+}

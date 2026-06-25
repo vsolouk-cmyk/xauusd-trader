@@ -1,0 +1,18 @@
+{
+  "stage": "Stage64J5_EVENT_CALENDAR_FORWARD_ONLY_GOVERNANCE_ACCEPTANCE_NO_VALIDATION",
+  "stage64j1_summary": "reports/stage64j1_full_scope_p1_p2_source_acquisition_preflight/stage64j1_full_scope_p1_p2_source_acquisition_preflight_summary.json",
+  "stage64j2_event_calendar_governance": "data/macro_regime/manifests/stage64j2_event_calendar_forward_only_governance.json",
+  "stage64j4_summary": "reports/stage64j4_wgc_etf_central_bank_mapper/stage64j4_wgc_etf_central_bank_mapper_summary.json",
+  "required_p1_sources": [
+    "SRC_GOLD_ETF_HOLDINGS_FLOWS",
+    "SRC_CENTRAL_BANK_GOLD_DEMAND"
+  ],
+  "event_manifest_id": "SRC_MACRO_EVENT_CALENDAR_ARCHIVE",
+  "broker_alignment_manifest_id": "SRC_BROKER_OR_SPOT_GOLD_D1_ALIGNMENT",
+  "allow_stage64k_if": {
+    "p1_sources_preflight_ok": true,
+    "historical_event_archive_missing_or_not_preflight_ok": true,
+    "forward_only_governance_manifest_valid": true,
+    "broker_alignment_may_remain_blocked_before_commercialization": true
+  }
+}

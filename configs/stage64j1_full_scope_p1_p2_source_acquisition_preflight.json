@@ -1,0 +1,151 @@
+{
+  "stage": "Stage64J1_FULL_SCOPE_P1_P2_SOURCE_ACQUISITION_PREFLIGHT_OR_PROGRAM_STOP_NO_ORDER",
+  "inputs": {
+    "stage64j_summary": "reports/stage64j_full_scope_data_completion_or_stop_decision/stage64j_full_scope_data_completion_or_stop_decision_summary.json"
+  },
+  "core_full_scope_manifest_ids": [
+    "SRC_GOLD_ETF_HOLDINGS_FLOWS",
+    "SRC_CENTRAL_BANK_GOLD_DEMAND",
+    "SRC_MACRO_EVENT_CALENDAR_ARCHIVE"
+  ],
+  "broker_alignment_manifest_ids": [
+    "SRC_BROKER_OR_SPOT_GOLD_D1_ALIGNMENT"
+  ],
+  "sources": [
+    {
+      "manifest_id": "SRC_GOLD_ETF_HOLDINGS_FLOWS",
+      "priority": "P1_HIGH",
+      "target_file": "data/macro_regime/raw/gold_etf_holdings_or_flows.csv",
+      "minimum_rows_for_preflight": 1000,
+      "required_start_utc": "2011-01-01T00:00:00Z",
+      "start_grace_days": 31,
+      "required_columns": [
+        "date_utc",
+        "etf_id",
+        "holdings_tonnes_or_flow",
+        "source",
+        "release_time_utc",
+        "available_after_utc"
+      ],
+      "time_columns": [
+        "date_utc"
+      ],
+      "lag_columns": [
+        "available_after_utc"
+      ],
+      "numeric_columns": [
+        "holdings_tonnes_or_flow"
+      ],
+      "key_columns": [
+        "date_utc",
+        "etf_id"
+      ],
+      "lag_policy": "NEXT_SESSION_AFTER_PUBLICATION_REQUIRED",
+      "required_action": "Acquire daily gold ETF holdings/flows history with explicit source and release/availability timestamps."
+    },
+    {
+      "manifest_id": "SRC_CENTRAL_BANK_GOLD_DEMAND",
+      "priority": "P1_HIGH",
+      "target_file": "data/macro_regime/raw/central_bank_gold_demand_monthly_quarterly.csv",
+      "minimum_rows_for_preflight": 40,
+      "required_start_utc": "2011-01-01T00:00:00Z",
+      "start_grace_days": 120,
+      "required_columns": [
+        "period_start",
+        "period_end",
+        "demand_value",
+        "unit",
+        "source",
+        "release_date_utc",
+        "available_after_utc"
+      ],
+      "time_columns": [
+        "period_start"
+      ],
+      "lag_columns": [
+        "release_date_utc",
+        "available_after_utc"
+      ],
+      "numeric_columns": [
+        "demand_value"
+      ],
+      "key_columns": [
+        "period_start",
+        "period_end",
+        "source"
+      ],
+      "lag_policy": "OFFICIAL_RELEASE_LAG_REQUIRED_SLOW_PRIOR_ONLY",
+      "required_action": "Acquire monthly or quarterly central-bank gold demand / net purchases history with official release lag and availability date."
+    },
+    {
+      "manifest_id": "SRC_MACRO_EVENT_CALENDAR_ARCHIVE",
+      "priority": "P2_MEDIUM",
+      "target_file": "data/macro_regime/raw/macro_event_calendar_archive.csv",
+      "minimum_rows_for_preflight": 500,
+      "required_start_utc": "2011-01-01T00:00:00Z",
+      "start_grace_days": 365,
+      "required_columns": [
+        "scheduled_time_utc",
+        "event_type",
+        "importance",
+        "country",
+        "known_before_event",
+        "source",
+        "available_after_utc"
+      ],
+      "time_columns": [
+        "scheduled_time_utc"
+      ],
+      "lag_columns": [
+        "available_after_utc"
+      ],
+      "numeric_columns": [],
+      "key_columns": [
+        "scheduled_time_utc",
+        "event_type",
+        "country"
+      ],
+      "lag_policy": "KNOWN_BEFORE_EVENT_ONLY",
+      "can_be_forward_only": true,
+      "forward_only_allowed": false,
+      "required_action": "Acquire historical macro event calendar archive or formally restrict event-calendar risk to forward-only governance."
+    },
+    {
+      "manifest_id": "SRC_BROKER_OR_SPOT_GOLD_D1_ALIGNMENT",
+      "priority": "P1_HIGH_ALIGNMENT",
+      "target_file": "data/macro_regime/raw/broker_or_spot_gold_d1_ohlc_2011_present.csv",
+      "minimum_rows_for_preflight": 3000,
+      "required_start_utc": "2011-01-01T00:00:00Z",
+      "start_grace_days": 31,
+      "required_columns": [
+        "date_utc",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
+        "source",
+        "available_after_utc"
+      ],
+      "time_columns": [
+        "date_utc"
+      ],
+      "lag_columns": [
+        "available_after_utc"
+      ],
+      "numeric_columns": [
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ],
+      "key_columns": [
+        "date_utc",
+        "source"
+      ],
+      "lag_policy": "BAR_CLOSE_OR_SESSION_CLOSE_ONLY",
+      "required_action": "Acquire broker/spot D1 backfill or run explicit COMEX-futures-vs-broker/spot alignment audit before any commercialization claim."
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "stage64l_summary": "reports/stage64l_full_scope_walk_forward_validation_design/stage64l_full_scope_walk_forward_validation_design_summary.json",
+  "stage64k_dataset": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "date_column": "feature_date_utc",
+  "price_column_candidates": [
+    "gold_close",
+    "gold_d1_close",
+    "gold_close_d1",
+    "gold_reference_close",
+    "xauusd_close",
+    "close_gold",
+    "close"
+  ],
+  "horizons_trading_days": [20, 60, 120],
+  "minimum_active_days_by_horizon": {
+    "20": 250,
+    "60": 180,
+    "120": 120
+  },
+  "min_positive_excess_splits": 3,
+  "max_split_share_of_active_days_lte": 0.45,
+  "max_year_share_of_active_days_lte": 0.40
+}

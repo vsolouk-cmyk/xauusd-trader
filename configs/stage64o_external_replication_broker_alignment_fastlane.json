@@ -1,0 +1,35 @@
+{
+  "stage": "Stage64O_EXTERNAL_REPLICATION_BROKER_ALIGNMENT_FASTLANE_NO_ORDER",
+  "paths": {
+    "stage64n4_summary": "reports/stage64n4_fastlane_replication_alignment_audit/stage64n4_fastlane_replication_alignment_audit_summary.json",
+    "stage64n4_report": "reports/stage64n4_fastlane_replication_alignment_audit/stage64n4_fastlane_replication_alignment_audit_report.md",
+    "stage64k_dataset": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+    "stage64l_summary": "reports/stage64l_full_scope_walk_forward_validation_design/stage64l_full_scope_walk_forward_validation_design_summary.json",
+    "stage64m_summary": "reports/stage64m_full_scope_walk_forward_validation_run/stage64m_full_scope_walk_forward_validation_run_summary.json",
+    "stage64n1b_summary": "reports/stage64n1b_a2_nonparametric_reconciliation/stage64n1b_a2_nonparametric_reconciliation_summary.json",
+    "stage64n3_summary": "reports/stage64n3_corrected_survivor_replication_alignment_decision/stage64n3_corrected_survivor_replication_alignment_decision_summary.json",
+    "gold_reference_file": "data/macro_regime/raw/gold_d1_ohlc_2011_present.csv",
+    "broker_d1_file": "data/macro_regime/raw/broker_or_spot_gold_d1_ohlc_2011_present.csv",
+    "broker_sqlite": "data/broker_normalized/amarkets_multitf.sqlite",
+    "broker_sqlite_table": "amarkets_bars"
+  },
+  "broker_alignment": {
+    "symbol": "XAUUSD",
+    "preferred_timeframes": ["H1", "M30", "M15", "M5"],
+    "gates": {
+      "min_overlap_days": 500,
+      "min_return_correlation": 0.95,
+      "min_sign_agreement": 0.70,
+      "max_median_abs_return_diff_bps": 20.0,
+      "max_p90_abs_return_diff_bps": 100.0
+    }
+  },
+  "hard_blocks": [
+    "NO_PAPER_ORDER",
+    "NO_EA_PROMOTION",
+    "NO_PAPER_LIVE",
+    "NO_LIVE",
+    "NO_BROKER_CONNECTION",
+    "NO_ORDER_AUTHORIZATION_FROM_STAGE64O"
+  ]
+}

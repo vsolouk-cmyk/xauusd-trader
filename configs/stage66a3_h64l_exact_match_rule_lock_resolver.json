@@ -1,0 +1,15 @@
+{
+  "stage": "Stage66A3_H64L_EXACT_MATCH_RULE_LOCK_RESOLVER",
+  "stage66a2_summary_path": "reports/stage66a2_h64l_reconstruction_reconciler/stage66a2_h64l_reconstruction_reconciler_summary.json",
+  "stage66a2_variant_matrix_path": "reports/stage66a2_h64l_reconstruction_reconciler/stage66a2_h64l_reconstruction_variant_matrix.json",
+  "base_locked_rule_path": "configs/h64l_locked_rule_v1.json",
+  "existing_stage66a_config_path": "configs/stage66a_h64l_concentration_audit.json",
+  "output_locked_rule_path": "configs/h64l_locked_rule_v2_stage66a3_exact_reconciled.json",
+  "output_stage66a_config_path": "configs/stage66a_h64l_concentration_audit_reconciled_v2.json",
+  "output_rule_version": "v2_stage66a3_exact_reconciled",
+  "expected_stage64r_candidate_active_days": 336,
+  "strict_exact_match_required": true,
+  "allow_multiple_tolerance_matches": true,
+  "selected_variant_id": "v1_plus_central_bank_demand_tonnes_3m__gold_sma50_over_200",
+  "tie_break_policy": "unique exact active-event-count match beats tolerance-only near matches; no threshold tuning"
+}

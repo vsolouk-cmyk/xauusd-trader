@@ -1,0 +1,20 @@
+{
+  "stage64o_summary": "reports/stage64o_external_replication_broker_alignment_fastlane/stage64o_external_replication_broker_alignment_fastlane_summary.json",
+  "gold_reference_csv": "data/macro_regime/raw/gold_d1_ohlc_2011_present.csv",
+  "gold_reference_date_col": "date_utc",
+  "gold_reference_close_col": "close",
+  "broker_sqlite": "data/broker_normalized/amarkets_multitf.sqlite",
+  "broker_table": "amarkets_bars",
+  "symbol_like": "%XAUUSD%",
+  "timeframe_preference": ["D1", "H1", "M30", "M15", "M5"],
+  "include_m1_scan": false,
+  "session_close_offset_hours_scan": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+  "alignment_gates": {
+    "min_overlap_days": 500,
+    "return_correlation_min": 0.95,
+    "sign_agreement_min": 0.70,
+    "median_abs_return_diff_bps_max": 20.0,
+    "p90_abs_return_diff_bps_max": 100.0
+  },
+  "accepted_broker_spot_output_csv": "data/macro_regime/raw/broker_or_spot_gold_d1_ohlc_2011_present.csv"
+}

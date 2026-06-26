@@ -1,0 +1,88 @@
+{
+  "stage": "Stage70B_CHAMPION_HARD_AUDIT",
+  "champion": {
+    "thesis_id": "K06_RESILIENT_GOLD_VS_DXY",
+    "family": "GOLD_RESILIENCE_AGAINST_DXY",
+    "direction": "long",
+    "horizon_trading_days": 120,
+    "conditions": [
+      {"column": "gold_sma20_over_50", "operator": ">", "threshold": 0.0},
+      {"column": "dxy_ret_20d", "operator": ">", "threshold": 0.0},
+      {"column": "real_yield_change_20d", "operator": "<", "threshold": 0.0}
+    ],
+    "entry_price_column": "gold_close",
+    "date_column_candidates": ["feature_date_utc", "date_utc"],
+    "cost_bps_total": 50.0,
+    "entry_cooldown_trading_days": 120
+  },
+  "macro_dataset_path": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "periods": [
+    {"period_id": "P1_2011_2014", "start": "2011-01-01", "end": "2014-12-31"},
+    {"period_id": "P2_2015_2018", "start": "2015-01-01", "end": "2018-12-31"},
+    {"period_id": "P3_2019_2022", "start": "2019-01-01", "end": "2022-12-31"},
+    {"period_id": "P4_2023_2026", "start": "2023-01-01", "end": "2026-12-31"}
+  ],
+  "stress_cost_bps": [50.0, 100.0, 150.0, 200.0],
+  "benchmark_rules": [
+    {
+      "rule_key": "K07_DXY_TREND_RELIEF_GOLD_TREND_H120_REFERENCE",
+      "label": "DXY trend relief + gold trend reference",
+      "horizon_trading_days": 120,
+      "conditions": [
+        {"column": "gold_sma20_over_50", "operator": ">", "threshold": 0.0},
+        {"column": "dxy_sma20_over_50", "operator": "<", "threshold": 0.0}
+      ]
+    },
+    {
+      "rule_key": "O02_D3_H60_REFERENCE",
+      "label": "Old D3 robust policy primary reference",
+      "horizon_trading_days": 60,
+      "conditions": [
+        {"column": "gold_sma20_over_50", "operator": ">", "threshold": 0.0},
+        {"column": "dxy_sma20_over_50", "operator": "<", "threshold": 0.0},
+        {"column": "dxy_ret_20d", "operator": "<", "threshold": 0.0}
+      ]
+    },
+    {
+      "rule_key": "TREND_ONLY_H120_REFERENCE",
+      "label": "Long trend-only reference",
+      "horizon_trading_days": 120,
+      "conditions": [
+        {"column": "gold_sma50_over_200", "operator": ">", "threshold": 0.0}
+      ]
+    }
+  ],
+  "backlog_register": [
+    {"thesis_id": "K07_DXY_TREND_RELIEF_GOLD_TREND", "status": "BACKLOG_REFERENCE", "reentry_trigger": "K06 killed or parked after hard audit; use only if not redundant with D3 policy.", "required_data": "current macro dataset"},
+    {"thesis_id": "K03_WGC_RISK_UNCERTAINTY_SAFE_HAVEN", "status": "BACKLOG_REFERENCE", "reentry_trigger": "K06 killed and safe-haven family still ranks top after one controlled rerun.", "required_data": "current macro dataset"},
+    {"thesis_id": "K05_CENTRAL_BANK_SUPPORT_CONTINUATION", "status": "BACKLOG_REFERENCE", "reentry_trigger": "central-bank demand turns structurally positive and K06 is closed.", "required_data": "current macro dataset plus refreshed WGC changes file"},
+    {"thesis_id": "K08_COT_POSITIONING_EXTREME_REVERSAL", "status": "DATA_BLOCKED_WITH_REQUIREMENTS", "reentry_trigger": "CFTC disaggregated gold COT importer exists with weekly lag handling.", "required_data": "cot_managed_money_z"},
+    {"thesis_id": "K09_INTRADAY_LONDON_NY_LIQUIDITY_BREAKOUT", "status": "DATA_BLOCKED_WITH_REQUIREMENTS", "reentry_trigger": "M1/M5 session feature builder and spread-aware intraday simulator exist.", "required_data": "session_breakout_signal, M1/M5 bars, session calendar, spread"},
+    {"thesis_id": "K10_EVENT_SHOCK_CONTINUATION_OR_REVERSAL", "status": "DATA_BLOCKED_WITH_REQUIREMENTS", "reentry_trigger": "economic event surprise dataset exists with timestamps and immediate DXY/yield/gold reaction.", "required_data": "macro_event_surprise_z"}
+  ],
+  "decision_constraints": {
+    "min_entry_count": 20,
+    "min_mean_net_return_bps": 250.0,
+    "min_median_net_return_bps": 150.0,
+    "min_win_rate": 0.60,
+    "min_positive_period_share": 0.75,
+    "min_positive_year_share": 0.60,
+    "max_year_entry_share": 0.20,
+    "max_abs_min_net_return_bps": 1500.0,
+    "max_recent_period_share_of_total_return": 0.80,
+    "min_leave_one_period_out_mean_bps": 100.0,
+    "min_mean_net_bps_at_150_cost": 150.0,
+    "max_benchmark_overlap_jaccard_pct": 80.0
+  },
+  "hard_blocks": [
+    "NO_AUTOMATED_ORDER",
+    "NO_PAPER_ORDER",
+    "NO_BROKER_CONNECTION",
+    "NO_EA_PROMOTION",
+    "NO_PAPER_LIVE",
+    "NO_LIVE",
+    "NO_ORDER_AUTHORIZATION_FROM_STAGE70B",
+    "NO_THRESHOLD_TUNING_FROM_STAGE70B",
+    "NO_PROMOTION_FROM_HARD_AUDIT_WITHOUT_FORWARD_SHADOW"
+  ]
+}

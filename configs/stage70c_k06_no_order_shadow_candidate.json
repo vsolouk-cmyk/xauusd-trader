@@ -1,0 +1,53 @@
+{
+  "stage": "Stage70C_K06_NO_ORDER_SHADOW_CANDIDATE",
+  "champion": {
+    "thesis_id": "K06_RESILIENT_GOLD_VS_DXY",
+    "family": "GOLD_RESILIENCE_AGAINST_DXY",
+    "direction": "long",
+    "horizon_trading_days": 120,
+    "conditions": [
+      {"column": "gold_sma20_over_50", "operator": ">", "threshold": 0.0},
+      {"column": "dxy_ret_20d", "operator": ">", "threshold": 0.0},
+      {"column": "real_yield_change_20d", "operator": "<", "threshold": 0.0}
+    ],
+    "stage70b_required_disposition": "PROMOTE_TO_NO_ORDER_SHADOW_CANDIDATE",
+    "cost_bps_total_reference": 50.0,
+    "entry_cooldown_trading_days_reference": 120
+  },
+  "inputs": {
+    "macro_dataset": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+    "stage70b_summary": "reports/stage70b_champion_hard_audit/stage70b_champion_hard_audit_summary.json"
+  },
+  "outputs": {
+    "ledger_csv": "data/forward_shadow/stage70c_k06_no_order_shadow_candidate_ledger.csv"
+  },
+  "freshness": {
+    "max_macro_lag_calendar_days": 3
+  },
+  "decision_policy": {
+    "inactive_decision": "STAGE70C_K06_SHADOW_WAIT_SIGNAL_NO_ORDER",
+    "active_decision": "STAGE70C_K06_SHADOW_SIGNAL_ACTIVE_REVIEW_ONLY_NO_ORDER",
+    "data_issue_decision": "STAGE70C_INPUT_OR_DATA_ISSUE_STOP_NO_ORDER"
+  },
+  "hard_blocks": [
+    "NO_AUTOMATED_ORDER",
+    "NO_PAPER_ORDER",
+    "NO_BROKER_CONNECTION",
+    "NO_EA_PROMOTION",
+    "NO_PAPER_LIVE",
+    "NO_LIVE",
+    "NO_ORDER_AUTHORIZATION_FROM_STAGE70C",
+    "NO_THRESHOLD_TUNING_FROM_STAGE70C",
+    "NO_PROMOTION_FROM_SHADOW_CANDIDATE_ONLY"
+  ],
+  "operator_instructions": [
+    "Stage70C is a no-order shadow candidate monitor and cannot authorize orders.",
+    "If K06 becomes active, generate review-only evidence; do not send broker, EA, paper-live, or live orders.",
+    "Do not open another megascan until K06 is closed, parked, or graduated by separate governance.",
+    "Keep Stage68F as the legacy daily monitor; Stage70C is the K06 champion monitor."
+  ],
+  "backlog_policy": {
+    "mode": "CONTROLLED_BACKLOG_NON_INTERRUPTIVE",
+    "rule": "Backlog can be updated but cannot interrupt K06 until K06 is promoted, killed, or parked with reason."
+  }
+}

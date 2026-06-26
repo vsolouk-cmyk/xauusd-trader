@@ -1,0 +1,44 @@
+{
+  "macro_dataset": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "date_col": "feature_date_utc",
+  "price_col": "gold_close",
+  "replay_start": "2019-01-01",
+  "replay_end": null,
+  "locked_final_holdout_start": "2023-01-01",
+  "stage71_summary": "reports/stage71_locked_historical_forward_test/stage71_locked_historical_forward_test_summary.json",
+  "rule": {
+    "thesis_id": "K06_RESILIENT_GOLD_VS_DXY",
+    "family": "GOLD_RESILIENCE_AGAINST_DXY",
+    "direction": "long",
+    "horizon_trading_days": 120,
+    "entry_cooldown_trading_days": 120,
+    "cost_bps_total": 50.0,
+    "conditions": [
+      {"column": "gold_sma20_over_50", "operator": ">", "threshold": 0.0},
+      {"column": "dxy_ret_20d", "operator": ">", "threshold": 0.0},
+      {"column": "real_yield_change_20d", "operator": "<", "threshold": 0.0}
+    ]
+  },
+  "decision_constraints": {
+    "min_replay_rows": 800,
+    "min_matured_events": 5,
+    "min_mean_net_return_bps": 100.0,
+    "min_win_rate": 0.55,
+    "min_final_holdout_matured_events": 3,
+    "min_final_holdout_mean_net_bps": 0.0,
+    "max_abs_worst_loss_bps": 1500.0,
+    "max_lookahead_violations": 0,
+    "max_missing_feature_rows": 0
+  },
+  "hard_blocks": [
+    "NO_AUTOMATED_ORDER",
+    "NO_PAPER_ORDER",
+    "NO_BROKER_CONNECTION",
+    "NO_EA_PROMOTION",
+    "NO_PAPER_LIVE",
+    "NO_LIVE",
+    "NO_ORDER_AUTHORIZATION_FROM_STAGE72",
+    "NO_THRESHOLD_TUNING_FROM_HISTORICAL_DAILY_REPLAY",
+    "NO_PROMOTION_FROM_STAGE72_WITHOUT_SEPARATE_GOVERNANCE"
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "stage": "Stage66K_COMPLEMENTARY_BACKUP_READINESS_EXPANSION",
+  "root_relative_inputs": {
+    "stage66j_summary": "reports/stage66j_dual_readiness_daily_ops/stage66j_dual_readiness_daily_ops_summary.json",
+    "stage66d_summary": "reports/stage66d_limited_complementary_thesis_scan/stage66d_limited_complementary_thesis_scan_summary.json",
+    "macro_dataset": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv"
+  },
+  "allowed_stage66j_decisions": [
+    "STAGE66J_DUAL_READINESS_WAIT_SIGNALS_NO_ORDER",
+    "STAGE66J_DRY_RUN_TICKET_REVIEW_REQUIRED_NO_ORDER"
+  ],
+  "required_stage66d_decision": "STAGE66D_PASS_FAST_COMPLEMENTARY_SHORTLIST_NO_ORDER",
+  "candidate_policy": {
+    "method": "pre_registered_backup_pass_fast_only_no_metric_retuning",
+    "exclude_primary_stage66e_rule_id": "D3_DOLLAR_RELIEF_TREND_CONTINUATION_LONG_H60",
+    "selected_backup_candidates": [
+      {
+        "thesis_id": "D1_DXY_REALYIELD_GOLD_TREND_SHORT_HORIZON_LONG",
+        "horizon_trading_days": 60
+      },
+      {
+        "thesis_id": "D4_VOL_RISK_OFF_REALYIELD_GOLD_LONG",
+        "horizon_trading_days": 60
+      }
+    ],
+    "no_unregistered_variants": true,
+    "no_threshold_tuning": true,
+    "no_rescue_filtering": true
+  },
+  "audit_thresholds": {
+    "min_trade_count": 25,
+    "min_mean_net_return_bps": 150.0,
+    "min_win_rate": 0.58,
+    "max_abs_base_drawdown_pct": 6.0,
+    "max_year_trade_share": 0.20,
+    "min_payoff_ratio": 1.05,
+    "kill_if_single_trade_loss_bps_lt": -1800.0,
+    "require_zero_lookahead_breaches": true
+  },
+  "readiness": {
+    "macro_freshness_max_calendar_lag_days": 5,
+    "dry_run_ticket_generator_later_stage": "Stage66L",
+    "ticket_generation_allowed_here": false
+  },
+  "outputs": {
+    "rule_locks_json": "configs/stage66k_backup_complementary_rule_locks.json",
+    "ledger_csv": "data/forward_shadow/stage66k_backup_complementary_readiness_ledger.csv"
+  },
+  "hard_blocks": [
+    "NO_AUTOMATED_ORDER",
+    "NO_PAPER_ORDER",
+    "NO_BROKER_CONNECTION",
+    "NO_EA_PROMOTION",
+    "NO_PAPER_LIVE",
+    "NO_LIVE",
+    "NO_ORDER_AUTHORIZATION_FROM_STAGE66K",
+    "NO_THRESHOLD_TUNING",
+    "NO_RESCUE_FILTERING",
+    "NO_PROMOTION_FROM_BACKUP_READINESS_EXPANSION_ONLY"
+  ]
+}

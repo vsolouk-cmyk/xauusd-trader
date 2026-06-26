@@ -1,0 +1,56 @@
+{
+  "stage": "Stage67D6_DOWNLOAD_FORMAT_AWARE_REBUILD_MACRO",
+  "downloads_dir": "~/Downloads",
+  "gold_m5_candidates": ["amarkets_xauusd_5m.csv"],
+  "gold_d1_path": "data/macro_regime/raw/broker_or_spot_gold_d1_ohlc_2011_present.csv",
+  "macro_dataset_path": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "sources": {
+    "dxy": {
+      "incoming_candidates": ["US Dollar Index Historical Data.csv", "dxy.csv"],
+      "target": "data/exogenous/dxy.csv",
+      "min_rows": 1000
+    },
+    "real_yield": {
+      "incoming_candidates": ["DFII10.csv", "real_yield.csv"],
+      "target": "data/exogenous/real_yield.csv",
+      "min_rows": 1000
+    },
+    "vix": {
+      "incoming_candidates": ["VIXCLS.csv", "vix.csv"],
+      "target": "data/exogenous/vix.csv",
+      "min_rows": 1000
+    },
+    "etf_flow": {
+      "incoming_candidates": ["ETF_Flows_2026-06-02_1536.xlsx", "ETF_Flows.xlsx"],
+      "target": "data/exogenous/etf_flow.csv"
+    },
+    "central_bank_demand": {
+      "incoming_candidates": ["World_official_gold_holdings_as_of_Jun2026_IFS.xlsx", "World_official_gold_holdings.xlsx"],
+      "target": "data/exogenous/central_bank_demand.csv"
+    }
+  },
+  "guards": {
+    "max_future_days_allowed": 2,
+    "macro_min_rows": 1000,
+    "min_dxy_macro_coverage_pct": 90,
+    "min_real_yield_macro_coverage_pct": 90,
+    "min_vix_macro_coverage_pct": 90
+  },
+  "readiness": {
+    "script": "app/stage66j2_multi_readiness_daily_ops.py",
+    "config": "configs/stage66j2_multi_readiness_daily_ops.json",
+    "out": "reports/stage66j2_multi_readiness_daily_ops"
+  },
+  "hard_blocks": [
+    "NO_AUTOMATED_ORDER",
+    "NO_PAPER_ORDER",
+    "NO_BROKER_CONNECTION",
+    "NO_EA_PROMOTION",
+    "NO_PAPER_LIVE",
+    "NO_LIVE",
+    "NO_ORDER_AUTHORIZATION_FROM_STAGE67D6",
+    "NO_INTERNET_DOWNLOAD_FROM_STAGE67D6",
+    "NO_THRESHOLD_TUNING",
+    "NO_PROMOTION_FROM_DATA_REFRESH_ONLY"
+  ]
+}

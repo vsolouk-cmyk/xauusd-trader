@@ -124,3 +124,47 @@ data/macro_regime/raw/**/*.csv
 # Stage64 generated normalized/manifest outputs stay local unless explicitly forced
 data/macro_regime/normalized/**
 data/macro_regime/manifests/*.json
+
+# --- local/generated runtime artifacts ---
+reports/
+archive/
+_incoming_*/
+*.zip
+
+# --- Python/macOS cache ---
+__pycache__/
+*.pyc
+.DS_Store
+
+# --- local market and macro datasets ---
+data/local/
+data/exogenous/
+data/macro_regime/raw/
+data/macro_regime/normalized/
+data/forward_shadow/
+
+# --- generated repair/backup artifacts ---
+data/**/_repair_backups/
+data/**/wgc_raw_extracted/
+
+# --- local/generated runtime artifacts ---
+reports/
+archive/
+_incoming_*/
+*.zip
+
+# --- Python/macOS cache ---
+__pycache__/
+*.pyc
+.DS_Store
+
+# --- local market and macro datasets ---
+data/local/
+data/exogenous/
+data/macro_regime/raw/
+data/macro_regime/normalized/
+data/forward_shadow/
+
+# --- generated repair/backup artifacts ---
+data/**/_repair_backups/
+data/**/wgc_raw_extracted/

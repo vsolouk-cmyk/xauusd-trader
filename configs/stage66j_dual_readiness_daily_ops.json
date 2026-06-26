@@ -1,0 +1,30 @@
+{
+  "child_timeout_seconds": 900,
+  "ledger_path": "data/forward_shadow/stage66j_dual_readiness_daily_ops_ledger.csv",
+  "stages": {
+    "stage65b": {
+      "enabled": true,
+      "script": "app/stage65b_forward_shadow_daily_ops.py",
+      "config": "configs/stage65b_forward_shadow_daily_ops.json",
+      "out_dir": "reports/stage65b_forward_shadow_daily_ops",
+      "summary_path": "reports/stage65b_forward_shadow_daily_ops/stage65b_forward_shadow_daily_ops_summary.json",
+      "extra_args": []
+    },
+    "stage66h": {
+      "enabled": true,
+      "script": "app/stage66h_no_broker_dry_run_ticket_generator.py",
+      "config": "configs/stage66h_no_broker_dry_run_ticket_generator.json",
+      "out_dir": "reports/stage66h_no_broker_dry_run_ticket_generator",
+      "summary_path": "reports/stage66h_no_broker_dry_run_ticket_generator/stage66h_no_broker_dry_run_ticket_generator_summary.json",
+      "extra_args": []
+    },
+    "stage66i": {
+      "enabled": true,
+      "script": "app/stage66i_no_broker_complementary_dry_run_ticket_generator.py",
+      "config": "configs/stage66i_no_broker_complementary_dry_run_ticket_generator.json",
+      "out_dir": "reports/stage66i_no_broker_complementary_dry_run_ticket_generator",
+      "summary_path": "reports/stage66i_no_broker_complementary_dry_run_ticket_generator/stage66i_no_broker_complementary_dry_run_ticket_generator_summary.json",
+      "extra_args": []
+    }
+  }
+}

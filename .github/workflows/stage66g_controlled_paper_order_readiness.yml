@@ -1,0 +1,35 @@
+name: Stage66G Controlled Paper Order Readiness
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  stage66g:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile
+        run: |
+          python -m py_compile app/stage66g_controlled_paper_order_readiness.py tests/test_stage66g_readiness_gate.py
+      - name: Test
+        run: |
+          python tests/test_stage66g_readiness_gate.py
+      - name: Run Stage66G
+        run: |
+          python app/stage66g_controlled_paper_order_readiness.py \
+            --root . \
+            --config configs/stage66g_controlled_paper_order_readiness.json \
+            --out reports/stage66g_controlled_paper_order_readiness
+      - name: Upload Stage66G artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage66g-controlled-paper-order-readiness
+          path: |
+            reports/stage66g_controlled_paper_order_readiness/

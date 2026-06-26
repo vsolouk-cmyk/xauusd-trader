@@ -1,0 +1,57 @@
+name: Stage66C H64L Paper Execution Simulator
+
+on:
+  workflow_dispatch:
+    inputs:
+      write_positions:
+        description: "Write the position-level CSV artifact"
+        required: true
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  stage66c:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Compile Stage66C
+        run: |
+          python -m py_compile app/stage66c_h64l_paper_execution_simulator.py tests/test_stage66c_position_engine.py
+
+      - name: Run Stage66C tests
+        run: |
+          python tests/test_stage66c_position_engine.py
+
+      - name: Run Stage66C paper-execution simulator
+        run: |
+          EXTRA=""
+          if [ "${{ inputs.write_positions }}" = "true" ]; then EXTRA="--write-positions"; fi
+          python app/stage66c_h64l_paper_execution_simulator.py \
+            --root . \
+            --config configs/stage66c_h64l_paper_execution_simulator.json \
+            --out reports/stage66c_h64l_paper_execution_simulator \
+            $EXTRA
+
+      - name: Upload Stage66C reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage66c-h64l-paper-execution-simulator
+          path: |
+            reports/stage66c_h64l_paper_execution_simulator/**
+          if-no-files-found: warn

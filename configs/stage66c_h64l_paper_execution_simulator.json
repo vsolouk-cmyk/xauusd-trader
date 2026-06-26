@@ -1,16 +1,34 @@
 {
-  "stage": "Stage66C_H64L_NO_ORDER_PAPER_EXECUTION_SIMULATOR_PRELOCK",
-  "package": "Package2_after_Stage66A_B_F_review",
-  "locked_rule_path": "configs/h64l_locked_rule_v1.json",
-  "feed_mismatch_penalty_bps_per_side": 20.0,
-  "slippage_bps_per_side": 5.0,
-  "spread_bps_per_side": 5.0,
-  "entry_price_policy": "next_available_external_d1_open_with_feed_mismatch_penalty; fallback close_to_close_conservative_proxy",
-  "sizing_bands": {
-    "band_A": {"risk_fraction_of_target_capital": 0.001, "label": "default_small"},
-    "band_B": {"risk_fraction_of_target_capital": 0.0025, "label": "only_if_stage66a_pass_fast"},
-    "band_C": {"risk_fraction_of_target_capital": 0.005, "label": "reporting_sensitivity_only_not_operational"}
-  },
-  "operational_sizing_selection_rule": "band_A by default. band_B only if Stage66A is PASS_FAST. band_C is never selected operationally from Package1 results.",
-  "no_order_policy": "NO_BROKER_CONNECTION_NO_ORDER_NO_LIVE"
+  "stage66f2_summary_path": "reports/stage66f2_governance_dashboard_reconciled/stage66f2_governance_dashboard_reconciled_summary.json",
+  "required_stage66f2_decision": "PAPER_SIM_READY_BAND_B_NO_ORDER_PACKAGE2",
+  "macro_dataset_path": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "external_d1_path": "data/macro_regime/raw/broker_or_spot_gold_d1_ohlc_2011_present.csv",
+  "locked_rule_path": "configs/h64l_locked_rule_v2_stage66a3_exact_reconciled.json",
+  "feature_date_col": "feature_date_utc",
+  "available_after_col": "sample_available_after_utc",
+  "external_date_col": "date_utc",
+  "entry_rule": "first_external_d1_close_on_or_after_sample_available_after_utc",
+  "entry_delay_trading_days": 0,
+  "holding_period_trading_days": 120,
+  "single_position_non_overlapping": true,
+  "round_trip_execution_cost_bps": 35.0,
+  "feed_mismatch_penalty_bps": 15.0,
+  "stress_total_penalty_bps": [0.0, 50.0, 100.0, 200.0, 350.0],
+  "sizing_bands": [
+    {"band": "B_conservative", "notional_fraction": 0.05},
+    {"band": "B_base", "notional_fraction": 0.10},
+    {"band": "B_upper_paper_only", "notional_fraction": 0.20}
+  ],
+  "decision_thresholds": {
+    "base_band_name": "B_base",
+    "min_closed_positions": 8,
+    "pass_fast_min_win_rate": 0.55,
+    "pass_fast_min_mean_net_bps": 300.0,
+    "pass_fast_max_base_band_drawdown_pct": 8.0,
+    "stress_gate_penalty_bps": 100.0,
+    "pass_fast_min_stress_mean_net_bps": 200.0,
+    "kill_if_single_trade_loss_bps_lt": -2200.0,
+    "small_size_min_mean_net_bps": 150.0,
+    "small_size_min_win_rate": 0.50
+  }
 }

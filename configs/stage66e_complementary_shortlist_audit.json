@@ -1,0 +1,41 @@
+{
+  "stage": "Stage66E_COMPLEMENTARY_SHORTLIST_AUDIT",
+  "purpose": "Audit and rule-lock the top-ranked Stage66D PASS_FAST complementary thesis. No order authorization.",
+  "input_paths": {
+    "stage66d_summary_path": "reports/stage66d_limited_complementary_thesis_scan/stage66d_limited_complementary_thesis_scan_summary.json",
+    "stage66h_summary_path": "reports/stage66h_no_broker_dry_run_ticket_generator/stage66h_no_broker_dry_run_ticket_generator_summary.json",
+    "macro_dataset_path": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv"
+  },
+  "macro_date_column": "feature_date_utc",
+  "selection_policy": {
+    "required_stage66d_decision": "STAGE66D_PASS_FAST_COMPLEMENTARY_SHORTLIST_NO_ORDER",
+    "method": "top_ranked_pass_fast_only_no_metric_retuning",
+    "expected_primary_thesis_id": "D3_DOLLAR_RELIEF_TREND_CONTINUATION_LONG",
+    "expected_primary_horizon_trading_days": 60,
+    "do_not_select_by_new_thresholds": true,
+    "do_not_rescue_filter": true
+  },
+  "audit_thresholds": {
+    "base_band_name": "D_base",
+    "min_closed_positions": 30,
+    "min_mean_net_return_bps": 175.0,
+    "min_win_rate": 0.58,
+    "kill_if_single_trade_loss_bps_lte": -1800.0,
+    "max_year_trade_share": 0.15,
+    "max_abs_base_band_drawdown_pct": 4.0,
+    "min_payoff_ratio": 1.15
+  },
+  "output_rule_lock_path": "configs/stage66e_selected_complementary_rule_lock.json",
+  "hard_blocks": [
+    "NO_AUTOMATED_ORDER",
+    "NO_PAPER_ORDER",
+    "NO_BROKER_CONNECTION",
+    "NO_EA_PROMOTION",
+    "NO_PAPER_LIVE",
+    "NO_LIVE",
+    "NO_ORDER_AUTHORIZATION_FROM_STAGE66E",
+    "NO_THRESHOLD_TUNING",
+    "NO_RESCUE_FILTERING",
+    "NO_PROMOTION_FROM_COMPLEMENTARY_AUDIT_ONLY"
+  ]
+}

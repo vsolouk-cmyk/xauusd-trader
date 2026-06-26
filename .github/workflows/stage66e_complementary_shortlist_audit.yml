@@ -1,0 +1,25 @@
+name: Stage66E Complementary Shortlist Audit
+
+on:
+  workflow_dispatch:
+
+jobs:
+  stage66e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Stage66E tests
+        run: python3 tests/test_stage66e_complementary_shortlist_audit.py
+      - name: Run Stage66E
+        run: |
+          python3 app/stage66e_complementary_shortlist_audit.py \
+            --root . \
+            --config configs/stage66e_complementary_shortlist_audit.json \
+            --out reports/stage66e_complementary_shortlist_audit
+      - name: Upload Stage66E reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage66e-complementary-shortlist-audit
+          path: |
+            reports/stage66e_complementary_shortlist_audit/**
+            configs/stage66e_selected_complementary_rule_lock.json

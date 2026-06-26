@@ -1,0 +1,44 @@
+{
+  "download_dir": "~/Downloads",
+  "manual_sources": {
+    "gold_m5": {
+      "filename": "amarkets_xauusd_5m.csv",
+      "target": "data/manual_sources/amarkets_xauusd_5m_last.csv"
+    },
+    "dxy": {
+      "filename": "dxy.csv",
+      "target": "data/exogenous/dxy.csv"
+    },
+    "real_yield": {
+      "filename": "real_yield.csv",
+      "target": "data/exogenous/real_yield.csv"
+    },
+    "vix": {
+      "filename": "vix.csv",
+      "target": "data/exogenous/vix.csv"
+    },
+    "etf_flow": {
+      "filename": "etf_flow.csv",
+      "target": "data/exogenous/etf_flow.csv"
+    },
+    "central_bank_demand": {
+      "filename": "central_bank_demand.csv",
+      "target": "data/exogenous/central_bank_demand.csv"
+    }
+  },
+  "canonical_outputs": {
+    "external_d1": "data/macro_regime/raw/broker_or_spot_gold_d1_ohlc_2011_present.csv",
+    "macro_dataset": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+    "ledger_csv": "data/forward_shadow/stage67b_manual_persistent_data_refresh_ledger.csv"
+  },
+  "readiness": {
+    "enabled": true,
+    "script": "app/stage66j2_multi_readiness_daily_ops.py",
+    "config": "configs/stage66j2_multi_readiness_daily_ops.json",
+    "out": "reports/stage66j2_multi_readiness_daily_ops"
+  },
+  "anti_truncation": {
+    "min_existing_retention_ratio": 0.98,
+    "stop_if_canonical_rows_drop": true
+  }
+}

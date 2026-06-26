@@ -1,10 +1,10 @@
 {
   "stage": "Stage65_FORWARD_SHADOW_SIGNAL_LEDGER_FASTLANE_NO_ORDER",
-  "last_run_utc": "2026-06-26T06:17:43Z",
-  "latest_feature_date": "2026-06-24",
+  "last_run_utc": "2026-06-26T07:40:42Z",
+  "latest_feature_date": "2026-06-25",
   "current_signal_active": false,
   "current_benchmark_active": false,
-  "signal_ledger_rows": 1,
+  "signal_ledger_rows": 2,
   "observation_ledger_rows": 0,
   "forward_governance_ready": false,
   "decision": "STAGE65_FORWARD_LEDGER_ACTIVE_CONTINUE_DAILY_NO_ORDER",

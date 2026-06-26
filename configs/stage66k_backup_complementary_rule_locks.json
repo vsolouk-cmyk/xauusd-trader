@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-06-26T06:12:29Z",
+  "generated_utc": "2026-06-26T06:17:44Z",
   "no_order_policy": "NO_ORDER_NO_BROKER_NO_EA_NO_PAPER_LIVE_NO_LIVE",
   "rule_locks": [
     {
@@ -29,11 +29,11 @@
       "exit_rule": "fixed_registered_horizon",
       "horizon_trading_days": 60,
       "hypothesis": "Gold trend plus falling dollar and falling real-yield pressure can create shorter-horizon continuation without requiring ETF and central-bank confirmation.",
-      "locked_at_utc": "2026-06-26T06:12:29Z",
+      "locked_at_utc": "2026-06-26T06:17:44Z",
       "no_order_policy": "NO_ORDER_NO_BROKER_NO_EA_NO_PAPER_LIVE_NO_LIVE",
       "position_mode": "single_position_non_overlapping",
       "rule_id": "D1_DXY_REALYIELD_GOLD_TREND_SHORT_HORIZON_LONG_H60",
-      "rule_sha256": "8411a952f9cf7c9adfa6c5266a9a5a9088d6711de27cfdc1fb0b59b8e2637742",
+      "rule_sha256": "5e04cc05d91690eae93e8a843e2ea2f8f85f89b2dc058a8d0b8777b9027c902b",
       "selection_policy": {
         "do_not_rescue_filter": true,
         "do_not_select_by_new_thresholds": true,
@@ -71,11 +71,11 @@
       "exit_rule": "fixed_registered_horizon",
       "horizon_trading_days": 60,
       "hypothesis": "Rising volatility plus easing real-yield pressure during a gold trend can capture risk-off continuation episodes.",
-      "locked_at_utc": "2026-06-26T06:12:29Z",
+      "locked_at_utc": "2026-06-26T06:17:44Z",
       "no_order_policy": "NO_ORDER_NO_BROKER_NO_EA_NO_PAPER_LIVE_NO_LIVE",
       "position_mode": "single_position_non_overlapping",
       "rule_id": "D4_VOL_RISK_OFF_REALYIELD_GOLD_LONG_H60",
-      "rule_sha256": "7989156208c2720ef1f7184c8f29093e45d11ac41268d0d4ebc1d66a0be86144",
+      "rule_sha256": "22ed6781359406266fd2a540834169990d03c8df5fab48e3afd064515275d2a6",
       "selection_policy": {
         "do_not_rescue_filter": true,
         "do_not_select_by_new_thresholds": true,

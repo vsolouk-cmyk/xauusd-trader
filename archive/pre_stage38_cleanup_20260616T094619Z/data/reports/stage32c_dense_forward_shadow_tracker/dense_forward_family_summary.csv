@@ -1,4 +1,0 @@
-family,candidate_count,signal_count,resolved_count,review_ready_candidate_count,latest_signal_ts,recommendation
-calendar_time_risk_proxy_v1,3,79,73,1,2026-06-16 12:15:00+00:00,REVIEW_DENSE_FORWARD_CANDIDATES
-volatility_transition_v1,3,64,58,0,2026-06-15 13:00:00+00:00,KEEP_COLLECTING_FORWARD_SAMPLES
-session_handoff_imbalance_v1,3,45,39,0,2026-06-16 12:15:00+00:00,KEEP_COLLECTING_FORWARD_SAMPLES

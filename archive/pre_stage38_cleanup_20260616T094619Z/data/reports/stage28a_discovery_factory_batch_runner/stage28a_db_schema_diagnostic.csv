@@ -1,2 +1,0 @@
-loader_mode,db_path,db_first,csv_fallback_enabled,m1_rows,h1_rows,m15_rows,m1_span,h1_span,m15_span
-reused:app.stage25c_deduped_filter_validation.load_bars_from_db,data/local/xauusd_local_store.sqlite,True,False,1534217,25608,102355,2022-05-01 23:01:00+00:00 → 2026-06-12 23:54:00+00:00,2022-05-01 23:00:00+00:00 → 2026-06-12 23:00:00+00:00,2022-05-01 23:00:00+00:00 → 2026-06-12 23:45:00+00:00

@@ -1,2 +1,0 @@
-variant_id,thesis_family,horizon_hours,diagnostic_only,signal_count,pf_x4,avg_net_x4,win_rate_x4,tail_pf_x4,recent_pf_x4,cost1_pf_x4,max_drawdown_x4,fatal_failed_gates,stage36c_decision,next_action
-stage36c_event_window_reversal_h4_guard2,event_risk_regime,4,False,1362,1.0923963737542823,0.19218428781203944,0.49412628487518356,1.674910920142521,1.674910920142521,0.6936084951799333,-196.91750000000093,pf;win_rate;cost1_pf;drawdown,BACKGROUND_ACCELERATION_ONLY_RESEARCH_ONLY,KEEP_BACKGROUND_ONLY_AND_RERUN_AFTER_NEW_DATA

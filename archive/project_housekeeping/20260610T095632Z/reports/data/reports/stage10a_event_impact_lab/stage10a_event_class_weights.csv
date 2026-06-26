@@ -1,7 +1,0 @@
-event_class,event_channel,events,avg_adaptive_score,avg_abs_impact_12h,avg_norm_impact_12h,direction_accuracy_12h,candidate_relevant_count,likely_noise_count,recommended_weight
-oil_supply_shock,oil_inflation_pressure,217,1.195727,28.572304,6.550381,,166,20,1.125
-central_bank_gold_demand,central_bank_demand,10,0.65722,25.599,4.155664,0.666667,4,1,1.0
-usd_shock,usd_pressure,55,1.368203,21.186182,8.337094,0.6,30,8,0.9
-front_end_yield_shock,real_yield_fed_path,52,1.197901,14.564808,9.514112,0.596154,29,2,0.894231
-real_yield_shock,real_yield_fed_path,143,1.180436,18.163077,6.375099,0.584507,70,11,0.876761
-nominal_yield_shock,real_yield_fed_path,33,1.011164,15.924545,8.246838,0.575758,17,3,0.863636

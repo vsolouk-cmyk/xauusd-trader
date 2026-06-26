@@ -1,8 +1,0 @@
-{
-  "stage": "Stage61B_DEMO_HARNESS_HEALTHCHECK_NO_PROMOTION",
-  "mt5_signal_file_name": "stage61_demo_signals.csv",
-  "healthcheck_mode": "EMPTY_SIGNAL_FILE_PARSE_TEST_ONLY",
-  "allow_order_rows_in_healthcheck": false,
-  "require_metaeditor_compile_confirmation": true,
-  "paper_live_or_live_allowed": false
-}

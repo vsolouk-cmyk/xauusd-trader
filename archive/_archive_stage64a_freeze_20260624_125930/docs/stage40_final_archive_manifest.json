@@ -1,9 +1,0 @@
-{
-  "patch": "stage40_final_archive_after_stage40b_patch",
-  "created_utc": "2026-06-17T05:59:27Z",
-  "files": [
-    "docs/STAGE40_FINAL_ARCHIVE_AFTER_STAGE40B.md",
-    "reports/stage40_final/stage40_final_archive_decision.json",
-    "stage40_final_archive_manifest.json"
-  ]
-}

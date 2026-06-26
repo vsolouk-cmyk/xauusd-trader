@@ -1,3 +1,0 @@
-candidate_id,variant,family,horizon_minutes,journal_rows,valid_forward_rows,open_valid_rows,closed_valid_rows,late_invalid_rows,closed_total,closed_median,closed_pf,closed_dd
-C1_PDL_RECLAIM_H6,pdl_sweep_reclaim_long_sweep2.5_reclaim2_london_new_york_h6_cool4,pdl_sweep_reclaim_refined,90,0,0,0,0,0,0.0,0.0,0.0,0.0
-C2_ASIA_HIGH_NY_H48,asia_high_breakout_long_close2_range4-35_new_york_only_h48_cool0,asia_high_breakout_refined,720,1,1,1,0,0,0.0,0.0,0.0,0.0

@@ -1,9 +1,0 @@
-source,family,name,events,pf_x1,pf_x4,pf_x6,test20_pf_x1,pf_2026_x1,boot_pf_p05_x1,median_x1,total_x1,rank_score,decision
-M1_EXACT,ny_open_impulse_continuation,ny_impulse_cont_lm0.45_cf0.1_h90_e14_tp0.8_sl0.8,274,0.6779,0.4426,0.3292,0.7074,0.8033,0.5545,-1.27,-264.1112,14.848,STAGE24B_REJECT
-M1_EXACT,ny_open_impulse_continuation,ny_impulse_cont_lm0.45_cf0.1_h180_e13_tp0.8_sl0.8,247,0.7543,0.5227,0.4032,0.7541,0.5706,0.5815,-2.9867,-202.5541,14.6272,STAGE24B_REJECT
-M1_EXACT,ny_open_impulse_continuation,ny_impulse_cont_lm0.45_cf0.1_h90_e14_tp0.6_sl0.65,274,0.6488,0.3964,0.276,0.7042,0.7044,0.5256,-2.2154,-265.3971,14.5161,STAGE24B_REJECT
-M1_EXACT,ny_open_impulse_continuation,ny_impulse_cont_lm0.45_cf0.1_h180_e13_tp0.6_sl0.65,247,0.6646,0.4171,0.2945,0.7084,0.705,0.4891,-2.8024,-239.5389,14.2533,STAGE24B_REJECT
-M1_EXACT,prev_day_inside_breakout_continuation,inside_break_cont_in0.85_cf0.1_h180_e13_tp0.6_sl0.65,150,1.0388,0.7134,0.5463,1.3531,1.3702,0.7836,1.8781,16.325,12.0217,STAGE24B_REJECT
-M1_EXACT,prev_day_inside_breakout_continuation,inside_break_cont_in0.85_cf0.05_h180_e13_tp0.6_sl0.65,151,1.0461,0.7175,0.5488,1.308,1.3702,0.6979,1.8914,19.4258,11.9454,STAGE24B_REJECT
-M1_EXACT,prev_day_inside_breakout_continuation,inside_break_cont_in0.85_cf0.1_h90_e13_tp0.8_sl0.8,150,0.9668,0.5847,0.4183,1.0614,1.2451,0.6941,-0.045,-10.5012,11.0387,STAGE24B_REJECT
-M1_EXACT,prev_day_inside_breakout_continuation,inside_break_cont_in0.85_cf0.05_h90_e13_tp0.8_sl0.8,151,0.9519,0.5762,0.4124,1.0444,1.2451,0.6731,-0.06,-15.4523,11.018,STAGE24B_REJECT

@@ -1,4 +1,0 @@
-timestamp_utc,symbol,strategy_id,ea_version,chart_timeframe,signal_timeframe,closed_h1_time_utc,close,sma10,distance_usd,session_name,session_allowed,signal,reason
-2026-06-08T00:05:03Z,XAUUSD,xauusd_long_tp24_sl15_no_london_v1,XAUUSD_DryRun_v1,M5,H1,2026-06-08T00:00:00Z,3376.20,3364.90,11.30,asia,true,true,DRY-RUN SIGNAL logged
-2026-06-08T07:05:01Z,XAUUSD,xauusd_long_tp24_sl15_no_london_v1,XAUUSD_DryRun_v1,M5,H1,2026-06-08T07:00:00Z,3379.10,3367.40,11.70,london,false,false,Dry-run skip: blocked UTC London session
-2026-06-08T14:05:02Z,XAUUSD,xauusd_long_tp24_sl15_no_london_v1,XAUUSD_DryRun_v1,M5,H1,2026-06-08T14:00:00Z,3381.50,3374.20,7.30,new_york,true,false,Dry-run no signal

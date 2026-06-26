@@ -1,4 +1,0 @@
-priority,scheduler_item,cadence,condition,action_now
-1,stage35c_forward_confirmation_trigger,every scheduler run after useful wrapper refresh or low-cost check,new_signal_count >= min_new_events triggers rerun Stage33D/E/35B,KEEP_ACTIVE_BACKGROUND_TRIGGER
-2,stage36a_new_thesis_parallel_intake,daily or first missing report,current branch pending or no strict review-ready candidate,START_NEW_THESIS_BRANCH_NOW
-3,stage36b_first_branch_backtest,manual next patch or scheduled after Stage36B exists,Stage36A branch specs ready,BUILD_STAGE36B_SESSION_REGIME_BASELINE_SCOUT_NEXT

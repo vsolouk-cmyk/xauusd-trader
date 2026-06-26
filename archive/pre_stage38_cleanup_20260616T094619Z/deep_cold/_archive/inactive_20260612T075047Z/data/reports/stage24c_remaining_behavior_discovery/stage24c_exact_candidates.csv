@@ -1,5 +1,0 @@
-source,family,name,events,pf_x1,pf_x4,pf_x6,test20_pf_x1,pf_2026_x1,boot_pf_p05_x1,median_x1,total_x1,rank_score,decision
-M1_EXACT,prev_day_expansion_exhaustion_reversal,prev_exp_exhaust_rev_px1.2_ext0.7_cf0.0_h180_e15_tp0.8_sl0.8,777,1.0363,0.7547,0.6031,1.0583,0.8041,0.9179,2.644,93.5713,17.2068,STAGE24C_REJECT
-M1_EXACT,prev_day_expansion_exhaustion_reversal,prev_exp_exhaust_rev_px1.5_ext0.7_cf0.0_h180_e15_tp0.8_sl0.8,777,1.0363,0.7547,0.6031,1.0583,0.8041,0.9179,2.644,93.5713,17.2068,STAGE24C_REJECT
-M1_EXACT,prev_day_expansion_exhaustion_reversal,prev_exp_exhaust_rev_px1.2_ext0.7_cf0.0_h90_e15_tp0.8_sl0.8,777,1.0358,0.7195,0.5562,1.0414,0.767,0.8891,1.9691,80.3198,16.9656,STAGE24C_REJECT
-M1_EXACT,prev_day_expansion_exhaustion_reversal,prev_exp_exhaust_rev_px1.5_ext0.7_cf0.0_h90_e15_tp0.8_sl0.8,777,1.0358,0.7195,0.5562,1.0414,0.767,0.8891,1.9691,80.3198,16.9656,STAGE24C_REJECT

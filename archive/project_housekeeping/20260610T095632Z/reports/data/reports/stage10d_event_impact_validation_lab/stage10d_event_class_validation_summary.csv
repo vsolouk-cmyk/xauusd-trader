@@ -1,7 +1,0 @@
-event_class,event_channel,events_declustered,controls,avg_event_norm12,avg_control_norm12,avg_impact_lift,median_event_norm12,median_control_norm12,median_impact_lift,event_high_medium_rate,control_high_medium_rate,impact_rate_lift,event_noise_rate,control_noise_rate,event_direction_accuracy,control_direction_accuracy,validation_verdict
-usd_shock,usd_pressure,40,160,7.738029,5.793782,1.335575,5.413833,4.887223,1.107752,0.75,0.75,1.0,0.175,0.13125,0.55,0.531646,reject_or_noise
-real_yield_shock,real_yield_fed_path,102,408,6.720091,6.515266,1.031438,4.960145,5.358305,0.925693,0.784314,0.737745,1.063123,0.078431,0.102941,0.633663,0.492611,reject_or_noise
-oil_supply_shock,oil_inflation_pressure,142,568,6.53081,6.626623,0.985541,4.752129,4.90319,0.969191,0.802817,0.757042,1.060465,0.098592,0.128521,,,reject_or_noise
-central_bank_gold_demand,central_bank_demand,1,4,1.083333,2.986946,0.362689,1.083333,1.46269,0.740644,0.0,0.5,0.0,0.0,0.5,1,0.25,insufficient_sample
-front_end_yield_shock,real_yield_fed_path,40,160,10.119024,6.48265,1.56094,7.406051,5.027598,1.47308,0.85,0.75,1.133333,0.05,0.10625,0.6,0.59375,directional_or_guard_candidate
-nominal_yield_shock,real_yield_fed_path,26,104,9.127482,6.35833,1.435516,9.177139,4.862378,1.887377,0.884615,0.692308,1.277778,0.115385,0.115385,0.576923,0.621359,directional_or_guard_candidate

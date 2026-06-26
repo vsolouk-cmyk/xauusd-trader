@@ -1,5 +1,0 @@
-table,status,rows,event_time_col
-news_events,ok,516,event_time_utc
-numeric_shock_events,ok,500,event_time_utc
-event_pipeline_staging,ok,5,event_time_utc
-macro_events,ok,0,event_time_utc

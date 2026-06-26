@@ -1,2 +1,0 @@
-event_id,event_time_utc,event_end_utc,title,event_class,event_channel,expected_gold_direction,initial_importance,confidence,source_name,source_url_or_note,manual_tags,notes
-EXAMPLE_DELETE_ME,2026-01-01T13:30:00Z,2026-01-01T13:30:00Z,EXAMPLE_DELETE_ME,cpi_surprise,real_yield_fed_path,0,1.0,0.5,manual,Delete this row,inflation;macro,Delete this row and enter real events

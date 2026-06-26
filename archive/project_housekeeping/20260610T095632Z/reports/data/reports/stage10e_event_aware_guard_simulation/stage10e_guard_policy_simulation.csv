@@ -1,6 +1,0 @@
-policy,description,trades,total_x4,median_x4,pf_x4,wr_x4,dd_x4,blocked_trades,kept_trades,blocked_pct,delta_total_vs_baseline,delta_pf_vs_baseline,delta_dd_vs_baseline,decision_hint
-baseline_all_trades,No event filter,524,2410.28,2.06,1.920727,0.580153,-202.67,0,524,0.0,0.0,0.0,0.0,baseline
-block_any_validated_yield_event_window,Block trades during any validated yield-shock event window,502,2266.92,2.14,1.891183,0.589641,-202.67,22,502,0.041985,-143.36,-0.029544,0.0,reject_as_guard_or_report_only
-block_hostile_yield_event_window_only,Block trades only when validated event is hostile to long gold,514,2289.5,2.07,1.878058,0.583658,-202.67,10,514,0.019084,-120.78,-0.042669,0.0,reject_as_guard_or_report_only
-take_only_supportive_yield_event_window,Take trades only when validated event is supportive to long gold,12,22.58,-5.305,1.354252,0.333333,-21.26,512,12,0.977099,-2387.7,-0.566475,181.41,insufficient_remaining_sample
-take_only_no_validated_event_window,Take trades only when no validated event window is active,502,2266.92,2.14,1.891183,0.589641,-202.67,22,502,0.041985,-143.36,-0.029544,0.0,reject_as_guard_or_report_only

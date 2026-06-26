@@ -1,8 +1,0 @@
-{
-  "created_wall_utc": "2026-06-11T07:37:29+00:00",
-  "collector_clock_mode": "BROKER_BAR_TIME",
-  "collector_start_bar_time": "2026-06-11T09:15:00+00:00",
-  "candidate": "pdh_breakout_continuation_long_h32_cool4",
-  "note": "Only signals with signal_dt > collector_start_bar_time are eligible.",
-  "tool_version": "v1"
-}

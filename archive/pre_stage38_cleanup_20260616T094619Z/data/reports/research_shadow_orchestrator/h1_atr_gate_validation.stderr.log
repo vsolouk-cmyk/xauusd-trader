@@ -1,2 +1,0 @@
-/Users/vahid/Desktop/xauusd-trader/app/stage27c_db_first_h1_atr_gate_validation.py:331: UserWarning: no explicit representation of timezones available for np.datetime64
-  starts[valid] = arr["bar_start"][idxs[valid]]

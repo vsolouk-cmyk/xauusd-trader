@@ -1,5 +1,0 @@
-STAGE32B_DENSE_FORWARD_SHADOW_INTAKE_QUEUE_READY_RESEARCH_SHADOW_ONLY
-shadow_queue_rows=17
-primary_shadow_queue_rows=7
-secondary_repair_queue_rows=10
-report=data/reports/stage32b_dense_forward_shadow_intake/stage32b_dense_forward_shadow_intake.md

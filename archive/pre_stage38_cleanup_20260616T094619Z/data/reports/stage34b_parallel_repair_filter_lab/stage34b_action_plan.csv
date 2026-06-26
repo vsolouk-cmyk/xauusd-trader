@@ -1,4 +1,0 @@
-priority,action,rationale,execution_status
-2,KEEP_SHORT_CONFIRMATION_PATHS_ACTIVE,Core metrics are promising but recency/last5 is not yet safe.,RESEARCH_ONLY
-3,KEEP_PARALLEL_ACCELERATION_QUEUE,Some paths are positive but not review-ready; collect only if cheap/background.,RESEARCH_ONLY
-4,KILL_OR_REPAIR_WEAK_PATHS,Do not wait for weak or single-variant paths to reach N=40 by default.,RESEARCH_ONLY

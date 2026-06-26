@@ -1,2 +1,0 @@
-path,exists,rows,status
-data/reports/stage25c_deduped_filter_validation/stage25c_enriched_canonical_trades.csv,True,100,loaded

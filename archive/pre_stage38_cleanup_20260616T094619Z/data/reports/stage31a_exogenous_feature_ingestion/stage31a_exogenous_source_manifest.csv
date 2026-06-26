@@ -1,8 +1,0 @@
-source,path,exists,loaded,rows_raw,status,time_col,value_col,rows_loaded,span
-dxy,/Users/vahid/Desktop/xauusd-trader/data/exogenous/dxy.csv,True,True,1025.0,loaded,timestamp,close,1025,2022-05-02 00:00:00+00:00 → 2026-06-05 00:00:00+00:00
-us10y,/Users/vahid/Desktop/xauusd-trader/data/exogenous/us10y.csv,True,True,1028.0,loaded,timestamp,close,1028,2022-05-02 00:00:00+00:00 → 2026-06-11 00:00:00+00:00
-real_yield,/Users/vahid/Desktop/xauusd-trader/data/exogenous/real_yield.csv,True,True,1028.0,loaded,timestamp,close,1028,2022-05-02 00:00:00+00:00 → 2026-06-11 00:00:00+00:00
-vix,/Users/vahid/Desktop/xauusd-trader/data/exogenous/vix.csv,True,True,1062.0,loaded,timestamp,close,1062,2022-05-02 00:00:00+00:00 → 2026-06-11 00:00:00+00:00
-spx,/Users/vahid/Desktop/xauusd-trader/data/exogenous/spx.csv,True,True,1033.0,loaded,timestamp,close,1033,2022-05-02 00:00:00+00:00 → 2026-06-12 00:00:00+00:00
-oil,/Users/vahid/Desktop/xauusd-trader/data/exogenous/oil.csv,True,True,1023.0,loaded,timestamp,close,1023,2022-05-02 00:00:00+00:00 → 2026-06-08 00:00:00+00:00
-calendar_events,/Users/vahid/Desktop/xauusd-trader/data/exogenous/calendar_events.csv,True,False,,template_present,,,0,

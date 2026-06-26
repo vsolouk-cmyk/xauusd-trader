@@ -1,2 +1,0 @@
-db_path,table,source_rows,timestamp_col,open_col,high_col,low_col,close_col,symbol_col,timeframe_col,selected_rows,h1_rows,h1_start_ts,h1_end_ts,h1_median_delta_min,error,columns
-data/local/xauusd_local_store.sqlite,bars,1560741,utc_time,open,high,low,close,symbol,timeframe,25624,25624,2022-05-01 23:00:00+00:00,2026-06-15 16:00:00+00:00,60.0,,source;symbol;timeframe;utc_time;open;high;low;close;tick_volume;spread;real_volume;source_time;imported_utc;raw_json;volume;ingested_at

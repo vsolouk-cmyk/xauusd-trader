@@ -1,6 +1,0 @@
-priority,branch_id,kill_switch,commercial_rule
-1,stage36_session_regime_baseline_scout,Kill if cost-stressed PF < 1.15 or month/period split is unstable.,NO_EA_NO_PAPER_NO_ORDER_UNTIL_STRICT_FORWARD_AND_COST_GATES_PASS
-2,stage36_news_no_news_regime_guard,"Kill if excluding event windows does not improve PF, drawdown, or tail behavior.",NO_EA_NO_PAPER_NO_ORDER_UNTIL_STRICT_FORWARD_AND_COST_GATES_PASS
-3,stage36_volatility_compression_breakout,Kill if last-quartile or cost-stressed PF collapses below 1.10.,NO_EA_NO_PAPER_NO_ORDER_UNTIL_STRICT_FORWARD_AND_COST_GATES_PASS
-4,stage36_structure_sweep_reclaim,Kill if sweep/reclaim does not outperform simple session baseline.,NO_EA_NO_PAPER_NO_ORDER_UNTIL_STRICT_FORWARD_AND_COST_GATES_PASS
-5,stage36_broker_cost_window_guard,Kill strategy branches whose edge disappears under realistic broker cost windows.,NO_EA_NO_PAPER_NO_ORDER_UNTIL_STRICT_FORWARD_AND_COST_GATES_PASS

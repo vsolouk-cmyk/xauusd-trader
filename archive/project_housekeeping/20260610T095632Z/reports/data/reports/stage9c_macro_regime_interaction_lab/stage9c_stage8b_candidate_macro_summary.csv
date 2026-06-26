@@ -1,9 +1,0 @@
-definition,guard_variant,geometry,macro_regime_numeric,trades,total_net_x4,median_net_x4,pf_x4,win_rate_x4,max_dd_x4
-liquidity_session,macro_blocked_nonoverlap,time_exit_12h,neutral,143,623.83,1.98,1.890041,0.573427,-194.1
-liquidity_session,macro_blocked_nonoverlap,time_exit_12h,mixed,83,397.05,2.72,1.737627,0.590361,-124.53
-liquidity_session,macro_blocked_nonoverlap,time_exit_12h,supportive,29,111.29,0.26,2.746822,0.517241,-19.31
-liquidity_session,macro_blocked_nonoverlap,time_exit_12h,hostile,7,72.97,9.91,13.141431,0.857143,-6.01
-liquidity_session,unguarded_nonoverlap,time_exit_12h,neutral,143,623.83,1.98,1.890041,0.573427,-194.1
-liquidity_session,unguarded_nonoverlap,time_exit_12h,mixed,83,397.05,2.72,1.737627,0.590361,-124.53
-liquidity_session,unguarded_nonoverlap,time_exit_12h,supportive,29,111.29,0.26,2.746822,0.517241,-19.31
-liquidity_session,unguarded_nonoverlap,time_exit_12h,hostile,7,72.97,9.91,13.141431,0.857143,-6.01

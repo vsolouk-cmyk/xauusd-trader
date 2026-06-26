@@ -1,0 +1,14 @@
+{
+  "stage66e_summary_path": "reports/stage66e_complementary_shortlist_audit/stage66e_complementary_shortlist_audit_summary.json",
+  "rule_lock_path": "configs/stage66e_selected_complementary_rule_lock.json",
+  "macro_dataset_path": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "external_d1_path": "data/macro_regime/raw/broker_or_spot_gold_d1_ohlc_2011_present.csv",
+  "macro_date_column": "feature_date_utc",
+  "external_date_column": "date_utc",
+  "macro_freshness_max_calendar_lag_days": 7,
+  "initial_manual_paper_order_fraction_reference": 0.05,
+  "max_manual_paper_order_fraction_before_new_forward_evidence": 0.1,
+  "stop_after_first_adverse_move_bps_reference": -1200.0,
+  "ticket_side": "LONG",
+  "ticket_type": "DRY_RUN_REVIEW_ONLY"
+}

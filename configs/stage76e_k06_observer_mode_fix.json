@@ -1,5 +1,0 @@
-{
-  "macro_path": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
-  "date_col": "feature_date_utc",
-  "bridge_csv_path": "data/mt5_bridge/k06_observer_signal.csv"
-}

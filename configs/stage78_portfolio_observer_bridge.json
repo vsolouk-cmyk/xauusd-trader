@@ -1,7 +1,0 @@
-{
-  "macro_path": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
-  "date_col": "feature_date_utc",
-  "price_col": "gold_close",
-  "stage77b_summary_path": "reports/stage77b_corrected_portfolio_candidate_selection_historical_asof/stage77b_corrected_portfolio_candidate_selection_historical_asof_summary.json",
-  "bridge_csv_path": "data/mt5_bridge/portfolio_observer_signal.csv"
-}

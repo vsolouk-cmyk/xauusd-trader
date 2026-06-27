@@ -54,3 +54,8 @@ data/exogenous/*.json
 *.sqlite3
 *.db
 # END XAUUSD runtime/artifact ignores - Stage101
+
+# BEGIN XAUUSD local source archives - Stage103
+_local_archive/
+*.archive.zip
+# END XAUUSD local source archives - Stage103

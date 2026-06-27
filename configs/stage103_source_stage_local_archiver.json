@@ -1,0 +1,26 @@
+{
+  "stage": "Stage103_SOURCE_STAGE_LOCAL_ARCHIVER",
+  "archive_root": "_local_archive/source_stage_archives",
+  "source_dirs": ["app", "configs", "docs", "tests"],
+  "stage_filename_regex": "stage([0-9]{1,3})[a-zA-Z0-9_\\-]*",
+  "preserve_stage_numbers": [67, 95, 99, 100, 103],
+  "preserve_name_contains": [
+    "stage67d6", "stage67e",
+    "stage95_cot_official_dataset_builder",
+    "stage99_unified_observer_cot_expansion",
+    "stage100_daily_unified_cot_observer_combo",
+    "stage103_source_stage_local_archiver"
+  ],
+  "archive_stage_min": 1,
+  "archive_stage_max": 102,
+  "include_runtime_cleanup_stages": true,
+  "append_gitignore": true,
+  "gitignore_block": "# BEGIN XAUUSD local source archives - Stage103\n_local_archive/\n*.archive.zip\n# END XAUUSD local source archives - Stage103\n",
+  "hard_blocks": [
+    "NO_DELETE_WITHOUT_ARCHIVE",
+    "NO_RUNTIME_DATA_DELETE",
+    "NO_ORDER_OR_BROKER_CHANGE",
+    "NO_MT5_OR_EA_CHANGE",
+    "NO_THESIS_DISCOVERY_FROM_STAGE103"
+  ]
+}

@@ -1,9 +1,0 @@
-{
-  "macro_dataset": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
-  "policy": "direct_readiness_collector_no_child_stage_invocation_no_order",
-  "notes": [
-    "Use after Stage67D6 source refresh and macro rebuild pass.",
-    "Does not call Stage66J or Stage66K child scripts; reads the macro dataset directly.",
-    "Central-bank demand remains unavailable unless a true time-series source is added; this is nonfatal and keeps H64L inactive/data-wait."
-  ]
-}

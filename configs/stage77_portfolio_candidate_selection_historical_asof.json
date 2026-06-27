@@ -1,0 +1,131 @@
+{
+  "macro_path": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "price_col": "gold_close",
+  "date_col_candidates": ["feature_date_utc", "date_utc"],
+  "cost_bps_total": 50.0,
+  "as_of_date": "2024-01-01",
+  "final_holdout_start": "2025-01-01",
+  "daily_replay_start": "2019-01-01",
+  "portfolio_max_complements": 2,
+  "max_jaccard_vs_selected_pct": 80.0,
+  "constraints": {
+    "min_total_entries": 8,
+    "min_total_mean_net_bps": 0.0,
+    "min_total_win_rate": 0.50,
+    "min_locked_forward_entries": 2,
+    "min_locked_forward_mean_bps": -100.0,
+    "min_final_holdout_entries": 1,
+    "min_final_holdout_mean_bps": -100.0,
+    "min_post_plus_final_entries": 1,
+    "min_post_plus_final_mean_bps": -100.0,
+    "max_abs_worst_loss_bps": 2000.0,
+    "max_missing_required_feature_rows": 0,
+    "max_lookahead_violations": 0
+  },
+  "candidates": [
+    {
+      "rule_id": "K06_RESILIENT_GOLD_VS_DXY_H120",
+      "label": "K06_RESILIENT_GOLD_VS_DXY",
+      "bucket": "anchor_validated",
+      "horizon_trading_days": 120,
+      "conditions": [
+        {"column": "gold_sma20_over_50", "operator": ">", "threshold": 0.0},
+        {"column": "dxy_ret_20d", "operator": ">", "threshold": 0.0},
+        {"column": "real_yield_change_20d", "operator": "<", "threshold": 0.0}
+      ]
+    },
+    {
+      "rule_id": "O02_D3_H60",
+      "label": "D3_DOLLAR_RELIEF_CONTINUATION",
+      "bucket": "legacy_policy_monitor",
+      "horizon_trading_days": 60,
+      "conditions": [
+        {"column": "gold_sma20_over_50", "operator": ">", "threshold": 0.0},
+        {"column": "dxy_sma20_over_50", "operator": "<", "threshold": 0.0},
+        {"column": "dxy_ret_20d", "operator": "<", "threshold": 0.0}
+      ]
+    },
+    {
+      "rule_id": "O03_D4_H60",
+      "label": "D4_RISK_OFF_REALYIELD_RELIEF",
+      "bucket": "legacy_policy_monitor",
+      "horizon_trading_days": 60,
+      "conditions": [
+        {"column": "gold_sma20_over_50", "operator": ">", "threshold": 0.0},
+        {"column": "vix_change_20d", "operator": ">", "threshold": 0.0},
+        {"column": "real_yield_change_20d", "operator": "<", "threshold": 0.0}
+      ]
+    },
+    {
+      "rule_id": "K07_DXY_TREND_RELIEF_GOLD_TREND_H120",
+      "label": "K07_DXY_TREND_RELIEF_GOLD_TREND",
+      "bucket": "known_public_backlog",
+      "horizon_trading_days": 120,
+      "conditions": [
+        {"column": "gold_sma20_over_50", "operator": ">", "threshold": 0.0},
+        {"column": "dxy_sma20_over_50", "operator": "<", "threshold": 0.0}
+      ]
+    },
+    {
+      "rule_id": "K03_SAFE_HAVEN_REALYIELD_H120",
+      "label": "K03_WGC_RISK_UNCERTAINTY_SAFE_HAVEN",
+      "bucket": "known_public_backlog",
+      "horizon_trading_days": 120,
+      "conditions": [
+        {"column": "vix_change_20d", "operator": ">", "threshold": 0.0},
+        {"column": "real_yield_change_20d", "operator": "<", "threshold": 0.0}
+      ]
+    },
+    {
+      "rule_id": "K05_CENTRAL_BANK_SUPPORT_H60",
+      "label": "K05_CENTRAL_BANK_SUPPORT_CONTINUATION",
+      "bucket": "known_public_backlog",
+      "horizon_trading_days": 60,
+      "conditions": [
+        {"column": "gold_sma20_over_50", "operator": ">", "threshold": 0.0},
+        {"column": "central_bank_demand_tonnes_3m", "operator": ">", "threshold": 0.0}
+      ]
+    },
+    {
+      "rule_id": "K04_ETF_FLOW_CONTINUATION_H60",
+      "label": "K04_ETF_FLOW_CONTINUATION",
+      "bucket": "known_public_backlog",
+      "horizon_trading_days": 60,
+      "conditions": [
+        {"column": "gold_sma20_over_50", "operator": ">", "threshold": 0.0},
+        {"column": "etf_flow_tonnes_3m", "operator": ">", "threshold": 0.0}
+      ]
+    },
+    {
+      "rule_id": "K01_OPPORTUNITY_COST_RELIEF_H120",
+      "label": "K01_WGC_OPPORTUNITY_COST_RELIEF",
+      "bucket": "known_public_backlog",
+      "horizon_trading_days": 120,
+      "conditions": [
+        {"column": "gold_sma20_over_50", "operator": ">", "threshold": 0.0},
+        {"column": "dxy_ret_20d", "operator": "<", "threshold": 0.0},
+        {"column": "real_yield_change_20d", "operator": "<", "threshold": 0.0}
+      ]
+    },
+    {
+      "rule_id": "K02_CTA_MOMENTUM_H60",
+      "label": "K02_CTA_TIME_SERIES_MOMENTUM_GOLD",
+      "bucket": "known_public_backlog",
+      "horizon_trading_days": 60,
+      "conditions": [
+        {"column": "gold_sma20_over_50", "operator": ">", "threshold": 0.0}
+      ]
+    }
+  ],
+  "hard_blocks": [
+    "NO_AUTOMATED_ORDER",
+    "NO_PAPER_ORDER",
+    "NO_BROKER_CONNECTION",
+    "NO_EA_PROMOTION",
+    "NO_PAPER_LIVE",
+    "NO_LIVE",
+    "NO_ORDER_AUTHORIZATION_FROM_STAGE77",
+    "NO_THRESHOLD_TUNING_FROM_PORTFOLIO_SELECTION",
+    "NO_NEW_THESIS_MEGASCAN_FROM_STAGE77"
+  ]
+}

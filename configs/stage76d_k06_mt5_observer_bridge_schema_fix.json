@@ -1,0 +1,7 @@
+{
+  "macro_path": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "date_col": "feature_date_utc",
+  "price_col": "gold_close",
+  "bridge_csv_path": "data/mt5_bridge/k06_observer_signal.csv",
+  "wide_reference_csv_path": "data/mt5_bridge/k06_observer_signal_wide_reference.csv"
+}

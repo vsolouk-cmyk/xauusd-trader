@@ -1,0 +1,21 @@
+{
+  "macro_path": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "date_col": "feature_date_utc",
+  "price_col": "gold_close",
+  "max_portfolio_size": 3,
+  "max_anchor_overlap_pct": 45.0,
+  "constraints": {
+    "min_total_entries": 8,
+    "min_total_mean_net_bps": 0.0,
+    "min_total_win_rate": 0.5,
+    "min_locked_forward_entries": 2,
+    "min_locked_forward_mean_bps": -100.0,
+    "min_final_holdout_entries": 1,
+    "min_final_holdout_mean_bps": -100.0,
+    "min_post_plus_final_entries": 1,
+    "min_post_plus_final_mean_bps": -100.0,
+    "max_abs_worst_loss_bps": 2000.0,
+    "max_missing_required_feature_rows": 0,
+    "max_lookahead_violations": 0
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "timeout_seconds": 180,
+  "run_stage67d6": true,
+  "run_stage67e": true,
+  "run_stage76e": true,
+  "run_stage78": true,
+  "copy_to_mt5_files": false,
+  "mt5_files_dir": "",
+  "notes": "Set mt5_files_dir to the exact MT5 Data Folder/MQL5/Files path and pass --copy-to-mt5-files only after verifying the path. Use --skip-refresh to rebuild only observer bridge CSVs."
+}

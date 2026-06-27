@@ -1,0 +1,43 @@
+{
+  "stage": "Stage102_REPO_RUNTIME_FOLDER_CLEANER",
+  "safe_runtime_targets": [
+    "reports",
+    "_incoming*",
+    "*.zip",
+    "**/__pycache__",
+    ".pytest_cache",
+    "**/.pytest_cache",
+    ".DS_Store",
+    "**/.DS_Store"
+  ],
+  "optional_generated_data_targets": [
+    "data/mt5_bridge/*.csv",
+    "data/external_frontiers",
+    "data/frontier_templates/*.csv",
+    "data/macro_regime/normalized/*.csv",
+    "data/macro_regime/raw",
+    "data/exogenous/*.csv",
+    "data/exogenous/*.json",
+    "data/local",
+    "*.sqlite",
+    "*.sqlite3",
+    "*.db"
+  ],
+  "protected_top_level": [
+    ".git",
+    "app",
+    "configs",
+    "docs",
+    "tests",
+    "mt5",
+    "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+    "data/external_frontiers/cot_positioning_normalized.csv"
+  ],
+  "hard_blocks": [
+    "NO_SOURCE_CODE_DELETE",
+    "NO_GIT_HISTORY_REWRITE",
+    "NO_ORDER_OR_BROKER_CHANGE",
+    "NO_MT5_OR_EA_CHANGE",
+    "NO_THESIS_DISCOVERY_FROM_STAGE102"
+  ]
+}

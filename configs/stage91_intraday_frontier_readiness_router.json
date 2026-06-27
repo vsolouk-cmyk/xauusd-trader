@@ -1,0 +1,32 @@
+{
+  "stage90_summary_path": "reports/stage90_data_frontier_thesis_router/stage90_data_frontier_thesis_router_summary.json",
+  "repo_data_dirs": ["data", "data/local", "data/raw", "data/mt5", "data/imported"],
+  "external_csv_paths": [
+    "~/Downloads/amarkets_xauusd_1m.csv",
+    "~/Downloads/amarkets_xauusd_m1.csv",
+    "~/Downloads/amarkets_xauusd_5m.csv",
+    "~/Downloads/amarkets_xauusd_m5.csv",
+    "~/Downloads/amarkets_xauusd_15m.csv",
+    "~/Downloads/amarkets_xauusd_m15.csv",
+    "~/Downloads/amarkets_xauusd_30m.csv",
+    "~/Downloads/amarkets_xauusd_m30.csv",
+    "~/Downloads/amarkets_xauusd_1h.csv",
+    "~/Downloads/amarkets_xauusd_h1.csv"
+  ],
+  "sqlite_globs": ["data/local/*.sqlite", "data/local/*.db", "data/*.sqlite", "data/*.db"],
+  "minimums": {
+    "m1_min_rows": 100000,
+    "m5_min_rows": 50000,
+    "m15_min_rows": 20000,
+    "h1_min_rows": 10000,
+    "min_distinct_timeframes_ready": 2
+  },
+  "output_names": {
+    "summary_json": "stage91_intraday_frontier_readiness_router_summary.json",
+    "report_md": "stage91_intraday_frontier_readiness_router_report.md",
+    "file_inventory_csv": "stage91_intraday_file_inventory.csv",
+    "db_inventory_csv": "stage91_intraday_db_inventory.csv",
+    "thesis_queue_csv": "stage91_intraday_thesis_queue.csv",
+    "data_requirements_csv": "stage91_intraday_data_requirements.csv"
+  }
+}

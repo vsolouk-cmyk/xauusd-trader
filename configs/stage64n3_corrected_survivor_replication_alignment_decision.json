@@ -1,5 +1,0 @@
-{
-  "stage": "Stage64N3_CORRECTED_SURVIVOR_REPLICATION_AND_ALIGNMENT_DECISION_NO_ORDER",
-  "stage64n1b_summary": "reports/stage64n1b_a2_nonparametric_reconciliation/stage64n1b_a2_nonparametric_reconciliation_summary.json",
-  "notes": "Decision memo only. No validation scan, no signal generation, no broker connection, no order authorization."
-}

@@ -1,0 +1,38 @@
+{
+  "paths": {
+    "macro_dataset": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+    "stage88_summary": "reports/stage88_daily_unified_observer_combo/stage88_daily_unified_observer_combo_summary.json",
+    "stage89_summary": "reports/stage89_residual_regime_thesis_discovery/stage89_residual_regime_thesis_discovery_summary.json",
+    "exogenous_dir": "data/exogenous",
+    "local_data_dir": "data/local",
+    "cot_file_patterns": [
+      "data/**/*cot*.csv",
+      "data/**/*cftc*.csv",
+      "data/**/*COT*.csv"
+    ],
+    "calendar_candidates": [
+      "data/exogenous/calendar_events.csv",
+      "data/calendar_events.csv",
+      "data/macro_regime/calendar_events.csv"
+    ],
+    "sqlite_db_candidates": [
+      "data/local/*.db",
+      "data/local/*.sqlite",
+      "data/**/*.db"
+    ],
+    "amarkets_csv_candidates": [
+      "~/Downloads/amarkets_xauusd_1m.csv",
+      "~/Downloads/amarkets_xauusd_m1.csv",
+      "~/Downloads/amarkets_xauusd_5m.csv",
+      "~/Downloads/amarkets_xauusd_m5.csv",
+      "~/Downloads/amarkets_xauusd_15m.csv",
+      "~/Downloads/amarkets_xauusd_m15.csv",
+      "~/Downloads/amarkets_xauusd_h1.csv"
+    ]
+  },
+  "min_score_to_select_frontier": 35,
+  "notes": [
+    "Stage90 only routes the next thesis-discovery frontier.",
+    "No order, broker, EA, MT5, or threshold changes are authorized."
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "report_type": "disaggregated_futures_options_combined",
+  "start_year": 2011,
+  "end_year": 2026,
+  "download_official_cftc": false,
+  "force_redownload": false,
+  "download_timeout_seconds": 45,
+  "download_dir": "data/external_frontiers/raw_cot/cftc",
+  "input_globs": [
+    "data/external_frontiers/raw_cot/**/*",
+    "data/exogenous/**/*cot*",
+    "data/**/*cot*",
+    "~/Downloads/*cot*",
+    "~/Downloads/*COT*",
+    "~/Downloads/*disagg*",
+    "~/Downloads/*Disagg*",
+    "~/Downloads/com_disagg_txt_*.zip",
+    "~/Downloads/fut_disagg_txt_*.zip"
+  ],
+  "output_csv": "data/external_frontiers/cot_positioning_normalized.csv",
+  "minimum_ready_rows": 300,
+  "minimum_zscore_non_null": 100,
+  "rolling_z_window_reports": 156,
+  "rolling_z_min_periods": 52,
+  "cot_release_lag_calendar_days": 3,
+  "cot_release_utc_hour": 22,
+  "cot_release_utc_minute": 0
+}

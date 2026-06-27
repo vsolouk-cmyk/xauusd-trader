@@ -1,0 +1,16 @@
+{
+  "macro_path": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "horizons_trading_days": [
+    10,
+    20,
+    40,
+    60,
+    120
+  ],
+  "cost_bps_total": 50.0,
+  "shortlist_min_entries": 20,
+  "shortlist_min_mean_net_return_bps": 75.0,
+  "shortlist_min_win_rate": 0.52,
+  "shortlist_min_positive_period_share": 0.5,
+  "shortlist_max_year_share": 0.35
+}

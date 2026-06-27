@@ -1,0 +1,590 @@
+{
+  "macro_dataset_path": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "date_col": "feature_date_utc",
+  "price_col": "gold_close",
+  "cost_bps_total_reference": 50.0,
+  "asof_date": "2024-01-01",
+  "max_shortlist": 8,
+  "constraints": {
+    "min_total_entries": 8,
+    "min_total_mean_net_bps": 150.0,
+    "min_total_win_rate": 0.55,
+    "max_abs_worst_loss_bps": 2200.0,
+    "min_locked_forward_entries": 2,
+    "min_locked_forward_mean_bps": 0.0,
+    "min_final_holdout_entries": 2,
+    "min_final_holdout_mean_bps": 500.0,
+    "min_post_plus_final_entries": 1,
+    "min_post_plus_final_mean_bps": 500.0,
+    "max_year_entry_share": 0.35,
+    "max_overlap_with_current_portfolio_pct": 45.0,
+    "min_incremental_union_active_days": 75,
+    "max_missing_required_feature_rows": 0
+  },
+  "candidate_rules": [
+    {
+      "rule_id": "S83_01_ETF_INFLOWS_GOLD_PULLBACK_H60",
+      "label": "ETF_INFLOW_GOLD_PULLBACK",
+      "bucket": "flow_pullback",
+      "horizon_trading_days": 60,
+      "cooldown_trading_days": 60,
+      "conditions": [
+        {
+          "column": "etf_flow_tonnes_3m",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "gold_ret_20d",
+          "operator": "<",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_02_CB_SUPPORT_GOLD_PULLBACK_H60",
+      "label": "CB_SUPPORT_GOLD_PULLBACK",
+      "bucket": "cb_pullback",
+      "horizon_trading_days": 60,
+      "cooldown_trading_days": 60,
+      "conditions": [
+        {
+          "column": "central_bank_demand_tonnes_3m",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "gold_ret_20d",
+          "operator": "<",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_03_DXY_DOWN_REALYIELD_UP_GOLD_STABLE_H120",
+      "label": "DXY_DOWN_REALYIELD_UP_GOLD_STABLE",
+      "bucket": "macro_divergence",
+      "horizon_trading_days": 120,
+      "cooldown_trading_days": 120,
+      "conditions": [
+        {
+          "column": "dxy_ret_60d",
+          "operator": "<",
+          "threshold": 0
+        },
+        {
+          "column": "real_yield_change_60d",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "gold_ret_20d",
+          "operator": ">",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_04_DXY_DOWN_REALYIELD_UP_GOLD_PULLBACK_H60",
+      "label": "DXY_DOWN_REALYIELD_UP_GOLD_PULLBACK",
+      "bucket": "macro_divergence",
+      "horizon_trading_days": 60,
+      "cooldown_trading_days": 60,
+      "conditions": [
+        {
+          "column": "dxy_ret_60d",
+          "operator": "<",
+          "threshold": 0
+        },
+        {
+          "column": "real_yield_change_60d",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "gold_ret_20d",
+          "operator": "<",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_05_RISKOFF_GOLD_PULLBACK_H60",
+      "label": "RISKOFF_GOLD_PULLBACK",
+      "bucket": "safe_haven_pullback",
+      "horizon_trading_days": 60,
+      "cooldown_trading_days": 60,
+      "conditions": [
+        {
+          "column": "vix_change_20d",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "gold_ret_20d",
+          "operator": "<",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_06_RISKOFF_DXY_DOWN_GOLD_PULLBACK_H60",
+      "label": "RISKOFF_DXY_DOWN_GOLD_PULLBACK",
+      "bucket": "safe_haven_pullback",
+      "horizon_trading_days": 60,
+      "cooldown_trading_days": 60,
+      "conditions": [
+        {
+          "column": "vix_change_20d",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "dxy_ret_20d",
+          "operator": "<",
+          "threshold": 0
+        },
+        {
+          "column": "gold_ret_20d",
+          "operator": "<",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_07_REALYIELD_UP_ETF_INFLOWS_H60",
+      "label": "REALYIELD_UP_ETF_INFLOWS",
+      "bucket": "flow_against_yields",
+      "horizon_trading_days": 60,
+      "cooldown_trading_days": 60,
+      "conditions": [
+        {
+          "column": "real_yield_change_20d",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "etf_flow_tonnes_3m",
+          "operator": ">",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_08_REALYIELD_UP_CB_SUPPORT_H60",
+      "label": "REALYIELD_UP_CB_SUPPORT",
+      "bucket": "cb_against_yields",
+      "horizon_trading_days": 60,
+      "cooldown_trading_days": 60,
+      "conditions": [
+        {
+          "column": "real_yield_change_20d",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "central_bank_demand_tonnes_3m",
+          "operator": ">",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_09_DXY_STRONG_ETF_INFLOWS_GOLD_PULLBACK_H60",
+      "label": "DXY_STRONG_ETF_INFLOWS_GOLD_PULLBACK",
+      "bucket": "flow_pullback",
+      "horizon_trading_days": 60,
+      "cooldown_trading_days": 60,
+      "conditions": [
+        {
+          "column": "dxy_ret_20d",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "etf_flow_tonnes_3m",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "gold_ret_20d",
+          "operator": "<",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_10_DXY_STRONG_CB_SUPPORT_GOLD_PULLBACK_H60",
+      "label": "DXY_STRONG_CB_SUPPORT_GOLD_PULLBACK",
+      "bucket": "cb_pullback",
+      "horizon_trading_days": 60,
+      "cooldown_trading_days": 60,
+      "conditions": [
+        {
+          "column": "dxy_ret_20d",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "central_bank_demand_tonnes_3m",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "gold_ret_20d",
+          "operator": "<",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_11_GOLD_PULLBACK_LOW_VOL_H60",
+      "label": "GOLD_PULLBACK_LOW_VOL",
+      "bucket": "pullback_low_vol",
+      "horizon_trading_days": 60,
+      "cooldown_trading_days": 60,
+      "conditions": [
+        {
+          "column": "gold_ret_20d",
+          "operator": "<",
+          "threshold": 0
+        },
+        {
+          "column": "gold_realized_vol_20d",
+          "operator": "<",
+          "threshold": 0.015
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_12_GOLD_PULLBACK_DXY_WEAK_LOWVOL_H60",
+      "label": "GOLD_PULLBACK_DXY_WEAK_LOWVOL",
+      "bucket": "pullback_low_vol",
+      "horizon_trading_days": 60,
+      "cooldown_trading_days": 60,
+      "conditions": [
+        {
+          "column": "gold_ret_20d",
+          "operator": "<",
+          "threshold": 0
+        },
+        {
+          "column": "dxy_ret_20d",
+          "operator": "<",
+          "threshold": 0
+        },
+        {
+          "column": "gold_realized_vol_20d",
+          "operator": "<",
+          "threshold": 0.015
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_13_DXY_120D_DOWN_GOLD_NOT_TRENDING_H120",
+      "label": "DXY_120D_DOWN_GOLD_NOT_TRENDING",
+      "bucket": "longer_orthogonal",
+      "horizon_trading_days": 120,
+      "cooldown_trading_days": 120,
+      "conditions": [
+        {
+          "column": "dxy_ret_120d",
+          "operator": "<",
+          "threshold": 0
+        },
+        {
+          "column": "gold_sma20_over_50",
+          "operator": "<",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_14_REALYIELD_120D_DOWN_GOLD_NOT_TRENDING_H120",
+      "label": "REALYIELD_120D_DOWN_GOLD_NOT_TRENDING",
+      "bucket": "longer_orthogonal",
+      "horizon_trading_days": 120,
+      "cooldown_trading_days": 120,
+      "conditions": [
+        {
+          "column": "real_yield_change_120d",
+          "operator": "<",
+          "threshold": 0
+        },
+        {
+          "column": "gold_sma20_over_50",
+          "operator": "<",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_15_ETF_FLOW_CHANGE_POS_GOLD_PULLBACK_H60",
+      "label": "ETF_FLOW_CHANGE_POS_GOLD_PULLBACK",
+      "bucket": "flow_acceleration",
+      "horizon_trading_days": 60,
+      "cooldown_trading_days": 60,
+      "conditions": [
+        {
+          "column": "etf_flow_change_20d",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "gold_ret_20d",
+          "operator": "<",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_16_CB_DEMAND_CHANGE_POS_GOLD_PULLBACK_H60",
+      "label": "CB_DEMAND_CHANGE_POS_GOLD_PULLBACK",
+      "bucket": "cb_acceleration",
+      "horizon_trading_days": 60,
+      "cooldown_trading_days": 60,
+      "conditions": [
+        {
+          "column": "central_bank_demand_change_20d",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "gold_ret_20d",
+          "operator": "<",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_17_DXY_UP_REALYIELD_UP_ETF_SUPPORT_H60",
+      "label": "DXY_UP_REALYIELD_UP_ETF_SUPPORT",
+      "bucket": "flow_against_headwinds",
+      "horizon_trading_days": 60,
+      "cooldown_trading_days": 60,
+      "conditions": [
+        {
+          "column": "dxy_ret_20d",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "real_yield_change_20d",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "etf_flow_tonnes_3m",
+          "operator": ">",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_18_DXY_UP_REALYIELD_UP_CB_SUPPORT_H60",
+      "label": "DXY_UP_REALYIELD_UP_CB_SUPPORT",
+      "bucket": "cb_against_headwinds",
+      "horizon_trading_days": 60,
+      "cooldown_trading_days": 60,
+      "conditions": [
+        {
+          "column": "dxy_ret_20d",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "real_yield_change_20d",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "central_bank_demand_tonnes_3m",
+          "operator": ">",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_19_VIX_UP_REALYIELD_UP_GOLD_PULLBACK_H60",
+      "label": "VIX_UP_REALYIELD_UP_GOLD_PULLBACK",
+      "bucket": "stress_pullback",
+      "horizon_trading_days": 60,
+      "cooldown_trading_days": 60,
+      "conditions": [
+        {
+          "column": "vix_change_20d",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "real_yield_change_20d",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "gold_ret_20d",
+          "operator": "<",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_20_VIX_DOWN_DXY_DOWN_GOLD_PULLBACK_H60",
+      "label": "VIX_DOWN_DXY_DOWN_GOLD_PULLBACK",
+      "bucket": "benign_pullback",
+      "horizon_trading_days": 60,
+      "cooldown_trading_days": 60,
+      "conditions": [
+        {
+          "column": "vix_change_20d",
+          "operator": "<",
+          "threshold": 0
+        },
+        {
+          "column": "dxy_ret_20d",
+          "operator": "<",
+          "threshold": 0
+        },
+        {
+          "column": "gold_ret_20d",
+          "operator": "<",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_21_GOLD_60D_PULLBACK_ETF_SUPPORT_H120",
+      "label": "GOLD_60D_PULLBACK_ETF_SUPPORT",
+      "bucket": "long_pullback_flow",
+      "horizon_trading_days": 120,
+      "cooldown_trading_days": 120,
+      "conditions": [
+        {
+          "column": "gold_ret_60d",
+          "operator": "<",
+          "threshold": 0
+        },
+        {
+          "column": "etf_flow_tonnes_3m",
+          "operator": ">",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_22_GOLD_60D_PULLBACK_CB_SUPPORT_H120",
+      "label": "GOLD_60D_PULLBACK_CB_SUPPORT",
+      "bucket": "long_pullback_cb",
+      "horizon_trading_days": 120,
+      "cooldown_trading_days": 120,
+      "conditions": [
+        {
+          "column": "gold_ret_60d",
+          "operator": "<",
+          "threshold": 0
+        },
+        {
+          "column": "central_bank_demand_tonnes_3m",
+          "operator": ">",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_23_DXY_120D_DOWN_ETF_SUPPORT_GOLD_PULLBACK_H120",
+      "label": "DXY_120D_DOWN_ETF_SUPPORT_GOLD_PULLBACK",
+      "bucket": "longer_orthogonal",
+      "horizon_trading_days": 120,
+      "cooldown_trading_days": 120,
+      "conditions": [
+        {
+          "column": "dxy_ret_120d",
+          "operator": "<",
+          "threshold": 0
+        },
+        {
+          "column": "etf_flow_tonnes_3m",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "gold_ret_20d",
+          "operator": "<",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_24_REALYIELD_120D_DOWN_CB_SUPPORT_GOLD_PULLBACK_H120",
+      "label": "REALYIELD_120D_DOWN_CB_SUPPORT_GOLD_PULLBACK",
+      "bucket": "longer_orthogonal",
+      "horizon_trading_days": 120,
+      "cooldown_trading_days": 120,
+      "conditions": [
+        {
+          "column": "real_yield_change_120d",
+          "operator": "<",
+          "threshold": 0
+        },
+        {
+          "column": "central_bank_demand_tonnes_3m",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "gold_ret_20d",
+          "operator": "<",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_25_ETF_SUPPORT_DXY_SMA_UP_GOLD_PULLBACK_H60",
+      "label": "ETF_SUPPORT_DXY_SMA_UP_GOLD_PULLBACK",
+      "bucket": "flow_against_dxy",
+      "horizon_trading_days": 60,
+      "cooldown_trading_days": 60,
+      "conditions": [
+        {
+          "column": "etf_flow_tonnes_3m",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "dxy_sma20_over_50",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "gold_ret_20d",
+          "operator": "<",
+          "threshold": 0
+        }
+      ]
+    },
+    {
+      "rule_id": "S83_26_CB_SUPPORT_DXY_SMA_UP_GOLD_PULLBACK_H60",
+      "label": "CB_SUPPORT_DXY_SMA_UP_GOLD_PULLBACK",
+      "bucket": "cb_against_dxy",
+      "horizon_trading_days": 60,
+      "cooldown_trading_days": 60,
+      "conditions": [
+        {
+          "column": "central_bank_demand_tonnes_3m",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "dxy_sma20_over_50",
+          "operator": ">",
+          "threshold": 0
+        },
+        {
+          "column": "gold_ret_20d",
+          "operator": "<",
+          "threshold": 0
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "stage": "Stage64K_FULL_SCOPE_LAG_SAFE_FEATURE_DATASET_PREFLIGHT_NO_VALIDATION",
+  "generated_utc": "2026-06-25T08:33:32Z",
+  "dataset_csv": "/Users/vahid/Desktop/xauusd-trader/data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "source_feature_dataset": "/Users/vahid/Desktop/xauusd-trader/data/macro_regime/normalized/stage64f_reduced_scope_lag_safe_feature_dataset.csv",
+  "etf_source": "/Users/vahid/Desktop/xauusd-trader/data/macro_regime/raw/gold_etf_holdings_or_flows.csv",
+  "central_bank_source": "/Users/vahid/Desktop/xauusd-trader/data/macro_regime/raw/central_bank_gold_demand_monthly_quarterly.csv",
+  "row_count": 3691,
+  "first_feature_date_utc": "2011-10-17T00:00:00Z",
+  "last_feature_date_utc": "2026-06-24T00:00:00Z",
+  "features_added": [
+    "etf_flow_tonnes_1m",
+    "etf_flow_tonnes_3m",
+    "etf_flow_tonnes_6m",
+    "etf_flow_tonnes_12m",
+    "central_bank_demand_tonnes_1m",
+    "central_bank_demand_tonnes_3m",
+    "central_bank_demand_tonnes_6m",
+    "central_bank_demand_tonnes_12m",
+    "event_calendar_forward_only_governance_active",
+    "etf_flow_tonnes_12m_z36",
+    "central_bank_demand_tonnes_12m_z36"
+  ],
+  "event_calendar_policy": "forward_only_governance_not_historical_feature",
+  "broker_spot_alignment_policy": "required_before_commercialization_not_blocking_stage64k_research_dataset",
+  "no_validation_no_order": true
+}

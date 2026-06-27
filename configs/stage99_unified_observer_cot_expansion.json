@@ -1,0 +1,21 @@
+{
+  "stage": "Stage99_UNIFIED_OBSERVER_COT_EXPANSION",
+  "macro_dataset": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "cot_dataset": "data/external_frontiers/cot_positioning_normalized.csv",
+  "stage98_summary": "reports/stage98_cot_portfolio_increment_review/stage98_cot_portfolio_increment_review_summary.json",
+  "bridge_csv": "data/mt5_bridge/unified_observer_signal.csv",
+  "mode": "OBSERVER_ONLY_NO_TRADE",
+  "allow_orders": false,
+  "cot_available_lag_days_if_missing": 3,
+  "primary_rule_id": "K06_RESILIENT_GOLD_VS_DXY_H120",
+  "expanded_rule_ids": [
+    "K06_RESILIENT_GOLD_VS_DXY_H120",
+    "K03_SAFE_HAVEN_REALYIELD_H120",
+    "K07_DXY_TREND_RELIEF_GOLD_TREND_H120",
+    "S83_14_REALYIELD_120D_DOWN_GOLD_NOT_TRENDING_H120",
+    "S83_13_DXY_120D_DOWN_GOLD_NOT_TRENDING_H120",
+    "C96_07_CB_SUPPORT_NOT_CROWDED_H120"
+  ],
+  "required_stage98_disposition": "COT_INCREMENT_SELECTED_FOR_STAGE99_UNIFIED_OBSERVER_EXPANSION",
+  "mt5_files_dir": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/"
+}

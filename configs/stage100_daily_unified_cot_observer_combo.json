@@ -1,0 +1,76 @@
+{
+  "stage": "Stage100_DAILY_UNIFIED_COT_OBSERVER_COMBO",
+  "mt5_files_dir": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/",
+  "unified_observer_csv": "data/mt5_bridge/unified_observer_signal.csv",
+  "child_stages": [
+    {
+      "name": "Stage67D6_DOWNLOAD_FORMAT_AWARE_REBUILD_MACRO",
+      "enabled": true,
+      "refresh_stage": true,
+      "timeout_seconds": 900,
+      "command": [
+        "{python}",
+        "{root}/app/stage67d6_download_format_aware_rebuild_macro.py",
+        "--root",
+        "{root}",
+        "--config",
+        "{root}/configs/stage67d6_download_format_aware_rebuild_macro.json",
+        "--out",
+        "{root}/reports/stage67d6_download_format_aware_rebuild_macro"
+      ]
+    },
+    {
+      "name": "Stage67E_CENTRAL_BANK_CHANGES_MAPPER",
+      "enabled": true,
+      "refresh_stage": true,
+      "timeout_seconds": 240,
+      "command": [
+        "{python}",
+        "{root}/app/stage67e_central_bank_changes_mapper.py",
+        "--root",
+        "{root}",
+        "--config",
+        "{root}/configs/stage67e_central_bank_changes_mapper.json",
+        "--out",
+        "{root}/reports/stage67e_central_bank_changes_mapper",
+        "--run-readiness",
+        "--run-frequency",
+        "--timeout-seconds",
+        "180"
+      ]
+    },
+    {
+      "name": "Stage95_COT_OFFICIAL_DATASET_BUILDER_NO_DOWNLOAD",
+      "enabled": true,
+      "refresh_stage": true,
+      "timeout_seconds": 600,
+      "command": [
+        "{python}",
+        "{root}/app/stage95_cot_official_dataset_builder.py",
+        "--root",
+        "{root}",
+        "--config",
+        "{root}/configs/stage95_cot_official_dataset_builder.json",
+        "--out",
+        "{root}/reports/stage95_cot_official_dataset_builder",
+        "--no-download"
+      ]
+    },
+    {
+      "name": "Stage99_UNIFIED_OBSERVER_COT_EXPANSION",
+      "enabled": true,
+      "refresh_stage": false,
+      "timeout_seconds": 420,
+      "command": [
+        "{python}",
+        "{root}/app/stage99_unified_observer_cot_expansion.py",
+        "--root",
+        "{root}",
+        "--config",
+        "{root}/configs/stage99_unified_observer_cot_expansion.json",
+        "--out",
+        "{root}/reports/stage99_unified_observer_cot_expansion"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "download_dir": "/Users/vahid/Downloads",
+  "central_bank_changes_globs": [
+    "Changes_latest*.xlsx",
+    "Changes_in_World_Official_Gold_Reserves*.xlsx",
+    "*Changes*Official*Gold*Reserves*.xlsx",
+    "*Changes*.xlsx"
+  ],
+  "monthly_sheet_name": "Monthly",
+  "monthly_header_row": 8,
+  "monthly_data_start_row": 9,
+  "monthly_first_month_col": 4,
+  "country_col": 2,
+  "central_bank_demand_path": "data/exogenous/central_bank_demand.csv",
+  "raw_monthly_output_path": "data/exogenous/wgc_raw_extracted/central_bank_changes_monthly_global.csv",
+  "macro_dataset_path": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv"
+}

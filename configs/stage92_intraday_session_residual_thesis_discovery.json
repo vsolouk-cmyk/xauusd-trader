@@ -1,0 +1,43 @@
+{
+  "macro_dataset": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "downloads_dir": "~/Downloads",
+  "preferred_timeframe": "m15",
+  "intraday_files": {
+    "m15": [
+      "~/Downloads/amarkets_xauusd_15m.csv",
+      "~/Downloads/amarkets_xauusd_m15.csv",
+      "~/Downloads/*xauusd*15*.csv",
+      "~/Downloads/*XAUUSD*15*.csv"
+    ],
+    "m5": [
+      "~/Downloads/amarkets_xauusd_5m.csv",
+      "~/Downloads/amarkets_xauusd_m5.csv",
+      "~/Downloads/*xauusd*5m*.csv",
+      "~/Downloads/*XAUUSD*5m*.csv"
+    ],
+    "h1": [
+      "~/Downloads/amarkets_xauusd_h1.csv",
+      "~/Downloads/amarkets_xauusd_1h.csv",
+      "~/Downloads/*xauusd*h1*.csv",
+      "~/Downloads/*XAUUSD*h1*.csv"
+    ]
+  },
+  "cost_bps_total_reference": 20.0,
+  "asof_date": "2024-01-01",
+  "candidate_top_n": 8,
+  "constraints": {
+    "min_total_entries": 20,
+    "min_total_mean_net_bps": 0.0,
+    "min_total_win_rate": 0.5,
+    "max_abs_worst_loss_bps": 900.0,
+    "min_locked_forward_entries": 3,
+    "min_locked_forward_mean_bps": -25.0,
+    "min_final_holdout_entries": 3,
+    "min_final_holdout_mean_bps": 0.0,
+    "min_post_asof_entries": 2,
+    "min_post_asof_mean_bps": 0.0,
+    "min_residual_entry_share": 0.5,
+    "max_year_entry_share": 0.35,
+    "max_missing_required_feature_rows": 0
+  }
+}

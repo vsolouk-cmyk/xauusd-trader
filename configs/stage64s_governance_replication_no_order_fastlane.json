@@ -1,8 +1,0 @@
-{
-  "stage": "Stage64S_GOVERNANCE_REPLICATION_AND_NO_ORDER_DECISION_FASTLANE",
-  "stage64r_summary": "reports/stage64r_external_spot_d1_intake_transfer_fastlane/stage64r_external_spot_d1_intake_transfer_fastlane_summary.json",
-  "stage64n4_summary": "reports/stage64n4_fastlane_replication_alignment_audit/stage64n4_fastlane_replication_alignment_audit_summary.json",
-  "stage64k_dataset": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
-  "external_spot_d1": "data/macro_regime/raw/broker_or_spot_gold_d1_ohlc_2011_present.csv",
-  "required_stage64r_decision": "EXTERNAL_SPOT_D1_TRANSFER_PASS_STAGE64S_GOVERNANCE_REPLICATION_ALLOWED_NO_ORDER"
-}

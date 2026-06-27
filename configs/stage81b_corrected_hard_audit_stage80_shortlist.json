@@ -1,0 +1,47 @@
+{
+  "macro_dataset_path": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "stage80_summary_json": "reports/stage80_structured_thesis_discovery_expansion/stage80_structured_thesis_discovery_expansion_summary.json",
+  "stage80_shortlist_csv": "reports/stage80_structured_thesis_discovery_expansion/stage80_discovery_shortlist.csv",
+  "date_col": "feature_date_utc",
+  "price_col": "gold_close",
+  "cost_bps_total_reference": 50.0,
+  "asof_date": "2024-01-01",
+  "max_selected_for_stage82": 4,
+  "splits": {
+    "TRAIN": {
+      "start": "2011-01-01",
+      "end": "2014-12-31"
+    },
+    "VALIDATION": {
+      "start": "2015-01-01",
+      "end": "2018-12-31"
+    },
+    "LOCKED_FORWARD": {
+      "start": "2019-01-01",
+      "end": "2022-12-31"
+    },
+    "FINAL_HOLDOUT": {
+      "start": "2023-01-01",
+      "end": "2099-12-31"
+    }
+  },
+  "constraints": {
+    "min_total_entries": 12,
+    "min_total_mean_net_bps": 150.0,
+    "min_total_median_net_bps": 0.0,
+    "min_total_win_rate": 0.55,
+    "max_abs_worst_loss_bps": 2000.0,
+    "min_validation_entries": 3,
+    "min_validation_mean_bps": -150.0,
+    "min_locked_forward_entries": 3,
+    "min_locked_forward_mean_bps": 0.0,
+    "min_final_holdout_entries": 2,
+    "min_final_holdout_mean_bps": 250.0,
+    "min_post_plus_final_entries": 2,
+    "min_post_plus_final_mean_bps": 500.0,
+    "max_year_entry_share": 0.35,
+    "max_overlap_with_stage77b_selected_pct": 55.0,
+    "max_missing_required_feature_rows": 0,
+    "max_lookahead_violations": 0
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "macro_dataset_path": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "date_column_candidates": ["feature_date_utc", "date_utc"],
+  "price_column_candidates": ["gold_close", "close"],
+  "cost_bps_total": 50.0,
+  "cluster_window_calendar_days": 60,
+  "rules": [
+    {
+      "rule_key": "h64l_v2",
+      "label": "H64L v2",
+      "type": "primary",
+      "horizon_trading_days": 120,
+      "conditions": [
+        {"column": "gold_sma20_over_50", "operator": ">", "threshold": 0.0},
+        {"column": "dxy_ret_20d", "operator": "<", "threshold": 0.0},
+        {"column": "real_yield_change_20d", "operator": "<", "threshold": 0.0},
+        {"column": "etf_flow_tonnes_3m", "operator": ">", "threshold": 0.0},
+        {"column": "central_bank_demand_tonnes_3m", "operator": ">", "threshold": 0.0},
+        {"column": "gold_sma50_over_200", "operator": ">", "threshold": 0.0}
+      ]
+    },
+    {
+      "rule_key": "d3_h60",
+      "label": "D3 Dollar Relief Trend Continuation H60",
+      "type": "complementary_primary",
+      "horizon_trading_days": 60,
+      "conditions": [
+        {"column": "gold_sma20_over_50", "operator": ">", "threshold": 0.0},
+        {"column": "dxy_sma20_over_50", "operator": "<", "threshold": 0.0},
+        {"column": "dxy_ret_20d", "operator": "<", "threshold": 0.0}
+      ]
+    },
+    {
+      "rule_key": "d1_backup",
+      "label": "D1 DXY Real Yield Gold Trend H60",
+      "type": "backup",
+      "horizon_trading_days": 60,
+      "conditions": [
+        {"column": "gold_sma20_over_50", "operator": ">", "threshold": 0.0},
+        {"column": "dxy_ret_20d", "operator": "<", "threshold": 0.0},
+        {"column": "real_yield_change_20d", "operator": "<", "threshold": 0.0}
+      ]
+    },
+    {
+      "rule_key": "d4_backup",
+      "label": "D4 Vol Risk-Off Real Yield Gold Long H60",
+      "type": "backup",
+      "horizon_trading_days": 60,
+      "conditions": [
+        {"column": "gold_sma20_over_50", "operator": ">", "threshold": 0.0},
+        {"column": "vix_change_20d", "operator": ">", "threshold": 0.0},
+        {"column": "real_yield_change_20d", "operator": "<", "threshold": 0.0}
+      ]
+    }
+  ]
+}

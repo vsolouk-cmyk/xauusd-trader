@@ -1,0 +1,20 @@
+{
+  "selected_cluster_entries_csv": "reports/stage68d_cluster_return_selection_policy/stage68d_selected_cluster_entries.csv",
+  "candidate_policy": "QUALITY_FIRST_EXCLUDE_D1",
+  "diagnostic_policy_prefix": "ORACLE",
+  "periods": [
+    {"label": "P1_2011_2014", "start_year": 2011, "end_year": 2014},
+    {"label": "P2_2015_2018", "start_year": 2015, "end_year": 2018},
+    {"label": "P3_2019_2022", "start_year": 2019, "end_year": 2022},
+    {"label": "P4_2023_2026", "start_year": 2023, "end_year": 2026}
+  ],
+  "constraints": {
+    "min_entry_count": 20,
+    "min_mean_net_return_bps": 150.0,
+    "min_win_rate": 0.55,
+    "min_positive_period_share": 0.50,
+    "min_positive_year_share": 0.50,
+    "max_abs_worst_3_entry_sum_bps": 3500.0,
+    "max_recent_period_share_of_total_return": 0.80
+  }
+}

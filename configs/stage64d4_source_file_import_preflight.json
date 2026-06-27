@@ -1,8 +1,0 @@
-{
-  "default_start_grace_days": 7,
-  "allow_usd_proxy_for_dxy_preflight": false,
-  "notes": [
-    "Calendar start 2011-01-01 falls on a non-trading day for most daily market series; LoaderFix1 accepts first observed date within a 7-day grace window.",
-    "DXY broad-dollar proxy is blocked by default unless explicitly accepted through allow_usd_proxy_for_dxy_preflight=true."
-  ]
-}

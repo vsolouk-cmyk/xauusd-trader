@@ -1,0 +1,42 @@
+{
+  "macro_path": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "date_col": "feature_date_utc",
+  "price_col": "gold_close",
+  "thesis_id": "K06_RESILIENT_GOLD_VS_DXY",
+  "family": "GOLD_RESILIENCE_AGAINST_DXY",
+  "direction": "long",
+  "horizon_trading_days": 120,
+  "entry_cooldown_trading_days": 120,
+  "cost_bps_total_reference": 50.0,
+  "max_stale_calendar_days": 7,
+  "current_date_utc": null,
+  "lock_files": [
+    {
+      "stage": "Stage70B",
+      "path": "reports/stage70b_champion_hard_audit/stage70b_champion_hard_audit_summary.json",
+      "required_disposition": "PROMOTE_TO_NO_ORDER_SHADOW_CANDIDATE"
+    },
+    {
+      "stage": "Stage71",
+      "path": "reports/stage71_locked_historical_forward_test/stage71_locked_historical_forward_test_summary.json",
+      "required_disposition": "K06_PASSES_LOCKED_HISTORICAL_FORWARD"
+    },
+    {
+      "stage": "Stage72",
+      "path": "reports/stage72_historical_daily_replay/stage72_historical_daily_replay_summary.json",
+      "required_disposition": "K06_PASSES_HISTORICAL_DAILY_REPLAY"
+    },
+    {
+      "stage": "Stage73B",
+      "path": "reports/stage73b_corrected_asof_validation_bridge/stage73b_corrected_asof_validation_bridge_summary.json",
+      "required_disposition": "K06_PASSES_CORRECTED_ASOF_VALIDATION"
+    }
+  ],
+  "reference_metric_sources": {
+    "stage71_overall_mean_bps": "reports/stage71_locked_historical_forward_test/stage71_locked_historical_forward_test_summary.json",
+    "stage72_replay_mean_bps": "reports/stage72_historical_daily_replay/stage72_historical_daily_replay_summary.json",
+    "stage73b_pre_asof_known_mean_bps": "reports/stage73b_corrected_asof_validation_bridge/stage73b_corrected_asof_validation_bridge_summary.json"
+  },
+  "output_ledger_path": "data/forward_shadow/stage74_k06_governance_demo_observation_ledger.csv",
+  "activation_packet_prefix": "stage74_k06_review_only_activation_packet"
+}

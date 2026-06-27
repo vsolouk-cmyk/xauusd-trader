@@ -1,0 +1,46 @@
+{
+  "stage": "Stage75_HISTORICAL_ACTIVATION_DRILL",
+  "macro_path": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "date_col": "feature_date_utc",
+  "price_col": "gold_close",
+  "thesis_id": "K06_RESILIENT_GOLD_VS_DXY",
+  "family": "GOLD_RESILIENCE_AGAINST_DXY",
+  "direction": "long",
+  "horizon_trading_days": 120,
+  "entry_cooldown_trading_days": 120,
+  "cost_bps_total": 50.0,
+  "drill_start_date": "2019-01-01",
+  "drill_end_date": null,
+  "latest_packet_policy": "latest_matured_activation",
+  "max_packet_examples": 8,
+  "conditions": [
+    {"column": "gold_sma20_over_50", "operator": ">", "threshold": 0.0},
+    {"column": "dxy_ret_20d", "operator": ">", "threshold": 0.0},
+    {"column": "real_yield_change_20d", "operator": "<", "threshold": 0.0}
+  ],
+  "required_lock_files": [
+    {"stage": "Stage70B", "path": "reports/stage70b_champion_hard_audit/stage70b_champion_hard_audit_summary.json", "required_disposition": "PROMOTE_TO_NO_ORDER_SHADOW_CANDIDATE"},
+    {"stage": "Stage71", "path": "reports/stage71_locked_historical_forward_test/stage71_locked_historical_forward_test_summary.json", "required_disposition": "K06_PASSES_LOCKED_HISTORICAL_FORWARD"},
+    {"stage": "Stage72", "path": "reports/stage72_historical_daily_replay/stage72_historical_daily_replay_summary.json", "required_disposition": "K06_PASSES_HISTORICAL_DAILY_REPLAY"},
+    {"stage": "Stage73B", "path": "reports/stage73b_corrected_asof_validation_bridge/stage73b_corrected_asof_validation_bridge_summary.json", "required_disposition": "K06_PASSES_CORRECTED_ASOF_VALIDATION"}
+  ],
+  "decision_constraints": {
+    "min_matured_activation_packets": 3,
+    "max_lookahead_violations": 0,
+    "max_missing_required_feature_rows": 0,
+    "min_mean_net_return_bps": 0.0,
+    "min_win_rate": 0.5,
+    "max_abs_worst_loss_bps": 1500.0
+  },
+  "hard_blocks": [
+    "NO_AUTOMATED_ORDER",
+    "NO_PAPER_ORDER",
+    "NO_BROKER_CONNECTION",
+    "NO_EA_PROMOTION",
+    "NO_PAPER_LIVE",
+    "NO_LIVE",
+    "NO_ORDER_AUTHORIZATION_FROM_STAGE75",
+    "NO_THRESHOLD_TUNING_FROM_HISTORICAL_ACTIVATION_DRILL",
+    "NO_WAIT_FOR_LIVE_SIGNAL_TO_TEST_ACTIVATION_PROTOCOL"
+  ]
+}

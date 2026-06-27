@@ -1,7 +1,0 @@
-{
-  "integrity_summary_path": "reports/stage66_data_integrity_crosscheck/stage66_data_integrity_crosscheck_summary.json",
-  "stage65b_background_summary_path": "reports/stage65b_forward_shadow_daily_ops/stage65b_forward_shadow_daily_ops_summary.json",
-  "stage66a_summary_path": "reports/stage66a_h64l_concentration_audit_reconciled_v2/stage66a_h64l_concentration_audit_summary.json",
-  "stage66b_summary_path": "reports/stage66b_h64l_rolling_origin_replay/stage66b_h64l_rolling_origin_replay_summary.json",
-  "require_integrity": true
-}

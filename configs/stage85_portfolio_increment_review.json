@@ -1,0 +1,14 @@
+{
+  "stage77b_summary_relpath": "reports/stage77b_corrected_portfolio_candidate_selection_historical_asof/stage77b_corrected_portfolio_candidate_selection_historical_asof_summary.json",
+  "stage84_summary_relpath": "reports/stage84_hard_audit_stage83_orthogonal_shortlist/stage84_hard_audit_stage83_orthogonal_shortlist_summary.json",
+  "macro_dataset_relpath": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "date_col": "feature_date_utc",
+  "price_col": "gold_close",
+  "max_additions": 2,
+  "max_overlap_with_current_pct": 35.0,
+  "min_incremental_union_active_days": 150,
+  "min_hard_audit_score": 3500.0,
+  "min_final_holdout_mean_bps": 1200.0,
+  "min_post_plus_final_mean_bps": 1200.0,
+  "min_total_win_rate": 0.6
+}

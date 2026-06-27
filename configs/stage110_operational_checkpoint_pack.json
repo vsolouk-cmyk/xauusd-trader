@@ -1,0 +1,6 @@
+{
+  "checkpoint_role": "Create local operational checkpoint after Stage109 daily unified second-order observer combo is confirmed.",
+  "no_order": true,
+  "no_broker_connection": true,
+  "no_mt5_change": true
+}

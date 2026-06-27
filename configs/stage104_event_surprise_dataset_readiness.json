@@ -1,0 +1,49 @@
+{
+  "event_search_paths": [
+    "data/external_frontiers/raw_events",
+    "data/event_surprise/raw",
+    "data/exogenous",
+    "~/Downloads"
+  ],
+  "event_patterns": [
+    "*event*.csv",
+    "*events*.csv",
+    "*calendar*.csv",
+    "*surprise*.csv",
+    "*macro*.csv",
+    "*economic*.csv",
+    "*.xlsx",
+    "*.xls"
+  ],
+  "ignore_path_fragments": [
+    "reports/",
+    "_incoming",
+    "stage104_event_surprise_normalized",
+    "event_surprise_normalized.csv",
+    "candidate_metrics",
+    "shortlist"
+  ],
+  "output_data_dir": "data/external_frontiers",
+  "template_dir": "data/frontier_templates",
+  "assume_naive_timezone": "UTC",
+  "accepted_event_types": [
+    "CPI",
+    "PCE",
+    "NFP",
+    "FOMC",
+    "ISM",
+    "RetailSales",
+    "JoblessClaims",
+    "GDP",
+    "PPI",
+    "JOLTS",
+    "UnemploymentRate",
+    "ConsumerConfidence"
+  ],
+  "min_impact_rank": 0,
+  "event_z_window": 60,
+  "event_z_min_periods": 12,
+  "min_event_rows": 300,
+  "min_accepted_rows": 200,
+  "min_zscore_non_null": 100
+}

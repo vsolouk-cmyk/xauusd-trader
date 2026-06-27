@@ -1,0 +1,28 @@
+{
+  "paths": {
+    "macro_dataset": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+    "cot_dataset": "data/external_frontiers/cot_positioning_normalized.csv",
+    "stage105_summary": "reports/stage105_second_order_cot_macro_thesis_discovery/stage105_second_order_cot_macro_thesis_discovery_summary.json",
+    "stage105_candidate_metrics": "reports/stage105_second_order_cot_macro_thesis_discovery/stage105_second_order_cot_macro_candidate_metrics.csv",
+    "stage105_shortlist": "reports/stage105_second_order_cot_macro_thesis_discovery/stage105_second_order_cot_macro_shortlist.csv"
+  },
+  "constraints": {
+    "min_total_entries": 10,
+    "min_total_mean_net_bps": 250.0,
+    "min_total_win_rate": 0.55,
+    "max_abs_worst_loss_bps": 2200.0,
+    "min_locked_forward_entries": 2,
+    "min_locked_forward_mean_bps": 300.0,
+    "min_final_holdout_entries": 2,
+    "min_final_holdout_mean_bps": 1200.0,
+    "min_post_asof_entries": 2,
+    "min_post_asof_mean_bps": 1200.0,
+    "max_year_entry_share": 0.3,
+    "max_missing_required_feature_rows": 0,
+    "max_lookahead_violations": 0,
+    "min_candidate_active_days": 150,
+    "min_incremental_union_active_days_recomputed": 150,
+    "max_overlap_with_current_pct_recomputed": 80.0
+  },
+  "max_selected": 2
+}

@@ -1,0 +1,40 @@
+{
+  "bridge_csv": "data/mt5_bridge/unified_observer_signal.csv",
+  "mt5_files_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "required_schema_version": "stage108_unified_observer_second_order_v1",
+  "required_rule_count": 7,
+  "required_short_keys": ["C96_07", "S105_03"],
+  "macro_stage": {
+    "name": "Stage67D6_DOWNLOAD_FORMAT_AWARE_REBUILD_MACRO",
+    "enabled": true,
+    "refresh_stage": true,
+    "script": "app/stage67d6_download_format_aware_rebuild_macro.py",
+    "config": "configs/stage67d6_download_format_aware_rebuild_macro.json",
+    "out": "reports/stage67d6_download_format_aware_rebuild_macro"
+  },
+  "central_bank_stage": {
+    "name": "Stage67E_CENTRAL_BANK_CHANGES_MAPPER",
+    "enabled": true,
+    "refresh_stage": true,
+    "script": "app/stage67e_central_bank_changes_mapper.py",
+    "config": "configs/stage67e_central_bank_changes_mapper.json",
+    "out": "reports/stage67e_central_bank_changes_mapper"
+  },
+  "cot_stage": {
+    "name": "Stage95_COT_OFFICIAL_DATASET_BUILDER_NO_DOWNLOAD",
+    "enabled": true,
+    "refresh_stage": true,
+    "script": "app/stage95_cot_official_dataset_builder.py",
+    "config": "configs/stage95_cot_official_dataset_builder.json",
+    "out": "reports/stage95_cot_official_dataset_builder",
+    "extra_args": ["--no-download"]
+  },
+  "observer_stage": {
+    "name": "Stage108_UNIFIED_OBSERVER_SECOND_ORDER_EXPANSION",
+    "enabled": true,
+    "refresh_stage": false,
+    "script": "app/stage108_unified_observer_second_order_expansion.py",
+    "config": "configs/stage108_unified_observer_second_order_expansion.json",
+    "out": "reports/stage108_unified_observer_second_order_expansion"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "macro_dataset": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "horizon_trading_days": 120,
+  "cost_bps": 20.0,
+  "selection_frac": 0.60,
+  "validation_frac": 0.20,
+  "tail_forward_frac": 0.20,
+  "min_selection_events": 25,
+  "min_validation_events": 10,
+  "min_tail_forward_events": 5,
+  "min_selection_mean_net_bps": 10.0,
+  "min_validation_mean_net_bps": 0.0,
+  "min_tail_forward_mean_net_bps": 0.0,
+  "min_tail_forward_win_rate": 0.50,
+  "max_observer_overlap_ratio": 0.60,
+  "max_year_concentration": 0.70,
+  "max_selected": 5,
+  "write_split_files": true
+}

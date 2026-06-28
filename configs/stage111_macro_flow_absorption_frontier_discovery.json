@@ -1,0 +1,93 @@
+{
+  "stage": "Stage111_MACRO_FLOW_ABSORPTION_FRONTIER_DISCOVERY",
+  "macro_dataset": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "cot_dataset": "data/external_frontiers/cot_positioning_normalized.csv",
+  "date_col": "date_utc",
+  "price_col": "gold_close",
+  "horizon_trading_days": 120,
+  "cost_bps": 20.0,
+  "top_n": 12,
+  "segments": {
+    "train": ["2011-01-01", "2018-12-31"],
+    "validation": ["2019-01-01", "2022-12-31"],
+    "tail_forward": ["2023-01-01", "2099-12-31"]
+  },
+  "asof_years": [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024],
+  "gate": {
+    "min_total_events": 25,
+    "min_train_events": 6,
+    "min_validation_events": 5,
+    "min_tail_forward_events": 4,
+    "min_mean_net_bps": 75.0,
+    "min_validation_mean_bps": 0.0,
+    "min_tail_forward_mean_bps": 0.0,
+    "min_tail_forward_win_rate": 0.48,
+    "min_positive_segments": 2,
+    "max_year_event_share": 0.55,
+    "max_union_overlap_share": 0.65,
+    "max_rule_overlap_share": 0.75,
+    "min_incremental_events": 5,
+    "min_asof_positive_rate": 0.45
+  },
+  "active_rules": [
+    {
+      "rule_id": "K06_RESILIENT_GOLD_VS_DXY_H120",
+      "label": "K06_RESILIENT_GOLD_VS_DXY",
+      "conditions": [
+        {"column": "gold_sma20_over_50", "op": ">", "threshold": 0.0},
+        {"column": "dxy_ret_20d", "op": ">", "threshold": 0.0},
+        {"column": "real_yield_change_20d", "op": "<", "threshold": 0.0}
+      ]
+    },
+    {
+      "rule_id": "K03_SAFE_HAVEN_REALYIELD_H120",
+      "label": "K03_WGC_RISK_UNCERTAINTY_SAFE_HAVEN",
+      "conditions": [
+        {"column": "vix_change_20d", "op": ">", "threshold": 0.0},
+        {"column": "real_yield_change_20d", "op": "<", "threshold": 0.0}
+      ]
+    },
+    {
+      "rule_id": "K07_DXY_TREND_RELIEF_GOLD_TREND_H120",
+      "label": "K07_DXY_TREND_RELIEF_GOLD_TREND",
+      "conditions": [
+        {"column": "gold_sma20_over_50", "op": ">", "threshold": 0.0},
+        {"column": "dxy_sma20_over_50", "op": "<", "threshold": 0.0}
+      ]
+    },
+    {
+      "rule_id": "S83_14_REALYIELD_120D_DOWN_GOLD_NOT_TRENDING_H120",
+      "label": "REALYIELD_120D_DOWN_GOLD_NOT_TRENDING",
+      "conditions": [
+        {"column": "real_yield_change_120d", "op": "<", "threshold": 0.0},
+        {"column": "gold_sma20_over_50", "op": "<", "threshold": 0.0}
+      ]
+    },
+    {
+      "rule_id": "S83_13_DXY_120D_DOWN_GOLD_NOT_TRENDING_H120",
+      "label": "DXY_120D_DOWN_GOLD_NOT_TRENDING",
+      "conditions": [
+        {"column": "dxy_ret_120d", "op": "<", "threshold": 0.0},
+        {"column": "gold_sma20_over_50", "op": "<", "threshold": 0.0}
+      ]
+    },
+    {
+      "rule_id": "C96_07_CB_SUPPORT_NOT_CROWDED_H120",
+      "label": "CB_SUPPORT_NOT_CROWDED",
+      "conditions": [
+        {"column": "cot_mm_net_z", "op": "<", "threshold": 1.0},
+        {"column": "central_bank_demand_tonnes_3m", "op": ">", "threshold": 0.0},
+        {"column": "gold_ret_20d", "op": "<", "threshold": 0.0}
+      ]
+    },
+    {
+      "rule_id": "S105_03_COT_DECROWDING_CB_SUPPORT_RY_RELIEF_H120",
+      "label": "COT_DECROWDING_CB_SUPPORT_RY_RELIEF",
+      "conditions": [
+        {"column": "cot_mm_net_z_change_4w", "op": "<", "threshold": 0.0},
+        {"column": "central_bank_demand_tonnes_3m", "op": ">", "threshold": 0.0},
+        {"column": "real_yield_change_20d", "op": "<", "threshold": 0.0}
+      ]
+    }
+  ]
+}

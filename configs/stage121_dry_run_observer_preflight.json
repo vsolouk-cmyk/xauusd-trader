@@ -1,0 +1,18 @@
+{
+  "stage": "Stage121_DRY_RUN_OBSERVER_PREFLIGHT",
+  "mode": "reports_only_no_update",
+  "hard_blocks": [
+    "NO_AUTOMATED_ORDER",
+    "NO_PAPER_ORDER",
+    "NO_BROKER_CONNECTION",
+    "NO_MT5_OR_EA_CHANGE_FROM_STAGE121",
+    "NO_EA_CHANGE",
+    "NO_OBSERVER_UPDATE_FROM_STAGE121",
+    "NO_OBSERVER_BRIDGE_WRITE",
+    "NO_MT5_MQL5_FILES_WRITE",
+    "NO_PAPER_LIVE",
+    "NO_LIVE"
+  ],
+  "default_event_spacing_hours": 120,
+  "max_raw_event_count_deviation_pct_watch": 25
+}

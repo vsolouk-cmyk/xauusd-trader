@@ -61,3 +61,11 @@ _local_archive/
 # END XAUUSD local source archives - Stage103
 data/economic_events_raw/
 data/economic_events_normalized/
+
+data/fundamental_event_inbox/raw/
+
+data/fundamental_event_inbox/cache/
+
+data/fundamental_event_inbox/normalized/
+
+data/fundamental_event_inbox/manifests/

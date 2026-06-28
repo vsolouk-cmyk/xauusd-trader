@@ -1,0 +1,15 @@
+{
+  "stage": "Stage114_OFFICIAL_EVENT_AND_FUNDAMENTAL_NORMALIZER",
+  "classification": "INFRASTRUCTURE_NORMALIZER_ONLY_NO_ORDER",
+  "manual_inbox_default": "~/Downloads/xauusd_fundamental_event_inbox",
+  "normalized_output_dir": "data/fundamental_event_inbox/normalized",
+  "report_dir": "reports/stage114_official_event_and_fundamental_normalizer",
+  "hard_blocks": [
+    "NO_AUTOMATED_ORDER",
+    "NO_PAPER_ORDER",
+    "NO_BROKER_CONNECTION",
+    "NO_MT5_OR_EA_CHANGE_FROM_STAGE114",
+    "NO_PAPER_LIVE",
+    "NO_LIVE"
+  ]
+}

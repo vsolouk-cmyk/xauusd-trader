@@ -1,0 +1,25 @@
+{
+  "stage": "Stage113_FUNDAMENTAL_EVENT_INBOX_UNIFIER",
+  "manual_inbox_name": "xauusd_fundamental_event_inbox",
+  "project_data_dir": "data/fundamental_event_inbox",
+  "reports_dir": "reports/stage113_fundamental_event_inbox_unifier",
+  "policy": {
+    "network_calls": "disabled",
+    "raw_data_git_policy": "ignored",
+    "order_policy": "NO_ORDER_NO_BROKER_NO_MT5_EA_CHANGE"
+  },
+  "buckets": [
+    "events/fred",
+    "events/bls",
+    "events/bea",
+    "events/census",
+    "events/fomc",
+    "events/treasury",
+    "cot/cftc",
+    "gold_etf/wgc",
+    "gld/spdr",
+    "central_bank_gold",
+    "fred_macro",
+    "macro_misc"
+  ]
+}

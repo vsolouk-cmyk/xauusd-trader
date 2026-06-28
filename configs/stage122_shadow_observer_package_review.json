@@ -1,0 +1,30 @@
+{
+  "stage": "Stage122_SHADOW_OBSERVER_PACKAGE_REVIEW",
+  "mode": "report_only_shadow_observer_package_review",
+  "inputs": {
+    "stage121_dir": "reports/stage121_dry_run_observer_preflight",
+    "stage120_dir": "reports/stage120_observer_design_review"
+  },
+  "outputs": {
+    "dir": "reports/stage122_shadow_observer_package_review"
+  },
+  "hard_blocks": [
+    "NO_AUTOMATED_ORDER",
+    "NO_PAPER_ORDER",
+    "NO_BROKER_CONNECTION",
+    "NO_MT5_OR_EA_CHANGE_FROM_STAGE122",
+    "NO_EA_CHANGE",
+    "NO_OBSERVER_UPDATE_FROM_STAGE122",
+    "NO_OBSERVER_BRIDGE_WRITE",
+    "NO_MT5_MQL5_FILES_WRITE",
+    "NO_ACTIVE_OBSERVER_FILE_WRITE",
+    "NO_PAPER_LIVE",
+    "NO_LIVE"
+  ],
+  "minimums": {
+    "min_spaced_signal_rows": 20,
+    "max_raw_event_count_delta_pct": 1.0,
+    "min_readiness_score": 70,
+    "min_event_spacing_hours": 120
+  }
+}

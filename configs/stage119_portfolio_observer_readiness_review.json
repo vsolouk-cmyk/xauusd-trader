@@ -1,0 +1,21 @@
+{
+  "stage": "Stage119_PORTFOLIO_OBSERVER_READINESS_REVIEW",
+  "classification": "PORTFOLIO_OBSERVER_READINESS_REVIEW_ONLY_NO_UPDATE",
+  "inputs": {
+    "stage118_dir": "reports/stage118_macro_cot_spdr_hard_audit",
+    "stage116_summary": "reports/stage116_source_specific_wgc_spdr_dxy_validator/stage116_source_specific_wgc_spdr_dxy_validator_summary.json"
+  },
+  "outputs": {
+    "report_dir": "reports/stage119_portfolio_observer_readiness_review"
+  },
+  "hard_blocks": [
+    "NO_AUTOMATED_ORDER",
+    "NO_PAPER_ORDER",
+    "NO_BROKER_CONNECTION",
+    "NO_MT5_OR_EA_CHANGE_FROM_STAGE119",
+    "NO_EA_CHANGE",
+    "NO_OBSERVER_UPDATE_FROM_STAGE119",
+    "NO_PAPER_LIVE",
+    "NO_LIVE"
+  ]
+}

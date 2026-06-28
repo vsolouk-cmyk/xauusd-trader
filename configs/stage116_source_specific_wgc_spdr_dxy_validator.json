@@ -1,0 +1,9 @@
+{
+  "stage": "Stage116_SOURCE_SPECIFIC_WGC_SPDR_DXY_VALIDATOR",
+  "default_root": "/Users/vahid/Desktop/xauusd-trader",
+  "default_inbox": "~/Downloads/xauusd_fundamental_event_inbox",
+  "no_order": true,
+  "dxy_direct_min_valid_rows": 50,
+  "dxy_fallback_series": "DTWEXBGS",
+  "wgc_spdr_status": "validated_candidate_until_shortlisted"
+}

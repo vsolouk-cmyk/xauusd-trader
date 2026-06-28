@@ -1,0 +1,25 @@
+{
+  "stage": "Stage118_MACRO_COT_SPDR_HARD_AUDIT",
+  "horizon_hours": 120,
+  "cost_bps_grid": [
+    0,
+    5,
+    10,
+    15,
+    25
+  ],
+  "audited_rules": [
+    "S117_01_RY_DOWN_DOLLAR_DOWN_COT_NOT_CROWDED",
+    "S117_06_SPDR_FLOW_SUPPORT_MACRO_RELIEF"
+  ],
+  "hard_blocks": [
+    "NO_AUTOMATED_ORDER",
+    "NO_PAPER_ORDER",
+    "NO_BROKER_CONNECTION",
+    "NO_MT5_OR_EA_CHANGE_FROM_STAGE118",
+    "NO_EA_CHANGE",
+    "NO_OBSERVER_UPDATE_FROM_STAGE118",
+    "NO_PAPER_LIVE",
+    "NO_LIVE"
+  ]
+}

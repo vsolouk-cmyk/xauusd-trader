@@ -1,0 +1,29 @@
+{
+  "stage": "Stage117_SEGMENTED_MACRO_COT_DOLLAR_DISCOVERY",
+  "horizon_hours": 120,
+  "split_policy": {
+    "selection": 0.6,
+    "validation": 0.2,
+    "tail_forward_proxy": 0.2
+  },
+  "hard_blocks": [
+    "NO_AUTOMATED_ORDER",
+    "NO_PAPER_ORDER",
+    "NO_BROKER_CONNECTION",
+    "NO_MT5_OR_EA_CHANGE_FROM_STAGE117",
+    "NO_EA_CHANGE",
+    "NO_PAPER_LIVE",
+    "NO_LIVE"
+  ],
+  "primary_inputs": [
+    "data/fundamental_event_inbox/features/stage115_daily_macro_feature_panel.csv",
+    "data/fundamental_event_inbox/features/stage115_cot_gold_weekly_features.csv",
+    "data/fundamental_event_inbox/features/stage116_validated_dollar_pressure.csv",
+    "data/fundamental_event_inbox/features/stage116_validated_spdr_gld_long.csv"
+  ],
+  "excluded_from_hard_features": [
+    "WGC ETF rows if Stage116 emitted zero",
+    "WGC central-bank rows if Stage116 emitted zero",
+    "direct DXY if HTML_OR_BLOCKED"
+  ]
+}

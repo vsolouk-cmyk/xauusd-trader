@@ -1,0 +1,18 @@
+{
+  "stage": "Stage120_OBSERVER_DESIGN_REVIEW",
+  "mode": "review_only_no_update",
+  "hard_blocks": [
+    "NO_AUTOMATED_ORDER",
+    "NO_PAPER_ORDER",
+    "NO_BROKER_CONNECTION",
+    "NO_MT5_OR_EA_CHANGE_FROM_STAGE120",
+    "NO_EA_CHANGE",
+    "NO_OBSERVER_UPDATE_FROM_STAGE120",
+    "NO_OBSERVER_BRIDGE_WRITE",
+    "NO_PAPER_LIVE",
+    "NO_LIVE"
+  ],
+  "primary_source": "reports/stage119_portfolio_observer_readiness_review/stage119_observer_readiness_queue.csv",
+  "threshold_source": "reports/stage117_segmented_macro_cot_dollar_discovery/stage117_selection_thresholds.csv",
+  "output_dir": "reports/stage120_observer_design_review"
+}

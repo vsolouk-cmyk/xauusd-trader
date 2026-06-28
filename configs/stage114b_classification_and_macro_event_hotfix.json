@@ -1,0 +1,20 @@
+{
+  "stage": "Stage114B_CLASSIFICATION_AND_MACRO_EVENT_HOTFIX",
+  "classification": "INFRASTRUCTURE_ONLY_NO_ORDER",
+  "manual_inbox_rel": "xauusd_fundamental_event_inbox",
+  "normalized_rel": "data/fundamental_event_inbox/normalized",
+  "report_rel": "reports/stage114b_classification_and_macro_event_hotfix",
+  "hard_blocks": [
+    "NO_AUTOMATED_ORDER",
+    "NO_PAPER_ORDER",
+    "NO_BROKER_CONNECTION",
+    "NO_MT5_OR_EA_CHANGE_FROM_STAGE114B",
+    "NO_PAPER_LIVE",
+    "NO_LIVE"
+  ],
+  "notes": [
+    "Classifier strips Stage113 hash prefix before routing.",
+    "AMarkets files are accepted as technical reference-only.",
+    "COT/WGC feature-grade parsing is intentionally deferred to Stage115."
+  ]
+}

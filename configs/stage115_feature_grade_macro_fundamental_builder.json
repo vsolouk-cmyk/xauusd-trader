@@ -1,0 +1,9 @@
+{
+  "stage": "Stage115_FEATURE_GRADE_MACRO_FUNDAMENTAL_BUILDER",
+  "default_normalized_dir": "data/fundamental_event_inbox/normalized",
+  "default_feature_dir": "data/fundamental_event_inbox/features",
+  "default_classification_csv": "reports/stage114b_classification_and_macro_event_hotfix/stage114b_corrected_file_classification.csv",
+  "order_policy": "NO_ORDER_NO_MT5_NO_EA_CHANGE",
+  "dxy_policy": "Use direct DXY only if >=50 valid close rows; otherwise fallback to FRED DTWEXBGS.",
+  "cot_policy": "Prefer fut_disagg_txt CFTC zip files; fallback to com_disagg_txt only if futures text files are absent."
+}

@@ -1,0 +1,19 @@
+{
+  "stage": "Stage128_MARKET_OPEN_FORWARD_SHADOW_AND_FRONTIER_MEGASCAN",
+  "horizon_hours": 120,
+  "spacing_hours": 120,
+  "promotion_allowed": false,
+  "order_allowed": false,
+  "recommended_runtime_mode": "KEEP_7_RULE_UNIFIED_OBSERVER_EA_PLUS_RULE8_RULE9_INDICATOR_OVERLAYS; NO_ORDER",
+  "frontier_gate": {
+    "selection_events_min": 100,
+    "validation_events_min": 30,
+    "tail_events_min": 30,
+    "nonoverlap_events_min": 10,
+    "validation_year_concentration_max_pct": 80,
+    "tail_year_concentration_max_pct": 80,
+    "nonoverlap_year_concentration_max_pct": 80,
+    "tail_cost10_hit_rate_min": 0.55,
+    "nonoverlap_cost10_hit_rate_min": 0.55
+  }
+}

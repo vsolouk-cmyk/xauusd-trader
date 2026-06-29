@@ -1,0 +1,9 @@
+{
+  "stage": "Stage129_DUAL_TRACK_MARKET_OPEN_OPS_AND_FRONTIER_EXPANSION",
+  "order_allowed": false,
+  "indicator_ui_fix_deferred": true,
+  "arms": {
+    "arm_1": "market-open forward shadow telemetry",
+    "arm_2": "frontier discovery expansion with stricter deconcentration"
+  }
+}

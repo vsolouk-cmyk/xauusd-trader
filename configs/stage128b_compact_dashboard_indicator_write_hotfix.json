@@ -1,0 +1,6 @@
+{
+  "stage": "Stage128B_COMPACT_DASHBOARD_INDICATOR_WRITE_HOTFIX",
+  "order_allowed": false,
+  "ea_trading_change_allowed": false,
+  "purpose": "Write compact dashboard indicator directly to MT5 indicator paths and refresh Stage128 status KV."
+}

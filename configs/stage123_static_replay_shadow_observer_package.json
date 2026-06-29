@@ -1,0 +1,21 @@
+{
+  "stage": "Stage123_STATIC_REPLAY_SHADOW_OBSERVER_PACKAGE",
+  "mode": "reports_only_static_replay",
+  "inputs": {
+    "stage122_queue": "reports/stage122_shadow_observer_package_review/stage122_stage123_static_replay_queue.csv",
+    "stage121_signal_events": "reports/stage121_dry_run_observer_preflight/stage121_dry_run_signal_events.csv"
+  },
+  "hard_blocks": [
+    "NO_AUTOMATED_ORDER",
+    "NO_PAPER_ORDER",
+    "NO_BROKER_CONNECTION",
+    "NO_MT5_OR_EA_CHANGE_FROM_STAGE123",
+    "NO_EA_CHANGE",
+    "NO_OBSERVER_UPDATE_FROM_STAGE123",
+    "NO_OBSERVER_BRIDGE_WRITE",
+    "NO_MT5_MQL5_FILES_WRITE",
+    "NO_ACTIVE_OBSERVER_FILE_WRITE",
+    "NO_PAPER_LIVE",
+    "NO_LIVE"
+  ]
+}

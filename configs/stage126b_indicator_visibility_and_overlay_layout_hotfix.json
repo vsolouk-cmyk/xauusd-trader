@@ -1,0 +1,7 @@
+{
+  "stage": "Stage126B_INDICATOR_VISIBILITY_AND_OVERLAY_LAYOUT_HOTFIX",
+  "purpose": "Make rule8/rule9 indicators visible in MT5 and move overlays below the main 7-rule EA chart status.",
+  "rule8_default_y": 360,
+  "rule9_default_y": 450,
+  "order_surface": "blocked"
+}

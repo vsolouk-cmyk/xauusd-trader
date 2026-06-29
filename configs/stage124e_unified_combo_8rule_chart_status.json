@@ -1,0 +1,10 @@
+{
+  "stage": "Stage124E_UNIFIED_COMBO_8RULE_CHART_STATUS",
+  "mode": "observer_status_display_only_no_order",
+  "legacy_rule_count": 7,
+  "stage124_shadow_rule_count": 1,
+  "write_active_order_surface": false,
+  "write_paper_live_surface": false,
+  "default_mt5_files": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "default_mt5_experts": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Experts/Advisors/XAUUSD"
+}

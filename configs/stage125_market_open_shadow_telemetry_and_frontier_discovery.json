@@ -1,0 +1,19 @@
+{
+  "stage": "Stage125_MARKET_OPEN_SHADOW_TELEMETRY_AND_FRONTIER_DISCOVERY",
+  "mode": "market_open_forward_shadow_and_discovery_no_order",
+  "root_default": "/Users/vahid/Desktop/xauusd-trader",
+  "mt5_files_default": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "horizon_hours": 120,
+  "runtime_decision": "Keep Unified_ObserverOnly_EA running; use Stage124F rule-8 indicator overlay on same chart; do not keep Stage124D/E as replacement EAs.",
+  "hard_blocks": [
+    "NO_AUTOMATED_ORDER",
+    "NO_PAPER_ORDER",
+    "NO_BROKER_CONNECTION",
+    "NO_TRADE_REQUEST_FROM_STAGE125",
+    "NO_ORDER_SEND",
+    "NO_CTRADE_USAGE",
+    "NO_MT5_EA_CHANGE_FROM_STAGE125",
+    "NO_PAPER_LIVE",
+    "NO_LIVE"
+  ]
+}

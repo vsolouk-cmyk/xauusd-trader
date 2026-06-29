@@ -1,0 +1,23 @@
+{
+  "stage": "Stage127_RULE9_DECONCENTRATION_COMBO_OVERLAP_REVIEW",
+  "horizon_hours": 120,
+  "candidate_id": "F125_04_SAFE_HAVEN_VIX_UP_DOLLAR_NOT_UP",
+  "rule9_id": "S126_01_SAFE_HAVEN_VIX_UP_DOLLAR_NOT_UP_SHADOW",
+  "hardening_rules": {
+    "max_validation_year_concentration_pct": 80,
+    "min_nonoverlap_events": 30,
+    "min_tail_cost10_hit_rate": 0.55,
+    "max_combo_jaccard": 0.35,
+    "min_tail_cost10_mean_bps": 0,
+    "min_nonoverlap_cost10_mean_bps": 0
+  },
+  "governance": {
+    "automated_order": false,
+    "paper_order": false,
+    "broker_connection": false,
+    "ctrade_usage": false,
+    "order_send": false,
+    "mt5_ea_change": false,
+    "indicator_layout_only": true
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "stage": "Stage126_FRONTIER_CANDIDATE_HARDENING_AND_SHADOW_OVERLAY",
+  "horizon_hours": 120,
+  "candidate_id": "F125_04_SAFE_HAVEN_VIX_UP_DOLLAR_NOT_UP",
+  "rule9_id": "S126_01_SAFE_HAVEN_VIX_UP_DOLLAR_NOT_UP_SHADOW",
+  "default_conditions": [
+    {"feature": "vix_chg_20d", "operator": "gt", "threshold": 0.49},
+    {"feature": "dollar_pressure_chg_20d", "operator": "lt", "threshold": 0.2258}
+  ],
+  "governance": {
+    "automated_order": false,
+    "paper_order": false,
+    "broker_connection": false,
+    "ctrade_usage": false,
+    "order_send": false,
+    "mt5_indicator_status_only": true
+  }
+}

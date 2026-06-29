@@ -1,0 +1,9 @@
+{
+  "stage": "Stage124F_RULE8_SAME_CHART_INDICATOR_OVERLAY",
+  "mode": "keep_existing_7rule_ea_add_stage124_as_indicator_overlay_no_order",
+  "default_mt5_files": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "default_mt5_indicators": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Indicators/Advisors/XAUUSD",
+  "write_active_order_surface": false,
+  "write_paper_live_surface": false,
+  "replace_existing_unified_ea": false
+}

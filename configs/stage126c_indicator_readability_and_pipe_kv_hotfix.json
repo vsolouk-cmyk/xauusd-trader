@@ -1,0 +1,10 @@
+{
+  "stage": "Stage126C_INDICATOR_READABILITY_AND_PIPE_KV_HOTFIX",
+  "purpose": "Reduce chart overlay font size, increase line spacing, move rule8/rule9 lower, and make indicators read both pipe and comma key-value files.",
+  "rule8_default_y": 430,
+  "rule9_default_y": 540,
+  "font_size": 7,
+  "line_height": 22,
+  "kv_format_support": "PIPE_AND_COMMA",
+  "order_surface": "blocked"
+}

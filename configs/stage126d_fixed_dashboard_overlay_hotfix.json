@@ -1,0 +1,9 @@
+{
+  "stage": "Stage126D_FIXED_DASHBOARD_OVERLAY_HOTFIX",
+  "purpose": "Fix Stage124F/Stage126 overlay readability and chart-stability using bottom-left fixed-pixel OBJ_LABEL dashboards.",
+  "no_order": true,
+  "indicator_defaults": {
+    "stage124f": {"corner": "CORNER_LEFT_LOWER", "x": 10, "y": 170, "font_size": 6, "line_height": 17},
+    "stage126": {"corner": "CORNER_LEFT_LOWER", "x": 10, "y": 75, "font_size": 6, "line_height": 17}
+  }
+}

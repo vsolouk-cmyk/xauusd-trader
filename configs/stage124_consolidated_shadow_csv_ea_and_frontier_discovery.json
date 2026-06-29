@@ -1,0 +1,21 @@
+{
+  "stage": "Stage124_CONSOLIDATED_SHADOW_CSV_EA_AND_FRONTIER_DISCOVERY",
+  "horizon_hours": 120,
+  "mode": "shadow_observer_only_no_order",
+  "rule": "S117_06_SPDR_FLOW_SUPPORT_MACRO_RELIEF",
+  "shadow_csv_name": "stage124_xauusd_shadow_observer_signal.csv",
+  "mt5_shadow_csv_name": "xauusd_stage124_shadow_observer_signal.csv",
+  "mql5_ea_name": "XAUUSD_Stage124_ShadowObserverOnly.mq5",
+  "next_discovery": {
+    "enabled": true,
+    "families": [
+      "real_yield_dollar_relief",
+      "spdr_support_real_yield_relief",
+      "cot_not_crowded_dollar_relief",
+      "safe_haven_vix_dollar",
+      "census_slowdown_real_yield_relief",
+      "event_window_real_yield_relief",
+      "credit_vol_stress_safe_haven"
+    ]
+  }
+}

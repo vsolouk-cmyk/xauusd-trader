@@ -1,0 +1,8 @@
+{
+  "stage": "Stage124D_MERGE_STAGE124_SHADOW_INTO_UNIFIED_COMBO",
+  "mode": "observer_only_combo_shadow_merge",
+  "default_mt5_files": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "default_mt5_experts": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Experts/Advisors/XAUUSD",
+  "order_policy": "NO_ORDER_SEND_NO_CTRADE_NO_PAPER_LIVE_NO_LIVE",
+  "stage124_rule_policy": "merge_as_8th_shadow_rule_only"
+}

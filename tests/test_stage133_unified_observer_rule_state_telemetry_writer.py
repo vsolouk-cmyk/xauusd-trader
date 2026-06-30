@@ -83,3 +83,24 @@ def test_collects_fresh_rule_state(tmp_path):
     assert summary["rule_state_fresh"] is True
     assert summary["latest_rows"] == 7
     assert "CONFIRMED" in summary["decision"]
+
+
+def test_read_latest_rule_rows_tab_delimited(tmp_path):
+    from app.stage133_unified_observer_rule_state_telemetry_writer import read_latest_rule_rows
+    p = tmp_path / "latest.csv"
+    p.write_text(
+        "rule_id\trule_active\n"
+        "K06\ttrue\n"
+        "K03\tfalse\n"
+        "K07\tactive\n",
+        encoding="utf-8"
+    )
+    total, active, ids = read_latest_rule_rows(p)
+    assert total == 3
+    assert active == 2
+    assert ids == ["K06", "K07"]
+
+def test_mql5_writer_uses_explicit_comma_delimiter():
+    from app.stage133_unified_observer_rule_state_telemetry_writer import TELEMETRY_BLOCK
+    assert "FILE_WRITE|FILE_CSV|FILE_ANSI, ','" in TELEMETRY_BLOCK
+    assert "FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, ','" in TELEMETRY_BLOCK

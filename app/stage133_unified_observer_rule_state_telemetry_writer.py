@@ -198,7 +198,7 @@ void Stage133_WriteKvSummary(const string &keys[], const string &vals[], int n, 
 
 void Stage133_WriteRuleTelemetryNow(const string &keys[], const string &vals[], int n, string reason)
 {
-   int latest = FileOpen(Stage133RuleTelemetryLatestFile, FILE_WRITE|FILE_CSV|FILE_ANSI);
+   int latest = FileOpen(Stage133RuleTelemetryLatestFile, FILE_WRITE|FILE_CSV|FILE_ANSI, ',');
    if(latest == INVALID_HANDLE)
    {
       Print("Stage133 latest rule-state FileOpen failed. file=", Stage133RuleTelemetryLatestFile, " err=", GetLastError(), ". No orders are sent.");
@@ -208,7 +208,7 @@ void Stage133_WriteRuleTelemetryNow(const string &keys[], const string &vals[], 
    int active_count = Stage133_WriteRuleRows(latest, keys, vals, n, reason);
    FileClose(latest);
 
-   int history = FileOpen(Stage133RuleTelemetryHistoryFile, FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI);
+   int history = FileOpen(Stage133RuleTelemetryHistoryFile, FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI, ',');
    if(history != INVALID_HANDLE)
    {
       if(FileSize(history) == 0)
@@ -418,20 +418,29 @@ def read_kv(path: Path) -> Tuple[Dict[str, str], str]:
     return kv, fmt
 
 
+def detect_delimiter(sample: str) -> str:
+    first = sample.splitlines()[0] if sample.splitlines() else ""
+    if "\t" in first and first.count("\t") >= first.count(","):
+        return "\t"
+    return ","
+
+
 def read_latest_rule_rows(path: Path) -> Tuple[int, int, List[str]]:
     if not path.exists() or path.stat().st_size <= 0:
         return 0, 0, []
     rows = []
     try:
-        with path.open("r", encoding="utf-8", errors="replace", newline="") as f:
-            for r in csv.DictReader(f):
-                rows.append(dict(r))
+        sample = path.read_text(encoding="utf-8", errors="replace")
+        delim = detect_delimiter(sample)
+        reader = csv.DictReader(sample.splitlines(), delimiter=delim)
+        for r in reader:
+            rows.append(dict(r))
     except Exception:
         return 0, 0, []
     active = 0
     active_ids = []
     for r in rows:
-        v = str(r.get("rule_active", "")).lower()
+        v = str(r.get("rule_active", "")).strip().lower()
         if v in {"true", "1", "yes", "active"}:
             active += 1
             active_ids.append(str(r.get("rule_id", "")))

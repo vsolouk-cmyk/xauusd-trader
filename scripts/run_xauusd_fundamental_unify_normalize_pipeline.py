@@ -77,6 +77,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     ap.add_argument("--root", default="/Users/vahid/Desktop/xauusd-trader")
     ap.add_argument("--inbox", default=str(Path.home() / "Downloads" / "xauusd_fundamental_event_inbox"))
     ap.add_argument("--download-first", action="store_true")
+    ap.add_argument("--force-refresh", action="store_true", help="Pass through to downloader: refresh all existing outputs")
+    ap.add_argument("--refresh-stale-hours", type=float, default=None, help="Pass through to downloader: refresh valid files older than N hours")
     ap.add_argument("--include-cot-xls", action="store_true")
     ap.add_argument("--skip-wgc-direct", action="store_true")
     ap.add_argument("--env-file", action="append", default=[], help="Pass local API-key env file(s) to the download runner")
@@ -98,6 +100,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         download_cmd = [sys.executable, "scripts/download_xauusd_official_data_batch.py", "--inbox", str(inbox)]
         if args.include_cot_xls:
             download_cmd.append("--include-cot-xls")
+        if args.force_refresh:
+            download_cmd.append("--force-refresh")
+        if args.refresh_stale_hours is not None:
+            download_cmd.extend(["--refresh-stale-hours", str(args.refresh_stale_hours)])
         if args.skip_wgc_direct:
             download_cmd.append("--skip-wgc-direct")
         for env_file in args.env_file:
@@ -131,6 +137,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         "root": str(root),
         "inbox": str(inbox),
         "download_first": args.download_first,
+        "force_refresh": args.force_refresh,
+        "refresh_stale_hours": args.refresh_stale_hours,
         "status": status,
         "elapsed_sec": round(time.time() - started, 2),
         "hard_blocks": ["NO_ORDER", "NO_MT5", "NO_EA", "NO_BROKER"],

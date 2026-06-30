@@ -128,6 +128,42 @@ def content_issue(path: Path) -> Optional[str]:
     return None
 
 
+
+def existing_valid_skip_result(
+    out: Path,
+    *,
+    force_refresh: bool = False,
+    refresh_stale_hours: Optional[float] = None,
+) -> Optional[Dict[str, object]]:
+    """Return a skip result when an existing output is already valid.
+
+    This makes the downloader persistent/incremental by default:
+    - existing non-empty files that pass content_issue() are not downloaded again
+    - --force-refresh disables the skip
+    - --refresh-stale-hours N refreshes valid files older than N hours
+    """
+    if force_refresh:
+        return None
+    if not out.exists() or out.stat().st_size <= 0:
+        return None
+    issue = content_issue(out)
+    if issue is not None:
+        return None
+    age_hours = max(0.0, (time.time() - out.stat().st_mtime) / 3600.0)
+    if refresh_stale_hours is not None and age_hours > refresh_stale_hours:
+        return None
+    return {
+        "kind": "existing_file",
+        "output": str(out),
+        "status": "SKIPPED_EXISTING_VALID",
+        "size_bytes": out.stat().st_size,
+        "elapsed_sec": 0.0,
+        "age_hours": round(age_hours, 2),
+    }
+
+
+OK_STATUSES = {"OK", "DRY_RUN", "SKIPPED_EXISTING_VALID"}
+
 def write_jsonl(log_path: Path, row: Dict[str, object]) -> None:
     ensure_dir(log_path.parent)
     with log_path.open("a", encoding="utf-8") as fh:
@@ -147,8 +183,15 @@ def curl_download(
     referer: Optional[str] = None,
     user_agent: bool = False,
     dry_run: bool = False,
+    force_refresh: bool = False,
+    refresh_stale_hours: Optional[float] = None,
 ) -> Dict[str, object]:
     ensure_dir(out.parent)
+    if not dry_run:
+        skipped = existing_valid_skip_result(out, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours)
+        if skipped is not None:
+            skipped["url"] = scrub(url)
+            return skipped
     cmd: List[str] = ["curl"]
     if globoff:
         cmd.append("-g")
@@ -185,8 +228,18 @@ def curl_download(
     }
 
 
-def post_bls(out: Path, *, dry_run: bool = False) -> Dict[str, object]:
+def post_bls(
+    out: Path,
+    *,
+    dry_run: bool = False,
+    force_refresh: bool = False,
+    refresh_stale_hours: Optional[float] = None,
+) -> Dict[str, object]:
     ensure_dir(out.parent)
+    if not dry_run:
+        skipped = existing_valid_skip_result(out, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours)
+        if skipped is not None:
+            return skipped
     payload: Dict[str, object] = {"seriesid": BLS_SERIES, "startyear": "2017", "endyear": "2026"}
     if env_present("BLS_API_KEY"):
         payload["startyear"] = str(DEFAULT_FROM_YEAR)
@@ -216,9 +269,19 @@ def post_bls(out: Path, *, dry_run: bool = False) -> Dict[str, object]:
     }
 
 
-def marker_result(path: Path, text: str, *, dry_run: bool = False) -> Dict[str, object]:
+def marker_result(
+    path: Path,
+    text: str,
+    *,
+    dry_run: bool = False,
+    force_refresh: bool = False,
+    refresh_stale_hours: Optional[float] = None,
+) -> Dict[str, object]:
     ensure_dir(path.parent)
     if not dry_run:
+        skipped = existing_valid_skip_result(path, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours)
+        if skipped is not None:
+            return skipped
         path.write_text(text, encoding="utf-8")
     return {"kind": "marker", "output": str(path), "status": "DRY_RUN" if dry_run else "OK", "size_bytes": 0 if dry_run else path.stat().st_size, "elapsed_sec": 0.0}
 
@@ -253,7 +316,7 @@ def run_section(
         if verbose_files:
             out = Path(str(res.get("output", ""))).name if res.get("output") else label
             console(f"    [{idx:03d}/{len(tasks):03d}] {res.get('status')} {out} {size_text(int(res.get('size_bytes') or 0))} {res.get('elapsed_sec')}s", quiet=quiet)
-    ok = sum(1 for r in results if str(r.get("status")) in {"OK", "DRY_RUN"})
+    ok = sum(1 for r in results if str(r.get("status")) in OK_STATUSES)
     warn = len(results) - ok
     elapsed = round(time.time() - started, 2)
     console(f"[{section_no:02d}/{total_sections:02d} DONE ] {name} | ok={ok} warn/fail={warn} | elapsed={elapsed}s", quiet=quiet)
@@ -261,40 +324,49 @@ def run_section(
     return results
 
 
-def build_sections(inbox: Path, years: List[int], *, include_cot_xls: bool, skip_wgc_direct: bool, dry_run: bool) -> List[Tuple[str, Sequence[Tuple[str, callable]]]]:
+def build_sections(
+    inbox: Path,
+    years: List[int],
+    *,
+    include_cot_xls: bool,
+    skip_wgc_direct: bool,
+    dry_run: bool,
+    force_refresh: bool,
+    refresh_stale_hours: Optional[float],
+) -> List[Tuple[str, Sequence[Tuple[str, callable]]]]:
     sections: List[Tuple[str, Sequence[Tuple[str, callable]]]] = []
 
     sections.append((
         "FRED macro direct CSVs",
-        [(sid, lambda sid=sid: curl_download(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}", inbox / "fred_macro" / f"{sid}.csv", dry_run=dry_run)) for sid in FRED_SERIES],
+        [(sid, lambda sid=sid: curl_download(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}", inbox / "fred_macro" / f"{sid}.csv", dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours)) for sid in FRED_SERIES],
     ))
 
     sections.append((
         "DXY direct candidate; DTWEXBGS remains official fallback",
-        [("stooq_dx_f_dxy_daily.csv", lambda: curl_download("https://stooq.com/q/d/l/?s=dx.f&i=d", inbox / "macro_misc" / "dxy" / "stooq_dx_f_dxy_daily.csv", dry_run=dry_run))],
+        [("stooq_dx_f_dxy_daily.csv", lambda: curl_download("https://stooq.com/q/d/l/?s=dx.f&i=d", inbox / "macro_misc" / "dxy" / "stooq_dx_f_dxy_daily.csv", dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours))],
     ))
 
     if env_present("FRED_API_KEY"):
         key = os.environ["FRED_API_KEY"]
         fred_tasks = [("fred_releases_dates_2009_present.json", lambda key=key: curl_download(
             f"https://api.stlouisfed.org/fred/releases/dates?api_key={key}&file_type=json&realtime_start=2009-01-01&realtime_end=9999-12-31&include_release_dates_with_no_data=true",
-            inbox / "events" / "fred" / "fred_releases_dates_2009_present.json", dry_run=dry_run))]
+            inbox / "events" / "fred" / "fred_releases_dates_2009_present.json", dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours))]
     else:
         fred_tasks = [("missing_FRED_API_KEY", lambda: {"output": "events/fred/fred_releases_dates_2009_present.json", "status": "SKIPPED_MISSING_FRED_API_KEY", "size_bytes": 0, "elapsed_sec": 0.0})]
     sections.append(("Official economic-events backbone: FRED release dates", fred_tasks))
 
     sections.append((
         "CFTC COT disaggregated futures TXT zips",
-        [(f"fut_disagg_txt_{y}.zip", lambda y=y: curl_download(f"https://www.cftc.gov/files/dea/history/fut_disagg_txt_{y}.zip", inbox / "cot" / "cftc" / f"fut_disagg_txt_{y}.zip", dry_run=dry_run)) for y in years],
+        [(f"fut_disagg_txt_{y}.zip", lambda y=y: curl_download(f"https://www.cftc.gov/files/dea/history/fut_disagg_txt_{y}.zip", inbox / "cot" / "cftc" / f"fut_disagg_txt_{y}.zip", dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours)) for y in years],
     ))
 
     if include_cot_xls:
         sections.append((
             "Optional CFTC COT disaggregated futures XLS zips",
-            [(f"fut_disagg_xls_{y}.zip", lambda y=y: curl_download(f"https://www.cftc.gov/files/dea/history/fut_disagg_xls_{y}.zip", inbox / "cot" / "cftc" / f"fut_disagg_xls_{y}.zip", dry_run=dry_run)) for y in years],
+            [(f"fut_disagg_xls_{y}.zip", lambda y=y: curl_download(f"https://www.cftc.gov/files/dea/history/fut_disagg_xls_{y}.zip", inbox / "cot" / "cftc" / f"fut_disagg_xls_{y}.zip", dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours)) for y in years],
         ))
 
-    sections.append(("BLS CPI / labor / payroll JSON", [("bls_core_macro.json", lambda: post_bls(inbox / "events" / "bls" / "bls_core_macro_2017_2026.json", dry_run=dry_run))]))
+    sections.append(("BLS CPI / labor / payroll JSON", [("bls_core_macro.json", lambda: post_bls(inbox / "events" / "bls" / "bls_core_macro_2017_2026.json", dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours))]))
 
     if env_present("BEA_API_KEY"):
         key = os.environ["BEA_API_KEY"]
@@ -305,12 +377,12 @@ def build_sections(inbox: Path, years: List[int], *, include_cot_xls: bool, skip
             "bea_nipa_T20600_personal_income_m_all.json": f"https://apps.bea.gov/api/data/?UserID={key}&method=GETDATA&datasetname=NIPA&TableName=T20600&Frequency=M&Year=ALL&ResultFormat=JSON",
             "bea_nipa_T20804_pce_price_indexes_m_all.json": f"https://apps.bea.gov/api/data/?UserID={key}&method=GETDATA&datasetname=NIPA&TableName=T20804&Frequency=M&Year=ALL&ResultFormat=JSON",
         }
-        bea_tasks = [(fn, lambda fn=fn, url=url: curl_download(url, inbox / "events" / "bea" / fn, dry_run=dry_run)) for fn, url in bea_urls.items()]
+        bea_tasks = [(fn, lambda fn=fn, url=url: curl_download(url, inbox / "events" / "bea" / fn, dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours)) for fn, url in bea_urls.items()]
     else:
         bea_tasks = [("missing_BEA_API_KEY", lambda: {"output": "events/bea/*.json", "status": "SKIPPED_MISSING_BEA_API_KEY", "size_bytes": 0, "elapsed_sec": 0.0})]
     sections.append(("BEA GDP / PCE / personal income JSON", bea_tasks))
 
-    census_var_tasks = [(f"census_eits_{ds}_variables.json", lambda ds=ds: curl_download(f"https://api.census.gov/data/timeseries/eits/{ds}/variables.json", inbox / "events" / "census" / f"census_eits_{ds}_variables.json", dry_run=dry_run)) for ds in ["marts", "ftd", "resconst", "ressales"]]
+    census_var_tasks = [(f"census_eits_{ds}_variables.json", lambda ds=ds: curl_download(f"https://api.census.gov/data/timeseries/eits/{ds}/variables.json", inbox / "events" / "census" / f"census_eits_{ds}_variables.json", dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours)) for ds in ["marts", "ftd", "resconst", "ressales"]]
     sections.append(("Census EITS metadata variables", census_var_tasks))
 
     if env_present("CENSUS_API_KEY"):
@@ -324,37 +396,37 @@ def build_sections(inbox: Path, years: List[int], *, include_cot_xls: bool, skip
         census_data_tasks = []
         for y in years:
             for ds, get in params.items():
-                census_data_tasks.append((f"census_{ds}_{y}.json", lambda y=y, ds=ds, get=get, key=key: curl_download(f"https://api.census.gov/data/timeseries/eits/{ds}?get={get}&time={y}&key={key}", inbox / "events" / "census" / f"census_{ds}_{y}.json", dry_run=dry_run)))
+                census_data_tasks.append((f"census_{ds}_{y}.json", lambda y=y, ds=ds, get=get, key=key: curl_download(f"https://api.census.gov/data/timeseries/eits/{ds}?get={get}&time={y}&key={key}", inbox / "events" / "census" / f"census_{ds}_{y}.json", dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours)))
     else:
         census_data_tasks = [("missing_CENSUS_API_KEY", lambda: {"output": "events/census/census_*_YYYY.json", "status": "SKIPPED_MISSING_CENSUS_API_KEY", "size_bytes": 0, "elapsed_sec": 0.0})]
     sections.append(("Census EITS yearly datasets", census_data_tasks))
 
-    sections.append(("Official economic-events backbone: FOMC calendar snapshot", [("fomc_calendars_2021_2027.html", lambda: curl_download("https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm", inbox / "events" / "fomc" / "fomc_calendars_2021_2027.html", dry_run=dry_run))]))
+    sections.append(("Official economic-events backbone: FOMC calendar snapshot", [("fomc_calendars_2021_2027.html", lambda: curl_download("https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm", inbox / "events" / "fomc" / "fomc_calendars_2021_2027.html", dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours))]))
 
     sections.append((
         "Official economic-events backbone: Treasury auctions",
         [
-            ("treasury_upcoming_auctions.csv", lambda: curl_download("https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/od/upcoming_auctions?format=csv&page[size]=1000", inbox / "events" / "treasury" / "treasury_upcoming_auctions.csv", globoff=True, dry_run=dry_run)),
-            ("treasury_auctions_query_recent.csv", lambda: curl_download("https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/od/auctions_query?format=csv&page[size]=10000&sort=-auction_date", inbox / "events" / "treasury" / "treasury_auctions_query_recent.csv", globoff=True, dry_run=dry_run)),
+            ("treasury_upcoming_auctions.csv", lambda: curl_download("https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/od/upcoming_auctions?format=csv&page[size]=1000", inbox / "events" / "treasury" / "treasury_upcoming_auctions.csv", globoff=True, dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours)),
+            ("treasury_auctions_query_recent.csv", lambda: curl_download("https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/od/auctions_query?format=csv&page[size]=10000&sort=-auction_date", inbox / "events" / "treasury" / "treasury_auctions_query_recent.csv", globoff=True, dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours)),
         ],
     ))
 
     if not skip_wgc_direct:
         wgc_tasks = [
-            ("ETF_Flows_2026-06-02_1536.xlsx", lambda: curl_download("https://www.gold.org/download/file/20888/ETF_Flows_2026-06-02_1536.xlsx", inbox / "gold_etf" / "wgc" / "ETF_Flows_2026-06-02_1536.xlsx", user_agent=True, referer="https://www.gold.org/goldhub/data/gold-etfs-holdings-and-flows", dry_run=dry_run)),
-            ("ETF-Flows-Data-Methodology.pdf", lambda: curl_download("https://www.gold.org/download/file/16223/ETF-Flows-Data-Methodology.pdf", inbox / "gold_etf" / "wgc" / "ETF-Flows-Data-Methodology.pdf", user_agent=True, referer="https://www.gold.org/goldhub/data/gold-etfs-holdings-and-flows", dry_run=dry_run)),
-            ("World_official_gold_holdings_as_of_Jun2026_IFS.xlsx", lambda: curl_download("https://www.gold.org/download/file/7739/World_official_gold_holdings_as_of_Jun2026_IFS.xlsx", inbox / "central_bank_gold" / "World_official_gold_holdings_as_of_Jun2026_IFS.xlsx", user_agent=True, referer="https://www.gold.org/goldhub/data/gold-reserves-by-country", dry_run=dry_run)),
-            ("Changes_latest_as_of_Jun2026_IFS.xlsx", lambda: curl_download("https://www.gold.org/download/file/7741/Changes_latest_as_of_Jun2026_IFS.xlsx", inbox / "central_bank_gold" / "Changes_latest_as_of_Jun2026_IFS.xlsx", user_agent=True, referer="https://www.gold.org/goldhub/data/gold-reserves-by-country", dry_run=dry_run)),
-            ("Quarterly_gold_and_FX_Reserves_Q1_2026.xlsx", lambda: curl_download("https://www.gold.org/download/file/8052/Quarterly_gold_and_FX_Reserves_Q1_2026.xlsx", inbox / "central_bank_gold" / "Quarterly_gold_and_FX_Reserves_Q1_2026.xlsx", user_agent=True, referer="https://www.gold.org/goldhub/data/gold-reserves-by-country", dry_run=dry_run)),
+            ("ETF_Flows_2026-06-02_1536.xlsx", lambda: curl_download("https://www.gold.org/download/file/20888/ETF_Flows_2026-06-02_1536.xlsx", inbox / "gold_etf" / "wgc" / "ETF_Flows_2026-06-02_1536.xlsx", user_agent=True, referer="https://www.gold.org/goldhub/data/gold-etfs-holdings-and-flows", dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours)),
+            ("ETF-Flows-Data-Methodology.pdf", lambda: curl_download("https://www.gold.org/download/file/16223/ETF-Flows-Data-Methodology.pdf", inbox / "gold_etf" / "wgc" / "ETF-Flows-Data-Methodology.pdf", user_agent=True, referer="https://www.gold.org/goldhub/data/gold-etfs-holdings-and-flows", dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours)),
+            ("World_official_gold_holdings_as_of_Jun2026_IFS.xlsx", lambda: curl_download("https://www.gold.org/download/file/7739/World_official_gold_holdings_as_of_Jun2026_IFS.xlsx", inbox / "central_bank_gold" / "World_official_gold_holdings_as_of_Jun2026_IFS.xlsx", user_agent=True, referer="https://www.gold.org/goldhub/data/gold-reserves-by-country", dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours)),
+            ("Changes_latest_as_of_Jun2026_IFS.xlsx", lambda: curl_download("https://www.gold.org/download/file/7741/Changes_latest_as_of_Jun2026_IFS.xlsx", inbox / "central_bank_gold" / "Changes_latest_as_of_Jun2026_IFS.xlsx", user_agent=True, referer="https://www.gold.org/goldhub/data/gold-reserves-by-country", dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours)),
+            ("Quarterly_gold_and_FX_Reserves_Q1_2026.xlsx", lambda: curl_download("https://www.gold.org/download/file/8052/Quarterly_gold_and_FX_Reserves_Q1_2026.xlsx", inbox / "central_bank_gold" / "Quarterly_gold_and_FX_Reserves_Q1_2026.xlsx", user_agent=True, referer="https://www.gold.org/goldhub/data/gold-reserves-by-country", dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours)),
         ]
     else:
         wgc_tasks = [("WGC manual preferred", lambda: {"output": "gold_etf/wgc + central_bank_gold", "status": "SKIPPED_WGC_DIRECT_BY_USER", "size_bytes": 0, "elapsed_sec": 0.0})]
     sections.append(("WGC ETF and central-bank direct attempts; browser fallback if blocked", wgc_tasks))
 
-    sections.append(("SPDR GLD historical archive", [("spdr_gld_historical_archive.xlsx", lambda: curl_download("https://api.spdrgoldshares.com/api/v1/historical-archive?exchange=NYSE&lang=en&product=gld", inbox / "gld" / "spdr" / "spdr_gld_historical_archive.xlsx", dry_run=dry_run))]))
+    sections.append(("SPDR GLD historical archive", [("spdr_gld_historical_archive.xlsx", lambda: curl_download("https://api.spdrgoldshares.com/api/v1/historical-archive?exchange=NYSE&lang=en&product=gld", inbox / "gld" / "spdr" / "spdr_gld_historical_archive.xlsx", dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours))]))
 
     gold_price_text = "Manual: https://www.gold.org/goldhub/data/gold-prices -> Downloads -> Download xlsx Gold price averages in a range of currencies since 1978\n"
-    sections.append(("WGC gold price averages manual marker", [("README_MANUAL_GOLD_PRICE_DOWNLOAD.txt", lambda: marker_result(inbox / "gold_price" / "wgc" / "README_MANUAL_GOLD_PRICE_DOWNLOAD.txt", gold_price_text, dry_run=dry_run))]))
+    sections.append(("WGC gold price averages manual marker", [("README_MANUAL_GOLD_PRICE_DOWNLOAD.txt", lambda: marker_result(inbox / "gold_price" / "wgc" / "README_MANUAL_GOLD_PRICE_DOWNLOAD.txt", gold_price_text, dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours))]))
 
     return sections
 
@@ -363,6 +435,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     ap = argparse.ArgumentParser(description=STAGE)
     ap.add_argument("--inbox", default=str(DEFAULT_INBOX))
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--force-refresh", action="store_true", help="Download again even when a valid output file already exists")
+    ap.add_argument("--refresh-stale-hours", type=float, default=None, help="Refresh valid existing files older than this many hours; omit to keep valid files")
     ap.add_argument("--include-cot-xls", action="store_true")
     ap.add_argument("--skip-wgc-direct", action="store_true", help="Skip WGC direct attempts if browser/manual download is preferred")
     ap.add_argument("--from-year", type=int, default=DEFAULT_FROM_YEAR)
@@ -401,7 +475,15 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     console(f"Log: {log_jsonl}", quiet=args.quiet)
 
     started = time.time()
-    sections = build_sections(inbox, years, include_cot_xls=args.include_cot_xls, skip_wgc_direct=args.skip_wgc_direct, dry_run=args.dry_run)
+    sections = build_sections(
+        inbox,
+        years,
+        include_cot_xls=args.include_cot_xls,
+        skip_wgc_direct=args.skip_wgc_direct,
+        dry_run=args.dry_run,
+        force_refresh=args.force_refresh,
+        refresh_stale_hours=args.refresh_stale_hours,
+    )
     all_results: List[Dict[str, object]] = []
     total_sections = len(sections)
     for section_no, (name, tasks) in enumerate(sections, start=1):
@@ -415,7 +497,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             verbose_files=not args.no_file_progress,
         ))
 
-    ok_count = sum(1 for r in all_results if str(r.get("status")) in {"OK", "DRY_RUN"})
+    ok_count = sum(1 for r in all_results if str(r.get("status")) in OK_STATUSES)
     warning_count = len(all_results) - ok_count
     summary = {
         "stage": STAGE,
@@ -426,6 +508,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         "to_year": args.to_year,
         "include_cot_xls": args.include_cot_xls,
         "skip_wgc_direct": args.skip_wgc_direct,
+        "force_refresh": args.force_refresh,
+        "refresh_stale_hours": args.refresh_stale_hours,
+        "skipped_existing_valid_count": sum(1 for r in all_results if str(r.get("status")) == "SKIPPED_EXISTING_VALID"),
         "elapsed_sec": round(time.time() - started, 2),
         "status": "DOWNLOAD_BATCH_COMPLETE" if warning_count == 0 else "DOWNLOAD_BATCH_COMPLETE_WITH_WARNINGS",
         "ok_or_dry_run_count": ok_count,

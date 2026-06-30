@@ -1,0 +1,14 @@
+{
+  "stage": "Stage130_FORWARD_SHADOW_TELEMETRY_COLLECTOR",
+  "order_allowed": false,
+  "ea_change_allowed": false,
+  "indicator_ui_change_allowed": false,
+  "default_stale_after_sec": 900,
+  "expected_files": {
+    "rule8_stage124f": "xauusd_stage124f_rule8_overlay_kv.csv",
+    "rule9_stage126": "xauusd_stage126_rule9_frontier_status_kv.csv",
+    "rule9_stage127_review": "xauusd_stage127_rule9_review_status_kv.csv",
+    "stage128_status": "xauusd_stage128_forward_shadow_and_megascan_status_kv.csv",
+    "stage129_status": "xauusd_stage129_dual_track_status_kv.csv"
+  }
+}

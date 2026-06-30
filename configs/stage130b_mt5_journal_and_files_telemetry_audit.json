@@ -1,0 +1,8 @@
+{
+  "stage": "Stage130B_MT5_JOURNAL_AND_FILES_TELEMETRY_AUDIT",
+  "order_allowed": false,
+  "ea_change_allowed": false,
+  "indicator_ui_change_allowed": false,
+  "default_max_log_files": 12,
+  "default_max_bytes_per_log": 2000000
+}

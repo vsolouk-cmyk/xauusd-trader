@@ -127,8 +127,6 @@ void DisplaySignal()
 
 int OnInit()
 {
-   Stage132_WriteTelemetryNow("OnInit");
-
    EventSetTimer(RefreshSeconds);
    DisplaySignal();
    return(INIT_SUCCEEDED);
@@ -136,8 +134,6 @@ int OnInit()
 
 void OnDeinit(const int reason)
 {
-   Stage132_WriteTelemetryNow("OnDeinit");
-
    Comment("");
    EventKillTimer();
 }
@@ -149,89 +145,5 @@ void OnTimer()
 
 void OnTick()
 {
-   Stage132_WriteTelemetryIfDue("OnTick");
-
    // Observer-only. Intentionally no trading logic.
 }
-
-// STAGE132_TELEMETRY_BLOCK_BEGIN
-// Telemetry-only runtime writer. No orders, no trade-class usage, no signal logic change.
-input int Stage132TelemetryIntervalSec = 60;
-input string Stage132TelemetryKvFile = "xauusd_stage132_unified_observer_ea_heartbeat_kv.csv";
-input string Stage132TelemetryHistoryFile = "xauusd_stage132_unified_observer_ea_heartbeat_history.csv";
-datetime g_stage132_last_telemetry_write = 0;
-
-string Stage132_BoolText(bool value)
-{
-   return(value ? "true" : "false");
-}
-
-void Stage132_WriteTelemetryNow(string reason)
-{
-   datetime tc = TimeCurrent();
-   datetime ts = TimeTradeServer();
-   string local_time = TimeToString(TimeLocal(), TIME_DATE|TIME_SECONDS);
-   string current_time = TimeToString(tc, TIME_DATE|TIME_SECONDS);
-   string server_time = TimeToString(ts, TIME_DATE|TIME_SECONDS);
-
-   int h = FileOpen(Stage132TelemetryKvFile, FILE_WRITE|FILE_TXT|FILE_ANSI);
-   if(h == INVALID_HANDLE)
-   {
-      Print("Stage132 telemetry KV FileOpen failed. file=", Stage132TelemetryKvFile, " err=", GetLastError(), ". No orders are sent.");
-      return;
-   }
-
-   FileWriteString(h, "stage|Stage132_UNIFIED_OBSERVER_EA_TELEMETRY_WRITER\n");
-   FileWriteString(h, "status|UNIFIED_OBSERVER_EA_RUNTIME_ALIVE_NO_ORDER\n");
-   FileWriteString(h, "reason|" + reason + "\n");
-   FileWriteString(h, "allow_trading|false\n");
-   FileWriteString(h, "order_send|false\n");
-   FileWriteString(h, "symbol|" + _Symbol + "\n");
-   FileWriteString(h, "period|" + IntegerToString(_Period) + "\n");
-   FileWriteString(h, "time_local|" + local_time + "\n");
-   FileWriteString(h, "time_current|" + current_time + "\n");
-   FileWriteString(h, "time_trade_server|" + server_time + "\n");
-   FileWriteString(h, "terminal_trade_allowed|" + Stage132_BoolText((bool)TerminalInfoInteger(TERMINAL_TRADE_ALLOWED)) + "\n");
-   FileWriteString(h, "mql_trade_allowed|" + Stage132_BoolText((bool)MQLInfoInteger(MQL_TRADE_ALLOWED)) + "\n");
-   FileWriteString(h, "account_trade_allowed|" + Stage132_BoolText((bool)AccountInfoInteger(ACCOUNT_TRADE_ALLOWED)) + "\n");
-   FileWriteString(h, "account_login|" + IntegerToString((int)AccountInfoInteger(ACCOUNT_LOGIN)) + "\n");
-   FileWriteString(h, "account_server|" + AccountInfoString(ACCOUNT_SERVER) + "\n");
-   FileWriteString(h, "terminal_build|" + IntegerToString((int)TerminalInfoInteger(TERMINAL_BUILD)) + "\n");
-   FileWriteString(h, "bars|" + IntegerToString(Bars(_Symbol, PERIOD_CURRENT)) + "\n");
-   FileWriteString(h, "note|telemetry_only_inside_unified_observer_ea_no_orders_no_signal_change\n");
-   FileClose(h);
-
-   int hh = FileOpen(Stage132TelemetryHistoryFile, FILE_READ|FILE_WRITE|FILE_CSV|FILE_ANSI);
-   if(hh != INVALID_HANDLE)
-   {
-      if(FileSize(hh) == 0)
-      {
-         FileWrite(hh, "time_local", "time_current", "time_trade_server", "symbol", "period", "reason", "terminal_trade_allowed", "mql_trade_allowed", "account_trade_allowed", "note");
-      }
-      FileSeek(hh, 0, SEEK_END);
-      FileWrite(hh, local_time, current_time, server_time, _Symbol, IntegerToString(_Period), reason,
-                Stage132_BoolText((bool)TerminalInfoInteger(TERMINAL_TRADE_ALLOWED)),
-                Stage132_BoolText((bool)MQLInfoInteger(MQL_TRADE_ALLOWED)),
-                Stage132_BoolText((bool)AccountInfoInteger(ACCOUNT_TRADE_ALLOWED)),
-                "telemetry_only_no_orders_no_signal_change");
-      FileClose(hh);
-   }
-   else
-   {
-      Print("Stage132 telemetry history FileOpen failed. file=", Stage132TelemetryHistoryFile, " err=", GetLastError(), ". No orders are sent.");
-   }
-
-   g_stage132_last_telemetry_write = TimeLocal();
-   Print("Stage132 unified observer EA telemetry written. reason=", reason, " symbol=", _Symbol, " period=", _Period, ". No orders are sent.");
-}
-
-void Stage132_WriteTelemetryIfDue(string reason)
-{
-   datetime now_local = TimeLocal();
-   int interval_sec = MathMax(10, Stage132TelemetryIntervalSec);
-   if(g_stage132_last_telemetry_write == 0 || (now_local - g_stage132_last_telemetry_write) >= interval_sec)
-   {
-      Stage132_WriteTelemetryNow(reason);
-   }
-}
-// STAGE132_TELEMETRY_BLOCK_END

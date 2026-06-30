@@ -1,0 +1,9 @@
+{
+  "stage": "Stage131_MT5_RUNTIME_HEARTBEAT_INDICATOR_AND_COLLECTOR",
+  "order_allowed": false,
+  "ea_change_allowed": false,
+  "indicator_ui_overlay_change_allowed": false,
+  "heartbeat_kv": "xauusd_stage131_runtime_heartbeat_kv.csv",
+  "heartbeat_history": "xauusd_stage131_runtime_heartbeat_history.csv",
+  "default_stale_after_sec": 180
+}

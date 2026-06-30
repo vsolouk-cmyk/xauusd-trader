@@ -1,0 +1,10 @@
+{
+  "stage": "Stage132_UNIFIED_OBSERVER_EA_TELEMETRY_WRITER_PATCH",
+  "order_allowed": false,
+  "trading_logic_change_allowed": false,
+  "signal_rule_change_allowed": false,
+  "indicator_ui_change_allowed": false,
+  "heartbeat_kv": "xauusd_stage132_unified_observer_ea_heartbeat_kv.csv",
+  "heartbeat_history": "xauusd_stage132_unified_observer_ea_heartbeat_history.csv",
+  "default_stale_after_sec": 180
+}

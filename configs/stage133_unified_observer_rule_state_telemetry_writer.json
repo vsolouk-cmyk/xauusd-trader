@@ -1,0 +1,12 @@
+{
+  "stage": "Stage133_UNIFIED_OBSERVER_RULE_STATE_TELEMETRY_WRITER",
+  "order_allowed": false,
+  "trading_logic_change_allowed": false,
+  "signal_rule_change_allowed": false,
+  "selected_rule_change_allowed": false,
+  "indicator_ui_change_allowed": false,
+  "rule_state_kv": "xauusd_stage133_unified_observer_rule_state_kv.csv",
+  "rule_state_latest_csv": "xauusd_stage133_unified_observer_rule_state_latest.csv",
+  "rule_state_history_csv": "xauusd_stage133_unified_observer_rule_state_history.csv",
+  "default_stale_after_sec": 180
+}

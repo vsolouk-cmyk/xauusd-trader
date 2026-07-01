@@ -1,0 +1,12 @@
+{
+  "stage": "Stage140_DEMO_CLOSED_DEAL_OUTCOME_MONITOR",
+  "objective": "Read-only MT5 history/deals monitor to determine the outcome of an accepted Stage134 demo order after no open position is found.",
+  "order_send_in_stage140": false,
+  "trade_modification_in_stage140": false,
+  "indicator": "Stage140_DemoClosedDealOutcomeMonitor.mq5",
+  "mt5_outputs": [
+    "xauusd_stage140_demo_closed_deal_outcome_kv.csv",
+    "xauusd_stage140_demo_deals_history.csv"
+  ],
+  "collector_summary": "reports/stage140_demo_closed_deal_outcome_monitor/stage140_demo_closed_deal_outcome_monitor_summary.json"
+}

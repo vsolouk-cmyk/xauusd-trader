@@ -1,0 +1,15 @@
+{
+  "stage": "Stage142_DEMO_LOOP_SUPERVISOR",
+  "objective": "Orchestrate the demo-live execution loop without sending orders.",
+  "order_send_in_stage142": false,
+  "position_modification_in_stage142": false,
+  "default_sequence": [
+    "Stage138 refresh",
+    "Stage134 collector",
+    "Stage139 position outcome collector",
+    "Stage140 closed deal collector",
+    "Stage141 ledger"
+  ],
+  "default_bars": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_1h.csv",
+  "output": "reports/stage142_demo_loop_supervisor/stage142_demo_loop_supervisor_summary.json"
+}

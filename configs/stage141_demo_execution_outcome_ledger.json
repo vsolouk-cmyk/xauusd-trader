@@ -1,0 +1,12 @@
+{
+  "stage": "Stage141_DEMO_EXECUTION_OUTCOME_LEDGER",
+  "objective": "Archive accepted demo order outcome and classify next loop action.",
+  "order_send_in_stage141": false,
+  "position_modification_in_stage141": false,
+  "ledger": "data/demo_execution/stage141_demo_execution_outcome_ledger.csv",
+  "dedupe_key": [
+    "signal_key",
+    "entry_deal_ticket",
+    "exit_deal_ticket"
+  ]
+}

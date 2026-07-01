@@ -1,0 +1,14 @@
+{
+  "stage": "Stage140B_MQL5_COMPAT_CLOSED_DEAL_MONITOR",
+  "replaces": [
+    "app/stage140_demo_closed_deal_outcome_collector.py",
+    "mql5/Indicators/XAUUSD/Stage140_DemoClosedDealOutcomeMonitor.mq5"
+  ],
+  "objective": "Compile-safe read-only MT5 deal-history monitor using numeric enum codes instead of fragile enum names.",
+  "order_send_in_stage140": false,
+  "trade_modification_in_stage140": false,
+  "indicator_outputs": [
+    "xauusd_stage140_demo_closed_deal_outcome_kv.csv",
+    "xauusd_stage140_demo_deals_history.csv"
+  ]
+}

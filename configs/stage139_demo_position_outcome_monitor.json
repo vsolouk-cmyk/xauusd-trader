@@ -1,0 +1,12 @@
+{
+  "stage": "Stage139_DEMO_POSITION_OUTCOME_MONITOR",
+  "objective": "Read-only monitoring of Stage134 demo position outcome and floating PnL.",
+  "order_send_in_stage139": false,
+  "trade_modification_in_stage139": false,
+  "indicator": "Stage139_DemoPositionOutcomeMonitor.mq5",
+  "mt5_outputs": [
+    "xauusd_stage139_demo_position_monitor_kv.csv",
+    "xauusd_stage139_demo_position_monitor_history.csv"
+  ],
+  "collector_summary": "reports/stage139_demo_position_outcome_monitor/stage139_demo_position_outcome_monitor_summary.json"
+}

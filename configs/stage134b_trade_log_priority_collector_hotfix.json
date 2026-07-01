@@ -1,0 +1,8 @@
+{
+  "stage": "Stage134B_TRADE_LOG_PRIORITY_COLLECTOR_HOTFIX",
+  "replaces": "app/stage134_demo_executor_pilot_collector.py",
+  "problem": "Status KV can be stale while trade_log proves demo order acceptance.",
+  "fix": "Prioritize accepted/rejected trade_log attempts over stale status_kv.",
+  "order_send_in_collector": false,
+  "ea_change": false
+}

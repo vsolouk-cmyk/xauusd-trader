@@ -1,0 +1,14 @@
+{
+  "stage": "Stage134_DEMO_EXECUTOR_PILOT",
+  "objective": "Move from observer-only to demo-live execution assessment loop.",
+  "demo_only": true,
+  "real_account_allowed": false,
+  "default_enable_demo_orders": false,
+  "manual_arm_required": true,
+  "max_lot_default": 0.01,
+  "max_open_positions_default": 1,
+  "direction_v1": "BUY_ONLY",
+  "input_signal": "xauusd_stage133_unified_observer_rule_state_kv.csv",
+  "status_kv": "xauusd_stage134_demo_executor_status_kv.csv",
+  "trade_log": "xauusd_stage134_demo_executor_trade_log.csv"
+}

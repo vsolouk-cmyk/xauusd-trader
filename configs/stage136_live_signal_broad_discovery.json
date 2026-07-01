@@ -1,0 +1,9 @@
+{
+  "stage": "Stage136_LIVE_SIGNAL_BROAD_DISCOVERY",
+  "objective": "Broad schema-adaptive discovery using historical validation plus current live unified_observer_signal.csv evaluation.",
+  "order_send_in_stage136": false,
+  "stage134_manual_input_change_required": true,
+  "stage134_rule_state_file": "xauusd_stage136_broad_discovery_rule_state_kv.csv",
+  "stage134_restore_file": "xauusd_stage133_unified_observer_rule_state_kv.csv",
+  "default_live_signal_file": "unified_observer_signal.csv"
+}

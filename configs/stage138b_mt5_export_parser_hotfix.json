@@ -1,0 +1,8 @@
+{
+  "stage": "Stage138B_MT5_EXPORT_PARSER_HOTFIX",
+  "replaces": "app/stage138_broker_technical_demo_discovery.py",
+  "objective": "Read AMarkets/MT5 tab-separated export with <DATE>, <TIME>, <OPEN>, <HIGH>, <LOW>, <CLOSE> columns.",
+  "strict_explicit_path": true,
+  "order_send_in_stage138": false,
+  "stage134_rule_state_file": "xauusd_stage138_technical_rule_state_kv.csv"
+}

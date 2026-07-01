@@ -1,0 +1,7 @@
+{
+  "stage": "Stage135B_SCHEMA_ADAPTIVE_DEMO_PROBE_DISCOVERY",
+  "replaces": "Stage135 hard-coded alias binding",
+  "order_send_in_stage135b": false,
+  "output_kv_for_stage134": "xauusd_stage135b_demo_probe_rule_state_kv.csv",
+  "real_account_allowed": false
+}

@@ -1,0 +1,10 @@
+{
+  "stage": "Stage135_DEMO_PROBE_RULE_DISCOVERY",
+  "purpose": "When Stage134 is armed but current rules are inactive, quickly produce a validated demo-probe candidate or prove no candidate is active.",
+  "default_dataset": "data/fundamental_event_inbox/features/stage117_joined_macro_cot_dollar_h1_research_dataset.csv",
+  "output_kv_for_stage134": "xauusd_stage135_demo_probe_rule_state_kv.csv",
+  "stage134_manual_input_change_required": true,
+  "stage134_restore_input": "xauusd_stage133_unified_observer_rule_state_kv.csv",
+  "order_send_in_stage135": false,
+  "real_account_allowed": false
+}

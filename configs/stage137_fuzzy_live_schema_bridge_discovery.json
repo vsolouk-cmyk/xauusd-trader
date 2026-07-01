@@ -1,0 +1,10 @@
+{
+  "stage": "Stage137_FUZZY_LIVE_SCHEMA_BRIDGE_DISCOVERY",
+  "objective": "Bridge live unified_observer_signal keys to historical features with fuzzy matching, then run broad demo candidate discovery.",
+  "order_send_in_stage137": false,
+  "stage134_rule_state_file": "xauusd_stage137_fuzzy_bridge_rule_state_kv.csv",
+  "stage134_restore_file": "xauusd_stage133_unified_observer_rule_state_kv.csv",
+  "default_min_similarity": 0.42,
+  "default_min_mean_bps": 3.0,
+  "default_min_hit": 0.5
+}

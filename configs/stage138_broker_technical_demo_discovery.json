@@ -1,0 +1,9 @@
+{
+  "stage": "Stage138_BROKER_TECHNICAL_DEMO_DISCOVERY",
+  "objective": "Bypass unavailable live macro numeric schema and discover demo-ready technical rules from AMarkets broker bars.",
+  "order_send_in_stage138": false,
+  "default_bars": "data/broker_normalized/amarkets/amarkets_xauusd_h1_normalized.csv",
+  "default_horizon_hours": 24,
+  "stage134_rule_state_file": "xauusd_stage138_technical_rule_state_kv.csv",
+  "stage134_restore_file": "xauusd_stage133_unified_observer_rule_state_kv.csv"
+}

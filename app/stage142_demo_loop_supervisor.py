@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 STAGE = "Stage142_DEMO_LOOP_SUPERVISOR"
-STATUS = "STAGE142_COMPLETE_DEMO_LOOP_SUPERVISOR_READY"
+STATUS = "STAGE142B_COMPLETE_FAST_DEMO_LOOP_SUPERVISOR_READY"
 
 DEFAULT_BARS = "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_1h.csv"
 
@@ -30,6 +30,7 @@ RISK_BLOCKS = [
     "STAGE134_EA_IS_ONLY_ORDER_SENDER",
     "DUPLICATE_GUARD_REQUIRED",
     "NEXT_ORDER_ONLY_ON_DISTINCT_SIGNAL_KEY",
+    "FAST_LOOP_EXCLUDES_HEAVY_STAGE138_BY_DEFAULT",
 ]
 
 
@@ -78,11 +79,11 @@ def append_rows(path: Path, rows: List[Dict[str, Any]], fields: List[str]) -> No
             w.writerow({k: r.get(k, "") for k in fields})
 
 
-def build_commands(root: Path, bars: str, run_stage138: bool, run_collectors: bool, run_ledger: bool, write_mt5: bool) -> List[Tuple[str, List[str]]]:
+def build_commands(root: Path, bars: str, with_stage138_refresh: bool, run_collectors: bool, run_ledger: bool, write_mt5: bool) -> List[Tuple[str, List[str]]]:
     py = sys.executable or "python3"
     cmds: List[Tuple[str, List[str]]] = []
 
-    if run_stage138:
+    if with_stage138_refresh:
         cmd = [
             py, "app/stage138_broker_technical_demo_discovery.py",
             "--root", str(root),
@@ -146,7 +147,7 @@ def run_commands(root: Path, cmds: List[Tuple[str, List[str]]], timeout_sec: int
     return results
 
 
-def classify_loop(s134: Dict[str, Any], s138: Dict[str, Any], s139: Dict[str, Any], s140: Dict[str, Any], s141: Dict[str, Any]) -> Dict[str, Any]:
+def classify_loop(s134: Dict[str, Any], s138: Dict[str, Any], s139: Dict[str, Any], s140: Dict[str, Any], s141: Dict[str, Any], command_failures: int) -> Dict[str, Any]:
     stage141_decision = str(s141.get("decision", ""))
     stage141_outcome = str(s141.get("outcome_status", ""))
     stage134_decision = str(s134.get("collector_decision", ""))
@@ -154,9 +155,14 @@ def classify_loop(s134: Dict[str, Any], s138: Dict[str, Any], s139: Dict[str, An
     stage140_decision = str(s140.get("collector_decision", ""))
     stage138_rule = str(s138.get("selected_rule_id", ""))
 
+    if command_failures:
+        loop_health = "WARN_COMMAND_FAILURES_REVIEW_LOG"
+    else:
+        loop_health = "OK"
+
     if "PROFIT_CONFIRMED_CONTINUE_LOOP" in stage141_decision:
         loop_decision = "STAGE142_LOOP_READY_FOR_NEXT_DISTINCT_SIGNAL_AFTER_PROFIT"
-        next_action = "KEEP_STAGE138_STAGE134_RUNNING_WAIT_FOR_NEXT_DISTINCT_SIGNAL"
+        next_action = "KEEP_STAGE134_ARMED_WAIT_FOR_NEXT_DISTINCT_SIGNAL"
     elif "LOSS_CONFIRMED" in stage141_decision:
         loop_decision = "STAGE142_LOOP_CONTINUE_BUT_REVIEW_RULE_AFTER_LOSS"
         next_action = "CONTINUE_DEMO_LOOP_WITH_RULE_REVIEW_IF_LOSS_CLUSTER"
@@ -174,9 +180,10 @@ def classify_loop(s134: Dict[str, Any], s138: Dict[str, Any], s139: Dict[str, An
         next_action = "VERIFY_STAGE134_ARMED_AND_DUPLICATE_GUARD"
     else:
         loop_decision = "STAGE142_NO_ACTIVE_RULE_REFRESH_DISCOVERY"
-        next_action = "RUN_STAGE138_REFRESH_OR_BROADER_DISCOVERY"
+        next_action = "RUN_STAGE138_REFRESH_MANUALLY_OR_WITH_SLOW_CADENCE"
 
     return {
+        "loop_health": loop_health,
         "loop_decision": loop_decision,
         "next_action": next_action,
         "stage138_selected_rule_id": stage138_rule,
@@ -195,6 +202,7 @@ def classify_loop(s134: Dict[str, Any], s138: Dict[str, Any], s139: Dict[str, An
 
 FIELDS = [
     "snapshot_utc",
+    "loop_health",
     "loop_decision",
     "next_action",
     "stage138_selected_rule_id",
@@ -209,26 +217,28 @@ FIELDS = [
     "stage141_bps_move",
     "stage141_ledger_row_count",
     "command_failures",
+    "with_stage138_refresh",
 ]
 
 
-def run(root: Path, bars: str, run_stage138: bool, run_collectors: bool, run_ledger: bool, write_mt5: bool, dry_run: bool, timeout_sec: int) -> Dict[str, Any]:
+def run(root: Path, bars: str, with_stage138_refresh: bool, run_collectors: bool, run_ledger: bool, write_mt5: bool, dry_run: bool, timeout_sec: int) -> Dict[str, Any]:
     root = root.expanduser()
     out = ensure_dir(root / "reports/stage142_demo_loop_supervisor")
     data = ensure_dir(root / "data/demo_execution")
     generated = utc_now()
 
-    cmds = build_commands(root, bars, run_stage138, run_collectors, run_ledger, write_mt5)
+    cmds = build_commands(root, bars, with_stage138_refresh, run_collectors, run_ledger, write_mt5)
     command_results = run_commands(root, cmds, timeout_sec, dry_run)
     command_failures = [r for r in command_results if int(r.get("returncode", 0)) != 0]
 
     s = {k: read_json_safe(root / v) for k, v in SUMMARY_PATHS.items()}
-    cls = classify_loop(s["stage134"], s["stage138"], s["stage139"], s["stage140"], s["stage141"])
+    cls = classify_loop(s["stage134"], s["stage138"], s["stage139"], s["stage140"], s["stage141"], len(command_failures))
 
     row = {
         "snapshot_utc": generated,
         **cls,
         "command_failures": len(command_failures),
+        "with_stage138_refresh": str(with_stage138_refresh).lower(),
     }
     latest_csv = out / "stage142_latest_demo_loop_supervisor_snapshot.csv"
     history_csv = data / "stage142_demo_loop_supervisor_snapshots.csv"
@@ -243,6 +253,7 @@ def run(root: Path, bars: str, run_stage138: bool, run_collectors: bool, run_led
         "status": STATUS,
         "root": str(root),
         "dry_run": dry_run,
+        "with_stage138_refresh": with_stage138_refresh,
         "commands_run": len(command_results),
         "command_failures": len(command_failures),
         "command_results": command_results,
@@ -253,7 +264,7 @@ def run(root: Path, bars: str, run_stage138: bool, run_collectors: bool, run_led
         "summary_json": str(out / "stage142_demo_loop_supervisor_summary.json"),
         "next": [
             "Keep Stage134 EA armed only on demo account.",
-            "Keep Stage138 refresh running so Stage134 sees fresh rule-state.",
+            "Run Stage142B fast loop every 10 minutes; run Stage138 refresh separately/manual or slower.",
             "Allow new orders only for distinct signal keys and ledger every closed outcome.",
         ],
     }
@@ -266,7 +277,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=STAGE)
     ap.add_argument("--root", default="/Users/vahid/Desktop/xauusd-trader")
     ap.add_argument("--bars", default=DEFAULT_BARS)
-    ap.add_argument("--skip-stage138", action="store_true")
+    ap.add_argument("--with-stage138-refresh", action="store_true", help="Opt-in heavy Stage138 refresh; excluded by default for fast 10-minute loop.")
     ap.add_argument("--skip-collectors", action="store_true")
     ap.add_argument("--skip-ledger", action="store_true")
     ap.add_argument("--write-mt5", action="store_true")
@@ -277,7 +288,7 @@ def main() -> int:
     run(
         root=Path(args.root),
         bars=args.bars,
-        run_stage138=not args.skip_stage138,
+        with_stage138_refresh=args.with_stage138_refresh,
         run_collectors=not args.skip_collectors,
         run_ledger=not args.skip_ledger,
         write_mt5=args.write_mt5,

@@ -1,0 +1,16 @@
+{
+  "stage": "Stage142B_FAST_DEMO_LOOP_SUPERVISOR",
+  "replaces": "app/stage142_demo_loop_supervisor.py",
+  "objective": "Keep high-frequency demo execution/outcome loop light; exclude heavy Stage138 refresh by default.",
+  "order_send_in_stage142": false,
+  "position_modification_in_stage142": false,
+  "default_sequence": [
+    "Stage134 collector",
+    "Stage139 position outcome collector",
+    "Stage140 closed deal collector",
+    "Stage141 ledger"
+  ],
+  "stage138_refresh": "opt-in via --with-stage138-refresh",
+  "default_bars": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_1h.csv",
+  "output": "reports/stage142_demo_loop_supervisor/stage142_demo_loop_supervisor_summary.json"
+}

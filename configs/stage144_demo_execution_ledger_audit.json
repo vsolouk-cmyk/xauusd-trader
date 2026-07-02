@@ -1,0 +1,15 @@
+{
+  "stage": "Stage144_DEMO_EXECUTION_LEDGER_AUDIT",
+  "objective": "Reconcile Stage134 trade log with Stage140 deal history and produce clean operational demo execution ledger.",
+  "order_send_in_stage144": false,
+  "position_modification_in_stage144": false,
+  "inputs": [
+    "MQL5/Files/xauusd_stage134_demo_executor_trade_log.csv",
+    "MQL5/Files/xauusd_stage140_demo_deals_history.csv",
+    "data/demo_execution/stage141_demo_execution_outcome_ledger.csv"
+  ],
+  "outputs": [
+    "data/demo_execution/stage144_clean_demo_execution_ledger.csv",
+    "reports/stage144_demo_execution_ledger_audit/stage144_demo_execution_ledger_audit_summary.json"
+  ]
+}

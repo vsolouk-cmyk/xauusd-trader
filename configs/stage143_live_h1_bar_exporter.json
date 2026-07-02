@@ -1,0 +1,10 @@
+{
+  "stage": "Stage143_LIVE_H1_BAR_EXPORTER",
+  "objective": "Automatically export live MT5 H1 XAUUSD bars into MQL5/Files for Stage138 slow refresh.",
+  "order_send_in_stage143": false,
+  "position_modification_in_stage143": false,
+  "indicator": "Stage143_LiveH1BarExporter.mq5",
+  "mt5_bars_file": "xauusd_stage143_live_h1_bars.csv",
+  "mt5_kv_file": "xauusd_stage143_live_h1_bar_exporter_kv.csv",
+  "stage138_recommended_bars": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage143_live_h1_bars.csv"
+}

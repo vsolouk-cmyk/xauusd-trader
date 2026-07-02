@@ -1,0 +1,13 @@
+{
+  "stage": "Stage145_CLEAN_LEDGER_PERFORMANCE_GATE",
+  "objective": "Use Stage144 clean reconciled ledger for demo performance gate and freeze/repair decisions.",
+  "order_send_in_stage145": false,
+  "position_modification_in_stage145": false,
+  "default_clean_ledger": "data/demo_execution/stage144_clean_demo_execution_ledger.csv",
+  "default_gate": {
+    "min_eval_trades": 10,
+    "min_continue_win_rate": 0.55,
+    "min_continue_mean_bps": 2.0,
+    "max_loss_streak": 3
+  }
+}

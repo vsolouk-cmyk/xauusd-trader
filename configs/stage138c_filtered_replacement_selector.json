@@ -1,0 +1,16 @@
+{
+  "stage": "Stage138C_FILTERED_REPLACEMENT_TECHNICAL_DEMO_DISCOVERY",
+  "objective": "Select a replacement technical demo rule while excluding frozen weak families.",
+  "order_send_in_stage138c": false,
+  "default_exclusions": [
+    "D138C_ret_48h_bps_GEQ65"
+  ],
+  "recommended_execution": {
+    "Stage134_InpRuleStateKvFile": "xauusd_stage138_technical_rule_state_kv.csv",
+    "Stage134_InpAllowedRules": "*",
+    "Stage134_InpMaxOpenPositions": 1,
+    "Stage134_InpMaxHoldMinutes": 60,
+    "Stage134_InpEnableDemoOrders": true,
+    "Stage134_InpRequireDemoAccount": true
+  }
+}

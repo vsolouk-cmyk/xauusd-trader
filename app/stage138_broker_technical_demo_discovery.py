@@ -11,8 +11,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
-STAGE = "Stage138_BROKER_TECHNICAL_DEMO_DISCOVERY"
-STATUS = "STAGE138B_COMPLETE_MT5_EXPORT_PARSER_HOTFIX_READY"
+STAGE = "Stage138C_FILTERED_REPLACEMENT_TECHNICAL_DEMO_DISCOVERY"
+STATUS = "STAGE138C_COMPLETE_FILTERED_REPLACEMENT_SELECTOR_READY"
 
 DEFAULT_BARS = "data/broker_normalized/amarkets/amarkets_xauusd_h1_normalized.csv"
 DEFAULT_MT5_FILES = (
@@ -33,6 +33,7 @@ RISK_BLOCKS = [
     "MT5_TAB_EXPORT_SUPPORTED",
     "STAGE134_EXECUTES_ONLY_AFTER_MANUAL_INPUT_SWITCH",
     "RESTORE_STAGE134_TO_STAGE133_AFTER_PROBE",
+    "FROZEN_RULE_FAMILY_EXCLUSION_SUPPORTED",
 ]
 
 
@@ -313,6 +314,18 @@ def gate(m: Dict[str, Any], min_events: int, min_mean: float, min_hit: float) ->
     return int(m["events"]) >= min_events and float(m["mean_bps"]) >= min_mean and float(m["hit_rate"]) >= min_hit
 
 
+def rule_is_excluded(rule_id: str, exclude_rule_ids: List[str], exclude_rule_substrings: List[str]) -> Tuple[bool, str]:
+    rid = str(rule_id or "")
+    exact = {str(x).strip() for x in exclude_rule_ids if str(x).strip()}
+    if rid in exact:
+        return True, f"exact:{rid}"
+    for token in exclude_rule_substrings:
+        t = str(token or "").strip()
+        if t and t in rid:
+            return True, f"substring:{t}"
+    return False, ""
+
+
 def make_rule_id(prefix: str, conds: List[Tuple[str, str, float]], tags: List[str]) -> str:
     parts = []
     for (c, op, _), tag in zip(conds, tags):
@@ -393,10 +406,14 @@ def write_kv(path: Path, kv: Dict[str, Any]) -> None:
     tmp.replace(path)
 
 
-def run(root: Path, bars_path: Path, mt5_files: Path, horizon: int, min_events: int, min_mean_bps: float, min_hit: float, max_pair_features: int, write_mt5: bool) -> Dict[str, Any]:
+def run(root: Path, bars_path: Path, mt5_files: Path, horizon: int, min_events: int, min_mean_bps: float, min_hit: float, max_pair_features: int, write_mt5: bool, exclude_rule_ids: Optional[List[str]] = None, exclude_rule_substrings: Optional[List[str]] = None, min_tail_mean_bps: Optional[float] = None, min_tail_hit: Optional[float] = None) -> Dict[str, Any]:
     root = root.expanduser()
     mt5_files = mt5_files.expanduser()
     bars_path = locate_bars(root, str(bars_path))
+    exclude_rule_ids = exclude_rule_ids or []
+    exclude_rule_substrings = exclude_rule_substrings or []
+    tail_mean_gate = min_mean_bps * 0.25 if min_tail_mean_bps is None else float(min_tail_mean_bps)
+    tail_hit_gate = min_hit * 0.90 if min_tail_hit is None else float(min_tail_hit)
 
     out = ensure_dir(root / "reports/stage138_broker_technical_demo_discovery")
     data = ensure_dir(root / "data/demo_execution")
@@ -423,14 +440,19 @@ def run(root: Path, bars_path: Path, mt5_files: Path, horizon: int, min_events: 
         tm = metric(tail, conds)
         g = "PASS" if (
             gate(vm, min_events, min_mean_bps, min_hit)
-            and gate(tm, max(5, min_events // 3), min_mean_bps * 0.25, min_hit * 0.90)
+            and gate(tm, max(5, min_events // 3), tail_mean_gate, tail_hit_gate)
         ) else "WATCH_OR_REJECT"
         active = condition_active(latest, conds)
+        excluded, exclude_reason = rule_is_excluded(rid, exclude_rule_ids, exclude_rule_substrings)
+        if excluded and g == "PASS":
+            g = "EXCLUDED_FROZEN_FAMILY"
         score_rows.append({
             "rule_id": rid,
             "label": label,
             "gate": g,
             "current_active": active,
+            "excluded": excluded,
+            "exclude_reason": exclude_reason,
             "conditions_json": json.dumps([{"feature": c, "op": op, "threshold": th, "current": latest.get(c)} for c, op, th in conds], sort_keys=True),
             "selection_events": sm["events"],
             "selection_mean_bps": sm["mean_bps"],
@@ -443,30 +465,30 @@ def run(root: Path, bars_path: Path, mt5_files: Path, horizon: int, min_events: 
             "tail_hit_rate": tm["hit_rate"],
         })
 
-    active_pass = [r for r in score_rows if r["gate"] == "PASS" and r["current_active"] is True]
+    active_pass = [r for r in score_rows if r["gate"] == "PASS" and r["current_active"] is True and not r.get("excluded")]
     active_pass.sort(key=lambda r: (float(r["validation_mean_bps"]), float(r["tail_mean_bps"]), float(r["validation_hit_rate"]), int(r["validation_events"])), reverse=True)
     selected = active_pass[0] if active_pass else None
 
     if selected:
-        decision = "STAGE138_DEMO_TECHNICAL_RULE_READY_POINT_STAGE134_TO_STAGE138_FILE"
+        decision = "STAGE138C_REPLACEMENT_TECHNICAL_RULE_READY_POINT_STAGE134_TO_STAGE138_FILE"
         selected_rule_id = selected["rule_id"]
         selected_label = selected["label"]
         any_signal_active = "true"
         active_count = "1"
-        reason = "selected current-active technical candidate passing validation/tail gates"
+        reason = "selected current-active non-excluded replacement candidate passing validation/tail gates"
     else:
-        decision = "STAGE138_NO_CURRENT_ACTIVE_TECHNICAL_PASS_CANDIDATE"
+        decision = "STAGE138C_NO_CURRENT_ACTIVE_NON_EXCLUDED_TECHNICAL_PASS_CANDIDATE"
         selected_rule_id = ""
         selected_label = ""
         any_signal_active = "false"
         active_count = "0"
-        reason = "no current-active technical candidate passed validation/tail gates"
+        reason = "no current-active non-excluded technical candidate passed validation/tail gates"
 
     feature_date = latest["utc_time"].isoformat().replace("+00:00", "Z")
 
     kv = {
-        "stage": "Stage138_BROKER_TECHNICAL_DEMO_DISCOVERY",
-        "status": "TECHNICAL_RULE_STATE_ALIVE_NO_ORDER_SEND_IN_STAGE138B",
+        "stage": "Stage138C_FILTERED_REPLACEMENT_TECHNICAL_DEMO_DISCOVERY",
+        "status": "TECHNICAL_RULE_STATE_ALIVE_NO_ORDER_SEND_IN_STAGE138C",
         "decision": decision,
         "reason": reason,
         "mode": "BROKER_TECHNICAL_DISCOVERY_TO_STAGE134",
@@ -497,7 +519,7 @@ def run(root: Path, bars_path: Path, mt5_files: Path, horizon: int, min_events: 
         "order_send": "false",
     }
 
-    score_fields = ["rule_id","label","gate","current_active","conditions_json","selection_events","selection_mean_bps","selection_hit_rate","validation_events","validation_mean_bps","validation_hit_rate","tail_events","tail_mean_bps","tail_hit_rate"]
+    score_fields = ["rule_id","label","gate","current_active","excluded","exclude_reason","conditions_json","selection_events","selection_mean_bps","selection_hit_rate","validation_events","validation_mean_bps","validation_hit_rate","tail_events","tail_mean_bps","tail_hit_rate"]
     score_path = out / "stage138_candidate_scores.csv"
     write_csv(score_path, score_rows, score_fields)
     write_csv(out / "stage138_risk_manifest.csv", [{"risk_block": b, "status": "ACTIVE"} for b in RISK_BLOCKS], ["risk_block", "status"])
@@ -523,6 +545,11 @@ def run(root: Path, bars_path: Path, mt5_files: Path, horizon: int, min_events: 
         "generated_utc": generated,
         "status": STATUS,
         "decision": decision,
+        "excluded_rule_ids": exclude_rule_ids,
+        "excluded_rule_substrings": exclude_rule_substrings,
+        "min_tail_mean_bps": tail_mean_gate,
+        "min_tail_hit": tail_hit_gate,
+        "excluded_pass_count": len([r for r in score_rows if r.get("excluded") and str(r.get("gate")).startswith("EXCLUDED")]),
         "root": str(root),
         "bars_path": str(bars_path),
         "raw_row_count": len(raw_rows),
@@ -550,8 +577,8 @@ def run(root: Path, bars_path: Path, mt5_files: Path, horizon: int, min_events: 
         },
         "summary_json": str(out / "stage138_broker_technical_demo_discovery_summary.json"),
         "next": [
-            "If selected_rule_id is non-empty, point Stage134 InpRuleStateKvFile to xauusd_stage138_technical_rule_state_kv.csv and InpAllowedRules to selected_rule_id.",
-            "If selected_rule_id is empty, move to thesis-family generator or rerun with M15/M5 bars; do not build more telemetry.",
+            "If selected_rule_id is non-empty, point Stage134 InpRuleStateKvFile to xauusd_stage138_technical_rule_state_kv.csv and use InpAllowedRules=* only while Stage138C exclusions are active.",
+            "If selected_rule_id is empty, rerun with M15/M5 bars or move to a new replacement family; do not unfreeze the excluded weak family.",
         ],
     }
     write_json(out / "stage138_broker_technical_demo_discovery_summary.json", summary)
@@ -570,6 +597,10 @@ def main() -> int:
     ap.add_argument("--min-hit", type=float, default=0.51)
     ap.add_argument("--max-pair-features", type=int, default=10)
     ap.add_argument("--write-mt5", action="store_true")
+    ap.add_argument("--exclude-rule-id", action="append", default=[], help="Exact rule_id to exclude from replacement selection. Repeatable.")
+    ap.add_argument("--exclude-rule-substring", action="append", default=[], help="Substring filter for frozen rule families. Repeatable.")
+    ap.add_argument("--min-tail-mean-bps", type=float, default=None, help="Explicit tail mean bps gate. Defaults to Stage138B relaxed tail gate.")
+    ap.add_argument("--min-tail-hit", type=float, default=None, help="Explicit tail hit-rate gate. Defaults to Stage138B relaxed tail gate.")
     args = ap.parse_args()
     run(
         root=Path(args.root),
@@ -581,6 +612,10 @@ def main() -> int:
         min_hit=args.min_hit,
         max_pair_features=args.max_pair_features,
         write_mt5=args.write_mt5,
+        exclude_rule_ids=args.exclude_rule_id,
+        exclude_rule_substrings=args.exclude_rule_substring,
+        min_tail_mean_bps=args.min_tail_mean_bps,
+        min_tail_hit=args.min_tail_hit,
     )
     return 0
 

@@ -1,0 +1,23 @@
+{
+  "stage": "Stage147_P0_EXECUTION_HARDENING_AND_STAGE145B_FAMILY_GATE",
+  "objective": "Apply external review P0/P1 fixes without changing strategy direction: retry-safe market-closed handling, H1-compatible max hold default, and per-family performance gate.",
+  "included_changes": [
+    "Stage134D: retcode=10018 market-closed rejection is retryable and not treated as successful execution.",
+    "Stage134D: default InpMaxHoldMinutes changed from 720 to 240 for H1 signal consistency.",
+    "Stage145B: add per-family metrics and 4-hour clustering alert from Stage144C clean ledger."
+  ],
+  "order_send_in_patch": false,
+  "real_live_authorized": false,
+  "recommended_stage134_inputs_after_install": {
+    "InpRuleStateKvFile": "xauusd_stage138_technical_rule_state_kv.csv",
+    "InpAllowedRules": "*",
+    "InpEnableDemoOrders": true,
+    "InpRequireDemoAccount": true,
+    "InpMaxOpenPositions": 1,
+    "InpMaxHoldMinutes": 240,
+    "InpMaxSignalAgeSec": 7200,
+    "InpMinSecondsBetweenOrderAttempts": 60,
+    "InpLots": 0.01,
+    "InpMaxLots": 0.01
+  }
+}

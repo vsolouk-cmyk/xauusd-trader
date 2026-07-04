@@ -1,0 +1,14 @@
+{
+  "stage": "Stage149_ATR_STOPS_AND_TIMEZONE_AUDIT",
+  "objective": "Apply external-review P1 hardening: ATR-based SL/TP in Stage134 and an explicit Stage143 timestamp/bar audit.",
+  "order_send_in_stage149": false,
+  "ea_order_send_unchanged": true,
+  "stage134_new_inputs": {
+    "InpUseAtrStops": true,
+    "InpAtrTimeframe": "PERIOD_H1",
+    "InpAtrPeriod": 14,
+    "InpAtrStopLossMult": 1.5,
+    "InpAtrTakeProfitMult": 2.0,
+    "InpMaxHoldMinutes": 240
+  }
+}

@@ -15,6 +15,15 @@ input int InpMaxSpreadPoints = 120;
 input int InpDeviationPoints = 30;
 input int InpStopLossPoints = 1200;
 input int InpTakeProfitPoints = 1800;
+input bool InpUseAtrStops = true;
+input ENUM_TIMEFRAMES InpAtrTimeframe = PERIOD_H1;
+input int InpAtrPeriod = 14;
+input double InpAtrStopLossMult = 1.5;
+input double InpAtrTakeProfitMult = 2.0;
+input int InpMinAtrStopLossPoints = 600;
+input int InpMaxAtrStopLossPoints = 3500;
+input int InpMinAtrTakeProfitPoints = 900;
+input int InpMaxAtrTakeProfitPoints = 5000;
 input int InpMaxHoldMinutes = 240;
 input string InpAllowedRules = "*";
 input string InpRuleStateKvFile = "xauusd_stage133_unified_observer_rule_state_kv.csv";
@@ -112,6 +121,65 @@ int CountOpenPositions()
    return(count);
 }
 
+
+double ClampDouble(double v, double lo, double hi)
+{
+   if(v < lo) return(lo);
+   if(v > hi) return(hi);
+   return(v);
+}
+
+double Max3(double a, double b, double c)
+{
+   return(MathMax(a, MathMax(b, c)));
+}
+
+bool CalculateAtrStopTakePoints(int &sl_points, int &tp_points, string &atr_note)
+{
+   sl_points = InpStopLossPoints;
+   tp_points = InpTakeProfitPoints;
+   atr_note = "fixed_points";
+
+   if(!InpUseAtrStops)
+      return(false);
+
+   int period = MathMax(2, InpAtrPeriod);
+   MqlRates rates[];
+   ArraySetAsSeries(rates, true);
+   int copied = CopyRates(_Symbol, InpAtrTimeframe, 1, period + 1, rates);
+   if(copied < period + 1)
+   {
+      atr_note = "atr_unavailable_fallback_fixed";
+      return(false);
+   }
+
+   double tr_sum = 0.0;
+   for(int i=0; i<period; i++)
+   {
+      double high_low = rates[i].high - rates[i].low;
+      double high_prev = MathAbs(rates[i].high - rates[i+1].close);
+      double low_prev = MathAbs(rates[i].low - rates[i+1].close);
+      tr_sum += Max3(high_low, high_prev, low_prev);
+   }
+
+   double atr_price = tr_sum / period;
+   double atr_points = atr_price / _Point;
+   if(atr_points <= 0.0)
+   {
+      atr_note = "atr_nonpositive_fallback_fixed";
+      return(false);
+   }
+
+   double raw_sl = atr_points * InpAtrStopLossMult;
+   double raw_tp = atr_points * InpAtrTakeProfitMult;
+   sl_points = (int)MathRound(ClampDouble(raw_sl, InpMinAtrStopLossPoints, InpMaxAtrStopLossPoints));
+   tp_points = (int)MathRound(ClampDouble(raw_tp, InpMinAtrTakeProfitPoints, InpMaxAtrTakeProfitPoints));
+   atr_note = "atr_points=" + DoubleToString(atr_points, 1)
+      + ";sl_points=" + IntegerToString(sl_points)
+      + ";tp_points=" + IntegerToString(tp_points);
+   return(true);
+}
+
 void AppendTradeLog(string event_type, string signal_key, string rule_id, string feature_date, double lot, double price, double sl, double tp, bool ok, string retcode, string retcode_desc)
 {
    bool exists = FileIsExist(InpTradeLogFile);
@@ -184,6 +252,12 @@ void WriteStatusKv(string decision, string reason, string selected_rule_id, stri
    FileWriteString(h,"spread_points|"+IntegerToString(spread_points)+"\n");
    FileWriteString(h,"open_positions|"+IntegerToString(open_positions)+"\n");
    FileWriteString(h,"max_open_positions|"+IntegerToString(InpMaxOpenPositions)+"\n");
+   FileWriteString(h,"max_hold_minutes|"+IntegerToString(InpMaxHoldMinutes)+"\n");
+   FileWriteString(h,"use_atr_stops|"+BoolText(InpUseAtrStops)+"\n");
+   FileWriteString(h,"atr_timeframe|"+IntegerToString(InpAtrTimeframe)+"\n");
+   FileWriteString(h,"atr_period|"+IntegerToString(InpAtrPeriod)+"\n");
+   FileWriteString(h,"atr_sl_mult|"+DoubleToString(InpAtrStopLossMult,2)+"\n");
+   FileWriteString(h,"atr_tp_mult|"+DoubleToString(InpAtrTakeProfitMult,2)+"\n");
    FileWriteString(h,"lot|"+DoubleToString(MathMin(InpLots,InpMaxLots),2)+"\n");
    FileWriteString(h,"order_attempted|"+BoolText(order_attempted)+"\n");
    FileWriteString(h,"last_retcode|"+g_last_retcode+"\n");
@@ -247,8 +321,12 @@ void EvaluateSignal()
    lot = NormalizeDouble(lot, 2);
    double ask = SymbolInfoDouble(_Symbol, SYMBOL_ASK);
    if(ask <= 0.0){ decision="BLOCKED_NO_ASK_PRICE"; reason="ask price unavailable"; WriteStatusKv(decision,reason,selected_rule_id,feature_date,any_signal_active,active_rule_count,signal_fresh,signal_age_sec,spread_ok,spread_points,open_positions,order_attempted); return; }
-   double sl = NormalizeDouble(ask - InpStopLossPoints*_Point, _Digits);
-   double tp = NormalizeDouble(ask + InpTakeProfitPoints*_Point, _Digits);
+   int sl_points = InpStopLossPoints;
+   int tp_points = InpTakeProfitPoints;
+   string atr_note = "";
+   CalculateAtrStopTakePoints(sl_points, tp_points, atr_note);
+   double sl = NormalizeDouble(ask - sl_points*_Point, _Digits);
+   double tp = NormalizeDouble(ask + tp_points*_Point, _Digits);
    string comment = "Stage134Demo|" + selected_rule_id;
    g_trade.SetExpertMagicNumber(InpMagic);
    g_trade.SetDeviationInPoints(InpDeviationPoints);

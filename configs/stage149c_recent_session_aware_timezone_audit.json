@@ -1,0 +1,8 @@
+{
+  "stage": "Stage149C_RECENT_SESSION_AWARE_TIMEZONE_AND_BAR_AUDIT",
+  "objective": "Classify expected exchange holiday/session gaps and block only recent suspicious intraweek gaps for current demo readiness.",
+  "recent_audit_days": 90,
+  "routine_session_gap_minutes": 360,
+  "decision_rule": "Block on future timestamps, non-monotonic timestamps, or suspicious intraweek gaps within the recent audit window.",
+  "historical_suspicious_gaps": "Logged for data-quality review but not a current demo execution blocker."
+}

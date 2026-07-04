@@ -1,0 +1,7 @@
+{
+  "stage": "Stage149B_MARKET_HOURS_AWARE_TIMEZONE_AND_BAR_AUDIT",
+  "objective": "Fix false REVIEW_REQUIRED caused by expected weekend/holiday gaps in XAUUSD H1 data.",
+  "decision_rule": "Only suspicious intraweek gaps, non-monotonic timestamps, or future timestamp offsets should block promotion/evaluation.",
+  "expected_market_closure_gaps": "Classified separately and not treated as a blocker.",
+  "order_send": false
+}

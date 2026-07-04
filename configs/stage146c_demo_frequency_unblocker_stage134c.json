@@ -1,0 +1,23 @@
+{
+  "stage": "Stage146C_DEMO_FREQUENCY_UNBLOCKER_STAGE134C",
+  "objective": "Remove static allowed-rule bottleneck in Stage134 by allowing wildcard Stage138-selected demo rules while preserving demo-only, max-open-position, spread, SL/TP and duplicate guards.",
+  "order_send_in_stage146c": "same Stage134 demo-only order path; no real account permission",
+  "changes": {
+    "InpAllowedRules_default": "*",
+    "wildcard_allowed_rules": [
+      "*",
+      "",
+      "ANY",
+      "ALL"
+    ],
+    "InpMaxSignalAgeSec_default": 7200,
+    "InpMinSecondsBetweenOrderAttempts_default": 60,
+    "unchanged_guards": [
+      "InpRequireDemoAccount",
+      "InpMaxOpenPositions",
+      "InpMaxSpreadPoints",
+      "SL/TP",
+      "duplicate signal_key guard"
+    ]
+  }
+}

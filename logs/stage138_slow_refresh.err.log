@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage138_broker_technical_demo_discovery.py", line 589, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage138_broker_technical_demo_discovery.py", line 574, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage138_broker_technical_demo_discovery.py", line 408, in run
+    raise ValueError(f"not enough bars for Stage138 discovery after parser normalization: {len(bars)} from {bars_path}; raw_rows={len(raw_rows)}")
+ValueError: not enough bars for Stage138 discovery after parser normalization: 0 from /Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage143_live_h1_bars.csv; raw_rows=0

@@ -1,0 +1,11 @@
+{
+  "stage": "Stage144C_DEMO_EXECUTION_LEDGER_AUDIT",
+  "objective": "Robustly reconcile Stage134 successful DEMO_BUY_ATTEMPT rows with Stage140 deal history using entry deal time/price and position_id pairing.",
+  "order_send": false,
+  "position_modification": false,
+  "important": [
+    "TIME_EXIT rows in Stage134 trade_log are not treated as new entry attempts.",
+    "Exit deals are paired by position_id even if magic/comment is blank.",
+    "Headerless Stage140 deal history is supported."
+  ]
+}

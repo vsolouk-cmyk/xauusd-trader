@@ -1,0 +1,12 @@
+{
+  "stage": "Stage144B_DEMO_EXECUTION_LEDGER_AUDIT",
+  "objective": "Patch Stage144 reconciliation so TIME_EXIT rows are not counted as new trade attempts and closed exits are paired by position_id even when the exit deal has blank magic/comment.",
+  "order_send": false,
+  "position_modification": false,
+  "input_trade_log": "MQL5/Files/xauusd_stage134_demo_executor_trade_log.csv",
+  "input_deals_history": "MQL5/Files/xauusd_stage140_demo_deals_history.csv",
+  "outputs": [
+    "data/demo_execution/stage144_clean_demo_execution_ledger.csv",
+    "reports/stage144_demo_execution_ledger_audit/stage144_demo_execution_ledger_audit_summary.json"
+  ]
+}

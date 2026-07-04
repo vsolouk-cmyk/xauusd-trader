@@ -1,0 +1,14 @@
+{
+  "stage": "Stage148_PRE_MARKET_SEPARATED_VALIDATION_DISCOVERY",
+  "objective": "Use the two-day market-closed window to validate replacement discovery with a recent execution embargo and separated validation/tail windows before allowing new demo execution.",
+  "order_send_in_stage148": false,
+  "default_recent_embargo_bars": 500,
+  "default_min_selection_mean_bps": 0.0,
+  "default_min_selection_hit": 0.5,
+  "default_min_validation_mean_bps": 4.0,
+  "default_min_validation_hit": 0.53,
+  "default_min_tail_mean_bps": 2.0,
+  "default_min_tail_hit": 0.5,
+  "default_exclusion": "D138C_ret_48h_bps_GEQ65",
+  "if_no_candidate": "Keep Stage134 frozen or allow no new entries; do not fall back to contaminated Stage138C selection."
+}

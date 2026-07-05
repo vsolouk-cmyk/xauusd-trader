@@ -1,0 +1,8 @@
+{
+  "stage": "Stage150B_FAST_CURRENT_ACTIVE_MTF_DISCOVERY",
+  "objective": "Accelerate M5/M15 MTF discovery by scoring only current-active executable candidates by default.",
+  "selection_equivalence": "Selected rule remains equivalent to Stage150 full scan because only current-active candidates can be selected.",
+  "full_diagnostic_mode": "--score-inactive",
+  "order_send": false,
+  "recommended_m5_refresh": "Use default fast mode for operational refresh; use --score-inactive only offline."
+}

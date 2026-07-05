@@ -1,0 +1,22 @@
+{
+  "stage": "Stage150_MTF_SEPARATED_VALIDATION_DISCOVERY",
+  "objective": "Prepare M15/M5 fallback discovery during the market-closed window without overwriting H1 Stage148 unless explicitly selected.",
+  "order_send": false,
+  "default_horizon_hours": 4,
+  "default_recent_embargo_hours": 720,
+  "recommended_runs": [
+    {
+      "tf": "m15",
+      "timeframe_minutes": 15,
+      "bars": "~/Downloads/amarkets_xauusd_15m.csv",
+      "min_events": 80
+    },
+    {
+      "tf": "m5",
+      "timeframe_minutes": 5,
+      "bars": "~/Downloads/amarkets_xauusd_5m.csv",
+      "min_events": 150
+    }
+  ],
+  "promotion_rule": "Only point Stage134 to a Stage150 KV if selected_rule_id is non-empty and separated validation/tail beat or complement Stage148 H1."
+}

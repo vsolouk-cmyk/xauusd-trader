@@ -1,0 +1,6 @@
+{
+  "stage": "Stage151_LOCKED_MTF_RULE_STATE_WRITER",
+  "objective": "Replace expensive M5 rescans with fast locked-rule refresh after a Stage150/150B rule has already been selected.",
+  "order_send": false,
+  "stage134_file_pattern": "xauusd_stage151_<tf>_locked_rule_state_kv.csv"
+}

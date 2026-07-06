@@ -1,0 +1,7 @@
+{
+  "stage": "Stage153_LOCKED_MTF_RULE_STATE_WRITER_TIMESTAMP_NORMALIZED",
+  "objective": "Normalize broker-server timestamps before writing Stage134 feature_date so stale/future signal gates use real UTC.",
+  "recommended_m5_timestamp_shift_hours": -3,
+  "reason": "Status showed broker/server M5 timestamps being written as UTC; Stage134/Stage151 correctly blocked them as future. Apply -3h normalization for current AMarkets server time.",
+  "order_send": false
+}

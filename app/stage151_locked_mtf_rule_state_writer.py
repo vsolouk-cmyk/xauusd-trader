@@ -5,8 +5,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
-STAGE='Stage151_LOCKED_MTF_RULE_STATE_WRITER'
-STATUS='STAGE151_COMPLETE_LOCKED_MTF_RULE_STATE_READY'
+STAGE='Stage151B_LOCKED_MTF_RULE_STATE_WRITER_STALE_GUARD'
+STATUS='STAGE151B_COMPLETE_LOCKED_MTF_RULE_STATE_STALE_GUARD_READY'
 DEFAULT_MT5_FILES='/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files'
 BASE_FEATURE_HOURS=[1,3,6,12,24,48]
 SMA_HOURS=[8,20,50,100]
@@ -134,7 +134,7 @@ def append_csv(path, rows, fields):
         [w.writerow({k:r.get(k,'') for k in fields}) for r in rows]
 def write_json(path,obj): ensure_dir(path.parent); path.write_text(json.dumps(obj,indent=2,ensure_ascii=False),encoding='utf-8')
 
-def run(root, bars_path, source_summary_path, tf, timeframe_minutes, mt5_files, write_mt5):
+def run(root, bars_path, source_summary_path, tf, timeframe_minutes, mt5_files, write_mt5, max_feature_age_sec=7200):
     root=Path(root).expanduser(); bars_path=Path(bars_path).expanduser(); source_summary_path=Path(source_summary_path).expanduser(); mt5_files=Path(mt5_files).expanduser(); generated=utc_now()
     source=json.loads(source_summary_path.read_text(encoding='utf-8'))
     rid=str(source.get('selected_rule_id') or ''); label=str(source.get('selected_label') or '')
@@ -143,12 +143,18 @@ def run(root, bars_path, source_summary_path, tf, timeframe_minutes, mt5_files, 
     if not conds: raise ValueError('source summary has no parseable selected_score.conditions_json')
     raw=read_table(bars_path); bars=normalize_bars(raw); min_required=max(hours_to_bars(110,timeframe_minutes)+5,200)
     if len(bars)<min_required: raise ValueError(f'not enough bars: {len(bars)} < {min_required}')
-    latest=compute_latest_features(bars,timeframe_minutes); active=condition_active(latest,conds); feature_date=latest['utc_time'].isoformat().replace('+00:00','Z')
+    latest=compute_latest_features(bars,timeframe_minutes); raw_rule_active=condition_active(latest,conds); now_utc=datetime.now(timezone.utc); feature_age_sec=int((now_utc-latest['utc_time']).total_seconds()); feature_fresh=(feature_age_sec>=0 and feature_age_sec<=max_feature_age_sec); active=(raw_rule_active and feature_fresh); feature_date=latest['utc_time'].isoformat().replace('+00:00','Z')
     tf_safe=''.join(ch.lower() if ch.isalnum() else '_' for ch in tf).strip('_') or f'm{timeframe_minutes}'
     kv_file=f'xauusd_stage151_{tf_safe}_locked_rule_state_kv.csv'; latest_file=f'xauusd_stage151_{tf_safe}_locked_rule_state_latest.csv'; hist_file=f'xauusd_stage151_{tf_safe}_locked_rule_state_history.csv'
-    decision='STAGE151_LOCKED_RULE_ACTIVE_POINT_STAGE134_TO_STAGE151_FILE' if active else 'STAGE151_LOCKED_RULE_INACTIVE_NO_ORDER'; reason='locked rule conditions are active on latest bar' if active else 'locked rule conditions are not active on latest bar'
-    kv={'stage':STAGE,'status':'LOCKED_MTF_RULE_STATE_ALIVE_NO_ORDER_SEND_IN_STAGE151','decision':decision,'reason':reason,'mode':'LOCKED_MTF_RULE_TO_STAGE134_FAST_REFRESH','tf':tf_safe,'timeframe_minutes':timeframe_minutes,'feature_date':feature_date,'any_signal_active':'true' if active else 'false','selected_rule_id':rid,'selected_label':label,'execution_allowed':'false','order_authorized':'false','rule_count':1,'active_rule_count':1 if active else 0,'allow_trading':'false','order_send':'false','source_summary':str(source_summary_path),'conditions_json':json.dumps(conds,sort_keys=True),'note':'Stage151 fast-refreshes a locked Stage150 rule only; it does not rescan candidates and does not send orders.','stage134_required_InpRuleStateKvFile':kv_file,'stage134_required_InpAllowedRules':rid}
-    latest_row={'time_utc':generated,'tf':tf_safe,'rule_id':rid,'rule_active':'true' if active else 'false','feature_date':feature_date,'selected_label':label,'decision':decision,'reason':reason,'allow_trading':'false','order_send':'false'}
+    
+    if active:
+        decision='STAGE151B_LOCKED_RULE_ACTIVE_POINT_STAGE134_TO_STAGE151_FILE'; reason='locked rule conditions are active on latest fresh bar'
+    elif raw_rule_active and not feature_fresh:
+        decision='STAGE151B_LOCKED_RULE_STALE_NO_ORDER'; reason='locked rule conditions are active but latest bar feature_date is stale'
+    else:
+        decision='STAGE151B_LOCKED_RULE_INACTIVE_NO_ORDER'; reason='locked rule conditions are not active on latest fresh bar'
+    kv={'stage':STAGE,'status':'LOCKED_MTF_RULE_STATE_ALIVE_NO_ORDER_SEND_IN_STAGE151B','decision':decision,'reason':reason,'mode':'LOCKED_MTF_RULE_TO_STAGE134_FAST_REFRESH','tf':tf_safe,'timeframe_minutes':timeframe_minutes,'feature_date':feature_date,'any_signal_active':'true' if active else 'false','raw_rule_active_before_stale_guard':'true' if raw_rule_active else 'false','feature_fresh':'true' if feature_fresh else 'false','feature_age_sec':feature_age_sec,'max_feature_age_sec':max_feature_age_sec,'selected_rule_id':rid,'selected_label':label,'execution_allowed':'false','order_authorized':'false','rule_count':1,'active_rule_count':1 if active else 0,'allow_trading':'false','order_send':'false','source_summary':str(source_summary_path),'conditions_json':json.dumps(conds,sort_keys=True),'note':'Stage151 fast-refreshes a locked Stage150 rule only; it does not rescan candidates and does not send orders.','stage134_required_InpRuleStateKvFile':kv_file,'stage134_required_InpAllowedRules':rid}
+    latest_row={'time_utc':generated,'tf':tf_safe,'rule_id':rid,'rule_active':'true' if active else 'false','raw_rule_active_before_stale_guard':'true' if raw_rule_active else 'false','feature_fresh':'true' if feature_fresh else 'false','feature_age_sec':feature_age_sec,'feature_date':feature_date,'selected_label':label,'decision':decision,'reason':reason,'allow_trading':'false','order_send':'false'}
     data=ensure_dir(root/'data/demo_execution'); repo_kv=data/kv_file; repo_latest=data/latest_file; repo_hist=data/hist_file
     write_kv(repo_kv,kv); write_csv(repo_latest,[latest_row],list(latest_row.keys())); append_csv(repo_hist,[latest_row],list(latest_row.keys()))
     mt5_kv=mt5_latest=''
@@ -157,10 +163,10 @@ def run(root, bars_path, source_summary_path, tf, timeframe_minutes, mt5_files, 
     out=ensure_dir(root/'reports/stage151_locked_mtf_rule_state_writer'/tf_safe)
     cond_rows=[{'feature':c['feature'],'op':c['op'],'threshold':c['threshold'],'current':latest.get(c['feature'])} for c in conds]
     write_csv(out/'stage151_locked_rule_conditions.csv', cond_rows, ['feature','op','threshold','current'])
-    summary={'stage':STAGE,'generated_utc':generated,'status':STATUS,'decision':decision,'root':str(root),'bars_path':str(bars_path),'source_summary':str(source_summary_path),'tf':tf_safe,'timeframe_minutes':timeframe_minutes,'raw_row_count':len(raw),'bar_count':len(bars),'bar_min_utc':bars[0]['utc_time'].isoformat(),'bar_max_utc':bars[-1]['utc_time'].isoformat(),'feature_date':feature_date,'selected_rule_id':rid,'selected_label':label,'conditions':cond_rows,'any_signal_active':active,'repo_kv':str(repo_kv),'repo_latest':str(repo_latest),'mt5_kv_written':bool(write_mt5),'mt5_kv':mt5_kv,'mt5_latest':mt5_latest,'stage134_instruction':{'InpRuleStateKvFile':kv_file,'InpAllowedRules':rid,'keep_InpEnableDemoOrders':'true only on demo account'},'summary_json':str(out/'stage151_locked_mtf_rule_state_writer_summary.json'),'next':['Use Stage151 for fast post-market-open refresh of a locked Stage150 MTF rule.','Run full Stage150B scans offline only when changing or replacing the locked rule.']}
+    summary={'stage':STAGE,'generated_utc':generated,'status':STATUS,'decision':decision,'root':str(root),'bars_path':str(bars_path),'source_summary':str(source_summary_path),'tf':tf_safe,'timeframe_minutes':timeframe_minutes,'raw_row_count':len(raw),'bar_count':len(bars),'bar_min_utc':bars[0]['utc_time'].isoformat(),'bar_max_utc':bars[-1]['utc_time'].isoformat(),'feature_date':feature_date,'selected_rule_id':rid,'selected_label':label,'conditions':cond_rows,'any_signal_active':active,'raw_rule_active_before_stale_guard':raw_rule_active,'feature_fresh':feature_fresh,'feature_age_sec':feature_age_sec,'max_feature_age_sec':max_feature_age_sec,'repo_kv':str(repo_kv),'repo_latest':str(repo_latest),'mt5_kv_written':bool(write_mt5),'mt5_kv':mt5_kv,'mt5_latest':mt5_latest,'stage134_instruction':{'InpRuleStateKvFile':kv_file,'InpAllowedRules':rid,'keep_InpEnableDemoOrders':'true only on demo account'},'summary_json':str(out/'stage151_locked_mtf_rule_state_writer_summary.json'),'next':['Use Stage151 for fast post-market-open refresh of a locked Stage150 MTF rule.','Run full Stage150B scans offline only when changing or replacing the locked rule.']}
     write_json(out/'stage151_locked_mtf_rule_state_writer_summary.json', summary); print(json.dumps(summary,indent=2,ensure_ascii=False)); return summary
 
 def main():
-    ap=argparse.ArgumentParser(description=STAGE); ap.add_argument('--root',default='/Users/vahid/Desktop/xauusd-trader'); ap.add_argument('--bars',required=True); ap.add_argument('--source-summary',required=True); ap.add_argument('--tf',required=True); ap.add_argument('--timeframe-minutes',type=int,required=True); ap.add_argument('--mt5-files',default=DEFAULT_MT5_FILES); ap.add_argument('--write-mt5',action='store_true'); args=ap.parse_args()
-    run(args.root,args.bars,args.source_summary,args.tf,args.timeframe_minutes,args.mt5_files,args.write_mt5); return 0
+    ap=argparse.ArgumentParser(description=STAGE); ap.add_argument('--root',default='/Users/vahid/Desktop/xauusd-trader'); ap.add_argument('--bars',required=True); ap.add_argument('--source-summary',required=True); ap.add_argument('--tf',required=True); ap.add_argument('--timeframe-minutes',type=int,required=True); ap.add_argument('--mt5-files',default=DEFAULT_MT5_FILES); ap.add_argument('--write-mt5',action='store_true'); ap.add_argument('--max-feature-age-sec',type=int,default=7200); args=ap.parse_args()
+    run(args.root,args.bars,args.source_summary,args.tf,args.timeframe_minutes,args.mt5_files,args.write_mt5,args.max_feature_age_sec); return 0
 if __name__=='__main__': raise SystemExit(main())

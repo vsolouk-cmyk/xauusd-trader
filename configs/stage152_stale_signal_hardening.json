@@ -1,0 +1,8 @@
+{
+  "stage": "Stage152_STALE_SIGNAL_HARDENING",
+  "objective": "Prevent freshly-written stale feature_date signals from executing",
+  "stage134_change": "InpMaxSignalAgeSec gates feature_date UTC, not file modified time",
+  "stage151_change": "Stage151B forces any_signal_active=false if latest CSV bar is stale",
+  "order_send": false,
+  "default_max_age_sec": 7200
+}

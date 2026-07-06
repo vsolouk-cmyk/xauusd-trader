@@ -122,6 +122,35 @@ int CountOpenPositions()
 }
 
 
+
+int ToIntSafe(string s)
+{
+   return((int)StringToInteger(TrimText(s)));
+}
+
+bool ParseIsoUtc(string iso, datetime &out_dt)
+{
+   string s = TrimText(iso);
+   StringReplace(s, "T", " ");
+   StringReplace(s, "Z", "");
+   int plus_pos = StringFind(s, "+");
+   if(plus_pos > 0) s = StringSubstr(s, 0, plus_pos);
+   int dot_pos = StringFind(s, ".");
+   if(dot_pos > 0) s = StringSubstr(s, 0, dot_pos);
+   if(StringLen(s) < 19) return(false);
+   MqlDateTime dt;
+   dt.year = ToIntSafe(StringSubstr(s, 0, 4));
+   dt.mon = ToIntSafe(StringSubstr(s, 5, 2));
+   dt.day = ToIntSafe(StringSubstr(s, 8, 2));
+   dt.hour = ToIntSafe(StringSubstr(s, 11, 2));
+   dt.min = ToIntSafe(StringSubstr(s, 14, 2));
+   dt.sec = ToIntSafe(StringSubstr(s, 17, 2));
+   if(dt.year < 2000 || dt.mon < 1 || dt.mon > 12 || dt.day < 1 || dt.day > 31 || dt.hour < 0 || dt.hour > 23 || dt.min < 0 || dt.min > 59 || dt.sec < 0 || dt.sec > 59)
+      return(false);
+   out_dt = StructToTime(dt);
+   return(out_dt > 0);
+}
+
 double ClampDouble(double v, double lo, double hi)
 {
    if(v < lo) return(lo);
@@ -248,6 +277,8 @@ void WriteStatusKv(string decision, string reason, string selected_rule_id, stri
    FileWriteString(h,"active_rule_count|"+active_rule_count+"\n");
    FileWriteString(h,"signal_fresh|"+BoolText(signal_fresh)+"\n");
    FileWriteString(h,"signal_age_sec|"+IntegerToString(signal_age_sec)+"\n");
+   FileWriteString(h,"signal_fresh_basis|feature_date_utc_not_file_modified_time\n");
+   FileWriteString(h,"max_signal_age_sec|"+IntegerToString(InpMaxSignalAgeSec)+"\n");
    FileWriteString(h,"spread_ok|"+BoolText(spread_ok)+"\n");
    FileWriteString(h,"spread_points|"+IntegerToString(spread_points)+"\n");
    FileWriteString(h,"open_positions|"+IntegerToString(open_positions)+"\n");
@@ -272,13 +303,14 @@ void EvaluateSignal()
 {
    CloseExpiredPositions();
    datetime now = TimeCurrent();
-   datetime mt = FileModifiedTime(InpRuleStateKvFile);
-   int signal_age_sec = (mt > 0 ? (int)(TimeLocal() - mt) : 999999);
-   bool signal_fresh = (mt > 0 && signal_age_sec >= 0 && signal_age_sec <= InpMaxSignalAgeSec);
    string selected_rule_id = CleanCell(ReadKvValueFromFile(InpRuleStateKvFile,"selected_rule_id",""));
    string feature_date = CleanCell(ReadKvValueFromFile(InpRuleStateKvFile,"feature_date",""));
    string any_signal_active = CleanCell(ReadKvValueFromFile(InpRuleStateKvFile,"any_signal_active",""));
    string active_rule_count = CleanCell(ReadKvValueFromFile(InpRuleStateKvFile,"active_rule_count","0"));
+   datetime feature_dt_utc = 0;
+   bool feature_date_parse_ok = ParseIsoUtc(feature_date, feature_dt_utc);
+   int signal_age_sec = (feature_date_parse_ok ? (int)(TimeGMT() - feature_dt_utc) : 999999);
+   bool signal_fresh = (feature_date_parse_ok && signal_age_sec >= 0 && signal_age_sec <= InpMaxSignalAgeSec);
    string signal_key = feature_date + "|" + selected_rule_id;
    int spread_points = (int)SymbolInfoInteger(_Symbol, SYMBOL_SPREAD);
    bool spread_ok = (spread_points > 0 && spread_points <= InpMaxSpreadPoints);
@@ -290,7 +322,7 @@ void EvaluateSignal()
    if(!InpEnableDemoOrders){ decision="BLOCKED_NOT_ARMED"; reason="InpEnableDemoOrders=false"; WriteStatusKv(decision,reason,selected_rule_id,feature_date,any_signal_active,active_rule_count,signal_fresh,signal_age_sec,spread_ok,spread_points,open_positions,order_attempted); return; }
    if(InpRequireDemoAccount && !IsDemoAccount()){ decision="BLOCKED_NOT_DEMO_ACCOUNT"; reason="RequireDemoAccount=true but account is not demo"; WriteStatusKv(decision,reason,selected_rule_id,feature_date,any_signal_active,active_rule_count,signal_fresh,signal_age_sec,spread_ok,spread_points,open_positions,order_attempted); return; }
    if(!TerminalInfoInteger(TERMINAL_TRADE_ALLOWED) || !MQLInfoInteger(MQL_TRADE_ALLOWED) || !AccountInfoInteger(ACCOUNT_TRADE_ALLOWED)){ decision="BLOCKED_TRADING_NOT_ALLOWED"; reason="terminal/mql/account trading flag is disabled"; WriteStatusKv(decision,reason,selected_rule_id,feature_date,any_signal_active,active_rule_count,signal_fresh,signal_age_sec,spread_ok,spread_points,open_positions,order_attempted); return; }
-   if(!signal_fresh){ decision="BLOCKED_SIGNAL_STALE"; reason="Stage133 rule-state telemetry is stale or missing"; WriteStatusKv(decision,reason,selected_rule_id,feature_date,any_signal_active,active_rule_count,signal_fresh,signal_age_sec,spread_ok,spread_points,open_positions,order_attempted); return; }
+   if(!signal_fresh){ decision="BLOCKED_SIGNAL_STALE"; reason="feature_date is stale/missing/unparseable; freshness is based on feature_date UTC, not file modified time"; WriteStatusKv(decision,reason,selected_rule_id,feature_date,any_signal_active,active_rule_count,signal_fresh,signal_age_sec,spread_ok,spread_points,open_positions,order_attempted); return; }
    if(!IsTrueText(any_signal_active) || selected_rule_id=="" || !IsRuleAllowed(selected_rule_id)){ decision="HOLD_NO_ACTIVE_ALLOWED_RULE"; reason="no active selected rule"; WriteStatusKv(decision,reason,selected_rule_id,feature_date,any_signal_active,active_rule_count,signal_fresh,signal_age_sec,spread_ok,spread_points,open_positions,order_attempted); return; }
    if(!spread_ok){ decision="BLOCKED_SPREAD"; reason="spread above guard"; WriteStatusKv(decision,reason,selected_rule_id,feature_date,any_signal_active,active_rule_count,signal_fresh,signal_age_sec,spread_ok,spread_points,open_positions,order_attempted); return; }
    if(open_positions >= InpMaxOpenPositions){ decision="BLOCKED_MAX_OPEN_POSITIONS"; reason="max open positions reached"; WriteStatusKv(decision,reason,selected_rule_id,feature_date,any_signal_active,active_rule_count,signal_fresh,signal_age_sec,spread_ok,spread_points,open_positions,order_attempted); return; }

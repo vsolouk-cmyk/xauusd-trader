@@ -1,0 +1,10 @@
+{
+  "stage": "Stage154_ACTIVE_SHORTLIST_RULE_ROUTER",
+  "objective": "Use cached Stage150 PASS candidate scores to route to whichever validated M5 rule is currently active, avoiding both single-rule inactivity and expensive full rescans.",
+  "order_send": false,
+  "stage134_required_InpRuleStateKvFile": "xauusd_stage154_m5_active_router_rule_state_kv.csv",
+  "stage134_required_InpAllowedRules": "all",
+  "timestamp_shift_hours": -3,
+  "note": "Stage154 does not discover new rules. It only chooses among previously scored PASS candidates. Demo-only.",
+  "hotfix": "Stage154B direct execution import path hardening"
+}

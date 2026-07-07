@@ -1,0 +1,9 @@
+{
+  "stage": "Stage155_ACTIVE_ROUTER_DEMO_RISK_GUARD",
+  "objective": "Route only among cached Stage150 PASS candidates while blocking families that are already net negative in demo execution.",
+  "default_risk_summary": "reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json",
+  "default_block_negative_demo_families": true,
+  "order_send": false,
+  "stage134_file": "xauusd_stage155_m5_active_router_rule_state_kv.csv",
+  "stage134_allowed_rules": "all"
+}

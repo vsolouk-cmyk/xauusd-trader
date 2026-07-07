@@ -8,6 +8,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 import sys
+import re
 
 # Allow direct execution as: python3 app/stage154_active_shortlist_rule_router.py
 # without requiring PYTHONPATH=. in launchd or terminal.
@@ -28,8 +29,8 @@ from app.stage151_locked_mtf_rule_state_writer import (
     write_kv,
 )
 
-STAGE = "Stage154_ACTIVE_SHORTLIST_RULE_ROUTER"
-STATUS = "STAGE154_COMPLETE_ACTIVE_SHORTLIST_RULE_ROUTER_READY"
+STAGE = "Stage155_ACTIVE_ROUTER_DEMO_RISK_GUARD"
+STATUS = "STAGE155_COMPLETE_ACTIVE_ROUTER_DEMO_RISK_GUARD_READY"
 DEFAULT_MT5_FILES = (
     "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/"
     "drive_c/Program Files/MetaTrader 5/MQL5/Files"
@@ -65,6 +66,54 @@ def parse_conditions(raw: Any) -> List[Dict[str, Any]]:
     return out
 
 
+
+
+def normalize_family_key(rule_id: str) -> str:
+    """Collapse threshold tokens so Stage145 family keys match candidate rule IDs."""
+    s = str(rule_id or "").strip()
+    # Handles tokens like _GEQ65, _LEQ35, _GEQ50P5 if later introduced.
+    s = re.sub(r"_(GEQ|LEQ)[0-9]+(?:P[0-9]+)?", "", s)
+    return s
+
+
+def load_blocked_demo_families(risk_summary_path: Optional[Path], block_negative_demo_families: bool) -> Tuple[set, List[Dict[str, Any]]]:
+    if not block_negative_demo_families or risk_summary_path is None:
+        return set(), []
+    p = Path(risk_summary_path).expanduser()
+    if not p.exists():
+        return set(), []
+    try:
+        data = json.loads(p.read_text(encoding="utf-8"))
+    except Exception:
+        return set(), []
+    blocked = set()
+    rows: List[Dict[str, Any]] = []
+    for fam in data.get("per_family", []) or []:
+        if not isinstance(fam, dict):
+            continue
+        key = str(fam.get("family_key") or "").strip()
+        if not key:
+            continue
+        closed = int(parse_float(fam.get("closed_trade_count")) or 0)
+        total_bps = parse_float(fam.get("total_bps"))
+        mean_bps = parse_float(fam.get("mean_bps"))
+        total_profit = parse_float(fam.get("total_net_profit"))
+        # Commercially defensive: once a demo-tested family is net negative, do not route it again
+        # until the operator deliberately refreshes/replaces the rule cache or disables this guard.
+        negative = closed >= 1 and ((total_bps is not None and total_bps < 0) or (mean_bps is not None and mean_bps < 0) or (total_profit is not None and total_profit < 0))
+        if negative:
+            blocked.add(key)
+            rows.append({
+                "family_key": key,
+                "closed_trade_count": closed,
+                "total_bps": total_bps,
+                "mean_bps": mean_bps,
+                "total_net_profit": total_profit,
+                "last_rule_id": fam.get("last_rule_id", ""),
+                "last_outcome": fam.get("last_outcome", ""),
+            })
+    return blocked, rows
+
 def choose_active_candidate(
     score_rows: List[Dict[str, str]],
     latest: Dict[str, Any],
@@ -73,12 +122,19 @@ def choose_active_candidate(
     min_tail_mean_bps: float,
     min_tail_hit: float,
     max_candidates: int,
-) -> Tuple[Optional[Dict[str, Any]], List[Dict[str, Any]], int]:
+    blocked_family_keys: Optional[set] = None,
+) -> Tuple[Optional[Dict[str, Any]], List[Dict[str, Any]], int, int]:
     candidates: List[Dict[str, Any]] = []
     eligible_count = 0
+    risk_blocked_count = 0
+    blocked_family_keys = blocked_family_keys or set()
     for r in score_rows:
         rule_id = str(r.get("rule_id") or "").strip()
         if not rule_id:
+            continue
+        family_key = normalize_family_key(rule_id)
+        if family_key in blocked_family_keys:
+            risk_blocked_count += 1
             continue
         gate = str(r.get("gate") or "").strip().upper()
         excluded = as_bool(r.get("excluded"))
@@ -102,6 +158,7 @@ def choose_active_candidate(
             continue
         active = condition_active(latest, conds)
         row: Dict[str, Any] = dict(r)
+        row["family_key"] = family_key
         row["conditions"] = conds
         row["router_active"] = active
         row["router_sort_key"] = (
@@ -128,7 +185,7 @@ def choose_active_candidate(
             candidates.append(row)
     candidates.sort(key=lambda x: x["router_sort_key"], reverse=True)
     selected = candidates[0] if candidates else None
-    return selected, candidates, eligible_count
+    return selected, candidates, eligible_count, risk_blocked_count
 
 
 def run(
@@ -146,6 +203,8 @@ def run(
     min_tail_mean_bps: float,
     min_tail_hit: float,
     max_candidates: int,
+    risk_summary: Optional[Path],
+    block_negative_demo_families: bool,
 ) -> Dict[str, Any]:
     root = root.expanduser()
     bars_path = bars_path.expanduser()
@@ -167,7 +226,8 @@ def run(
     raw_feature_date = raw_feature_time.isoformat().replace("+00:00", "Z")
 
     rows = read_table(score_csv)
-    selected, active_candidates, eligible_count = choose_active_candidate(
+    blocked_family_keys, blocked_family_rows = load_blocked_demo_families(risk_summary, block_negative_demo_families)
+    selected, active_candidates, eligible_count, risk_blocked_count = choose_active_candidate(
         rows,
         latest,
         min_validation_mean_bps=min_validation_mean_bps,
@@ -175,33 +235,34 @@ def run(
         min_tail_mean_bps=min_tail_mean_bps,
         min_tail_hit=min_tail_hit,
         max_candidates=max_candidates,
+        blocked_family_keys=blocked_family_keys,
     )
 
     tf_safe = "".join(ch.lower() if ch.isalnum() else "_" for ch in tf).strip("_") or f"m{timeframe_minutes}"
-    kv_file = f"xauusd_stage154_{tf_safe}_active_router_rule_state_kv.csv"
-    latest_file = f"xauusd_stage154_{tf_safe}_active_router_rule_state_latest.csv"
-    history_file = f"xauusd_stage154_{tf_safe}_active_router_rule_state_history.csv"
+    kv_file = f"xauusd_stage155_{tf_safe}_active_router_rule_state_kv.csv"
+    latest_file = f"xauusd_stage155_{tf_safe}_active_router_rule_state_latest.csv"
+    history_file = f"xauusd_stage155_{tf_safe}_active_router_rule_state_history.csv"
 
     selected_rule_id = str(selected.get("rule_id") if selected else "")
     selected_label = str(selected.get("label") if selected else "")
     active_and_fresh = bool(selected_rule_id and feature_fresh)
     if selected_rule_id and feature_fresh:
-        decision = "STAGE154_ACTIVE_ROUTER_RULE_READY_POINT_STAGE134_TO_STAGE154_FILE"
+        decision = "STAGE155_ACTIVE_RISK_GUARDED_RULE_READY_POINT_STAGE134_TO_STAGE155_FILE"
         reason = "active shortlist candidate selected and feature_date is fresh"
     elif selected_rule_id and not feature_fresh:
-        decision = "STAGE154_ACTIVE_ROUTER_STALE_NO_ORDER"
+        decision = "STAGE155_ACTIVE_ROUTER_STALE_NO_ORDER"
         reason = "active shortlist candidate exists but feature_date is stale or future"
     else:
-        decision = "STAGE154_NO_ACTIVE_SHORTLIST_RULE_NO_ORDER"
+        decision = "STAGE155_NO_ACTIVE_RISK_GUARDED_RULE_NO_ORDER"
         reason = "no active candidate from cached Stage150 score shortlist"
 
     selected_condition_snapshot = selected.get("router_condition_snapshot") if selected else "[]"
     kv: Dict[str, Any] = {
         "stage": STAGE,
-        "status": "ACTIVE_SHORTLIST_ROUTER_ALIVE_NO_ORDER_SEND_IN_STAGE154",
+        "status": "ACTIVE_ROUTER_DEMO_RISK_GUARD_ALIVE_NO_ORDER_SEND_IN_STAGE155",
         "decision": decision,
         "reason": reason,
-        "mode": "CACHED_SCORE_SHORTLIST_ACTIVE_ROUTER_TO_STAGE134",
+        "mode": "CACHED_SCORE_SHORTLIST_ACTIVE_ROUTER_WITH_DEMO_RISK_GUARD_TO_STAGE134",
         "tf": tf_safe,
         "timeframe_minutes": timeframe_minutes,
         "feature_date": feature_date,
@@ -213,16 +274,22 @@ def run(
         "any_signal_active": "true" if active_and_fresh else "false",
         "selected_rule_id": selected_rule_id,
         "selected_label": selected_label,
+        "selected_family_key": normalize_family_key(selected_rule_id) if selected_rule_id else "",
         "active_rule_count": 1 if active_and_fresh else 0,
         "active_shortlist_count": len(active_candidates),
         "eligible_shortlist_count": eligible_count,
+        "risk_blocked_family_count": len(blocked_family_keys),
+        "risk_blocked_candidate_count": risk_blocked_count,
+        "risk_summary": str(risk_summary) if risk_summary else "",
+        "block_negative_demo_families": "true" if block_negative_demo_families else "false",
+        "blocked_family_keys": ";".join(sorted(blocked_family_keys)),
         "score_csv": str(score_csv),
         "selected_condition_snapshot": selected_condition_snapshot,
         "execution_allowed": "false",
         "order_authorized": "false",
         "allow_trading": "false",
         "order_send": "false",
-        "note": "Stage154 routes among cached Stage150 PASS candidates only; it does not rescan discovery and does not send orders.",
+        "note": "Stage155 routes among cached Stage150 PASS candidates and blocks demo-negative families; it does not rescan discovery and does not send orders.",
         "stage134_required_InpRuleStateKvFile": kv_file,
         "stage134_required_InpAllowedRules": "all",
     }
@@ -239,6 +306,8 @@ def run(
         "reason": reason,
         "active_shortlist_count": len(active_candidates),
         "eligible_shortlist_count": eligible_count,
+        "risk_blocked_family_count": len(blocked_family_keys),
+        "risk_blocked_candidate_count": risk_blocked_count,
         "allow_trading": "false",
         "order_send": "false",
     }
@@ -260,13 +329,14 @@ def run(
         write_csv(Path(mt5_latest), [latest_row], list(latest_row.keys()))
         append_csv(mt5_files / history_file, [latest_row], list(latest_row.keys()))
 
-    out_dir = ensure_dir(root / "reports/stage154_active_shortlist_rule_router" / tf_safe)
+    out_dir = ensure_dir(root / "reports/stage155_active_router_demo_risk_guard" / tf_safe)
     active_rows: List[Dict[str, Any]] = []
     for i, r in enumerate(active_candidates[: max_candidates], start=1):
         active_rows.append(
             {
                 "rank": i,
                 "rule_id": r.get("rule_id", ""),
+                "family_key": r.get("family_key", ""),
                 "label": r.get("label", ""),
                 "selection_mean_bps": r.get("selection_mean_bps", ""),
                 "validation_mean_bps": r.get("validation_mean_bps", ""),
@@ -277,11 +347,12 @@ def run(
             }
         )
     write_csv(
-        out_dir / "stage154_active_shortlist_candidates.csv",
+        out_dir / "stage155_active_router_candidates.csv",
         active_rows,
         [
             "rank",
             "rule_id",
+            "family_key",
             "label",
             "selection_mean_bps",
             "validation_mean_bps",
@@ -315,7 +386,14 @@ def run(
         "active_shortlist_count": len(active_candidates),
         "selected_rule_id": selected_rule_id,
         "selected_label": selected_label,
+        "selected_family_key": normalize_family_key(selected_rule_id) if selected_rule_id else "",
         "selected_condition_snapshot": selected_condition_snapshot,
+        "risk_summary": str(risk_summary) if risk_summary else "",
+        "block_negative_demo_families": block_negative_demo_families,
+        "risk_blocked_family_count": len(blocked_family_keys),
+        "risk_blocked_candidate_count": risk_blocked_count,
+        "blocked_family_keys": sorted(blocked_family_keys),
+        "blocked_family_rows": blocked_family_rows,
         "repo_kv": str(repo_kv),
         "repo_latest": str(repo_latest),
         "mt5_kv_written": bool(write_mt5),
@@ -326,13 +404,13 @@ def run(
             "InpAllowedRules": "all",
             "keep_InpEnableDemoOrders": "true only on demo account",
         },
-        "summary_json": str(out_dir / "stage154_active_shortlist_rule_router_summary.json"),
+        "summary_json": str(out_dir / "stage155_active_router_demo_risk_guard_summary.json"),
         "next": [
-            "Use Stage154 when a single locked Stage151 rule is inactive for too long.",
+            "Use Stage155 for demo execution routing after Stage154 exposed demo-negative families.",
             "Keep Stage150B as offline replacement discovery; Stage154 only routes cached PASS candidates.",
         ],
     }
-    write_json(out_dir / "stage154_active_shortlist_rule_router_summary.json", summary)
+    write_json(out_dir / "stage155_active_router_demo_risk_guard_summary.json", summary)
     print(json.dumps(summary, indent=2, ensure_ascii=False))
     return summary
 
@@ -353,6 +431,8 @@ def main() -> int:
     ap.add_argument("--min-tail-mean-bps", type=float, default=1.0)
     ap.add_argument("--min-tail-hit", type=float, default=0.50)
     ap.add_argument("--max-candidates", type=int, default=300)
+    ap.add_argument("--risk-summary", default="/Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json")
+    ap.add_argument("--allow-negative-demo-families", action="store_true")
     args = ap.parse_args()
     run(
         root=Path(args.root),
@@ -369,6 +449,8 @@ def main() -> int:
         min_tail_mean_bps=args.min_tail_mean_bps,
         min_tail_hit=args.min_tail_hit,
         max_candidates=args.max_candidates,
+        risk_summary=Path(args.risk_summary) if args.risk_summary else None,
+        block_negative_demo_families=not args.allow_negative_demo_families,
     )
     return 0
 

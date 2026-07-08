@@ -4966,3 +4966,327 @@
     "Run full Stage150B scans offline only when changing or replacing the locked rule."
   ]
 }
+{
+  "stage": "Stage153_LOCKED_MTF_RULE_STATE_WRITER_TIMESTAMP_NORMALIZED",
+  "generated_utc": "2026-07-07T12:55:48Z",
+  "status": "STAGE151B_COMPLETE_LOCKED_MTF_RULE_STATE_STALE_GUARD_READY",
+  "decision": "STAGE153_LOCKED_RULE_INACTIVE_NO_ORDER",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "bars_path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+  "source_summary": "/Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_mtf_separated_validation_discovery_summary.json",
+  "tf": "m5",
+  "timeframe_minutes": 5,
+  "raw_row_count": 318641,
+  "bar_count": 318641,
+  "bar_min_utc": "2022-01-03T01:00:00+00:00",
+  "bar_max_utc": "2026-07-07T12:20:00+00:00",
+  "feature_date": "2026-07-07T09:20:00Z",
+  "raw_feature_date": "2026-07-07T12:20:00Z",
+  "timestamp_shift_hours": -3.0,
+  "selected_rule_id": "D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35",
+  "selected_label": "m5: trend_8_20_bps >= q65 AND trend_50_100_bps >= q35",
+  "conditions": [
+    {
+      "feature": "trend_8_20_bps",
+      "op": ">=",
+      "threshold": 9.25846423904142,
+      "current": -32.140363470740674
+    },
+    {
+      "feature": "trend_50_100_bps",
+      "op": ">=",
+      "threshold": -14.337320822584214,
+      "current": 127.85634942136693
+    }
+  ],
+  "any_signal_active": false,
+  "raw_rule_active_before_stale_guard": false,
+  "feature_fresh": false,
+  "feature_age_sec": 13019,
+  "max_feature_age_sec": 7200,
+  "repo_kv": "/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage151_m5_locked_rule_state_kv.csv",
+  "repo_latest": "/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage151_m5_locked_rule_state_latest.csv",
+  "mt5_kv_written": true,
+  "mt5_kv": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage151_m5_locked_rule_state_kv.csv",
+  "mt5_latest": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage151_m5_locked_rule_state_latest.csv",
+  "stage134_instruction": {
+    "InpRuleStateKvFile": "xauusd_stage151_m5_locked_rule_state_kv.csv",
+    "InpAllowedRules": "D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35",
+    "keep_InpEnableDemoOrders": "true only on demo account"
+  },
+  "summary_json": "/Users/vahid/Desktop/xauusd-trader/reports/stage151_locked_mtf_rule_state_writer/m5/stage151_locked_mtf_rule_state_writer_summary.json",
+  "next": [
+    "Use Stage151 for fast post-market-open refresh of a locked Stage150 MTF rule.",
+    "Run full Stage150B scans offline only when changing or replacing the locked rule."
+  ]
+}
+{
+  "stage": "Stage153_LOCKED_MTF_RULE_STATE_WRITER_TIMESTAMP_NORMALIZED",
+  "generated_utc": "2026-07-07T13:02:01Z",
+  "status": "STAGE151B_COMPLETE_LOCKED_MTF_RULE_STATE_STALE_GUARD_READY",
+  "decision": "STAGE153_LOCKED_RULE_INACTIVE_NO_ORDER",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "bars_path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+  "source_summary": "/Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_mtf_separated_validation_discovery_summary.json",
+  "tf": "m5",
+  "timeframe_minutes": 5,
+  "raw_row_count": 318641,
+  "bar_count": 318641,
+  "bar_min_utc": "2022-01-03T01:00:00+00:00",
+  "bar_max_utc": "2026-07-07T12:20:00+00:00",
+  "feature_date": "2026-07-07T09:20:00Z",
+  "raw_feature_date": "2026-07-07T12:20:00Z",
+  "timestamp_shift_hours": -3.0,
+  "selected_rule_id": "D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35",
+  "selected_label": "m5: trend_8_20_bps >= q65 AND trend_50_100_bps >= q35",
+  "conditions": [
+    {
+      "feature": "trend_8_20_bps",
+      "op": ">=",
+      "threshold": 9.25846423904142,
+      "current": -32.140363470740674
+    },
+    {
+      "feature": "trend_50_100_bps",
+      "op": ">=",
+      "threshold": -14.337320822584214,
+      "current": 127.85634942136693
+    }
+  ],
+  "any_signal_active": false,
+  "raw_rule_active_before_stale_guard": false,
+  "feature_fresh": false,
+  "feature_age_sec": 13364,
+  "max_feature_age_sec": 7200,
+  "repo_kv": "/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage151_m5_locked_rule_state_kv.csv",
+  "repo_latest": "/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage151_m5_locked_rule_state_latest.csv",
+  "mt5_kv_written": true,
+  "mt5_kv": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage151_m5_locked_rule_state_kv.csv",
+  "mt5_latest": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage151_m5_locked_rule_state_latest.csv",
+  "stage134_instruction": {
+    "InpRuleStateKvFile": "xauusd_stage151_m5_locked_rule_state_kv.csv",
+    "InpAllowedRules": "D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35",
+    "keep_InpEnableDemoOrders": "true only on demo account"
+  },
+  "summary_json": "/Users/vahid/Desktop/xauusd-trader/reports/stage151_locked_mtf_rule_state_writer/m5/stage151_locked_mtf_rule_state_writer_summary.json",
+  "next": [
+    "Use Stage151 for fast post-market-open refresh of a locked Stage150 MTF rule.",
+    "Run full Stage150B scans offline only when changing or replacing the locked rule."
+  ]
+}
+{
+  "stage": "Stage153_LOCKED_MTF_RULE_STATE_WRITER_TIMESTAMP_NORMALIZED",
+  "generated_utc": "2026-07-07T16:08:52Z",
+  "status": "STAGE151B_COMPLETE_LOCKED_MTF_RULE_STATE_STALE_GUARD_READY",
+  "decision": "STAGE153_LOCKED_RULE_INACTIVE_NO_ORDER",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "bars_path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+  "source_summary": "/Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_mtf_separated_validation_discovery_summary.json",
+  "tf": "m5",
+  "timeframe_minutes": 5,
+  "raw_row_count": 318641,
+  "bar_count": 318641,
+  "bar_min_utc": "2022-01-03T01:00:00+00:00",
+  "bar_max_utc": "2026-07-07T12:20:00+00:00",
+  "feature_date": "2026-07-07T09:20:00Z",
+  "raw_feature_date": "2026-07-07T12:20:00Z",
+  "timestamp_shift_hours": -3.0,
+  "selected_rule_id": "D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35",
+  "selected_label": "m5: trend_8_20_bps >= q65 AND trend_50_100_bps >= q35",
+  "conditions": [
+    {
+      "feature": "trend_8_20_bps",
+      "op": ">=",
+      "threshold": 9.25846423904142,
+      "current": -32.140363470740674
+    },
+    {
+      "feature": "trend_50_100_bps",
+      "op": ">=",
+      "threshold": -14.337320822584214,
+      "current": 127.85634942136693
+    }
+  ],
+  "any_signal_active": false,
+  "raw_rule_active_before_stale_guard": false,
+  "feature_fresh": false,
+  "feature_age_sec": 28193,
+  "max_feature_age_sec": 7200,
+  "repo_kv": "/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage151_m5_locked_rule_state_kv.csv",
+  "repo_latest": "/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage151_m5_locked_rule_state_latest.csv",
+  "mt5_kv_written": true,
+  "mt5_kv": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage151_m5_locked_rule_state_kv.csv",
+  "mt5_latest": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage151_m5_locked_rule_state_latest.csv",
+  "stage134_instruction": {
+    "InpRuleStateKvFile": "xauusd_stage151_m5_locked_rule_state_kv.csv",
+    "InpAllowedRules": "D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35",
+    "keep_InpEnableDemoOrders": "true only on demo account"
+  },
+  "summary_json": "/Users/vahid/Desktop/xauusd-trader/reports/stage151_locked_mtf_rule_state_writer/m5/stage151_locked_mtf_rule_state_writer_summary.json",
+  "next": [
+    "Use Stage151 for fast post-market-open refresh of a locked Stage150 MTF rule.",
+    "Run full Stage150B scans offline only when changing or replacing the locked rule."
+  ]
+}
+{
+  "stage": "Stage153_LOCKED_MTF_RULE_STATE_WRITER_TIMESTAMP_NORMALIZED",
+  "generated_utc": "2026-07-07T18:13:19Z",
+  "status": "STAGE151B_COMPLETE_LOCKED_MTF_RULE_STATE_STALE_GUARD_READY",
+  "decision": "STAGE153_LOCKED_RULE_INACTIVE_NO_ORDER",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "bars_path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+  "source_summary": "/Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_mtf_separated_validation_discovery_summary.json",
+  "tf": "m5",
+  "timeframe_minutes": 5,
+  "raw_row_count": 318641,
+  "bar_count": 318641,
+  "bar_min_utc": "2022-01-03T01:00:00+00:00",
+  "bar_max_utc": "2026-07-07T12:20:00+00:00",
+  "feature_date": "2026-07-07T09:20:00Z",
+  "raw_feature_date": "2026-07-07T12:20:00Z",
+  "timestamp_shift_hours": -3.0,
+  "selected_rule_id": "D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35",
+  "selected_label": "m5: trend_8_20_bps >= q65 AND trend_50_100_bps >= q35",
+  "conditions": [
+    {
+      "feature": "trend_8_20_bps",
+      "op": ">=",
+      "threshold": 9.25846423904142,
+      "current": -32.140363470740674
+    },
+    {
+      "feature": "trend_50_100_bps",
+      "op": ">=",
+      "threshold": -14.337320822584214,
+      "current": 127.85634942136693
+    }
+  ],
+  "any_signal_active": false,
+  "raw_rule_active_before_stale_guard": false,
+  "feature_fresh": false,
+  "feature_age_sec": 32035,
+  "max_feature_age_sec": 7200,
+  "repo_kv": "/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage151_m5_locked_rule_state_kv.csv",
+  "repo_latest": "/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage151_m5_locked_rule_state_latest.csv",
+  "mt5_kv_written": true,
+  "mt5_kv": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage151_m5_locked_rule_state_kv.csv",
+  "mt5_latest": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage151_m5_locked_rule_state_latest.csv",
+  "stage134_instruction": {
+    "InpRuleStateKvFile": "xauusd_stage151_m5_locked_rule_state_kv.csv",
+    "InpAllowedRules": "D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35",
+    "keep_InpEnableDemoOrders": "true only on demo account"
+  },
+  "summary_json": "/Users/vahid/Desktop/xauusd-trader/reports/stage151_locked_mtf_rule_state_writer/m5/stage151_locked_mtf_rule_state_writer_summary.json",
+  "next": [
+    "Use Stage151 for fast post-market-open refresh of a locked Stage150 MTF rule.",
+    "Run full Stage150B scans offline only when changing or replacing the locked rule."
+  ]
+}
+{
+  "stage": "Stage153_LOCKED_MTF_RULE_STATE_WRITER_TIMESTAMP_NORMALIZED",
+  "generated_utc": "2026-07-07T18:18:57Z",
+  "status": "STAGE151B_COMPLETE_LOCKED_MTF_RULE_STATE_STALE_GUARD_READY",
+  "decision": "STAGE153_LOCKED_RULE_INACTIVE_NO_ORDER",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "bars_path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+  "source_summary": "/Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_mtf_separated_validation_discovery_summary.json",
+  "tf": "m5",
+  "timeframe_minutes": 5,
+  "raw_row_count": 318641,
+  "bar_count": 318641,
+  "bar_min_utc": "2022-01-03T01:00:00+00:00",
+  "bar_max_utc": "2026-07-07T12:20:00+00:00",
+  "feature_date": "2026-07-07T09:20:00Z",
+  "raw_feature_date": "2026-07-07T12:20:00Z",
+  "timestamp_shift_hours": -3.0,
+  "selected_rule_id": "D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35",
+  "selected_label": "m5: trend_8_20_bps >= q65 AND trend_50_100_bps >= q35",
+  "conditions": [
+    {
+      "feature": "trend_8_20_bps",
+      "op": ">=",
+      "threshold": 9.25846423904142,
+      "current": -32.140363470740674
+    },
+    {
+      "feature": "trend_50_100_bps",
+      "op": ">=",
+      "threshold": -14.337320822584214,
+      "current": 127.85634942136693
+    }
+  ],
+  "any_signal_active": false,
+  "raw_rule_active_before_stale_guard": false,
+  "feature_fresh": false,
+  "feature_age_sec": 32364,
+  "max_feature_age_sec": 7200,
+  "repo_kv": "/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage151_m5_locked_rule_state_kv.csv",
+  "repo_latest": "/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage151_m5_locked_rule_state_latest.csv",
+  "mt5_kv_written": true,
+  "mt5_kv": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage151_m5_locked_rule_state_kv.csv",
+  "mt5_latest": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage151_m5_locked_rule_state_latest.csv",
+  "stage134_instruction": {
+    "InpRuleStateKvFile": "xauusd_stage151_m5_locked_rule_state_kv.csv",
+    "InpAllowedRules": "D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35",
+    "keep_InpEnableDemoOrders": "true only on demo account"
+  },
+  "summary_json": "/Users/vahid/Desktop/xauusd-trader/reports/stage151_locked_mtf_rule_state_writer/m5/stage151_locked_mtf_rule_state_writer_summary.json",
+  "next": [
+    "Use Stage151 for fast post-market-open refresh of a locked Stage150 MTF rule.",
+    "Run full Stage150B scans offline only when changing or replacing the locked rule."
+  ]
+}
+{
+  "stage": "Stage153_LOCKED_MTF_RULE_STATE_WRITER_TIMESTAMP_NORMALIZED",
+  "generated_utc": "2026-07-07T18:24:25Z",
+  "status": "STAGE151B_COMPLETE_LOCKED_MTF_RULE_STATE_STALE_GUARD_READY",
+  "decision": "STAGE153_LOCKED_RULE_INACTIVE_NO_ORDER",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "bars_path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+  "source_summary": "/Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_mtf_separated_validation_discovery_summary.json",
+  "tf": "m5",
+  "timeframe_minutes": 5,
+  "raw_row_count": 318641,
+  "bar_count": 318641,
+  "bar_min_utc": "2022-01-03T01:00:00+00:00",
+  "bar_max_utc": "2026-07-07T12:20:00+00:00",
+  "feature_date": "2026-07-07T09:20:00Z",
+  "raw_feature_date": "2026-07-07T12:20:00Z",
+  "timestamp_shift_hours": -3.0,
+  "selected_rule_id": "D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35",
+  "selected_label": "m5: trend_8_20_bps >= q65 AND trend_50_100_bps >= q35",
+  "conditions": [
+    {
+      "feature": "trend_8_20_bps",
+      "op": ">=",
+      "threshold": 9.25846423904142,
+      "current": -32.140363470740674
+    },
+    {
+      "feature": "trend_50_100_bps",
+      "op": ">=",
+      "threshold": -14.337320822584214,
+      "current": 127.85634942136693
+    }
+  ],
+  "any_signal_active": false,
+  "raw_rule_active_before_stale_guard": false,
+  "feature_fresh": false,
+  "feature_age_sec": 32692,
+  "max_feature_age_sec": 7200,
+  "repo_kv": "/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage151_m5_locked_rule_state_kv.csv",
+  "repo_latest": "/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage151_m5_locked_rule_state_latest.csv",
+  "mt5_kv_written": true,
+  "mt5_kv": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage151_m5_locked_rule_state_kv.csv",
+  "mt5_latest": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage151_m5_locked_rule_state_latest.csv",
+  "stage134_instruction": {
+    "InpRuleStateKvFile": "xauusd_stage151_m5_locked_rule_state_kv.csv",
+    "InpAllowedRules": "D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35",
+    "keep_InpEnableDemoOrders": "true only on demo account"
+  },
+  "summary_json": "/Users/vahid/Desktop/xauusd-trader/reports/stage151_locked_mtf_rule_state_writer/m5/stage151_locked_mtf_rule_state_writer_summary.json",
+  "next": [
+    "Use Stage151 for fast post-market-open refresh of a locked Stage150 MTF rule.",
+    "Run full Stage150B scans offline only when changing or replacing the locked rule."
+  ]
+}

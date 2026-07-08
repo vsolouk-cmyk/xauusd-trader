@@ -29,8 +29,8 @@ from app.stage151_locked_mtf_rule_state_writer import (
     write_kv,
 )
 
-STAGE = "Stage155_ACTIVE_ROUTER_DEMO_RISK_GUARD"
-STATUS = "STAGE155_COMPLETE_ACTIVE_ROUTER_DEMO_RISK_GUARD_READY"
+STAGE = "Stage157_GLOBAL_GATE_SAFE_ROUTER"
+STATUS = "STAGE157_COMPLETE_GLOBAL_GATE_SAFE_ROUTER_READY"
 DEFAULT_MT5_FILES = (
     "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/"
     "drive_c/Program Files/MetaTrader 5/MQL5/Files"
@@ -113,6 +113,67 @@ def load_blocked_demo_families(risk_summary_path: Optional[Path], block_negative
                 "last_outcome": fam.get("last_outcome", ""),
             })
     return blocked, rows
+
+
+
+def load_risk_summary_data(risk_summary_path: Optional[Path]) -> Dict[str, Any]:
+    if risk_summary_path is None:
+        return {}
+    p = Path(risk_summary_path).expanduser()
+    if not p.exists():
+        return {}
+    try:
+        data = json.loads(p.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def global_freeze_triggered(risk_data: Dict[str, Any], min_global_gate_trades: int) -> Tuple[bool, Dict[str, Any]]:
+    """Return whether aggregate demo performance has triggered a circuit breaker.
+
+    The guard is intentionally driven by Stage145's aggregate decision, not by
+    a single candidate rule. Once Stage145 says freeze/repair on the clean demo
+    ledger, this router should stop writing active signals until discovery is
+    repaired or the operator explicitly disables the guard.
+    """
+    if not risk_data:
+        return False, {
+            "global_gate_freeze_active": False,
+            "global_gate_reason": "risk summary missing or unreadable",
+        }
+    closed = int(parse_float(risk_data.get("closed_trade_count")) or 0)
+    gate_decision = str(risk_data.get("gate_decision") or "")
+    recommended_action = str(risk_data.get("recommended_action") or "")
+    severity = str(risk_data.get("severity") or "")
+    total_bps = parse_float(risk_data.get("total_bps"))
+    mean_bps = parse_float(risk_data.get("mean_bps"))
+    win_rate = parse_float(risk_data.get("win_rate"))
+    decision_blob = " ".join([gate_decision, recommended_action, severity]).upper()
+    stage145_freeze = any(tok in decision_blob for tok in ["FREEZE", "REPAIR", "NEGATIVE_EXPECTANCY"])
+    high_severity_negative = severity.upper() == "HIGH" and closed >= min_global_gate_trades and (
+        (total_bps is not None and total_bps < 0) or (mean_bps is not None and mean_bps < 0)
+    )
+    active = closed >= min_global_gate_trades and (stage145_freeze or high_severity_negative)
+    reason = (
+        f"Stage145 aggregate gate requires freeze/repair: gate_decision={gate_decision}; "
+        f"recommended_action={recommended_action}; severity={severity}; closed_trade_count={closed}; "
+        f"total_bps={total_bps}; mean_bps={mean_bps}; win_rate={win_rate}"
+    ) if active else (
+        f"Stage145 aggregate gate not frozen: gate_decision={gate_decision}; severity={severity}; closed_trade_count={closed}"
+    )
+    return active, {
+        "global_gate_freeze_active": active,
+        "global_gate_reason": reason,
+        "global_gate_decision": gate_decision,
+        "global_recommended_action": recommended_action,
+        "global_severity": severity,
+        "global_closed_trade_count": closed,
+        "global_total_bps": total_bps,
+        "global_mean_bps": mean_bps,
+        "global_win_rate": win_rate,
+        "min_global_gate_trades": min_global_gate_trades,
+    }
 
 def choose_active_candidate(
     score_rows: List[Dict[str, str]],
@@ -205,6 +266,8 @@ def run(
     max_candidates: int,
     risk_summary: Optional[Path],
     block_negative_demo_families: bool,
+    global_freeze_guard: bool,
+    min_global_gate_trades: int,
 ) -> Dict[str, Any]:
     root = root.expanduser()
     bars_path = bars_path.expanduser()
@@ -226,6 +289,9 @@ def run(
     raw_feature_date = raw_feature_time.isoformat().replace("+00:00", "Z")
 
     rows = read_table(score_csv)
+    risk_data = load_risk_summary_data(risk_summary)
+    global_freeze_active, global_gate_info = global_freeze_triggered(risk_data, min_global_gate_trades)
+    global_freeze_active = bool(global_freeze_guard and global_freeze_active)
     blocked_family_keys, blocked_family_rows = load_blocked_demo_families(risk_summary, block_negative_demo_families)
     selected, active_candidates, eligible_count, risk_blocked_count = choose_active_candidate(
         rows,
@@ -243,18 +309,27 @@ def run(
     latest_file = f"xauusd_stage155_{tf_safe}_active_router_rule_state_latest.csv"
     history_file = f"xauusd_stage155_{tf_safe}_active_router_rule_state_history.csv"
 
-    selected_rule_id = str(selected.get("rule_id") if selected else "")
-    selected_label = str(selected.get("label") if selected else "")
-    active_and_fresh = bool(selected_rule_id and feature_fresh)
-    if selected_rule_id and feature_fresh:
-        decision = "STAGE155_ACTIVE_RISK_GUARDED_RULE_READY_POINT_STAGE134_TO_STAGE155_FILE"
-        reason = "active shortlist candidate selected and feature_date is fresh"
-    elif selected_rule_id and not feature_fresh:
-        decision = "STAGE155_ACTIVE_ROUTER_STALE_NO_ORDER"
-        reason = "active shortlist candidate exists but feature_date is stale or future"
+    raw_selected_rule_id = str(selected.get("rule_id") if selected else "")
+    raw_selected_label = str(selected.get("label") if selected else "")
+    if global_freeze_active:
+        selected_rule_id = ""
+        selected_label = ""
+        active_and_fresh = False
+        decision = "STAGE157_GLOBAL_PERFORMANCE_FREEZE_NO_ORDER"
+        reason = str(global_gate_info.get("global_gate_reason") or "Stage145 aggregate freeze active")
     else:
-        decision = "STAGE155_NO_ACTIVE_RISK_GUARDED_RULE_NO_ORDER"
-        reason = "no active candidate from cached Stage150 score shortlist"
+        selected_rule_id = raw_selected_rule_id
+        selected_label = raw_selected_label
+        active_and_fresh = bool(selected_rule_id and feature_fresh)
+        if selected_rule_id and feature_fresh:
+            decision = "STAGE157_ACTIVE_RISK_GUARDED_RULE_READY_POINT_STAGE134_TO_STAGE155_FILE"
+            reason = "active shortlist candidate selected and feature_date is fresh; aggregate global freeze guard is not active"
+        elif selected_rule_id and not feature_fresh:
+            decision = "STAGE157_ACTIVE_ROUTER_STALE_NO_ORDER"
+            reason = "active shortlist candidate exists but feature_date is stale or future"
+        else:
+            decision = "STAGE157_NO_ACTIVE_RISK_GUARDED_RULE_NO_ORDER"
+            reason = "no active candidate from cached Stage150 score shortlist after family/global guards"
 
     selected_condition_snapshot = selected.get("router_condition_snapshot") if selected else "[]"
     kv: Dict[str, Any] = {
@@ -283,6 +358,13 @@ def run(
         "risk_summary": str(risk_summary) if risk_summary else "",
         "block_negative_demo_families": "true" if block_negative_demo_families else "false",
         "blocked_family_keys": ";".join(sorted(blocked_family_keys)),
+        "global_freeze_guard": "true" if global_freeze_guard else "false",
+        "global_gate_freeze_active": "true" if global_freeze_active else "false",
+        "global_gate_decision": global_gate_info.get("global_gate_decision", ""),
+        "global_recommended_action": global_gate_info.get("global_recommended_action", ""),
+        "global_severity": global_gate_info.get("global_severity", ""),
+        "global_gate_reason": global_gate_info.get("global_gate_reason", ""),
+        "raw_selected_rule_id_before_global_gate": raw_selected_rule_id,
         "score_csv": str(score_csv),
         "selected_condition_snapshot": selected_condition_snapshot,
         "execution_allowed": "false",
@@ -308,6 +390,9 @@ def run(
         "eligible_shortlist_count": eligible_count,
         "risk_blocked_family_count": len(blocked_family_keys),
         "risk_blocked_candidate_count": risk_blocked_count,
+        "global_gate_freeze_active": "true" if global_freeze_active else "false",
+        "global_gate_decision": global_gate_info.get("global_gate_decision", ""),
+        "raw_selected_rule_id_before_global_gate": raw_selected_rule_id,
         "allow_trading": "false",
         "order_send": "false",
     }
@@ -388,7 +473,12 @@ def run(
         "selected_label": selected_label,
         "selected_family_key": normalize_family_key(selected_rule_id) if selected_rule_id else "",
         "selected_condition_snapshot": selected_condition_snapshot,
+        "raw_selected_rule_id_before_global_gate": raw_selected_rule_id,
+        "raw_selected_label_before_global_gate": raw_selected_label,
         "risk_summary": str(risk_summary) if risk_summary else "",
+        "global_freeze_guard": global_freeze_guard,
+        "global_gate_freeze_active": global_freeze_active,
+        "global_gate_info": global_gate_info,
         "block_negative_demo_families": block_negative_demo_families,
         "risk_blocked_family_count": len(blocked_family_keys),
         "risk_blocked_candidate_count": risk_blocked_count,
@@ -406,8 +496,8 @@ def run(
         },
         "summary_json": str(out_dir / "stage155_active_router_demo_risk_guard_summary.json"),
         "next": [
-            "Use Stage155 for demo execution routing after Stage154 exposed demo-negative families.",
-            "Keep Stage150B as offline replacement discovery; Stage154 only routes cached PASS candidates.",
+            "Use this Stage157-hardened router behind Stage156; it preserves Stage155 KV filename so Stage134 input does not need to change.",
+            "If global_gate_freeze_active is true, keep demo orders blocked and repair discovery before re-enabling routing.",
         ],
     }
     write_json(out_dir / "stage155_active_router_demo_risk_guard_summary.json", summary)
@@ -433,6 +523,8 @@ def main() -> int:
     ap.add_argument("--max-candidates", type=int, default=300)
     ap.add_argument("--risk-summary", default="/Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json")
     ap.add_argument("--allow-negative-demo-families", action="store_true")
+    ap.add_argument("--disable-global-freeze-guard", action="store_true")
+    ap.add_argument("--min-global-gate-trades", type=int, default=10)
     args = ap.parse_args()
     run(
         root=Path(args.root),
@@ -451,6 +543,8 @@ def main() -> int:
         max_candidates=args.max_candidates,
         risk_summary=Path(args.risk_summary) if args.risk_summary else None,
         block_negative_demo_families=not args.allow_negative_demo_families,
+        global_freeze_guard=not args.disable_global_freeze_guard,
+        min_global_gate_trades=args.min_global_gate_trades,
     )
     return 0
 

@@ -1,0 +1,11 @@
+{
+  "stage": "Stage156_OPERATIONAL_UNIFIER",
+  "objective": "Single operational command to check M5 source freshness, optionally run DB updater, run Stage155 router, inspect Stage134, and optionally refresh Stage144/145.",
+  "default_root": "/Users/vahid/Desktop/xauusd-trader",
+  "default_bars_m5": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+  "default_score_csv": "reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv",
+  "default_risk_summary": "reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json",
+  "timestamp_shift_hours": -3,
+  "order_send": false,
+  "delegates_order_decision_to": "Stage134 only"
+}

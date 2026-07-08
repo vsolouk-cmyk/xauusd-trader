@@ -1,0 +1,14 @@
+{
+  "stage": "Stage163_MACRO_SUPPORTED_SIDE_DISCOVERY",
+  "default_root": "/Users/vahid/Desktop/xauusd-trader",
+  "default_bars_m5": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+  "default_stage161_summary": "reports/stage161_macro_aware_candidate_classifier/stage161_macro_aware_candidate_classifier_summary.json",
+  "timestamp_shift_hours": -3,
+  "horizon_hours": 4,
+  "min_events": 100,
+  "min_mean_bps": 1.5,
+  "min_hit_rate": 0.515,
+  "min_recent_mean_bps": 1.0,
+  "order_routing_allowed": false,
+  "demo_release_allowed": false
+}

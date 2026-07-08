@@ -1,0 +1,9 @@
+{
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "inbox": "~/Downloads/xauusd_fundamental_event_inbox",
+  "out": "reports/stage162_macro_data_freshness_triage",
+  "core_daily_stale_days": 5,
+  "cot_weekly_stale_days": 14,
+  "stage117_h1_joined_dataset_stale_days": 10,
+  "order_routing_allowed": false
+}

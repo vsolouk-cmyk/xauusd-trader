@@ -1,0 +1,15 @@
+{
+  "stage": "Stage164B_HIGHER_TF_MACRO_REGIME_REBUILD_PANDAS_FREQ_FIX",
+  "read_only": true,
+  "order_routing_allowed": false,
+  "demo_release_allowed": false,
+  "default_inputs": {
+    "root": "/Users/vahid/Desktop/xauusd-trader",
+    "bars_m5": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+    "stage161_summary": "reports/stage161_macro_aware_candidate_classifier/stage161_macro_aware_candidate_classifier_summary.json",
+    "timestamp_shift_hours": -3,
+    "horizon_hours": 24
+  },
+  "purpose": "Rebuild discovery at H1/H4/D1 after M5 technical candidates conflict with the current macro regime.",
+  "hotfix": "Use lowercase pandas resample frequencies: 1h, 4h, 1d."
+}

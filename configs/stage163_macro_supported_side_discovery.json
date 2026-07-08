@@ -1,5 +1,5 @@
 {
-  "stage": "Stage163_MACRO_SUPPORTED_SIDE_DISCOVERY",
+  "stage": "Stage163B_MACRO_SUPPORTED_SIDE_DISCOVERY",
   "default_root": "/Users/vahid/Desktop/xauusd-trader",
   "default_bars_m5": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
   "default_stage161_summary": "reports/stage161_macro_aware_candidate_classifier/stage161_macro_aware_candidate_classifier_summary.json",

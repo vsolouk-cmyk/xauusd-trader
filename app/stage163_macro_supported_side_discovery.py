@@ -26,7 +26,7 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 import numpy as np
 import pandas as pd
 
-STAGE = "Stage163_MACRO_SUPPORTED_SIDE_DISCOVERY"
+STAGE = "Stage163B_MACRO_SUPPORTED_SIDE_DISCOVERY_TSV_LOADER_FIX"
 DEFAULT_ROOT = "/Users/vahid/Desktop/xauusd-trader"
 DEFAULT_BARS = "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv"
 DEFAULT_STAGE161 = "reports/stage161_macro_aware_candidate_classifier/stage161_macro_aware_candidate_classifier_summary.json"
@@ -72,7 +72,16 @@ def read_json(path: Path) -> Dict[str, Any]:
 
 
 def normalize_col(name: str) -> str:
-    return str(name).strip().lower().replace(" ", "_").replace("-", "_")
+    # Normalize common CSV/MT5 headers such as <DATE>, <TIME>, time_utc.
+    return (
+        str(name)
+        .strip()
+        .lower()
+        .replace("<", "")
+        .replace(">", "")
+        .replace(" ", "_")
+        .replace("-", "_")
+    )
 
 
 def find_column(columns: Sequence[str], candidates: Sequence[str]) -> Optional[str]:
@@ -90,16 +99,23 @@ def find_column(columns: Sequence[str], candidates: Sequence[str]) -> Optional[s
 
 
 def load_bars(path: Path, timestamp_shift_hours: float = 0.0) -> pd.DataFrame:
+    """Load normalized CSV or raw MT5/AMarkets tab-separated bars.
+
+    Stage163 originally selected the <DATE> column alone in raw MT5 TSV exports and
+    collapsed intraday bars into one row per date. Stage163B explicitly combines
+    <DATE> + <TIME> when both are present.
+    """
     if not path.exists():
         raise FileNotFoundError(f"bars file not found: {path}")
-    # Try common separators; AMarkets exports have appeared as comma or semicolon.
     last_err: Optional[Exception] = None
     df: Optional[pd.DataFrame] = None
+    selected_sep = None
     for sep in [",", ";", "\t"]:
         try:
             tmp = pd.read_csv(path, sep=sep)
             if tmp.shape[1] >= 5:
                 df = tmp
+                selected_sep = sep
                 break
         except Exception as exc:
             last_err = exc
@@ -109,20 +125,32 @@ def load_bars(path: Path, timestamp_shift_hours: float = 0.0) -> pd.DataFrame:
         raise ValueError(f"could not parse bars file: {path}")
 
     columns = list(df.columns)
-    time_col = find_column(columns, ["utc_time", "time_utc", "datetime", "date", "time", "timestamp"])
+    date_col = find_column(columns, ["date", "DATE"])
+    split_time_col = find_column(columns, ["time", "TIME"])
+    # Prefer explicit UTC/datetime columns for normalized project files. For raw MT5
+    # files, combine <DATE> and <TIME>; do not parse <DATE> alone.
+    explicit_time_col = find_column(columns, ["utc_time", "time_utc", "datetime", "timestamp"])
+    time_col = explicit_time_col or (date_col if not split_time_col else None)
     open_col = find_column(columns, ["open", "o"])
     high_col = find_column(columns, ["high", "h"])
     low_col = find_column(columns, ["low", "l"])
     close_col = find_column(columns, ["close", "c", "bid_close"])
-    volume_col = find_column(columns, ["volume", "tick_volume", "vol"])
-    if not all([time_col, open_col, high_col, low_col, close_col]):
+    volume_col = find_column(columns, ["volume", "tickvol", "tick_volume", "vol"])
+    if not all([open_col, high_col, low_col, close_col]) or (not time_col and not (date_col and split_time_col)):
         raise ValueError(
             "missing required OHLC/time columns; "
-            f"found={columns[:20]} time={time_col} open={open_col} high={high_col} low={low_col} close={close_col}"
+            f"sep={selected_sep!r} found={columns[:20]} date={date_col} split_time={split_time_col} "
+            f"time={time_col} open={open_col} high={high_col} low={low_col} close={close_col}"
         )
 
     out = pd.DataFrame()
-    out["utc_time"] = pd.to_datetime(df[time_col], errors="coerce", utc=True)
+    if date_col and split_time_col and not explicit_time_col:
+        raw_ts = df[date_col].astype(str).str.strip() + " " + df[split_time_col].astype(str).str.strip()
+        out["utc_time"] = pd.to_datetime(raw_ts, format="%Y.%m.%d %H:%M:%S", errors="coerce", utc=True)
+        parse_mode = "split_date_time_mt5_tsv"
+    else:
+        out["utc_time"] = pd.to_datetime(df[time_col], errors="coerce", utc=True)
+        parse_mode = "explicit_datetime_column"
     if timestamp_shift_hours:
         out["utc_time"] = out["utc_time"] + pd.to_timedelta(timestamp_shift_hours, unit="h")
     for dst, src in [("open", open_col), ("high", high_col), ("low", low_col), ("close", close_col)]:
@@ -133,6 +161,10 @@ def load_bars(path: Path, timestamp_shift_hours: float = 0.0) -> pd.DataFrame:
         out["volume"] = np.nan
     out = out.dropna(subset=["utc_time", "open", "high", "low", "close"]).sort_values("utc_time")
     out = out.drop_duplicates(subset=["utc_time"], keep="last").reset_index(drop=True)
+    out.attrs["loader_selected_sep"] = selected_sep
+    out.attrs["loader_parse_mode"] = parse_mode
+    out.attrs["loader_raw_row_count"] = int(len(df))
+    out.attrs["loader_raw_columns"] = [str(c) for c in columns[:30]]
     if out.empty:
         raise ValueError("no parseable bars after OHLC/time normalization")
     return out
@@ -493,6 +525,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             "bar_count": int(len(bars)),
             "feature_row_count": int(len(feat.dropna(subset=["future_long_bps", "future_short_bps"]))),
             "latest_bar_utc": str(bars["utc_time"].max()),
+            "loader_selected_sep": bars.attrs.get("loader_selected_sep"),
+            "loader_parse_mode": bars.attrs.get("loader_parse_mode"),
+            "loader_raw_row_count": bars.attrs.get("loader_raw_row_count"),
+            "loader_raw_columns": bars.attrs.get("loader_raw_columns"),
             "macro_pressure": pressure,
             "macro_supported_sides": supported_sides,
             "macro_note": macro_note,

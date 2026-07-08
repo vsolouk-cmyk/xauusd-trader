@@ -1,0 +1,9 @@
+{
+  "stage": "Stage160_MACRO_PIPELINE_READINESS_AUDIT",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "feature_dir": "data/fundamental_event_inbox/features",
+  "pipeline_summary": "reports/xauusd_fundamental_unify_normalize_pipeline/xauusd_fundamental_unify_normalize_pipeline_summary.json",
+  "stage116_summary": "reports/stage116_source_specific_wgc_spdr_dxy_validator/stage116_source_specific_wgc_spdr_dxy_validator_summary.json",
+  "max_mtime_age_hours": 48,
+  "order_routing_allowed": false
+}

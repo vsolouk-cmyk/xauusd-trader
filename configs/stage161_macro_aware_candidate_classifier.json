@@ -1,0 +1,11 @@
+{
+  "stage": "Stage161_MACRO_AWARE_CANDIDATE_CLASSIFIER",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "feature_dir": "data/fundamental_event_inbox/features",
+  "stage160_summary": "reports/stage160_macro_pipeline_readiness_audit/stage160_macro_pipeline_readiness_audit_summary.json",
+  "stage159_shortlist": "reports/stage159_locked_family_repair_discovery/stage159_locked_family_shortlist.csv",
+  "stage159_family_summary": "reports/stage159_locked_family_repair_discovery/stage159_family_repair_summary.csv",
+  "event_window_days": 1,
+  "order_routing_allowed": false,
+  "demo_release_allowed": false
+}

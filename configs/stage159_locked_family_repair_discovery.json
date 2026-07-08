@@ -1,0 +1,18 @@
+{
+  "stage": "Stage159_LOCKED_FAMILY_REPAIR_DISCOVERY",
+  "purpose": "Offline repair discovery for robust locked-family shortlist after active-router demo failure.",
+  "order_capable": false,
+  "writes_execution_kv": false,
+  "defaults": {
+    "timeframe_minutes": 5,
+    "timestamp_shift_hours": -3,
+    "horizon_hours": 4,
+    "cooldown_hours": 4,
+    "min_events": 20,
+    "min_mean_bps": 2.0,
+    "min_hit_rate": 0.52,
+    "min_positive_folds": 3,
+    "min_session_positive": 2,
+    "macro_stale_days": 7
+  }
+}

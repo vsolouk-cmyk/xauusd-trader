@@ -4612,3 +4612,183 @@
     "If selected_rule_id is empty, rerun with M15/M5 bars or move to a new replacement family; do not unfreeze the excluded weak family."
   ]
 }
+{
+  "stage": "Stage138C_FILTERED_REPLACEMENT_TECHNICAL_DEMO_DISCOVERY",
+  "generated_utc": "2026-07-08T05:10:29Z",
+  "status": "STAGE138C_COMPLETE_FILTERED_REPLACEMENT_SELECTOR_READY",
+  "decision": "STAGE138C_REPLACEMENT_TECHNICAL_RULE_READY_POINT_STAGE134_TO_STAGE138_FILE",
+  "excluded_rule_ids": [],
+  "excluded_rule_substrings": [
+    "D138C_ret_48h_bps_GEQ65"
+  ],
+  "min_tail_mean_bps": 2.0,
+  "min_tail_hit": 0.5,
+  "excluded_pass_count": 18,
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "bars_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage143_live_h1_bars.csv",
+  "raw_row_count": 30000,
+  "bar_count": 30000,
+  "bar_min_utc": "2021-06-04T17:00:00+00:00",
+  "bar_max_utc": "2026-07-08T08:00:00+00:00",
+  "horizon_hours": 24,
+  "candidate_rows": 1872,
+  "pass_count": 1383,
+  "current_active_pass_count": 455,
+  "selected_rule_id": "D138C_ret_24h_bps_GEQ50__trend_8_20_bps_LEQ50",
+  "selected_label": "ret_24h_bps >= q50 AND trend_8_20_bps <= q50",
+  "selected_score": {
+    "rule_id": "D138C_ret_24h_bps_GEQ50__trend_8_20_bps_LEQ50",
+    "label": "ret_24h_bps >= q50 AND trend_8_20_bps <= q50",
+    "gate": "PASS",
+    "current_active": true,
+    "excluded": false,
+    "exclude_reason": "",
+    "conditions_json": "[{\"current\": 4.119783929450449, \"feature\": \"ret_24h_bps\", \"op\": \">=\", \"threshold\": 3.27738371140196}, {\"current\": -38.547027567353844, \"feature\": \"trend_8_20_bps\", \"op\": \"<=\", \"threshold\": 0.5769451498716105}]",
+    "selection_events": 2014,
+    "selection_mean_bps": 2.4321,
+    "selection_hit_rate": 0.4995,
+    "validation_events": 574,
+    "validation_mean_bps": 24.3458,
+    "validation_hit_rate": 0.5749,
+    "tail_events": 644,
+    "tail_mean_bps": 6.8461,
+    "tail_hit_rate": 0.5419
+  },
+  "score_csv": "/Users/vahid/Desktop/xauusd-trader/reports/stage138_broker_technical_demo_discovery/stage138_candidate_scores.csv",
+  "repo_kv": "/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage138_technical_rule_state_kv.csv",
+  "repo_latest": "/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage138_technical_rule_state_latest.csv",
+  "mt5_kv_written": true,
+  "mt5_kv": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage138_technical_rule_state_kv.csv",
+  "mt5_latest": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage138_technical_rule_state_latest.csv",
+  "stage134_instruction": {
+    "InpRuleStateKvFile": "xauusd_stage138_technical_rule_state_kv.csv",
+    "InpAllowedRules": "D138C_ret_24h_bps_GEQ50__trend_8_20_bps_LEQ50",
+    "keep_InpEnableDemoOrders": "true only on demo account",
+    "restore_after_probe": "xauusd_stage133_unified_observer_rule_state_kv.csv"
+  },
+  "summary_json": "/Users/vahid/Desktop/xauusd-trader/reports/stage138_broker_technical_demo_discovery/stage138_broker_technical_demo_discovery_summary.json",
+  "next": [
+    "If selected_rule_id is non-empty, point Stage134 InpRuleStateKvFile to xauusd_stage138_technical_rule_state_kv.csv and use InpAllowedRules=* only while Stage138C exclusions are active.",
+    "If selected_rule_id is empty, rerun with M15/M5 bars or move to a new replacement family; do not unfreeze the excluded weak family."
+  ]
+}
+{
+  "stage": "Stage138C_FILTERED_REPLACEMENT_TECHNICAL_DEMO_DISCOVERY",
+  "generated_utc": "2026-07-08T05:35:36Z",
+  "status": "STAGE138C_COMPLETE_FILTERED_REPLACEMENT_SELECTOR_READY",
+  "decision": "STAGE138C_REPLACEMENT_TECHNICAL_RULE_READY_POINT_STAGE134_TO_STAGE138_FILE",
+  "excluded_rule_ids": [],
+  "excluded_rule_substrings": [
+    "D138C_ret_48h_bps_GEQ65"
+  ],
+  "min_tail_mean_bps": 2.0,
+  "min_tail_hit": 0.5,
+  "excluded_pass_count": 18,
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "bars_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage143_live_h1_bars.csv",
+  "raw_row_count": 30000,
+  "bar_count": 30000,
+  "bar_min_utc": "2021-06-04T17:00:00+00:00",
+  "bar_max_utc": "2026-07-08T08:00:00+00:00",
+  "horizon_hours": 24,
+  "candidate_rows": 1872,
+  "pass_count": 1383,
+  "current_active_pass_count": 460,
+  "selected_rule_id": "D138C_ret_12h_bps_LEQ35__ret_48h_bps_LEQ35",
+  "selected_label": "ret_12h_bps <= q35 AND ret_48h_bps <= q35",
+  "selected_score": {
+    "rule_id": "D138C_ret_12h_bps_LEQ35__ret_48h_bps_LEQ35",
+    "label": "ret_12h_bps <= q35 AND ret_48h_bps <= q35",
+    "gate": "PASS",
+    "current_active": true,
+    "excluded": false,
+    "exclude_reason": "",
+    "conditions_json": "[{\"current\": -42.10043789280804, \"feature\": \"ret_12h_bps\", \"op\": \"<=\", \"threshold\": -16.458858243939336}, {\"current\": -90.34748849348074, \"feature\": \"ret_48h_bps\", \"op\": \"<=\", \"threshold\": -36.266326237198946}]",
+    "selection_events": 3452,
+    "selection_mean_bps": 3.7072,
+    "selection_hit_rate": 0.5513,
+    "validation_events": 987,
+    "validation_mean_bps": 23.4965,
+    "validation_hit_rate": 0.6069,
+    "tail_events": 1241,
+    "tail_mean_bps": 4.4732,
+    "tail_hit_rate": 0.5681
+  },
+  "score_csv": "/Users/vahid/Desktop/xauusd-trader/reports/stage138_broker_technical_demo_discovery/stage138_candidate_scores.csv",
+  "repo_kv": "/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage138_technical_rule_state_kv.csv",
+  "repo_latest": "/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage138_technical_rule_state_latest.csv",
+  "mt5_kv_written": true,
+  "mt5_kv": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage138_technical_rule_state_kv.csv",
+  "mt5_latest": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage138_technical_rule_state_latest.csv",
+  "stage134_instruction": {
+    "InpRuleStateKvFile": "xauusd_stage138_technical_rule_state_kv.csv",
+    "InpAllowedRules": "D138C_ret_12h_bps_LEQ35__ret_48h_bps_LEQ35",
+    "keep_InpEnableDemoOrders": "true only on demo account",
+    "restore_after_probe": "xauusd_stage133_unified_observer_rule_state_kv.csv"
+  },
+  "summary_json": "/Users/vahid/Desktop/xauusd-trader/reports/stage138_broker_technical_demo_discovery/stage138_broker_technical_demo_discovery_summary.json",
+  "next": [
+    "If selected_rule_id is non-empty, point Stage134 InpRuleStateKvFile to xauusd_stage138_technical_rule_state_kv.csv and use InpAllowedRules=* only while Stage138C exclusions are active.",
+    "If selected_rule_id is empty, rerun with M15/M5 bars or move to a new replacement family; do not unfreeze the excluded weak family."
+  ]
+}
+{
+  "stage": "Stage138C_FILTERED_REPLACEMENT_TECHNICAL_DEMO_DISCOVERY",
+  "generated_utc": "2026-07-08T06:01:17Z",
+  "status": "STAGE138C_COMPLETE_FILTERED_REPLACEMENT_SELECTOR_READY",
+  "decision": "STAGE138C_REPLACEMENT_TECHNICAL_RULE_READY_POINT_STAGE134_TO_STAGE138_FILE",
+  "excluded_rule_ids": [],
+  "excluded_rule_substrings": [
+    "D138C_ret_48h_bps_GEQ65"
+  ],
+  "min_tail_mean_bps": 2.0,
+  "min_tail_hit": 0.5,
+  "excluded_pass_count": 18,
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "bars_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage143_live_h1_bars.csv",
+  "raw_row_count": 30000,
+  "bar_count": 30000,
+  "bar_min_utc": "2021-06-04T18:00:00+00:00",
+  "bar_max_utc": "2026-07-08T09:00:00+00:00",
+  "horizon_hours": 24,
+  "candidate_rows": 1872,
+  "pass_count": 1385,
+  "current_active_pass_count": 465,
+  "selected_rule_id": "D138C_ret_24h_bps_GEQ35__trend_50_100_bps_LEQ65",
+  "selected_label": "ret_24h_bps >= q35 AND trend_50_100_bps <= q65",
+  "selected_score": {
+    "rule_id": "D138C_ret_24h_bps_GEQ35__trend_50_100_bps_LEQ65",
+    "label": "ret_24h_bps >= q35 AND trend_50_100_bps <= q65",
+    "gate": "PASS",
+    "current_active": true,
+    "excluded": false,
+    "exclude_reason": "",
+    "conditions_json": "[{\"current\": 9.263525474696443, \"feature\": \"ret_24h_bps\", \"op\": \">=\", \"threshold\": -23.80476095219075}, {\"current\": 19.427186846099342, \"feature\": \"trend_50_100_bps\", \"op\": \"<=\", \"threshold\": 20.236106645558085}]",
+    "selection_events": 7200,
+    "selection_mean_bps": 1.4943,
+    "selection_hit_rate": 0.5081,
+    "validation_events": 2003,
+    "validation_mean_bps": 24.632,
+    "validation_hit_rate": 0.6006,
+    "tail_events": 1812,
+    "tail_mean_bps": 19.0815,
+    "tail_hit_rate": 0.5442
+  },
+  "score_csv": "/Users/vahid/Desktop/xauusd-trader/reports/stage138_broker_technical_demo_discovery/stage138_candidate_scores.csv",
+  "repo_kv": "/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage138_technical_rule_state_kv.csv",
+  "repo_latest": "/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage138_technical_rule_state_latest.csv",
+  "mt5_kv_written": true,
+  "mt5_kv": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage138_technical_rule_state_kv.csv",
+  "mt5_latest": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage138_technical_rule_state_latest.csv",
+  "stage134_instruction": {
+    "InpRuleStateKvFile": "xauusd_stage138_technical_rule_state_kv.csv",
+    "InpAllowedRules": "D138C_ret_24h_bps_GEQ35__trend_50_100_bps_LEQ65",
+    "keep_InpEnableDemoOrders": "true only on demo account",
+    "restore_after_probe": "xauusd_stage133_unified_observer_rule_state_kv.csv"
+  },
+  "summary_json": "/Users/vahid/Desktop/xauusd-trader/reports/stage138_broker_technical_demo_discovery/stage138_broker_technical_demo_discovery_summary.json",
+  "next": [
+    "If selected_rule_id is non-empty, point Stage134 InpRuleStateKvFile to xauusd_stage138_technical_rule_state_kv.csv and use InpAllowedRules=* only while Stage138C exclusions are active.",
+    "If selected_rule_id is empty, rerun with M15/M5 bars or move to a new replacement family; do not unfreeze the excluded weak family."
+  ]
+}

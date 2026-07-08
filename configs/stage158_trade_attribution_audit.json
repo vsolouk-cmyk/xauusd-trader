@@ -1,0 +1,10 @@
+{
+  "stage": "Stage158B_TRADE_ATTRIBUTION_AUDIT_BAR_LOADER_FIX",
+  "purpose": "Read-only attribution audit with robust AMarkets M5 TSV loading and MFE/MAE diagnostics.",
+  "default_timestamp_shift_hours": -3,
+  "default_entry_time_shift_hours": -3,
+  "default_max_signal_age_sec": 7200,
+  "default_horizon_hours": 4,
+  "writes_mt5_execution_kv": false,
+  "sends_orders": false
+}

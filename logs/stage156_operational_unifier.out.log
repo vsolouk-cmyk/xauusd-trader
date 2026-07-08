@@ -1237,3 +1237,888 @@
     "Use --db-update-command only after identifying the repo's current AMarkets DB updater command."
   ]
 }
+{
+  "stage": "Stage156_OPERATIONAL_UNIFIER",
+  "generated_utc": "2026-07-08T04:59:33Z",
+  "status": "STAGE156_COMPLETE_OPERATIONAL_UNIFIER_READY",
+  "classification": "POSITION_OPEN",
+  "reason": "Stage134 sees an open position; duplicate orders correctly blocked.",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "mt5_files": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "source": {
+    "bars_m5": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+    "exists": true,
+    "row_count_including_header_if_any": 318862,
+    "last_line": "2026.07.08\t07:40:00\t4125.25\t4125.65\t4121.97\t4123.09\t307\t0\t36",
+    "raw_latest_time": "2026-07-08T07:40:00Z",
+    "timestamp_shift_hours": -3.0,
+    "normalized_latest_time": "2026-07-08T04:40:00Z",
+    "feature_age_sec": 1174,
+    "max_feature_age_sec": 7200,
+    "source_fresh": true
+  },
+  "router": {
+    "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv",
+    "decision": "STAGE157_GLOBAL_PERFORMANCE_FREEZE_NO_ORDER",
+    "any_signal_active": "false",
+    "selected_rule_id": "",
+    "selected_family_key": "",
+    "active_shortlist_count": "94",
+    "eligible_shortlist_count": "191",
+    "risk_blocked_family_count": "4"
+  },
+  "stage134": {
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage134_demo_executor_status_kv.csv",
+    "decision": "HOLD_NO_ACTIVE_ALLOWED_RULE",
+    "reason": "no active selected rule",
+    "feature_date": "2026-07-08T04:40:00Z",
+    "signal_fresh": "true",
+    "signal_age_sec": "1168",
+    "any_signal_active": "false",
+    "open_positions": "1",
+    "last_success_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35",
+    "last_attempt_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35"
+  },
+  "commands": [
+    {
+      "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+      "started_utc": "2026-07-08T04:59:34Z",
+      "finished_utc": "2026-07-08T04:59:49Z",
+      "returncode": 0,
+      "stdout_tail": "0_100_bps\\\", \\\"op\\\": \\\">=\\\", \\\"threshold\\\": -14.337320822584214}]\",\n  \"raw_selected_rule_id_before_global_gate\": \"D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n  \"raw_selected_label_before_global_gate\": \"m5: ret_6h_bps >= q35 AND trend_50_100_bps >= q35\",\n  \"risk_summary\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json\",\n  \"global_freeze_guard\": true,\n  \"global_gate_freeze_active\": true,\n  \"global_gate_info\": {\n    \"global_gate_freeze_active\": true,\n    \"global_gate_reason\": \"Stage145 aggregate gate requires freeze/repair: gate_decision=STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY; recommended_action=FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY; severity=HIGH; closed_trade_count=12; total_bps=-9.72; mean_bps=-0.81; win_rate=0.5\",\n    \"global_gate_decision\": \"STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY\",\n    \"global_recommended_action\": \"FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY\",\n    \"global_severity\": \"HIGH\",\n    \"global_closed_trade_count\": 12,\n    \"global_total_bps\": -9.72,\n    \"global_mean_bps\": -0.81,\n    \"global_win_rate\": 0.5,\n    \"min_global_gate_trades\": 10\n  },\n  \"block_negative_demo_families\": true,\n  \"risk_blocked_family_count\": 4,\n  \"risk_blocked_candidate_count\": 27,\n  \"blocked_family_keys\": [\n    \"D138C_ret_48h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n    \"D150C_M5_trend_8_20_bps__trend_50_100_bps\"\n  ],\n  \"blocked_family_rows\": [\n    {\n      \"family_key\": \"D138C_ret_48h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 6,\n      \"total_bps\": -1.29,\n      \"mean_bps\": -0.21,\n      \"total_net_profit\": -0.94,\n      \"last_rule_id\": \"D138C_ret_48h_bps_GEQ65__trend_50_100_bps_LEQ65\",\n      \"last_outcome\": \"PROFIT\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -57.1,\n      \"mean_bps\": -57.1,\n      \"total_net_profit\": -23.65,\n      \"last_rule_id\": \"D150C_M5_ret_12h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -19.35,\n      \"mean_bps\": -19.35,\n      \"total_net_profit\": -8.72,\n      \"last_rule_id\": \"D150C_M5_ret_3h_bps_GEQ65__ret_24h_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_trend_8_20_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -50.52,\n      \"mean_bps\": -50.52,\n      \"total_net_profit\": -21.22,\n      \"last_rule_id\": \"D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    }\n  ],\n  \"repo_kv\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"repo_latest\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"mt5_kv_written\": true,\n  \"mt5_kv\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"mt5_latest\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"stage134_instruction\": {\n    \"InpRuleStateKvFile\": \"xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n    \"InpAllowedRules\": \"all\",\n    \"keep_InpEnableDemoOrders\": \"true only on demo account\"\n  },\n  \"summary_json\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage155_active_router_demo_risk_guard/m5/stage155_active_router_demo_risk_guard_summary.json\",\n  \"next\": [\n    \"Use this Stage157-hardened router behind Stage156; it preserves Stage155 KV filename so Stage134 input does not need to change.\",\n    \"If global_gate_freeze_active is true, keep demo orders blocked and repair discovery before re-enabling routing.\"\n  ]\n}\n",
+      "stderr_tail": ""
+    }
+  ],
+  "next": [
+    "If classification is NO_ACTIVE_RULE, keep Stage155 running and do not patch unless inactivity is commercially unacceptable over a defined window.",
+    "If classification is SOURCE_STALE or BLOCKED_STALE, update the M5 CSV and run this unifier again.",
+    "Use --db-update-command only after identifying the repo's current AMarkets DB updater command."
+  ]
+}
+{
+  "stage": "Stage156_OPERATIONAL_UNIFIER",
+  "generated_utc": "2026-07-08T05:04:53Z",
+  "status": "STAGE156_COMPLETE_OPERATIONAL_UNIFIER_READY",
+  "classification": "POSITION_OPEN",
+  "reason": "Stage134 sees an open position; duplicate orders correctly blocked.",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "mt5_files": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "source": {
+    "bars_m5": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+    "exists": true,
+    "row_count_including_header_if_any": 318862,
+    "last_line": "2026.07.08\t07:40:00\t4125.25\t4125.65\t4121.97\t4123.09\t307\t0\t36",
+    "raw_latest_time": "2026-07-08T07:40:00Z",
+    "timestamp_shift_hours": -3.0,
+    "normalized_latest_time": "2026-07-08T04:40:00Z",
+    "feature_age_sec": 1494,
+    "max_feature_age_sec": 7200,
+    "source_fresh": true
+  },
+  "router": {
+    "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv",
+    "decision": "STAGE157_GLOBAL_PERFORMANCE_FREEZE_NO_ORDER",
+    "any_signal_active": "false",
+    "selected_rule_id": "",
+    "selected_family_key": "",
+    "active_shortlist_count": "94",
+    "eligible_shortlist_count": "191",
+    "risk_blocked_family_count": "4"
+  },
+  "stage134": {
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage134_demo_executor_status_kv.csv",
+    "decision": "HOLD_NO_ACTIVE_ALLOWED_RULE",
+    "reason": "no active selected rule",
+    "feature_date": "2026-07-08T04:40:00Z",
+    "signal_fresh": "true",
+    "signal_age_sec": "1500",
+    "any_signal_active": "false",
+    "open_positions": "1",
+    "last_success_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35",
+    "last_attempt_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35"
+  },
+  "commands": [
+    {
+      "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+      "started_utc": "2026-07-08T05:04:54Z",
+      "finished_utc": "2026-07-08T05:05:26Z",
+      "returncode": 0,
+      "stdout_tail": "0_100_bps\\\", \\\"op\\\": \\\">=\\\", \\\"threshold\\\": -14.337320822584214}]\",\n  \"raw_selected_rule_id_before_global_gate\": \"D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n  \"raw_selected_label_before_global_gate\": \"m5: ret_6h_bps >= q35 AND trend_50_100_bps >= q35\",\n  \"risk_summary\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json\",\n  \"global_freeze_guard\": true,\n  \"global_gate_freeze_active\": true,\n  \"global_gate_info\": {\n    \"global_gate_freeze_active\": true,\n    \"global_gate_reason\": \"Stage145 aggregate gate requires freeze/repair: gate_decision=STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY; recommended_action=FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY; severity=HIGH; closed_trade_count=12; total_bps=-9.72; mean_bps=-0.81; win_rate=0.5\",\n    \"global_gate_decision\": \"STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY\",\n    \"global_recommended_action\": \"FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY\",\n    \"global_severity\": \"HIGH\",\n    \"global_closed_trade_count\": 12,\n    \"global_total_bps\": -9.72,\n    \"global_mean_bps\": -0.81,\n    \"global_win_rate\": 0.5,\n    \"min_global_gate_trades\": 10\n  },\n  \"block_negative_demo_families\": true,\n  \"risk_blocked_family_count\": 4,\n  \"risk_blocked_candidate_count\": 27,\n  \"blocked_family_keys\": [\n    \"D138C_ret_48h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n    \"D150C_M5_trend_8_20_bps__trend_50_100_bps\"\n  ],\n  \"blocked_family_rows\": [\n    {\n      \"family_key\": \"D138C_ret_48h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 6,\n      \"total_bps\": -1.29,\n      \"mean_bps\": -0.21,\n      \"total_net_profit\": -0.94,\n      \"last_rule_id\": \"D138C_ret_48h_bps_GEQ65__trend_50_100_bps_LEQ65\",\n      \"last_outcome\": \"PROFIT\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -57.1,\n      \"mean_bps\": -57.1,\n      \"total_net_profit\": -23.65,\n      \"last_rule_id\": \"D150C_M5_ret_12h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -19.35,\n      \"mean_bps\": -19.35,\n      \"total_net_profit\": -8.72,\n      \"last_rule_id\": \"D150C_M5_ret_3h_bps_GEQ65__ret_24h_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_trend_8_20_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -50.52,\n      \"mean_bps\": -50.52,\n      \"total_net_profit\": -21.22,\n      \"last_rule_id\": \"D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    }\n  ],\n  \"repo_kv\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"repo_latest\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"mt5_kv_written\": true,\n  \"mt5_kv\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"mt5_latest\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"stage134_instruction\": {\n    \"InpRuleStateKvFile\": \"xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n    \"InpAllowedRules\": \"all\",\n    \"keep_InpEnableDemoOrders\": \"true only on demo account\"\n  },\n  \"summary_json\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage155_active_router_demo_risk_guard/m5/stage155_active_router_demo_risk_guard_summary.json\",\n  \"next\": [\n    \"Use this Stage157-hardened router behind Stage156; it preserves Stage155 KV filename so Stage134 input does not need to change.\",\n    \"If global_gate_freeze_active is true, keep demo orders blocked and repair discovery before re-enabling routing.\"\n  ]\n}\n",
+      "stderr_tail": ""
+    }
+  ],
+  "next": [
+    "If classification is NO_ACTIVE_RULE, keep Stage155 running and do not patch unless inactivity is commercially unacceptable over a defined window.",
+    "If classification is SOURCE_STALE or BLOCKED_STALE, update the M5 CSV and run this unifier again.",
+    "Use --db-update-command only after identifying the repo's current AMarkets DB updater command."
+  ]
+}
+{
+  "stage": "Stage156_OPERATIONAL_UNIFIER",
+  "generated_utc": "2026-07-08T05:10:32Z",
+  "status": "STAGE156_COMPLETE_OPERATIONAL_UNIFIER_READY",
+  "classification": "POSITION_OPEN",
+  "reason": "Stage134 sees an open position; duplicate orders correctly blocked.",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "mt5_files": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "source": {
+    "bars_m5": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+    "exists": true,
+    "row_count_including_header_if_any": 318862,
+    "last_line": "2026.07.08\t07:40:00\t4125.25\t4125.65\t4121.97\t4123.09\t307\t0\t36",
+    "raw_latest_time": "2026-07-08T07:40:00Z",
+    "timestamp_shift_hours": -3.0,
+    "normalized_latest_time": "2026-07-08T04:40:00Z",
+    "feature_age_sec": 1834,
+    "max_feature_age_sec": 7200,
+    "source_fresh": true
+  },
+  "router": {
+    "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv",
+    "decision": "STAGE157_GLOBAL_PERFORMANCE_FREEZE_NO_ORDER",
+    "any_signal_active": "false",
+    "selected_rule_id": "",
+    "selected_family_key": "",
+    "active_shortlist_count": "94",
+    "eligible_shortlist_count": "191",
+    "risk_blocked_family_count": "4"
+  },
+  "stage134": {
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage134_demo_executor_status_kv.csv",
+    "decision": "HOLD_NO_ACTIVE_ALLOWED_RULE",
+    "reason": "no active selected rule",
+    "feature_date": "2026-07-08T04:40:00Z",
+    "signal_fresh": "true",
+    "signal_age_sec": "1890",
+    "any_signal_active": "false",
+    "open_positions": "1",
+    "last_success_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35",
+    "last_attempt_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35"
+  },
+  "commands": [
+    {
+      "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+      "started_utc": "2026-07-08T05:10:34Z",
+      "finished_utc": "2026-07-08T05:11:29Z",
+      "returncode": 0,
+      "stdout_tail": "0_100_bps\\\", \\\"op\\\": \\\">=\\\", \\\"threshold\\\": -14.337320822584214}]\",\n  \"raw_selected_rule_id_before_global_gate\": \"D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n  \"raw_selected_label_before_global_gate\": \"m5: ret_6h_bps >= q35 AND trend_50_100_bps >= q35\",\n  \"risk_summary\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json\",\n  \"global_freeze_guard\": true,\n  \"global_gate_freeze_active\": true,\n  \"global_gate_info\": {\n    \"global_gate_freeze_active\": true,\n    \"global_gate_reason\": \"Stage145 aggregate gate requires freeze/repair: gate_decision=STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY; recommended_action=FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY; severity=HIGH; closed_trade_count=12; total_bps=-9.72; mean_bps=-0.81; win_rate=0.5\",\n    \"global_gate_decision\": \"STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY\",\n    \"global_recommended_action\": \"FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY\",\n    \"global_severity\": \"HIGH\",\n    \"global_closed_trade_count\": 12,\n    \"global_total_bps\": -9.72,\n    \"global_mean_bps\": -0.81,\n    \"global_win_rate\": 0.5,\n    \"min_global_gate_trades\": 10\n  },\n  \"block_negative_demo_families\": true,\n  \"risk_blocked_family_count\": 4,\n  \"risk_blocked_candidate_count\": 27,\n  \"blocked_family_keys\": [\n    \"D138C_ret_48h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n    \"D150C_M5_trend_8_20_bps__trend_50_100_bps\"\n  ],\n  \"blocked_family_rows\": [\n    {\n      \"family_key\": \"D138C_ret_48h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 6,\n      \"total_bps\": -1.29,\n      \"mean_bps\": -0.21,\n      \"total_net_profit\": -0.94,\n      \"last_rule_id\": \"D138C_ret_48h_bps_GEQ65__trend_50_100_bps_LEQ65\",\n      \"last_outcome\": \"PROFIT\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -57.1,\n      \"mean_bps\": -57.1,\n      \"total_net_profit\": -23.65,\n      \"last_rule_id\": \"D150C_M5_ret_12h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -19.35,\n      \"mean_bps\": -19.35,\n      \"total_net_profit\": -8.72,\n      \"last_rule_id\": \"D150C_M5_ret_3h_bps_GEQ65__ret_24h_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_trend_8_20_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -50.52,\n      \"mean_bps\": -50.52,\n      \"total_net_profit\": -21.22,\n      \"last_rule_id\": \"D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    }\n  ],\n  \"repo_kv\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"repo_latest\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"mt5_kv_written\": true,\n  \"mt5_kv\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"mt5_latest\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"stage134_instruction\": {\n    \"InpRuleStateKvFile\": \"xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n    \"InpAllowedRules\": \"all\",\n    \"keep_InpEnableDemoOrders\": \"true only on demo account\"\n  },\n  \"summary_json\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage155_active_router_demo_risk_guard/m5/stage155_active_router_demo_risk_guard_summary.json\",\n  \"next\": [\n    \"Use this Stage157-hardened router behind Stage156; it preserves Stage155 KV filename so Stage134 input does not need to change.\",\n    \"If global_gate_freeze_active is true, keep demo orders blocked and repair discovery before re-enabling routing.\"\n  ]\n}\n",
+      "stderr_tail": ""
+    }
+  ],
+  "next": [
+    "If classification is NO_ACTIVE_RULE, keep Stage155 running and do not patch unless inactivity is commercially unacceptable over a defined window.",
+    "If classification is SOURCE_STALE or BLOCKED_STALE, update the M5 CSV and run this unifier again.",
+    "Use --db-update-command only after identifying the repo's current AMarkets DB updater command."
+  ]
+}
+{
+  "stage": "Stage156_OPERATIONAL_UNIFIER",
+  "generated_utc": "2026-07-08T05:16:33Z",
+  "status": "STAGE156_COMPLETE_OPERATIONAL_UNIFIER_READY",
+  "classification": "POSITION_OPEN",
+  "reason": "Stage134 sees an open position; duplicate orders correctly blocked.",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "mt5_files": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "source": {
+    "bars_m5": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+    "exists": true,
+    "row_count_including_header_if_any": 318862,
+    "last_line": "2026.07.08\t07:40:00\t4125.25\t4125.65\t4121.97\t4123.09\t307\t0\t36",
+    "raw_latest_time": "2026-07-08T07:40:00Z",
+    "timestamp_shift_hours": -3.0,
+    "normalized_latest_time": "2026-07-08T04:40:00Z",
+    "feature_age_sec": 2193,
+    "max_feature_age_sec": 7200,
+    "source_fresh": true
+  },
+  "router": {
+    "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv",
+    "decision": "STAGE157_GLOBAL_PERFORMANCE_FREEZE_NO_ORDER",
+    "any_signal_active": "false",
+    "selected_rule_id": "",
+    "selected_family_key": "",
+    "active_shortlist_count": "94",
+    "eligible_shortlist_count": "191",
+    "risk_blocked_family_count": "4"
+  },
+  "stage134": {
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage134_demo_executor_status_kv.csv",
+    "decision": "HOLD_NO_ACTIVE_ALLOWED_RULE",
+    "reason": "no active selected rule",
+    "feature_date": "2026-07-08T04:40:00Z",
+    "signal_fresh": "true",
+    "signal_age_sec": "2190",
+    "any_signal_active": "false",
+    "open_positions": "1",
+    "last_success_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35",
+    "last_attempt_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35"
+  },
+  "commands": [
+    {
+      "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+      "started_utc": "2026-07-08T05:16:33Z",
+      "finished_utc": "2026-07-08T05:16:51Z",
+      "returncode": 0,
+      "stdout_tail": "0_100_bps\\\", \\\"op\\\": \\\">=\\\", \\\"threshold\\\": -14.337320822584214}]\",\n  \"raw_selected_rule_id_before_global_gate\": \"D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n  \"raw_selected_label_before_global_gate\": \"m5: ret_6h_bps >= q35 AND trend_50_100_bps >= q35\",\n  \"risk_summary\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json\",\n  \"global_freeze_guard\": true,\n  \"global_gate_freeze_active\": true,\n  \"global_gate_info\": {\n    \"global_gate_freeze_active\": true,\n    \"global_gate_reason\": \"Stage145 aggregate gate requires freeze/repair: gate_decision=STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY; recommended_action=FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY; severity=HIGH; closed_trade_count=12; total_bps=-9.72; mean_bps=-0.81; win_rate=0.5\",\n    \"global_gate_decision\": \"STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY\",\n    \"global_recommended_action\": \"FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY\",\n    \"global_severity\": \"HIGH\",\n    \"global_closed_trade_count\": 12,\n    \"global_total_bps\": -9.72,\n    \"global_mean_bps\": -0.81,\n    \"global_win_rate\": 0.5,\n    \"min_global_gate_trades\": 10\n  },\n  \"block_negative_demo_families\": true,\n  \"risk_blocked_family_count\": 4,\n  \"risk_blocked_candidate_count\": 27,\n  \"blocked_family_keys\": [\n    \"D138C_ret_48h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n    \"D150C_M5_trend_8_20_bps__trend_50_100_bps\"\n  ],\n  \"blocked_family_rows\": [\n    {\n      \"family_key\": \"D138C_ret_48h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 6,\n      \"total_bps\": -1.29,\n      \"mean_bps\": -0.21,\n      \"total_net_profit\": -0.94,\n      \"last_rule_id\": \"D138C_ret_48h_bps_GEQ65__trend_50_100_bps_LEQ65\",\n      \"last_outcome\": \"PROFIT\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -57.1,\n      \"mean_bps\": -57.1,\n      \"total_net_profit\": -23.65,\n      \"last_rule_id\": \"D150C_M5_ret_12h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -19.35,\n      \"mean_bps\": -19.35,\n      \"total_net_profit\": -8.72,\n      \"last_rule_id\": \"D150C_M5_ret_3h_bps_GEQ65__ret_24h_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_trend_8_20_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -50.52,\n      \"mean_bps\": -50.52,\n      \"total_net_profit\": -21.22,\n      \"last_rule_id\": \"D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    }\n  ],\n  \"repo_kv\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"repo_latest\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"mt5_kv_written\": true,\n  \"mt5_kv\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"mt5_latest\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"stage134_instruction\": {\n    \"InpRuleStateKvFile\": \"xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n    \"InpAllowedRules\": \"all\",\n    \"keep_InpEnableDemoOrders\": \"true only on demo account\"\n  },\n  \"summary_json\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage155_active_router_demo_risk_guard/m5/stage155_active_router_demo_risk_guard_summary.json\",\n  \"next\": [\n    \"Use this Stage157-hardened router behind Stage156; it preserves Stage155 KV filename so Stage134 input does not need to change.\",\n    \"If global_gate_freeze_active is true, keep demo orders blocked and repair discovery before re-enabling routing.\"\n  ]\n}\n",
+      "stderr_tail": ""
+    }
+  ],
+  "next": [
+    "If classification is NO_ACTIVE_RULE, keep Stage155 running and do not patch unless inactivity is commercially unacceptable over a defined window.",
+    "If classification is SOURCE_STALE or BLOCKED_STALE, update the M5 CSV and run this unifier again.",
+    "Use --db-update-command only after identifying the repo's current AMarkets DB updater command."
+  ]
+}
+{
+  "stage": "Stage156_OPERATIONAL_UNIFIER",
+  "generated_utc": "2026-07-08T05:21:54Z",
+  "status": "STAGE156_COMPLETE_OPERATIONAL_UNIFIER_READY",
+  "classification": "POSITION_OPEN",
+  "reason": "Stage134 sees an open position; duplicate orders correctly blocked.",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "mt5_files": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "source": {
+    "bars_m5": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+    "exists": true,
+    "row_count_including_header_if_any": 318862,
+    "last_line": "2026.07.08\t07:40:00\t4125.25\t4125.65\t4121.97\t4123.09\t307\t0\t36",
+    "raw_latest_time": "2026-07-08T07:40:00Z",
+    "timestamp_shift_hours": -3.0,
+    "normalized_latest_time": "2026-07-08T04:40:00Z",
+    "feature_age_sec": 2514,
+    "max_feature_age_sec": 7200,
+    "source_fresh": true
+  },
+  "router": {
+    "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv",
+    "decision": "STAGE157_GLOBAL_PERFORMANCE_FREEZE_NO_ORDER",
+    "any_signal_active": "false",
+    "selected_rule_id": "",
+    "selected_family_key": "",
+    "active_shortlist_count": "94",
+    "eligible_shortlist_count": "191",
+    "risk_blocked_family_count": "4"
+  },
+  "stage134": {
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage134_demo_executor_status_kv.csv",
+    "decision": "HOLD_NO_ACTIVE_ALLOWED_RULE",
+    "reason": "no active selected rule",
+    "feature_date": "2026-07-08T04:40:00Z",
+    "signal_fresh": "true",
+    "signal_age_sec": "2520",
+    "any_signal_active": "false",
+    "open_positions": "1",
+    "last_success_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35",
+    "last_attempt_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35"
+  },
+  "commands": [
+    {
+      "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+      "started_utc": "2026-07-08T05:21:54Z",
+      "finished_utc": "2026-07-08T05:22:07Z",
+      "returncode": 0,
+      "stdout_tail": "0_100_bps\\\", \\\"op\\\": \\\">=\\\", \\\"threshold\\\": -14.337320822584214}]\",\n  \"raw_selected_rule_id_before_global_gate\": \"D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n  \"raw_selected_label_before_global_gate\": \"m5: ret_6h_bps >= q35 AND trend_50_100_bps >= q35\",\n  \"risk_summary\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json\",\n  \"global_freeze_guard\": true,\n  \"global_gate_freeze_active\": true,\n  \"global_gate_info\": {\n    \"global_gate_freeze_active\": true,\n    \"global_gate_reason\": \"Stage145 aggregate gate requires freeze/repair: gate_decision=STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY; recommended_action=FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY; severity=HIGH; closed_trade_count=12; total_bps=-9.72; mean_bps=-0.81; win_rate=0.5\",\n    \"global_gate_decision\": \"STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY\",\n    \"global_recommended_action\": \"FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY\",\n    \"global_severity\": \"HIGH\",\n    \"global_closed_trade_count\": 12,\n    \"global_total_bps\": -9.72,\n    \"global_mean_bps\": -0.81,\n    \"global_win_rate\": 0.5,\n    \"min_global_gate_trades\": 10\n  },\n  \"block_negative_demo_families\": true,\n  \"risk_blocked_family_count\": 4,\n  \"risk_blocked_candidate_count\": 27,\n  \"blocked_family_keys\": [\n    \"D138C_ret_48h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n    \"D150C_M5_trend_8_20_bps__trend_50_100_bps\"\n  ],\n  \"blocked_family_rows\": [\n    {\n      \"family_key\": \"D138C_ret_48h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 6,\n      \"total_bps\": -1.29,\n      \"mean_bps\": -0.21,\n      \"total_net_profit\": -0.94,\n      \"last_rule_id\": \"D138C_ret_48h_bps_GEQ65__trend_50_100_bps_LEQ65\",\n      \"last_outcome\": \"PROFIT\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -57.1,\n      \"mean_bps\": -57.1,\n      \"total_net_profit\": -23.65,\n      \"last_rule_id\": \"D150C_M5_ret_12h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -19.35,\n      \"mean_bps\": -19.35,\n      \"total_net_profit\": -8.72,\n      \"last_rule_id\": \"D150C_M5_ret_3h_bps_GEQ65__ret_24h_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_trend_8_20_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -50.52,\n      \"mean_bps\": -50.52,\n      \"total_net_profit\": -21.22,\n      \"last_rule_id\": \"D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    }\n  ],\n  \"repo_kv\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"repo_latest\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"mt5_kv_written\": true,\n  \"mt5_kv\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"mt5_latest\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"stage134_instruction\": {\n    \"InpRuleStateKvFile\": \"xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n    \"InpAllowedRules\": \"all\",\n    \"keep_InpEnableDemoOrders\": \"true only on demo account\"\n  },\n  \"summary_json\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage155_active_router_demo_risk_guard/m5/stage155_active_router_demo_risk_guard_summary.json\",\n  \"next\": [\n    \"Use this Stage157-hardened router behind Stage156; it preserves Stage155 KV filename so Stage134 input does not need to change.\",\n    \"If global_gate_freeze_active is true, keep demo orders blocked and repair discovery before re-enabling routing.\"\n  ]\n}\n",
+      "stderr_tail": ""
+    }
+  ],
+  "next": [
+    "If classification is NO_ACTIVE_RULE, keep Stage155 running and do not patch unless inactivity is commercially unacceptable over a defined window.",
+    "If classification is SOURCE_STALE or BLOCKED_STALE, update the M5 CSV and run this unifier again.",
+    "Use --db-update-command only after identifying the repo's current AMarkets DB updater command."
+  ]
+}
+{
+  "stage": "Stage156_OPERATIONAL_UNIFIER",
+  "generated_utc": "2026-07-08T05:27:10Z",
+  "status": "STAGE156_COMPLETE_OPERATIONAL_UNIFIER_READY",
+  "classification": "POSITION_OPEN",
+  "reason": "Stage134 sees an open position; duplicate orders correctly blocked.",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "mt5_files": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "source": {
+    "bars_m5": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+    "exists": true,
+    "row_count_including_header_if_any": 318862,
+    "last_line": "2026.07.08\t07:40:00\t4125.25\t4125.65\t4121.97\t4123.09\t307\t0\t36",
+    "raw_latest_time": "2026-07-08T07:40:00Z",
+    "timestamp_shift_hours": -3.0,
+    "normalized_latest_time": "2026-07-08T04:40:00Z",
+    "feature_age_sec": 2831,
+    "max_feature_age_sec": 7200,
+    "source_fresh": true
+  },
+  "router": {
+    "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv",
+    "decision": "STAGE157_GLOBAL_PERFORMANCE_FREEZE_NO_ORDER",
+    "any_signal_active": "false",
+    "selected_rule_id": "",
+    "selected_family_key": "",
+    "active_shortlist_count": "94",
+    "eligible_shortlist_count": "191",
+    "risk_blocked_family_count": "4"
+  },
+  "stage134": {
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage134_demo_executor_status_kv.csv",
+    "decision": "HOLD_NO_ACTIVE_ALLOWED_RULE",
+    "reason": "no active selected rule",
+    "feature_date": "2026-07-08T04:40:00Z",
+    "signal_fresh": "true",
+    "signal_age_sec": "2850",
+    "any_signal_active": "false",
+    "open_positions": "1",
+    "last_success_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35",
+    "last_attempt_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35"
+  },
+  "commands": [
+    {
+      "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+      "started_utc": "2026-07-08T05:27:11Z",
+      "finished_utc": "2026-07-08T05:27:30Z",
+      "returncode": 0,
+      "stdout_tail": "0_100_bps\\\", \\\"op\\\": \\\">=\\\", \\\"threshold\\\": -14.337320822584214}]\",\n  \"raw_selected_rule_id_before_global_gate\": \"D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n  \"raw_selected_label_before_global_gate\": \"m5: ret_6h_bps >= q35 AND trend_50_100_bps >= q35\",\n  \"risk_summary\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json\",\n  \"global_freeze_guard\": true,\n  \"global_gate_freeze_active\": true,\n  \"global_gate_info\": {\n    \"global_gate_freeze_active\": true,\n    \"global_gate_reason\": \"Stage145 aggregate gate requires freeze/repair: gate_decision=STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY; recommended_action=FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY; severity=HIGH; closed_trade_count=12; total_bps=-9.72; mean_bps=-0.81; win_rate=0.5\",\n    \"global_gate_decision\": \"STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY\",\n    \"global_recommended_action\": \"FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY\",\n    \"global_severity\": \"HIGH\",\n    \"global_closed_trade_count\": 12,\n    \"global_total_bps\": -9.72,\n    \"global_mean_bps\": -0.81,\n    \"global_win_rate\": 0.5,\n    \"min_global_gate_trades\": 10\n  },\n  \"block_negative_demo_families\": true,\n  \"risk_blocked_family_count\": 4,\n  \"risk_blocked_candidate_count\": 27,\n  \"blocked_family_keys\": [\n    \"D138C_ret_48h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n    \"D150C_M5_trend_8_20_bps__trend_50_100_bps\"\n  ],\n  \"blocked_family_rows\": [\n    {\n      \"family_key\": \"D138C_ret_48h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 6,\n      \"total_bps\": -1.29,\n      \"mean_bps\": -0.21,\n      \"total_net_profit\": -0.94,\n      \"last_rule_id\": \"D138C_ret_48h_bps_GEQ65__trend_50_100_bps_LEQ65\",\n      \"last_outcome\": \"PROFIT\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -57.1,\n      \"mean_bps\": -57.1,\n      \"total_net_profit\": -23.65,\n      \"last_rule_id\": \"D150C_M5_ret_12h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -19.35,\n      \"mean_bps\": -19.35,\n      \"total_net_profit\": -8.72,\n      \"last_rule_id\": \"D150C_M5_ret_3h_bps_GEQ65__ret_24h_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_trend_8_20_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -50.52,\n      \"mean_bps\": -50.52,\n      \"total_net_profit\": -21.22,\n      \"last_rule_id\": \"D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    }\n  ],\n  \"repo_kv\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"repo_latest\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"mt5_kv_written\": true,\n  \"mt5_kv\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"mt5_latest\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"stage134_instruction\": {\n    \"InpRuleStateKvFile\": \"xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n    \"InpAllowedRules\": \"all\",\n    \"keep_InpEnableDemoOrders\": \"true only on demo account\"\n  },\n  \"summary_json\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage155_active_router_demo_risk_guard/m5/stage155_active_router_demo_risk_guard_summary.json\",\n  \"next\": [\n    \"Use this Stage157-hardened router behind Stage156; it preserves Stage155 KV filename so Stage134 input does not need to change.\",\n    \"If global_gate_freeze_active is true, keep demo orders blocked and repair discovery before re-enabling routing.\"\n  ]\n}\n",
+      "stderr_tail": ""
+    }
+  ],
+  "next": [
+    "If classification is NO_ACTIVE_RULE, keep Stage155 running and do not patch unless inactivity is commercially unacceptable over a defined window.",
+    "If classification is SOURCE_STALE or BLOCKED_STALE, update the M5 CSV and run this unifier again.",
+    "Use --db-update-command only after identifying the repo's current AMarkets DB updater command."
+  ]
+}
+{
+  "stage": "Stage156_OPERATIONAL_UNIFIER",
+  "generated_utc": "2026-07-08T05:32:35Z",
+  "status": "STAGE156_COMPLETE_OPERATIONAL_UNIFIER_READY",
+  "classification": "POSITION_OPEN",
+  "reason": "Stage134 sees an open position; duplicate orders correctly blocked.",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "mt5_files": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "source": {
+    "bars_m5": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+    "exists": true,
+    "row_count_including_header_if_any": 318862,
+    "last_line": "2026.07.08\t07:40:00\t4125.25\t4125.65\t4121.97\t4123.09\t307\t0\t36",
+    "raw_latest_time": "2026-07-08T07:40:00Z",
+    "timestamp_shift_hours": -3.0,
+    "normalized_latest_time": "2026-07-08T04:40:00Z",
+    "feature_age_sec": 3155,
+    "max_feature_age_sec": 7200,
+    "source_fresh": true
+  },
+  "router": {
+    "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv",
+    "decision": "STAGE157_GLOBAL_PERFORMANCE_FREEZE_NO_ORDER",
+    "any_signal_active": "false",
+    "selected_rule_id": "",
+    "selected_family_key": "",
+    "active_shortlist_count": "94",
+    "eligible_shortlist_count": "191",
+    "risk_blocked_family_count": "4"
+  },
+  "stage134": {
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage134_demo_executor_status_kv.csv",
+    "decision": "HOLD_NO_ACTIVE_ALLOWED_RULE",
+    "reason": "no active selected rule",
+    "feature_date": "2026-07-08T04:40:00Z",
+    "signal_fresh": "true",
+    "signal_age_sec": "3180",
+    "any_signal_active": "false",
+    "open_positions": "1",
+    "last_success_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35",
+    "last_attempt_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35"
+  },
+  "commands": [
+    {
+      "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+      "started_utc": "2026-07-08T05:32:35Z",
+      "finished_utc": "2026-07-08T05:33:00Z",
+      "returncode": 0,
+      "stdout_tail": "0_100_bps\\\", \\\"op\\\": \\\">=\\\", \\\"threshold\\\": -14.337320822584214}]\",\n  \"raw_selected_rule_id_before_global_gate\": \"D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n  \"raw_selected_label_before_global_gate\": \"m5: ret_6h_bps >= q35 AND trend_50_100_bps >= q35\",\n  \"risk_summary\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json\",\n  \"global_freeze_guard\": true,\n  \"global_gate_freeze_active\": true,\n  \"global_gate_info\": {\n    \"global_gate_freeze_active\": true,\n    \"global_gate_reason\": \"Stage145 aggregate gate requires freeze/repair: gate_decision=STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY; recommended_action=FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY; severity=HIGH; closed_trade_count=12; total_bps=-9.72; mean_bps=-0.81; win_rate=0.5\",\n    \"global_gate_decision\": \"STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY\",\n    \"global_recommended_action\": \"FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY\",\n    \"global_severity\": \"HIGH\",\n    \"global_closed_trade_count\": 12,\n    \"global_total_bps\": -9.72,\n    \"global_mean_bps\": -0.81,\n    \"global_win_rate\": 0.5,\n    \"min_global_gate_trades\": 10\n  },\n  \"block_negative_demo_families\": true,\n  \"risk_blocked_family_count\": 4,\n  \"risk_blocked_candidate_count\": 27,\n  \"blocked_family_keys\": [\n    \"D138C_ret_48h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n    \"D150C_M5_trend_8_20_bps__trend_50_100_bps\"\n  ],\n  \"blocked_family_rows\": [\n    {\n      \"family_key\": \"D138C_ret_48h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 6,\n      \"total_bps\": -1.29,\n      \"mean_bps\": -0.21,\n      \"total_net_profit\": -0.94,\n      \"last_rule_id\": \"D138C_ret_48h_bps_GEQ65__trend_50_100_bps_LEQ65\",\n      \"last_outcome\": \"PROFIT\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -57.1,\n      \"mean_bps\": -57.1,\n      \"total_net_profit\": -23.65,\n      \"last_rule_id\": \"D150C_M5_ret_12h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -19.35,\n      \"mean_bps\": -19.35,\n      \"total_net_profit\": -8.72,\n      \"last_rule_id\": \"D150C_M5_ret_3h_bps_GEQ65__ret_24h_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_trend_8_20_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -50.52,\n      \"mean_bps\": -50.52,\n      \"total_net_profit\": -21.22,\n      \"last_rule_id\": \"D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    }\n  ],\n  \"repo_kv\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"repo_latest\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"mt5_kv_written\": true,\n  \"mt5_kv\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"mt5_latest\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"stage134_instruction\": {\n    \"InpRuleStateKvFile\": \"xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n    \"InpAllowedRules\": \"all\",\n    \"keep_InpEnableDemoOrders\": \"true only on demo account\"\n  },\n  \"summary_json\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage155_active_router_demo_risk_guard/m5/stage155_active_router_demo_risk_guard_summary.json\",\n  \"next\": [\n    \"Use this Stage157-hardened router behind Stage156; it preserves Stage155 KV filename so Stage134 input does not need to change.\",\n    \"If global_gate_freeze_active is true, keep demo orders blocked and repair discovery before re-enabling routing.\"\n  ]\n}\n",
+      "stderr_tail": ""
+    }
+  ],
+  "next": [
+    "If classification is NO_ACTIVE_RULE, keep Stage155 running and do not patch unless inactivity is commercially unacceptable over a defined window.",
+    "If classification is SOURCE_STALE or BLOCKED_STALE, update the M5 CSV and run this unifier again.",
+    "Use --db-update-command only after identifying the repo's current AMarkets DB updater command."
+  ]
+}
+{
+  "stage": "Stage156_OPERATIONAL_UNIFIER",
+  "generated_utc": "2026-07-08T05:38:04Z",
+  "status": "STAGE156_COMPLETE_OPERATIONAL_UNIFIER_READY",
+  "classification": "POSITION_OPEN",
+  "reason": "Stage134 sees an open position; duplicate orders correctly blocked.",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "mt5_files": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "source": {
+    "bars_m5": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+    "exists": true,
+    "row_count_including_header_if_any": 318862,
+    "last_line": "2026.07.08\t07:40:00\t4125.25\t4125.65\t4121.97\t4123.09\t307\t0\t36",
+    "raw_latest_time": "2026-07-08T07:40:00Z",
+    "timestamp_shift_hours": -3.0,
+    "normalized_latest_time": "2026-07-08T04:40:00Z",
+    "feature_age_sec": 3485,
+    "max_feature_age_sec": 7200,
+    "source_fresh": true
+  },
+  "router": {
+    "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv",
+    "decision": "STAGE157_GLOBAL_PERFORMANCE_FREEZE_NO_ORDER",
+    "any_signal_active": "false",
+    "selected_rule_id": "",
+    "selected_family_key": "",
+    "active_shortlist_count": "94",
+    "eligible_shortlist_count": "191",
+    "risk_blocked_family_count": "4"
+  },
+  "stage134": {
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage134_demo_executor_status_kv.csv",
+    "decision": "HOLD_NO_ACTIVE_ALLOWED_RULE",
+    "reason": "no active selected rule",
+    "feature_date": "2026-07-08T04:40:00Z",
+    "signal_fresh": "true",
+    "signal_age_sec": "3510",
+    "any_signal_active": "false",
+    "open_positions": "1",
+    "last_success_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35",
+    "last_attempt_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35"
+  },
+  "commands": [
+    {
+      "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+      "started_utc": "2026-07-08T05:38:05Z",
+      "finished_utc": "2026-07-08T05:38:45Z",
+      "returncode": 0,
+      "stdout_tail": "0_100_bps\\\", \\\"op\\\": \\\">=\\\", \\\"threshold\\\": -14.337320822584214}]\",\n  \"raw_selected_rule_id_before_global_gate\": \"D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n  \"raw_selected_label_before_global_gate\": \"m5: ret_6h_bps >= q35 AND trend_50_100_bps >= q35\",\n  \"risk_summary\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json\",\n  \"global_freeze_guard\": true,\n  \"global_gate_freeze_active\": true,\n  \"global_gate_info\": {\n    \"global_gate_freeze_active\": true,\n    \"global_gate_reason\": \"Stage145 aggregate gate requires freeze/repair: gate_decision=STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY; recommended_action=FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY; severity=HIGH; closed_trade_count=12; total_bps=-9.72; mean_bps=-0.81; win_rate=0.5\",\n    \"global_gate_decision\": \"STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY\",\n    \"global_recommended_action\": \"FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY\",\n    \"global_severity\": \"HIGH\",\n    \"global_closed_trade_count\": 12,\n    \"global_total_bps\": -9.72,\n    \"global_mean_bps\": -0.81,\n    \"global_win_rate\": 0.5,\n    \"min_global_gate_trades\": 10\n  },\n  \"block_negative_demo_families\": true,\n  \"risk_blocked_family_count\": 4,\n  \"risk_blocked_candidate_count\": 27,\n  \"blocked_family_keys\": [\n    \"D138C_ret_48h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n    \"D150C_M5_trend_8_20_bps__trend_50_100_bps\"\n  ],\n  \"blocked_family_rows\": [\n    {\n      \"family_key\": \"D138C_ret_48h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 6,\n      \"total_bps\": -1.29,\n      \"mean_bps\": -0.21,\n      \"total_net_profit\": -0.94,\n      \"last_rule_id\": \"D138C_ret_48h_bps_GEQ65__trend_50_100_bps_LEQ65\",\n      \"last_outcome\": \"PROFIT\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -57.1,\n      \"mean_bps\": -57.1,\n      \"total_net_profit\": -23.65,\n      \"last_rule_id\": \"D150C_M5_ret_12h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -19.35,\n      \"mean_bps\": -19.35,\n      \"total_net_profit\": -8.72,\n      \"last_rule_id\": \"D150C_M5_ret_3h_bps_GEQ65__ret_24h_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_trend_8_20_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -50.52,\n      \"mean_bps\": -50.52,\n      \"total_net_profit\": -21.22,\n      \"last_rule_id\": \"D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    }\n  ],\n  \"repo_kv\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"repo_latest\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"mt5_kv_written\": true,\n  \"mt5_kv\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"mt5_latest\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"stage134_instruction\": {\n    \"InpRuleStateKvFile\": \"xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n    \"InpAllowedRules\": \"all\",\n    \"keep_InpEnableDemoOrders\": \"true only on demo account\"\n  },\n  \"summary_json\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage155_active_router_demo_risk_guard/m5/stage155_active_router_demo_risk_guard_summary.json\",\n  \"next\": [\n    \"Use this Stage157-hardened router behind Stage156; it preserves Stage155 KV filename so Stage134 input does not need to change.\",\n    \"If global_gate_freeze_active is true, keep demo orders blocked and repair discovery before re-enabling routing.\"\n  ]\n}\n",
+      "stderr_tail": ""
+    }
+  ],
+  "next": [
+    "If classification is NO_ACTIVE_RULE, keep Stage155 running and do not patch unless inactivity is commercially unacceptable over a defined window.",
+    "If classification is SOURCE_STALE or BLOCKED_STALE, update the M5 CSV and run this unifier again.",
+    "Use --db-update-command only after identifying the repo's current AMarkets DB updater command."
+  ]
+}
+{
+  "stage": "Stage156_OPERATIONAL_UNIFIER",
+  "generated_utc": "2026-07-08T05:43:49Z",
+  "status": "STAGE156_COMPLETE_OPERATIONAL_UNIFIER_READY",
+  "classification": "POSITION_OPEN",
+  "reason": "Stage134 sees an open position; duplicate orders correctly blocked.",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "mt5_files": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "source": {
+    "bars_m5": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+    "exists": true,
+    "row_count_including_header_if_any": 318862,
+    "last_line": "2026.07.08\t07:40:00\t4125.25\t4125.65\t4121.97\t4123.09\t307\t0\t36",
+    "raw_latest_time": "2026-07-08T07:40:00Z",
+    "timestamp_shift_hours": -3.0,
+    "normalized_latest_time": "2026-07-08T04:40:00Z",
+    "feature_age_sec": 3829,
+    "max_feature_age_sec": 7200,
+    "source_fresh": true
+  },
+  "router": {
+    "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv",
+    "decision": "STAGE157_GLOBAL_PERFORMANCE_FREEZE_NO_ORDER",
+    "any_signal_active": "false",
+    "selected_rule_id": "",
+    "selected_family_key": "",
+    "active_shortlist_count": "94",
+    "eligible_shortlist_count": "191",
+    "risk_blocked_family_count": "4"
+  },
+  "stage134": {
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage134_demo_executor_status_kv.csv",
+    "decision": "HOLD_NO_ACTIVE_ALLOWED_RULE",
+    "reason": "no active selected rule",
+    "feature_date": "2026-07-08T04:40:00Z",
+    "signal_fresh": "true",
+    "signal_age_sec": "3840",
+    "any_signal_active": "false",
+    "open_positions": "1",
+    "last_success_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35",
+    "last_attempt_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35"
+  },
+  "commands": [
+    {
+      "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+      "started_utc": "2026-07-08T05:43:49Z",
+      "finished_utc": "2026-07-08T05:44:11Z",
+      "returncode": 0,
+      "stdout_tail": "0_100_bps\\\", \\\"op\\\": \\\">=\\\", \\\"threshold\\\": -14.337320822584214}]\",\n  \"raw_selected_rule_id_before_global_gate\": \"D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n  \"raw_selected_label_before_global_gate\": \"m5: ret_6h_bps >= q35 AND trend_50_100_bps >= q35\",\n  \"risk_summary\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json\",\n  \"global_freeze_guard\": true,\n  \"global_gate_freeze_active\": true,\n  \"global_gate_info\": {\n    \"global_gate_freeze_active\": true,\n    \"global_gate_reason\": \"Stage145 aggregate gate requires freeze/repair: gate_decision=STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY; recommended_action=FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY; severity=HIGH; closed_trade_count=12; total_bps=-9.72; mean_bps=-0.81; win_rate=0.5\",\n    \"global_gate_decision\": \"STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY\",\n    \"global_recommended_action\": \"FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY\",\n    \"global_severity\": \"HIGH\",\n    \"global_closed_trade_count\": 12,\n    \"global_total_bps\": -9.72,\n    \"global_mean_bps\": -0.81,\n    \"global_win_rate\": 0.5,\n    \"min_global_gate_trades\": 10\n  },\n  \"block_negative_demo_families\": true,\n  \"risk_blocked_family_count\": 4,\n  \"risk_blocked_candidate_count\": 27,\n  \"blocked_family_keys\": [\n    \"D138C_ret_48h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n    \"D150C_M5_trend_8_20_bps__trend_50_100_bps\"\n  ],\n  \"blocked_family_rows\": [\n    {\n      \"family_key\": \"D138C_ret_48h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 6,\n      \"total_bps\": -1.29,\n      \"mean_bps\": -0.21,\n      \"total_net_profit\": -0.94,\n      \"last_rule_id\": \"D138C_ret_48h_bps_GEQ65__trend_50_100_bps_LEQ65\",\n      \"last_outcome\": \"PROFIT\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -57.1,\n      \"mean_bps\": -57.1,\n      \"total_net_profit\": -23.65,\n      \"last_rule_id\": \"D150C_M5_ret_12h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -19.35,\n      \"mean_bps\": -19.35,\n      \"total_net_profit\": -8.72,\n      \"last_rule_id\": \"D150C_M5_ret_3h_bps_GEQ65__ret_24h_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_trend_8_20_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -50.52,\n      \"mean_bps\": -50.52,\n      \"total_net_profit\": -21.22,\n      \"last_rule_id\": \"D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    }\n  ],\n  \"repo_kv\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"repo_latest\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"mt5_kv_written\": true,\n  \"mt5_kv\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"mt5_latest\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"stage134_instruction\": {\n    \"InpRuleStateKvFile\": \"xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n    \"InpAllowedRules\": \"all\",\n    \"keep_InpEnableDemoOrders\": \"true only on demo account\"\n  },\n  \"summary_json\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage155_active_router_demo_risk_guard/m5/stage155_active_router_demo_risk_guard_summary.json\",\n  \"next\": [\n    \"Use this Stage157-hardened router behind Stage156; it preserves Stage155 KV filename so Stage134 input does not need to change.\",\n    \"If global_gate_freeze_active is true, keep demo orders blocked and repair discovery before re-enabling routing.\"\n  ]\n}\n",
+      "stderr_tail": ""
+    }
+  ],
+  "next": [
+    "If classification is NO_ACTIVE_RULE, keep Stage155 running and do not patch unless inactivity is commercially unacceptable over a defined window.",
+    "If classification is SOURCE_STALE or BLOCKED_STALE, update the M5 CSV and run this unifier again.",
+    "Use --db-update-command only after identifying the repo's current AMarkets DB updater command."
+  ]
+}
+{
+  "stage": "Stage156_OPERATIONAL_UNIFIER",
+  "generated_utc": "2026-07-08T05:49:14Z",
+  "status": "STAGE156_COMPLETE_OPERATIONAL_UNIFIER_READY",
+  "classification": "POSITION_OPEN",
+  "reason": "Stage134 sees an open position; duplicate orders correctly blocked.",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "mt5_files": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "source": {
+    "bars_m5": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+    "exists": true,
+    "row_count_including_header_if_any": 318862,
+    "last_line": "2026.07.08\t07:40:00\t4125.25\t4125.65\t4121.97\t4123.09\t307\t0\t36",
+    "raw_latest_time": "2026-07-08T07:40:00Z",
+    "timestamp_shift_hours": -3.0,
+    "normalized_latest_time": "2026-07-08T04:40:00Z",
+    "feature_age_sec": 4155,
+    "max_feature_age_sec": 7200,
+    "source_fresh": true
+  },
+  "router": {
+    "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv",
+    "decision": "STAGE157_GLOBAL_PERFORMANCE_FREEZE_NO_ORDER",
+    "any_signal_active": "false",
+    "selected_rule_id": "",
+    "selected_family_key": "",
+    "active_shortlist_count": "94",
+    "eligible_shortlist_count": "191",
+    "risk_blocked_family_count": "4"
+  },
+  "stage134": {
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage134_demo_executor_status_kv.csv",
+    "decision": "HOLD_NO_ACTIVE_ALLOWED_RULE",
+    "reason": "no active selected rule",
+    "feature_date": "2026-07-08T04:40:00Z",
+    "signal_fresh": "true",
+    "signal_age_sec": "4170",
+    "any_signal_active": "false",
+    "open_positions": "1",
+    "last_success_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35",
+    "last_attempt_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35"
+  },
+  "commands": [
+    {
+      "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+      "started_utc": "2026-07-08T05:49:15Z",
+      "finished_utc": "2026-07-08T05:49:29Z",
+      "returncode": 0,
+      "stdout_tail": "0_100_bps\\\", \\\"op\\\": \\\">=\\\", \\\"threshold\\\": -14.337320822584214}]\",\n  \"raw_selected_rule_id_before_global_gate\": \"D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n  \"raw_selected_label_before_global_gate\": \"m5: ret_6h_bps >= q35 AND trend_50_100_bps >= q35\",\n  \"risk_summary\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json\",\n  \"global_freeze_guard\": true,\n  \"global_gate_freeze_active\": true,\n  \"global_gate_info\": {\n    \"global_gate_freeze_active\": true,\n    \"global_gate_reason\": \"Stage145 aggregate gate requires freeze/repair: gate_decision=STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY; recommended_action=FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY; severity=HIGH; closed_trade_count=12; total_bps=-9.72; mean_bps=-0.81; win_rate=0.5\",\n    \"global_gate_decision\": \"STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY\",\n    \"global_recommended_action\": \"FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY\",\n    \"global_severity\": \"HIGH\",\n    \"global_closed_trade_count\": 12,\n    \"global_total_bps\": -9.72,\n    \"global_mean_bps\": -0.81,\n    \"global_win_rate\": 0.5,\n    \"min_global_gate_trades\": 10\n  },\n  \"block_negative_demo_families\": true,\n  \"risk_blocked_family_count\": 4,\n  \"risk_blocked_candidate_count\": 27,\n  \"blocked_family_keys\": [\n    \"D138C_ret_48h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n    \"D150C_M5_trend_8_20_bps__trend_50_100_bps\"\n  ],\n  \"blocked_family_rows\": [\n    {\n      \"family_key\": \"D138C_ret_48h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 6,\n      \"total_bps\": -1.29,\n      \"mean_bps\": -0.21,\n      \"total_net_profit\": -0.94,\n      \"last_rule_id\": \"D138C_ret_48h_bps_GEQ65__trend_50_100_bps_LEQ65\",\n      \"last_outcome\": \"PROFIT\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -57.1,\n      \"mean_bps\": -57.1,\n      \"total_net_profit\": -23.65,\n      \"last_rule_id\": \"D150C_M5_ret_12h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -19.35,\n      \"mean_bps\": -19.35,\n      \"total_net_profit\": -8.72,\n      \"last_rule_id\": \"D150C_M5_ret_3h_bps_GEQ65__ret_24h_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_trend_8_20_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -50.52,\n      \"mean_bps\": -50.52,\n      \"total_net_profit\": -21.22,\n      \"last_rule_id\": \"D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    }\n  ],\n  \"repo_kv\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"repo_latest\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"mt5_kv_written\": true,\n  \"mt5_kv\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"mt5_latest\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"stage134_instruction\": {\n    \"InpRuleStateKvFile\": \"xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n    \"InpAllowedRules\": \"all\",\n    \"keep_InpEnableDemoOrders\": \"true only on demo account\"\n  },\n  \"summary_json\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage155_active_router_demo_risk_guard/m5/stage155_active_router_demo_risk_guard_summary.json\",\n  \"next\": [\n    \"Use this Stage157-hardened router behind Stage156; it preserves Stage155 KV filename so Stage134 input does not need to change.\",\n    \"If global_gate_freeze_active is true, keep demo orders blocked and repair discovery before re-enabling routing.\"\n  ]\n}\n",
+      "stderr_tail": ""
+    }
+  ],
+  "next": [
+    "If classification is NO_ACTIVE_RULE, keep Stage155 running and do not patch unless inactivity is commercially unacceptable over a defined window.",
+    "If classification is SOURCE_STALE or BLOCKED_STALE, update the M5 CSV and run this unifier again.",
+    "Use --db-update-command only after identifying the repo's current AMarkets DB updater command."
+  ]
+}
+{
+  "stage": "Stage156_OPERATIONAL_UNIFIER",
+  "generated_utc": "2026-07-08T05:54:32Z",
+  "status": "STAGE156_COMPLETE_OPERATIONAL_UNIFIER_READY",
+  "classification": "POSITION_OPEN",
+  "reason": "Stage134 sees an open position; duplicate orders correctly blocked.",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "mt5_files": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "source": {
+    "bars_m5": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+    "exists": true,
+    "row_count_including_header_if_any": 318862,
+    "last_line": "2026.07.08\t07:40:00\t4125.25\t4125.65\t4121.97\t4123.09\t307\t0\t36",
+    "raw_latest_time": "2026-07-08T07:40:00Z",
+    "timestamp_shift_hours": -3.0,
+    "normalized_latest_time": "2026-07-08T04:40:00Z",
+    "feature_age_sec": 4472,
+    "max_feature_age_sec": 7200,
+    "source_fresh": true
+  },
+  "router": {
+    "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv",
+    "decision": "STAGE157_GLOBAL_PERFORMANCE_FREEZE_NO_ORDER",
+    "any_signal_active": "false",
+    "selected_rule_id": "",
+    "selected_family_key": "",
+    "active_shortlist_count": "94",
+    "eligible_shortlist_count": "191",
+    "risk_blocked_family_count": "4"
+  },
+  "stage134": {
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage134_demo_executor_status_kv.csv",
+    "decision": "HOLD_NO_ACTIVE_ALLOWED_RULE",
+    "reason": "no active selected rule",
+    "feature_date": "2026-07-08T04:40:00Z",
+    "signal_fresh": "true",
+    "signal_age_sec": "4470",
+    "any_signal_active": "false",
+    "open_positions": "1",
+    "last_success_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35",
+    "last_attempt_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35"
+  },
+  "commands": [
+    {
+      "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+      "started_utc": "2026-07-08T05:54:32Z",
+      "finished_utc": "2026-07-08T05:54:43Z",
+      "returncode": 0,
+      "stdout_tail": "0_100_bps\\\", \\\"op\\\": \\\">=\\\", \\\"threshold\\\": -14.337320822584214}]\",\n  \"raw_selected_rule_id_before_global_gate\": \"D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n  \"raw_selected_label_before_global_gate\": \"m5: ret_6h_bps >= q35 AND trend_50_100_bps >= q35\",\n  \"risk_summary\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json\",\n  \"global_freeze_guard\": true,\n  \"global_gate_freeze_active\": true,\n  \"global_gate_info\": {\n    \"global_gate_freeze_active\": true,\n    \"global_gate_reason\": \"Stage145 aggregate gate requires freeze/repair: gate_decision=STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY; recommended_action=FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY; severity=HIGH; closed_trade_count=12; total_bps=-9.72; mean_bps=-0.81; win_rate=0.5\",\n    \"global_gate_decision\": \"STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY\",\n    \"global_recommended_action\": \"FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY\",\n    \"global_severity\": \"HIGH\",\n    \"global_closed_trade_count\": 12,\n    \"global_total_bps\": -9.72,\n    \"global_mean_bps\": -0.81,\n    \"global_win_rate\": 0.5,\n    \"min_global_gate_trades\": 10\n  },\n  \"block_negative_demo_families\": true,\n  \"risk_blocked_family_count\": 4,\n  \"risk_blocked_candidate_count\": 27,\n  \"blocked_family_keys\": [\n    \"D138C_ret_48h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n    \"D150C_M5_trend_8_20_bps__trend_50_100_bps\"\n  ],\n  \"blocked_family_rows\": [\n    {\n      \"family_key\": \"D138C_ret_48h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 6,\n      \"total_bps\": -1.29,\n      \"mean_bps\": -0.21,\n      \"total_net_profit\": -0.94,\n      \"last_rule_id\": \"D138C_ret_48h_bps_GEQ65__trend_50_100_bps_LEQ65\",\n      \"last_outcome\": \"PROFIT\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -57.1,\n      \"mean_bps\": -57.1,\n      \"total_net_profit\": -23.65,\n      \"last_rule_id\": \"D150C_M5_ret_12h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -19.35,\n      \"mean_bps\": -19.35,\n      \"total_net_profit\": -8.72,\n      \"last_rule_id\": \"D150C_M5_ret_3h_bps_GEQ65__ret_24h_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_trend_8_20_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -50.52,\n      \"mean_bps\": -50.52,\n      \"total_net_profit\": -21.22,\n      \"last_rule_id\": \"D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    }\n  ],\n  \"repo_kv\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"repo_latest\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"mt5_kv_written\": true,\n  \"mt5_kv\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"mt5_latest\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"stage134_instruction\": {\n    \"InpRuleStateKvFile\": \"xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n    \"InpAllowedRules\": \"all\",\n    \"keep_InpEnableDemoOrders\": \"true only on demo account\"\n  },\n  \"summary_json\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage155_active_router_demo_risk_guard/m5/stage155_active_router_demo_risk_guard_summary.json\",\n  \"next\": [\n    \"Use this Stage157-hardened router behind Stage156; it preserves Stage155 KV filename so Stage134 input does not need to change.\",\n    \"If global_gate_freeze_active is true, keep demo orders blocked and repair discovery before re-enabling routing.\"\n  ]\n}\n",
+      "stderr_tail": ""
+    }
+  ],
+  "next": [
+    "If classification is NO_ACTIVE_RULE, keep Stage155 running and do not patch unless inactivity is commercially unacceptable over a defined window.",
+    "If classification is SOURCE_STALE or BLOCKED_STALE, update the M5 CSV and run this unifier again.",
+    "Use --db-update-command only after identifying the repo's current AMarkets DB updater command."
+  ]
+}
+{
+  "stage": "Stage156_OPERATIONAL_UNIFIER",
+  "generated_utc": "2026-07-08T05:59:46Z",
+  "status": "STAGE156_COMPLETE_OPERATIONAL_UNIFIER_READY",
+  "classification": "POSITION_OPEN",
+  "reason": "Stage134 sees an open position; duplicate orders correctly blocked.",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "mt5_files": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "source": {
+    "bars_m5": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+    "exists": true,
+    "row_count_including_header_if_any": 318862,
+    "last_line": "2026.07.08\t07:40:00\t4125.25\t4125.65\t4121.97\t4123.09\t307\t0\t36",
+    "raw_latest_time": "2026-07-08T07:40:00Z",
+    "timestamp_shift_hours": -3.0,
+    "normalized_latest_time": "2026-07-08T04:40:00Z",
+    "feature_age_sec": 4786,
+    "max_feature_age_sec": 7200,
+    "source_fresh": true
+  },
+  "router": {
+    "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv",
+    "decision": "STAGE157_GLOBAL_PERFORMANCE_FREEZE_NO_ORDER",
+    "any_signal_active": "false",
+    "selected_rule_id": "",
+    "selected_family_key": "",
+    "active_shortlist_count": "94",
+    "eligible_shortlist_count": "191",
+    "risk_blocked_family_count": "4"
+  },
+  "stage134": {
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage134_demo_executor_status_kv.csv",
+    "decision": "HOLD_NO_ACTIVE_ALLOWED_RULE",
+    "reason": "no active selected rule",
+    "feature_date": "2026-07-08T04:40:00Z",
+    "signal_fresh": "true",
+    "signal_age_sec": "4800",
+    "any_signal_active": "false",
+    "open_positions": "1",
+    "last_success_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35",
+    "last_attempt_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35"
+  },
+  "commands": [
+    {
+      "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+      "started_utc": "2026-07-08T05:59:46Z",
+      "finished_utc": "2026-07-08T05:59:59Z",
+      "returncode": 0,
+      "stdout_tail": "0_100_bps\\\", \\\"op\\\": \\\">=\\\", \\\"threshold\\\": -14.337320822584214}]\",\n  \"raw_selected_rule_id_before_global_gate\": \"D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n  \"raw_selected_label_before_global_gate\": \"m5: ret_6h_bps >= q35 AND trend_50_100_bps >= q35\",\n  \"risk_summary\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json\",\n  \"global_freeze_guard\": true,\n  \"global_gate_freeze_active\": true,\n  \"global_gate_info\": {\n    \"global_gate_freeze_active\": true,\n    \"global_gate_reason\": \"Stage145 aggregate gate requires freeze/repair: gate_decision=STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY; recommended_action=FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY; severity=HIGH; closed_trade_count=12; total_bps=-9.72; mean_bps=-0.81; win_rate=0.5\",\n    \"global_gate_decision\": \"STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY\",\n    \"global_recommended_action\": \"FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY\",\n    \"global_severity\": \"HIGH\",\n    \"global_closed_trade_count\": 12,\n    \"global_total_bps\": -9.72,\n    \"global_mean_bps\": -0.81,\n    \"global_win_rate\": 0.5,\n    \"min_global_gate_trades\": 10\n  },\n  \"block_negative_demo_families\": true,\n  \"risk_blocked_family_count\": 4,\n  \"risk_blocked_candidate_count\": 27,\n  \"blocked_family_keys\": [\n    \"D138C_ret_48h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n    \"D150C_M5_trend_8_20_bps__trend_50_100_bps\"\n  ],\n  \"blocked_family_rows\": [\n    {\n      \"family_key\": \"D138C_ret_48h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 6,\n      \"total_bps\": -1.29,\n      \"mean_bps\": -0.21,\n      \"total_net_profit\": -0.94,\n      \"last_rule_id\": \"D138C_ret_48h_bps_GEQ65__trend_50_100_bps_LEQ65\",\n      \"last_outcome\": \"PROFIT\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -57.1,\n      \"mean_bps\": -57.1,\n      \"total_net_profit\": -23.65,\n      \"last_rule_id\": \"D150C_M5_ret_12h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -19.35,\n      \"mean_bps\": -19.35,\n      \"total_net_profit\": -8.72,\n      \"last_rule_id\": \"D150C_M5_ret_3h_bps_GEQ65__ret_24h_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_trend_8_20_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -50.52,\n      \"mean_bps\": -50.52,\n      \"total_net_profit\": -21.22,\n      \"last_rule_id\": \"D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    }\n  ],\n  \"repo_kv\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"repo_latest\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"mt5_kv_written\": true,\n  \"mt5_kv\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"mt5_latest\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"stage134_instruction\": {\n    \"InpRuleStateKvFile\": \"xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n    \"InpAllowedRules\": \"all\",\n    \"keep_InpEnableDemoOrders\": \"true only on demo account\"\n  },\n  \"summary_json\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage155_active_router_demo_risk_guard/m5/stage155_active_router_demo_risk_guard_summary.json\",\n  \"next\": [\n    \"Use this Stage157-hardened router behind Stage156; it preserves Stage155 KV filename so Stage134 input does not need to change.\",\n    \"If global_gate_freeze_active is true, keep demo orders blocked and repair discovery before re-enabling routing.\"\n  ]\n}\n",
+      "stderr_tail": ""
+    }
+  ],
+  "next": [
+    "If classification is NO_ACTIVE_RULE, keep Stage155 running and do not patch unless inactivity is commercially unacceptable over a defined window.",
+    "If classification is SOURCE_STALE or BLOCKED_STALE, update the M5 CSV and run this unifier again.",
+    "Use --db-update-command only after identifying the repo's current AMarkets DB updater command."
+  ]
+}
+{
+  "stage": "Stage156_OPERATIONAL_UNIFIER",
+  "generated_utc": "2026-07-08T06:05:03Z",
+  "status": "STAGE156_COMPLETE_OPERATIONAL_UNIFIER_READY",
+  "classification": "POSITION_OPEN",
+  "reason": "Stage134 sees an open position; duplicate orders correctly blocked.",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "mt5_files": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "source": {
+    "bars_m5": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+    "exists": true,
+    "row_count_including_header_if_any": 318862,
+    "last_line": "2026.07.08\t07:40:00\t4125.25\t4125.65\t4121.97\t4123.09\t307\t0\t36",
+    "raw_latest_time": "2026-07-08T07:40:00Z",
+    "timestamp_shift_hours": -3.0,
+    "normalized_latest_time": "2026-07-08T04:40:00Z",
+    "feature_age_sec": 5104,
+    "max_feature_age_sec": 7200,
+    "source_fresh": true
+  },
+  "router": {
+    "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv",
+    "decision": "STAGE157_GLOBAL_PERFORMANCE_FREEZE_NO_ORDER",
+    "any_signal_active": "false",
+    "selected_rule_id": "",
+    "selected_family_key": "",
+    "active_shortlist_count": "94",
+    "eligible_shortlist_count": "191",
+    "risk_blocked_family_count": "4"
+  },
+  "stage134": {
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage134_demo_executor_status_kv.csv",
+    "decision": "HOLD_NO_ACTIVE_ALLOWED_RULE",
+    "reason": "no active selected rule",
+    "feature_date": "2026-07-08T04:40:00Z",
+    "signal_fresh": "true",
+    "signal_age_sec": "5130",
+    "any_signal_active": "false",
+    "open_positions": "1",
+    "last_success_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35",
+    "last_attempt_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35"
+  },
+  "commands": [
+    {
+      "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+      "started_utc": "2026-07-08T06:05:04Z",
+      "finished_utc": "2026-07-08T06:05:38Z",
+      "returncode": 0,
+      "stdout_tail": "0_100_bps\\\", \\\"op\\\": \\\">=\\\", \\\"threshold\\\": -14.337320822584214}]\",\n  \"raw_selected_rule_id_before_global_gate\": \"D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n  \"raw_selected_label_before_global_gate\": \"m5: ret_6h_bps >= q35 AND trend_50_100_bps >= q35\",\n  \"risk_summary\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json\",\n  \"global_freeze_guard\": true,\n  \"global_gate_freeze_active\": true,\n  \"global_gate_info\": {\n    \"global_gate_freeze_active\": true,\n    \"global_gate_reason\": \"Stage145 aggregate gate requires freeze/repair: gate_decision=STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY; recommended_action=FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY; severity=HIGH; closed_trade_count=12; total_bps=-9.72; mean_bps=-0.81; win_rate=0.5\",\n    \"global_gate_decision\": \"STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY\",\n    \"global_recommended_action\": \"FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY\",\n    \"global_severity\": \"HIGH\",\n    \"global_closed_trade_count\": 12,\n    \"global_total_bps\": -9.72,\n    \"global_mean_bps\": -0.81,\n    \"global_win_rate\": 0.5,\n    \"min_global_gate_trades\": 10\n  },\n  \"block_negative_demo_families\": true,\n  \"risk_blocked_family_count\": 4,\n  \"risk_blocked_candidate_count\": 27,\n  \"blocked_family_keys\": [\n    \"D138C_ret_48h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n    \"D150C_M5_trend_8_20_bps__trend_50_100_bps\"\n  ],\n  \"blocked_family_rows\": [\n    {\n      \"family_key\": \"D138C_ret_48h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 6,\n      \"total_bps\": -1.29,\n      \"mean_bps\": -0.21,\n      \"total_net_profit\": -0.94,\n      \"last_rule_id\": \"D138C_ret_48h_bps_GEQ65__trend_50_100_bps_LEQ65\",\n      \"last_outcome\": \"PROFIT\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -57.1,\n      \"mean_bps\": -57.1,\n      \"total_net_profit\": -23.65,\n      \"last_rule_id\": \"D150C_M5_ret_12h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -19.35,\n      \"mean_bps\": -19.35,\n      \"total_net_profit\": -8.72,\n      \"last_rule_id\": \"D150C_M5_ret_3h_bps_GEQ65__ret_24h_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_trend_8_20_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -50.52,\n      \"mean_bps\": -50.52,\n      \"total_net_profit\": -21.22,\n      \"last_rule_id\": \"D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    }\n  ],\n  \"repo_kv\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"repo_latest\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"mt5_kv_written\": true,\n  \"mt5_kv\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"mt5_latest\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"stage134_instruction\": {\n    \"InpRuleStateKvFile\": \"xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n    \"InpAllowedRules\": \"all\",\n    \"keep_InpEnableDemoOrders\": \"true only on demo account\"\n  },\n  \"summary_json\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage155_active_router_demo_risk_guard/m5/stage155_active_router_demo_risk_guard_summary.json\",\n  \"next\": [\n    \"Use this Stage157-hardened router behind Stage156; it preserves Stage155 KV filename so Stage134 input does not need to change.\",\n    \"If global_gate_freeze_active is true, keep demo orders blocked and repair discovery before re-enabling routing.\"\n  ]\n}\n",
+      "stderr_tail": ""
+    }
+  ],
+  "next": [
+    "If classification is NO_ACTIVE_RULE, keep Stage155 running and do not patch unless inactivity is commercially unacceptable over a defined window.",
+    "If classification is SOURCE_STALE or BLOCKED_STALE, update the M5 CSV and run this unifier again.",
+    "Use --db-update-command only after identifying the repo's current AMarkets DB updater command."
+  ]
+}
+{
+  "stage": "Stage156_OPERATIONAL_UNIFIER",
+  "generated_utc": "2026-07-08T06:10:42Z",
+  "status": "STAGE156_COMPLETE_OPERATIONAL_UNIFIER_READY",
+  "classification": "POSITION_OPEN",
+  "reason": "Stage134 sees an open position; duplicate orders correctly blocked.",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "mt5_files": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "source": {
+    "bars_m5": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+    "exists": true,
+    "row_count_including_header_if_any": 318862,
+    "last_line": "2026.07.08\t07:40:00\t4125.25\t4125.65\t4121.97\t4123.09\t307\t0\t36",
+    "raw_latest_time": "2026-07-08T07:40:00Z",
+    "timestamp_shift_hours": -3.0,
+    "normalized_latest_time": "2026-07-08T04:40:00Z",
+    "feature_age_sec": 5443,
+    "max_feature_age_sec": 7200,
+    "source_fresh": true
+  },
+  "router": {
+    "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv",
+    "decision": "STAGE157_GLOBAL_PERFORMANCE_FREEZE_NO_ORDER",
+    "any_signal_active": "false",
+    "selected_rule_id": "",
+    "selected_family_key": "",
+    "active_shortlist_count": "94",
+    "eligible_shortlist_count": "191",
+    "risk_blocked_family_count": "4"
+  },
+  "stage134": {
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage134_demo_executor_status_kv.csv",
+    "decision": "HOLD_NO_ACTIVE_ALLOWED_RULE",
+    "reason": "no active selected rule",
+    "feature_date": "2026-07-08T04:40:00Z",
+    "signal_fresh": "true",
+    "signal_age_sec": "5460",
+    "any_signal_active": "false",
+    "open_positions": "1",
+    "last_success_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35",
+    "last_attempt_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35"
+  },
+  "commands": [
+    {
+      "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+      "started_utc": "2026-07-08T06:10:43Z",
+      "finished_utc": "2026-07-08T06:11:07Z",
+      "returncode": 0,
+      "stdout_tail": "0_100_bps\\\", \\\"op\\\": \\\">=\\\", \\\"threshold\\\": -14.337320822584214}]\",\n  \"raw_selected_rule_id_before_global_gate\": \"D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n  \"raw_selected_label_before_global_gate\": \"m5: ret_6h_bps >= q35 AND trend_50_100_bps >= q35\",\n  \"risk_summary\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json\",\n  \"global_freeze_guard\": true,\n  \"global_gate_freeze_active\": true,\n  \"global_gate_info\": {\n    \"global_gate_freeze_active\": true,\n    \"global_gate_reason\": \"Stage145 aggregate gate requires freeze/repair: gate_decision=STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY; recommended_action=FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY; severity=HIGH; closed_trade_count=12; total_bps=-9.72; mean_bps=-0.81; win_rate=0.5\",\n    \"global_gate_decision\": \"STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY\",\n    \"global_recommended_action\": \"FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY\",\n    \"global_severity\": \"HIGH\",\n    \"global_closed_trade_count\": 12,\n    \"global_total_bps\": -9.72,\n    \"global_mean_bps\": -0.81,\n    \"global_win_rate\": 0.5,\n    \"min_global_gate_trades\": 10\n  },\n  \"block_negative_demo_families\": true,\n  \"risk_blocked_family_count\": 4,\n  \"risk_blocked_candidate_count\": 27,\n  \"blocked_family_keys\": [\n    \"D138C_ret_48h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n    \"D150C_M5_trend_8_20_bps__trend_50_100_bps\"\n  ],\n  \"blocked_family_rows\": [\n    {\n      \"family_key\": \"D138C_ret_48h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 6,\n      \"total_bps\": -1.29,\n      \"mean_bps\": -0.21,\n      \"total_net_profit\": -0.94,\n      \"last_rule_id\": \"D138C_ret_48h_bps_GEQ65__trend_50_100_bps_LEQ65\",\n      \"last_outcome\": \"PROFIT\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -57.1,\n      \"mean_bps\": -57.1,\n      \"total_net_profit\": -23.65,\n      \"last_rule_id\": \"D150C_M5_ret_12h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -19.35,\n      \"mean_bps\": -19.35,\n      \"total_net_profit\": -8.72,\n      \"last_rule_id\": \"D150C_M5_ret_3h_bps_GEQ65__ret_24h_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_trend_8_20_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -50.52,\n      \"mean_bps\": -50.52,\n      \"total_net_profit\": -21.22,\n      \"last_rule_id\": \"D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    }\n  ],\n  \"repo_kv\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"repo_latest\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"mt5_kv_written\": true,\n  \"mt5_kv\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"mt5_latest\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"stage134_instruction\": {\n    \"InpRuleStateKvFile\": \"xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n    \"InpAllowedRules\": \"all\",\n    \"keep_InpEnableDemoOrders\": \"true only on demo account\"\n  },\n  \"summary_json\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage155_active_router_demo_risk_guard/m5/stage155_active_router_demo_risk_guard_summary.json\",\n  \"next\": [\n    \"Use this Stage157-hardened router behind Stage156; it preserves Stage155 KV filename so Stage134 input does not need to change.\",\n    \"If global_gate_freeze_active is true, keep demo orders blocked and repair discovery before re-enabling routing.\"\n  ]\n}\n",
+      "stderr_tail": ""
+    }
+  ],
+  "next": [
+    "If classification is NO_ACTIVE_RULE, keep Stage155 running and do not patch unless inactivity is commercially unacceptable over a defined window.",
+    "If classification is SOURCE_STALE or BLOCKED_STALE, update the M5 CSV and run this unifier again.",
+    "Use --db-update-command only after identifying the repo's current AMarkets DB updater command."
+  ]
+}
+{
+  "stage": "Stage156_OPERATIONAL_UNIFIER",
+  "generated_utc": "2026-07-08T06:16:11Z",
+  "status": "STAGE156_COMPLETE_OPERATIONAL_UNIFIER_READY",
+  "classification": "POSITION_OPEN",
+  "reason": "Stage134 sees an open position; duplicate orders correctly blocked.",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "mt5_files": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "source": {
+    "bars_m5": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+    "exists": true,
+    "row_count_including_header_if_any": 318862,
+    "last_line": "2026.07.08\t07:40:00\t4125.25\t4125.65\t4121.97\t4123.09\t307\t0\t36",
+    "raw_latest_time": "2026-07-08T07:40:00Z",
+    "timestamp_shift_hours": -3.0,
+    "normalized_latest_time": "2026-07-08T04:40:00Z",
+    "feature_age_sec": 5771,
+    "max_feature_age_sec": 7200,
+    "source_fresh": true
+  },
+  "router": {
+    "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv",
+    "decision": "STAGE157_GLOBAL_PERFORMANCE_FREEZE_NO_ORDER",
+    "any_signal_active": "false",
+    "selected_rule_id": "",
+    "selected_family_key": "",
+    "active_shortlist_count": "94",
+    "eligible_shortlist_count": "191",
+    "risk_blocked_family_count": "4"
+  },
+  "stage134": {
+    "kv_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage134_demo_executor_status_kv.csv",
+    "decision": "HOLD_NO_ACTIVE_ALLOWED_RULE",
+    "reason": "no active selected rule",
+    "feature_date": "2026-07-08T04:40:00Z",
+    "signal_fresh": "true",
+    "signal_age_sec": "5791",
+    "any_signal_active": "false",
+    "open_positions": "1",
+    "last_success_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35",
+    "last_attempt_signal_key": "2026-07-08T04:40:00Z|D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35"
+  },
+  "commands": [
+    {
+      "cmd": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5",
+      "started_utc": "2026-07-08T06:16:11Z",
+      "finished_utc": "2026-07-08T06:16:30Z",
+      "returncode": 0,
+      "stdout_tail": "0_100_bps\\\", \\\"op\\\": \\\">=\\\", \\\"threshold\\\": -14.337320822584214}]\",\n  \"raw_selected_rule_id_before_global_gate\": \"D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n  \"raw_selected_label_before_global_gate\": \"m5: ret_6h_bps >= q35 AND trend_50_100_bps >= q35\",\n  \"risk_summary\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json\",\n  \"global_freeze_guard\": true,\n  \"global_gate_freeze_active\": true,\n  \"global_gate_info\": {\n    \"global_gate_freeze_active\": true,\n    \"global_gate_reason\": \"Stage145 aggregate gate requires freeze/repair: gate_decision=STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY; recommended_action=FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY; severity=HIGH; closed_trade_count=12; total_bps=-9.72; mean_bps=-0.81; win_rate=0.5\",\n    \"global_gate_decision\": \"STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY\",\n    \"global_recommended_action\": \"FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY\",\n    \"global_severity\": \"HIGH\",\n    \"global_closed_trade_count\": 12,\n    \"global_total_bps\": -9.72,\n    \"global_mean_bps\": -0.81,\n    \"global_win_rate\": 0.5,\n    \"min_global_gate_trades\": 10\n  },\n  \"block_negative_demo_families\": true,\n  \"risk_blocked_family_count\": 4,\n  \"risk_blocked_candidate_count\": 27,\n  \"blocked_family_keys\": [\n    \"D138C_ret_48h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n    \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n    \"D150C_M5_trend_8_20_bps__trend_50_100_bps\"\n  ],\n  \"blocked_family_rows\": [\n    {\n      \"family_key\": \"D138C_ret_48h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 6,\n      \"total_bps\": -1.29,\n      \"mean_bps\": -0.21,\n      \"total_net_profit\": -0.94,\n      \"last_rule_id\": \"D138C_ret_48h_bps_GEQ65__trend_50_100_bps_LEQ65\",\n      \"last_outcome\": \"PROFIT\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_12h_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -57.1,\n      \"mean_bps\": -57.1,\n      \"total_net_profit\": -23.65,\n      \"last_rule_id\": \"D150C_M5_ret_12h_bps_GEQ35__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_ret_3h_bps__ret_24h_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -19.35,\n      \"mean_bps\": -19.35,\n      \"total_net_profit\": -8.72,\n      \"last_rule_id\": \"D150C_M5_ret_3h_bps_GEQ65__ret_24h_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    },\n    {\n      \"family_key\": \"D150C_M5_trend_8_20_bps__trend_50_100_bps\",\n      \"closed_trade_count\": 1,\n      \"total_bps\": -50.52,\n      \"mean_bps\": -50.52,\n      \"total_net_profit\": -21.22,\n      \"last_rule_id\": \"D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35\",\n      \"last_outcome\": \"LOSS\"\n    }\n  ],\n  \"repo_kv\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"repo_latest\": \"/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"mt5_kv_written\": true,\n  \"mt5_kv\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n  \"mt5_latest\": \"/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_latest.csv\",\n  \"stage134_instruction\": {\n    \"InpRuleStateKvFile\": \"xauusd_stage155_m5_active_router_rule_state_kv.csv\",\n    \"InpAllowedRules\": \"all\",\n    \"keep_InpEnableDemoOrders\": \"true only on demo account\"\n  },\n  \"summary_json\": \"/Users/vahid/Desktop/xauusd-trader/reports/stage155_active_router_demo_risk_guard/m5/stage155_active_router_demo_risk_guard_summary.json\",\n  \"next\": [\n    \"Use this Stage157-hardened router behind Stage156; it preserves Stage155 KV filename so Stage134 input does not need to change.\",\n    \"If global_gate_freeze_active is true, keep demo orders blocked and repair discovery before re-enabling routing.\"\n  ]\n}\n",
+      "stderr_tail": ""
+    }
+  ],
+  "next": [
+    "If classification is NO_ACTIVE_RULE, keep Stage155 running and do not patch unless inactivity is commercially unacceptable over a defined window.",
+    "If classification is SOURCE_STALE or BLOCKED_STALE, update the M5 CSV and run this unifier again.",
+    "Use --db-update-command only after identifying the repo's current AMarkets DB updater command."
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "stage": "Stage165_MACRO_THESIS_REGIME_REBUILD",
+  "description": "Read-only macro-regime thesis scan for XAUUSD after M5 and higher-timeframe technical paths failed under current macro headwind.",
+  "order_routing_allowed": false,
+  "demo_release_allowed": false,
+  "default_inputs": {
+    "root": "/Users/vahid/Desktop/xauusd-trader",
+    "bars_m5": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+    "stage161_summary": "reports/stage161_macro_aware_candidate_classifier/stage161_macro_aware_candidate_classifier_summary.json",
+    "macro_panel": "data/fundamental_event_inbox/features/stage115_daily_macro_feature_panel.csv",
+    "timestamp_shift_hours": -3,
+    "horizons_days": "1,3,5"
+  },
+  "default_thresholds": {
+    "min_events": 40,
+    "min_mean_bps": 8.0,
+    "min_hit_rate": 0.53,
+    "min_recent_mean_bps": 3.0,
+    "min_positive_folds": 3
+  },
+  "outputs": {
+    "report_dir": "reports/stage165_macro_thesis_regime_rebuild",
+    "summary_json": "stage165_macro_thesis_regime_rebuild_summary.json",
+    "candidate_scores_csv": "stage165_macro_thesis_candidate_scores.csv",
+    "shortlist_csv": "stage165_macro_thesis_shortlist.csv",
+    "regime_context_json": "stage165_macro_thesis_regime_context.json"
+  }
+}

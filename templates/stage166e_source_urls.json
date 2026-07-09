@@ -1,0 +1,17 @@
+[
+  {
+    "name": "google_news_gold_geopolitics_rss",
+    "url": "https://news.google.com/rss/search?q=gold%20geopolitical%20risk%20OR%20XAUUSD&hl=en-US&gl=US&ceid=US:en",
+    "format": "rss"
+  },
+  {
+    "name": "google_news_gold_fed_rss",
+    "url": "https://news.google.com/rss/search?q=gold%20Federal%20Reserve%20yields%20dollar&hl=en-US&gl=US&ceid=US:en",
+    "format": "rss"
+  },
+  {
+    "name": "gdelt_doc_gold_timeline_24h",
+    "url": "https://api.gdeltproject.org/api/v2/doc/doc?query=gold%20OR%20XAUUSD%20OR%20geopolitical%20risk&mode=timelinevolraw&format=csv&timespan=24h",
+    "format": "csv"
+  }
+]

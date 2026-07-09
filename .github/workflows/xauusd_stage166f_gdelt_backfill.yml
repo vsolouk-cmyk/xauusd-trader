@@ -1,0 +1,102 @@
+name: XAUUSD Stage166F GDELT Backfill
+
+on:
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: 'UTC start date YYYY-MM-DD'
+        required: true
+        default: '2022-01-01'
+      end_date:
+        description: 'UTC end date YYYY-MM-DD; empty means now'
+        required: false
+        default: ''
+      split_date:
+        description: 'Train/holdout split date YYYY-MM-DD, for health metadata only'
+        required: true
+        default: '2025-08-13'
+      chunk_days:
+        description: 'Days per GDELT query chunk'
+        required: true
+        default: '180'
+      max_workers:
+        description: 'Parallel workers'
+        required: true
+        default: '4'
+      max_queries:
+        description: 'Probe cap; 0 means full run'
+        required: true
+        default: '20'
+      timeout_seconds:
+        description: 'Per-request timeout'
+        required: true
+        default: '20'
+  schedule:
+    - cron: '37 2 * * *'
+
+permissions:
+  contents: read
+
+env:
+  OUT_DIR: reports/stage166f_github_gdelt_backfill
+
+jobs:
+  gdelt-backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Resolve inputs
+        id: vars
+        shell: bash
+        run: |
+          START_DATE="${{ github.event.inputs.start_date || '2022-01-01' }}"
+          END_DATE="${{ github.event.inputs.end_date || '' }}"
+          SPLIT_DATE="${{ github.event.inputs.split_date || '2025-08-13' }}"
+          CHUNK_DAYS="${{ github.event.inputs.chunk_days || '180' }}"
+          MAX_WORKERS="${{ github.event.inputs.max_workers || '4' }}"
+          MAX_QUERIES="${{ github.event.inputs.max_queries || '20' }}"
+          TIMEOUT_SECONDS="${{ github.event.inputs.timeout_seconds || '20' }}"
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            START_DATE="$(date -u -d '45 days ago' +%F)"
+            END_DATE=""
+            MAX_QUERIES="0"
+            CHUNK_DAYS="45"
+          fi
+          echo "start_date=$START_DATE" >> "$GITHUB_OUTPUT"
+          echo "end_date=$END_DATE" >> "$GITHUB_OUTPUT"
+          echo "split_date=$SPLIT_DATE" >> "$GITHUB_OUTPUT"
+          echo "chunk_days=$CHUNK_DAYS" >> "$GITHUB_OUTPUT"
+          echo "max_workers=$MAX_WORKERS" >> "$GITHUB_OUTPUT"
+          echo "max_queries=$MAX_QUERIES" >> "$GITHUB_OUTPUT"
+          echo "timeout_seconds=$TIMEOUT_SECONDS" >> "$GITHUB_OUTPUT"
+
+      - name: Compile Stage166F
+        run: python -m py_compile app/stage166f_github_gdelt_backfill.py
+
+      - name: Run GDELT backfill
+        run: |
+          mkdir -p "$OUT_DIR"
+          python app/stage166f_github_gdelt_backfill.py fetch \
+            --output-dir "$OUT_DIR" \
+            --start-date "${{ steps.vars.outputs.start_date }}" \
+            --end-date "${{ steps.vars.outputs.end_date }}" \
+            --split-date "${{ steps.vars.outputs.split_date }}" \
+            --chunk-days "${{ steps.vars.outputs.chunk_days }}" \
+            --max-workers "${{ steps.vars.outputs.max_workers }}" \
+            --max-queries "${{ steps.vars.outputs.max_queries }}" \
+            --timeout-seconds "${{ steps.vars.outputs.timeout_seconds }}"
+
+      - name: Upload Stage166F artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage166f-gdelt-backfill-${{ github.run_id }}
+          path: reports/stage166f_github_gdelt_backfill
+          retention-days: 30

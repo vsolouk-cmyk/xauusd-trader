@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Stage167B Event-Aware Medium-Frequency Discovery and Holdout Gate
+Stage167C Event-Aware Medium-Frequency Discovery and Holdout Gate
 
 Commercial-purpose read-only discovery gate for XAUUSD/gold.
 
-Hotfix B adds fast-stop diagnostics for insufficient event history and skips full per-trade export by default.
+Hotfix C fixes sparse historical event panels by computing event thresholds on the positive train distribution, while keeping fast-stop protection for truly empty panels.
 
 This stage is designed specifically to avoid the recurring project failure mode:
 low-frequency rules + weak edge + waiting for more samples.
@@ -293,29 +293,66 @@ def session_label(hour: int) -> str:
 
 
 def compute_train_thresholds(train: pd.DataFrame) -> Dict[str, float]:
-    def q(col: str, p: float, default: float = 0.0) -> float:
-        vals = pd.to_numeric(train.get(col), errors="coerce").dropna()
+    """Compute train-only thresholds.
+
+    Stage167B incorrectly treated sparse but valid historical news panels as
+    unusable because quantiles were computed over every M5 bar. A GDELT-style
+    hourly event panel is naturally sparse; most M5 bars have zero news pressure,
+    so all-bar q50/q80 can be zero even when thousands of train bars carry
+    real event signal. For event columns we therefore compute effective
+    thresholds on the strictly positive train distribution and keep all-bar
+    quantiles only as diagnostics. Technical thresholds remain all-bar.
+    """
+    def _series(col: str) -> pd.Series:
+        return pd.to_numeric(train.get(col), errors="coerce").dropna()
+
+    def q_all(col: str, p: float, default: float = 0.0) -> float:
+        vals = _series(col)
         if len(vals) < 10:
             return default
         v = float(vals.quantile(p))
         return v if math.isfinite(v) else default
-    return {
-        "shock_q50": q("shock_abs", 0.50, 0.0),
-        "shock_q60": q("shock_abs", 0.60, 0.0),
-        "shock_q70": q("shock_abs", 0.70, 0.0),
-        "shock_q80": q("shock_abs", 0.80, 0.0),
-        "long_q60": q("gold_long_pressure", 0.60, 0.0),
-        "long_q75": q("gold_long_pressure", 0.75, 0.0),
-        "short_q60": q("gold_short_pressure", 0.60, 0.0),
-        "short_q75": q("gold_short_pressure", 0.75, 0.0),
-        "atr48_q40": q("atr_48_bps", 0.40, 1.0),
-        "atr48_q60": q("atr_48_bps", 0.60, 2.0),
-        "atr48_q80": q("atr_48_bps", 0.80, 4.0),
-        "mom6_abs_q55": q("ret_6_bps", 0.55, 0.0),
-        "mom12_abs_q55": q("ret_12_bps", 0.55, 0.0),
-        "range96_q60": q("range_pct_rank_96", 0.60, 0.5),
-        "range96_q80": q("range_pct_rank_96", 0.80, 0.8),
+
+    def q_pos(col: str, p: float, default: float = 0.0, min_count: int = 10) -> float:
+        vals = _series(col)
+        vals = vals[vals > 0]
+        if len(vals) < min_count:
+            return default
+        v = float(vals.quantile(p))
+        return v if math.isfinite(v) else default
+
+    shock_pos_count = int((_series("shock_abs") > 0).sum())
+    long_pos_count = int((_series("gold_long_pressure") > 0).sum())
+    short_pos_count = int((_series("gold_short_pressure") > 0).sum())
+
+    thresholds: Dict[str, float] = {
+        # Effective event thresholds used by rule profiles.
+        "shock_q50": q_pos("shock_abs", 0.50, 0.0),
+        "shock_q60": q_pos("shock_abs", 0.60, 0.0),
+        "shock_q70": q_pos("shock_abs", 0.70, 0.0),
+        "shock_q80": q_pos("shock_abs", 0.80, 0.0),
+        "long_q60": q_pos("gold_long_pressure", 0.60, 0.0),
+        "long_q75": q_pos("gold_long_pressure", 0.75, 0.0),
+        "short_q60": q_pos("gold_short_pressure", 0.60, 0.0),
+        "short_q75": q_pos("gold_short_pressure", 0.75, 0.0),
+        # Diagnostics: all-bar quantiles explain sparsity and should not gate valid sparse panels.
+        "shock_allbar_q80": q_all("shock_abs", 0.80, 0.0),
+        "long_allbar_q75": q_all("gold_long_pressure", 0.75, 0.0),
+        "short_allbar_q75": q_all("gold_short_pressure", 0.75, 0.0),
+        "shock_positive_train_count": float(shock_pos_count),
+        "long_positive_train_count": float(long_pos_count),
+        "short_positive_train_count": float(short_pos_count),
+        "event_threshold_source": "positive_train_distribution",
+        # Technical thresholds.
+        "atr48_q40": q_all("atr_48_bps", 0.40, 1.0),
+        "atr48_q60": q_all("atr_48_bps", 0.60, 2.0),
+        "atr48_q80": q_all("atr_48_bps", 0.80, 4.0),
+        "mom6_abs_q55": q_all("ret_6_bps", 0.55, 0.0),
+        "mom12_abs_q55": q_all("ret_12_bps", 0.55, 0.0),
+        "range96_q60": q_all("range_pct_rank_96", 0.60, 0.5),
+        "range96_q80": q_all("range_pct_rank_96", 0.80, 0.8),
     }
+    return thresholds
 
 
 @dataclass(frozen=True)
@@ -574,12 +611,22 @@ def event_panel_health_check(event_panel: pd.DataFrame, event_meta: Dict[str, An
     feature_active = active_rows(features)
     shock_thresholds_zero = all(float(thresholds.get(k, 0.0) or 0.0) == 0.0 for k in ["shock_q50", "shock_q60", "shock_q70", "shock_q80"])
     pressure_thresholds_zero = all(float(thresholds.get(k, 0.0) or 0.0) == 0.0 for k in ["long_q60", "long_q75", "short_q60", "short_q75"])
+    positive_threshold_counts = {
+        "shock_positive_train_count": int(float(thresholds.get("shock_positive_train_count", 0.0) or 0.0)),
+        "long_positive_train_count": int(float(thresholds.get("long_positive_train_count", 0.0) or 0.0)),
+        "short_positive_train_count": int(float(thresholds.get("short_positive_train_count", 0.0) or 0.0)),
+    }
+    sparse_but_thresholded = (
+        train_active >= int(args.min_train_active_event_bars)
+        and not shock_thresholds_zero
+        and sum(positive_threshold_counts.values()) >= int(args.min_train_active_event_bars)
+    )
     reasons: List[str] = []
     if panel_rows < int(args.min_event_panel_rows):
         reasons.append("EVENT_PANEL_ROWS_LT_MIN")
     if train_active < int(args.min_train_active_event_bars):
         reasons.append("TRAIN_ACTIVE_EVENT_BARS_LT_MIN")
-    if shock_thresholds_zero and pressure_thresholds_zero:
+    if shock_thresholds_zero and pressure_thresholds_zero and not sparse_but_thresholded:
         reasons.append("TRAIN_EVENT_THRESHOLDS_COLLAPSED_TO_ZERO")
     return {
         "panel_rows": panel_rows,
@@ -590,6 +637,9 @@ def event_panel_health_check(event_panel: pd.DataFrame, event_meta: Dict[str, An
         "min_train_active_event_bars": int(args.min_train_active_event_bars),
         "shock_thresholds_zero": bool(shock_thresholds_zero),
         "pressure_thresholds_zero": bool(pressure_thresholds_zero),
+        "positive_threshold_counts": positive_threshold_counts,
+        "event_threshold_source": str(thresholds.get("event_threshold_source", "unknown")),
+        "sparse_but_thresholded": bool(sparse_but_thresholded),
         "event_overlay_trainable": len(reasons) == 0,
         "fast_stop": len(reasons) > 0,
         "fast_stop_reasons": reasons,
@@ -917,7 +967,7 @@ def run(args: argparse.Namespace) -> Dict[str, Any]:
         top_trades.to_csv(outputs["top_rule_trades_csv"], index=False)
 
         if event_health.get("fast_stop") and not args.force_scan_with_insufficient_event_panel:
-            decision = "STAGE167B_EVENT_PANEL_NOT_TRAINABLE_FAST_STOP_REBUILD_STAGE166_HISTORY_FIRST"
+            decision = "STAGE167C_EVENT_PANEL_NOT_TRAINABLE_FAST_STOP_REBUILD_STAGE166_HISTORY_FIRST"
             severity = "HIGH"
             recommended_action = "DO_NOT_SCAN_TECHNICAL_CONTROLS_AS_EVENT_AWARE; BACKFILL_OR_REBUILD_CURRENT_EVENT_HISTORY_PANEL"
         elif len(shortlist) > 0:
@@ -973,6 +1023,7 @@ def run(args: argparse.Namespace) -> Dict[str, Any]:
             "outputs": outputs,
             "next": [
                 "If event_panel_health.fast_stop is true, rebuild Stage166 with broader historical/current-event coverage before rescanning.",
+                "Stage167C uses positive-train event thresholds so sparse but valid GDELT panels can be scanned without becoming technical controls.",
                 "If shortlist_count is zero, do not wait for more low-frequency samples.",
                 "If shortlist_count is positive, review stage167_commercial_shortlist.csv and run Stage168 execution replay before any demo order release.",
                 "Send summary JSON, decision MD, and shortlist CSV back for decision review.",

@@ -9757,3 +9757,233 @@
     "If global_gate_freeze_active is true, keep demo orders blocked and repair discovery before re-enabling routing."
   ]
 }
+{
+  "stage": "Stage157_GLOBAL_GATE_SAFE_ROUTER",
+  "generated_utc": "2026-07-09T11:00:32Z",
+  "status": "STAGE157_COMPLETE_GLOBAL_GATE_SAFE_ROUTER_READY",
+  "decision": "STAGE157_GLOBAL_PERFORMANCE_FREEZE_NO_ORDER",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "bars_path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+  "score_csv": "/Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv",
+  "tf": "m5",
+  "timeframe_minutes": 5,
+  "raw_row_count": 319155,
+  "bar_count": 319155,
+  "raw_feature_date": "2026-07-09T09:10:00Z",
+  "timestamp_shift_hours": -3.0,
+  "feature_date": "2026-07-09T06:10:00Z",
+  "feature_age_sec": 17529,
+  "max_feature_age_sec": 7200,
+  "feature_fresh": false,
+  "score_rows": 552,
+  "eligible_shortlist_count": 188,
+  "active_shortlist_count": 98,
+  "selected_rule_id": "",
+  "selected_label": "",
+  "selected_family_key": "",
+  "selected_condition_snapshot": "[{\"current\": 73.32216418645787, \"feature\": \"ret_3h_bps\", \"op\": \">=\", \"threshold\": 0.3984177296678659}, {\"current\": 3.156140896001247, \"feature\": \"ret_6h_bps\", \"op\": \"<=\", \"threshold\": 13.040843987678917}]",
+  "raw_selected_rule_id_before_global_gate": "D150C_M5_ret_3h_bps_GEQ50__ret_6h_bps_LEQ65",
+  "raw_selected_label_before_global_gate": "m5: ret_3h_bps >= q50 AND ret_6h_bps <= q65",
+  "risk_summary": "/Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json",
+  "global_freeze_guard": true,
+  "global_gate_freeze_active": true,
+  "global_gate_info": {
+    "global_gate_freeze_active": true,
+    "global_gate_reason": "Stage145 aggregate gate requires freeze/repair: gate_decision=STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY; recommended_action=FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY; severity=HIGH; closed_trade_count=13; total_bps=-78.3; mean_bps=-6.02; win_rate=0.4615",
+    "global_gate_decision": "STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY",
+    "global_recommended_action": "FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY",
+    "global_severity": "HIGH",
+    "global_closed_trade_count": 13,
+    "global_total_bps": -78.3,
+    "global_mean_bps": -6.02,
+    "global_win_rate": 0.4615,
+    "min_global_gate_trades": 10
+  },
+  "block_negative_demo_families": true,
+  "risk_blocked_family_count": 5,
+  "risk_blocked_candidate_count": 36,
+  "blocked_family_keys": [
+    "D138C_ret_48h_bps__trend_50_100_bps",
+    "D150C_M5_ret_12h_bps__trend_50_100_bps",
+    "D150C_M5_ret_3h_bps__ret_24h_bps",
+    "D150C_M5_ret_6h_bps__trend_50_100_bps",
+    "D150C_M5_trend_8_20_bps__trend_50_100_bps"
+  ],
+  "blocked_family_rows": [
+    {
+      "family_key": "D138C_ret_48h_bps__trend_50_100_bps",
+      "closed_trade_count": 6,
+      "total_bps": -1.29,
+      "mean_bps": -0.21,
+      "total_net_profit": -0.94,
+      "last_rule_id": "D138C_ret_48h_bps_GEQ65__trend_50_100_bps_LEQ65",
+      "last_outcome": "PROFIT"
+    },
+    {
+      "family_key": "D150C_M5_ret_12h_bps__trend_50_100_bps",
+      "closed_trade_count": 1,
+      "total_bps": -57.1,
+      "mean_bps": -57.1,
+      "total_net_profit": -23.65,
+      "last_rule_id": "D150C_M5_ret_12h_bps_GEQ35__trend_50_100_bps_GEQ35",
+      "last_outcome": "LOSS"
+    },
+    {
+      "family_key": "D150C_M5_ret_3h_bps__ret_24h_bps",
+      "closed_trade_count": 1,
+      "total_bps": -19.35,
+      "mean_bps": -19.35,
+      "total_net_profit": -8.72,
+      "last_rule_id": "D150C_M5_ret_3h_bps_GEQ65__ret_24h_bps_GEQ35",
+      "last_outcome": "LOSS"
+    },
+    {
+      "family_key": "D150C_M5_ret_6h_bps__trend_50_100_bps",
+      "closed_trade_count": 1,
+      "total_bps": -68.58,
+      "mean_bps": -68.58,
+      "total_net_profit": -28.3,
+      "last_rule_id": "D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35",
+      "last_outcome": "LOSS"
+    },
+    {
+      "family_key": "D150C_M5_trend_8_20_bps__trend_50_100_bps",
+      "closed_trade_count": 1,
+      "total_bps": -50.52,
+      "mean_bps": -50.52,
+      "total_net_profit": -21.22,
+      "last_rule_id": "D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35",
+      "last_outcome": "LOSS"
+    }
+  ],
+  "repo_kv": "/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_kv.csv",
+  "repo_latest": "/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_latest.csv",
+  "mt5_kv_written": true,
+  "mt5_kv": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv",
+  "mt5_latest": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_latest.csv",
+  "stage134_instruction": {
+    "InpRuleStateKvFile": "xauusd_stage155_m5_active_router_rule_state_kv.csv",
+    "InpAllowedRules": "all",
+    "keep_InpEnableDemoOrders": "true only on demo account"
+  },
+  "summary_json": "/Users/vahid/Desktop/xauusd-trader/reports/stage155_active_router_demo_risk_guard/m5/stage155_active_router_demo_risk_guard_summary.json",
+  "next": [
+    "Use this Stage157-hardened router behind Stage156; it preserves Stage155 KV filename so Stage134 input does not need to change.",
+    "If global_gate_freeze_active is true, keep demo orders blocked and repair discovery before re-enabling routing."
+  ]
+}
+{
+  "stage": "Stage157_GLOBAL_GATE_SAFE_ROUTER",
+  "generated_utc": "2026-07-09T11:07:12Z",
+  "status": "STAGE157_COMPLETE_GLOBAL_GATE_SAFE_ROUTER_READY",
+  "decision": "STAGE157_GLOBAL_PERFORMANCE_FREEZE_NO_ORDER",
+  "root": "/Users/vahid/Desktop/xauusd-trader",
+  "bars_path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+  "score_csv": "/Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv",
+  "tf": "m5",
+  "timeframe_minutes": 5,
+  "raw_row_count": 319155,
+  "bar_count": 319155,
+  "raw_feature_date": "2026-07-09T09:10:00Z",
+  "timestamp_shift_hours": -3.0,
+  "feature_date": "2026-07-09T06:10:00Z",
+  "feature_age_sec": 17867,
+  "max_feature_age_sec": 7200,
+  "feature_fresh": false,
+  "score_rows": 552,
+  "eligible_shortlist_count": 188,
+  "active_shortlist_count": 98,
+  "selected_rule_id": "",
+  "selected_label": "",
+  "selected_family_key": "",
+  "selected_condition_snapshot": "[{\"current\": 73.32216418645787, \"feature\": \"ret_3h_bps\", \"op\": \">=\", \"threshold\": 0.3984177296678659}, {\"current\": 3.156140896001247, \"feature\": \"ret_6h_bps\", \"op\": \"<=\", \"threshold\": 13.040843987678917}]",
+  "raw_selected_rule_id_before_global_gate": "D150C_M5_ret_3h_bps_GEQ50__ret_6h_bps_LEQ65",
+  "raw_selected_label_before_global_gate": "m5: ret_3h_bps >= q50 AND ret_6h_bps <= q65",
+  "risk_summary": "/Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json",
+  "global_freeze_guard": true,
+  "global_gate_freeze_active": true,
+  "global_gate_info": {
+    "global_gate_freeze_active": true,
+    "global_gate_reason": "Stage145 aggregate gate requires freeze/repair: gate_decision=STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY; recommended_action=FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY; severity=HIGH; closed_trade_count=13; total_bps=-78.3; mean_bps=-6.02; win_rate=0.4615",
+    "global_gate_decision": "STAGE145_FREEZE_REPAIR_RULE_NEGATIVE_EXPECTANCY",
+    "global_recommended_action": "FREEZE_CURRENT_RULE_AND_REPAIR_DISCOVERY",
+    "global_severity": "HIGH",
+    "global_closed_trade_count": 13,
+    "global_total_bps": -78.3,
+    "global_mean_bps": -6.02,
+    "global_win_rate": 0.4615,
+    "min_global_gate_trades": 10
+  },
+  "block_negative_demo_families": true,
+  "risk_blocked_family_count": 5,
+  "risk_blocked_candidate_count": 36,
+  "blocked_family_keys": [
+    "D138C_ret_48h_bps__trend_50_100_bps",
+    "D150C_M5_ret_12h_bps__trend_50_100_bps",
+    "D150C_M5_ret_3h_bps__ret_24h_bps",
+    "D150C_M5_ret_6h_bps__trend_50_100_bps",
+    "D150C_M5_trend_8_20_bps__trend_50_100_bps"
+  ],
+  "blocked_family_rows": [
+    {
+      "family_key": "D138C_ret_48h_bps__trend_50_100_bps",
+      "closed_trade_count": 6,
+      "total_bps": -1.29,
+      "mean_bps": -0.21,
+      "total_net_profit": -0.94,
+      "last_rule_id": "D138C_ret_48h_bps_GEQ65__trend_50_100_bps_LEQ65",
+      "last_outcome": "PROFIT"
+    },
+    {
+      "family_key": "D150C_M5_ret_12h_bps__trend_50_100_bps",
+      "closed_trade_count": 1,
+      "total_bps": -57.1,
+      "mean_bps": -57.1,
+      "total_net_profit": -23.65,
+      "last_rule_id": "D150C_M5_ret_12h_bps_GEQ35__trend_50_100_bps_GEQ35",
+      "last_outcome": "LOSS"
+    },
+    {
+      "family_key": "D150C_M5_ret_3h_bps__ret_24h_bps",
+      "closed_trade_count": 1,
+      "total_bps": -19.35,
+      "mean_bps": -19.35,
+      "total_net_profit": -8.72,
+      "last_rule_id": "D150C_M5_ret_3h_bps_GEQ65__ret_24h_bps_GEQ35",
+      "last_outcome": "LOSS"
+    },
+    {
+      "family_key": "D150C_M5_ret_6h_bps__trend_50_100_bps",
+      "closed_trade_count": 1,
+      "total_bps": -68.58,
+      "mean_bps": -68.58,
+      "total_net_profit": -28.3,
+      "last_rule_id": "D150C_M5_ret_6h_bps_GEQ35__trend_50_100_bps_GEQ35",
+      "last_outcome": "LOSS"
+    },
+    {
+      "family_key": "D150C_M5_trend_8_20_bps__trend_50_100_bps",
+      "closed_trade_count": 1,
+      "total_bps": -50.52,
+      "mean_bps": -50.52,
+      "total_net_profit": -21.22,
+      "last_rule_id": "D150C_M5_trend_8_20_bps_GEQ65__trend_50_100_bps_GEQ35",
+      "last_outcome": "LOSS"
+    }
+  ],
+  "repo_kv": "/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_kv.csv",
+  "repo_latest": "/Users/vahid/Desktop/xauusd-trader/data/demo_execution/xauusd_stage155_m5_active_router_rule_state_latest.csv",
+  "mt5_kv_written": true,
+  "mt5_kv": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_kv.csv",
+  "mt5_latest": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_latest.csv",
+  "stage134_instruction": {
+    "InpRuleStateKvFile": "xauusd_stage155_m5_active_router_rule_state_kv.csv",
+    "InpAllowedRules": "all",
+    "keep_InpEnableDemoOrders": "true only on demo account"
+  },
+  "summary_json": "/Users/vahid/Desktop/xauusd-trader/reports/stage155_active_router_demo_risk_guard/m5/stage155_active_router_demo_risk_guard_summary.json",
+  "next": [
+    "Use this Stage157-hardened router behind Stage156; it preserves Stage155 KV filename so Stage134 input does not need to change.",
+    "If global_gate_freeze_active is true, keep demo orders blocked and repair discovery before re-enabling routing."
+  ]
+}

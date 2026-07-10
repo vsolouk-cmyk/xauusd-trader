@@ -178,6 +178,47 @@ def pick_latest_row(rows: List[Dict[str, str]]) -> Dict[str, str]:
     return candidates[-1][2]
 
 
+def normalize_rule_metadata(obj: Dict[str, Any]) -> Dict[str, Any]:
+    """Normalize Stage171B candidate and Stage171E exact-lock rule JSON schemas.
+
+    Stage171E stores the authoritative metadata as:
+    - selected_evidence_path
+    - selected_evidence_strength
+    - exact_rule_lock_confidence
+
+    Older Stage171D only read `rule_id` and `confidence`, so it logged a
+    conservative reconstructed identifier even after Stage171E locked the rule.
+    This function preserves the log-only execution behavior while making the
+    governance metadata match the archived locked-rule evidence.
+    """
+    selected_path = str(obj.get("selected_evidence_path") or "")
+    selected_strength = str(obj.get("selected_evidence_strength") or "")
+    exact_locked = bool(obj.get("exact_rule_locked", False))
+
+    is_stage171e_v2 = (
+        exact_locked
+        and (
+            "h64l_locked_rule_v2_stage66a3_exact_reconciled" in selected_path
+            or selected_strength == "AUTHORITATIVE_LOCKED_RULE_V2_NAME"
+        )
+    )
+
+    if is_stage171e_v2:
+        obj = dict(obj)
+        obj["rule_id"] = obj.get("rule_id") or "H64L_EXACT_LOCKED_RULE_V2_STAGE66A3"
+        obj["confidence"] = obj.get("exact_rule_lock_confidence") or obj.get("confidence") or "HIGH_FROM_ARCHIVED_LOCKED_RULE"
+        obj["rule_confidence"] = obj["confidence"]
+        obj["event_guard_policy"] = obj.get("event_guard_policy") or "GDELT/news guard only; simple 30-minute blackout around FOMC/NFP/CPI for rescue track."
+        return obj
+
+    obj = dict(obj)
+    if "confidence" not in obj and "exact_rule_lock_confidence" in obj:
+        obj["confidence"] = obj.get("exact_rule_lock_confidence")
+    if "rule_confidence" not in obj and "confidence" in obj:
+        obj["rule_confidence"] = obj.get("confidence")
+    return obj
+
+
 def load_rule(rule_path: Optional[Path]) -> Dict[str, Any]:
     default = {
         "rule_id": "H64L_MANUAL_SHADOW_RECONSTRUCTED_CONDITIONS_PENDING_STAGE64R_CONFIRMATION",
@@ -189,7 +230,7 @@ def load_rule(rule_path: Optional[Path]) -> Dict[str, Any]:
     if rule_path and rule_path.exists():
         try:
             obj = json.loads(rule_path.read_text(encoding="utf-8"))
-            default.update(obj)
+            default.update(normalize_rule_metadata(obj))
         except Exception as exc:  # keep logger running
             default["rule_load_warning"] = str(exc)
     return default
@@ -329,6 +370,8 @@ def run_once(args: argparse.Namespace) -> int:
             "rule_id": rule.get("rule_id"),
             "exact_rule_locked": rule.get("exact_rule_locked", False),
             "confidence": rule.get("confidence", rule.get("rule_confidence", "")),
+            "selected_evidence_path": rule.get("selected_evidence_path", ""),
+            "selected_evidence_strength": rule.get("selected_evidence_strength", ""),
         },
         "current_shadow": {
             "feature_date_utc": shadow["feature_date_utc"],

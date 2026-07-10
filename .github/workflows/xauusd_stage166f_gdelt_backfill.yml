@@ -116,6 +116,20 @@ jobs:
             --retry-backoff-seconds "${{ steps.vars.outputs.retry_backoff_seconds }}" \
             --request-delay-seconds "${{ steps.vars.outputs.request_delay_seconds }}"
 
+      - name: Merge prior published history into refreshed panel
+        shell: bash
+        run: |
+          PRIOR_DIR="$(mktemp -d)"
+          if git fetch --quiet --depth=1 origin "$PUBLISH_BRANCH"; then
+            git show "FETCH_HEAD:stage166f_current_event_intraday_panel.csv" > "$PRIOR_DIR/prior_panel.csv" || true
+          fi
+          python app/stage166f_merge_refresh_snapshot.py \
+            --existing "$PRIOR_DIR/prior_panel.csv" \
+            --incoming "$OUT_DIR/stage166f_current_event_intraday_panel.csv" \
+            --out "$OUT_DIR/stage166f_current_event_intraday_panel.merged.csv"
+          mv -f "$OUT_DIR/stage166f_current_event_intraday_panel.merged.csv" \
+            "$OUT_DIR/stage166f_current_event_intraday_panel.csv"
+
       - name: Upload immutable run artifact
         uses: actions/upload-artifact@v4
         with:
@@ -139,6 +153,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout --orphan stage166f-publish-tmp
           git rm -rf .
+          git clean -fdx
           cp -R "$PUBLISH_DIR"/. .
           git add -A
           git commit -m "Publish latest Stage166F GDELT snapshot"

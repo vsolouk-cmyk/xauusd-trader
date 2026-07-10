@@ -32,22 +32,16 @@
       "required": true
     },
     {
-      "name": "format_aware_macro_rebuild",
-      "argv": ["{python}", "app/stage67d6_download_format_aware_rebuild_macro.py"],
+      "name": "stage64k_feature_dataset_rebuild_archived",
+      "argv": [
+        "{python}",
+        "archive/repo_cleanup_20260626/old_app_stage_files/stage64k_full_scope_lag_safe_feature_dataset_preflight.py",
+        "--root", "{root}",
+        "--config", "{root}/archive/repo_cleanup_20260626/configs_inactive/stage64k_full_scope_lag_safe_feature_dataset_preflight.json",
+        "--out", "{root}/reports/stage64k_full_scope_lag_safe_feature_dataset_preflight"
+      ],
       "timeout_seconds": 1800,
-      "required": false
-    },
-    {
-      "name": "stage64k_feature_dataset_rebuild_active",
-      "argv": ["{python}", "app/stage64k_full_scope_lag_safe_feature_dataset_preflight.py"],
-      "timeout_seconds": 1800,
-      "required": false
-    },
-    {
-      "name": "stage64k_feature_dataset_rebuild_archived_fallback",
-      "argv": ["{python}", "archive/repo_cleanup_20260626/old_app_stage_files/stage64k_full_scope_lag_safe_feature_dataset_preflight.py"],
-      "timeout_seconds": 1800,
-      "required": false
+      "required": true
     }
   ],
   "gdelt": {
@@ -57,6 +51,7 @@
     "fetch_timeout_seconds": 180,
     "compatible_panel": "reports/stage166_current_event_shock_overlay/stage166_current_event_intraday_panel.csv",
     "downloads_dir": "~/Downloads",
+    "max_artifact_age_hours": 18,
     "artifact_globs": [
       "stage166f-gdelt-refresh-*.zip",
       "stage166f-gdelt-backfill-*.zip"

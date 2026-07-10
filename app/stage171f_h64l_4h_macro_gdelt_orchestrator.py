@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Stage171F — H64L Four-Hour Macro + GDELT Operations Orchestrator.
+Stage171F2 — H64L Four-Hour Macro Rebuild + GDELT Snapshot Orchestrator.
 
 Operational scope only:
 - checks the manually maintained AMarkets files;
@@ -35,7 +35,7 @@ import zipfile
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
-STAGE = "Stage171F_H64L_4H_MACRO_GDELT_ORCHESTRATOR"
+STAGE = "Stage171F2_H64L_4H_MACRO_REBUILD_GDELT_ORCHESTRATOR"
 DEFAULT_CONFIG = "configs/stage171f_h64l_4h_macro_gdelt_orchestrator.json"
 DEFAULT_REPORT_DIR = "reports/stage171f_h64l_4h_macro_gdelt_orchestrator"
 DEFAULT_FEATURE_DATASET = "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv"
@@ -262,7 +262,7 @@ def git_import_gdelt(root: Path, cfg: Dict[str, Any], report_dir: Path) -> Dict[
         fetch = run_command("gdelt_git_fetch", ["git", "fetch", "--quiet", "--depth=1", remote, branch], root, int(cfg.get("fetch_timeout_seconds", 180)), {}, False)
         result["fetch"] = fetch
         if not fetch.get("ok"):
-            result["error"] = "GDELT_BRANCH_FETCH_FAILED"
+            result["error"] = "GDELT_BRANCH_NOT_PUBLISHED_OR_FETCH_FAILED"
             return result
         wanted = [
             "stage166f_current_event_intraday_panel.csv",
@@ -308,7 +308,18 @@ def artifact_import_gdelt(root: Path, cfg: Dict[str, Any], report_dir: Path) -> 
         result["error"] = "NO_GDELT_ARTIFACT_IN_DOWNLOADS"
         return result
     selected = candidates[0]
-    result["selected"] = str(selected)
+    modified = dt.datetime.fromtimestamp(selected.stat().st_mtime, tz=dt.timezone.utc)
+    age_hours = (utc_now() - modified).total_seconds() / 3600.0
+    max_age_hours = float(cfg.get("max_artifact_age_hours", 18))
+    result.update({
+        "selected": str(selected),
+        "selected_mtime_utc": utc_iso(modified),
+        "selected_age_hours": round(age_hours, 3),
+        "max_artifact_age_hours": max_age_hours,
+    })
+    if age_hours > max_age_hours:
+        result["error"] = "STALE_GDELT_ARTIFACT_NOT_IMPORTED"
+        return result
     with tempfile.TemporaryDirectory(prefix="stage171f_artifact_") as td:
         temp = Path(td)
         try:
@@ -416,10 +427,14 @@ def run_once(args: argparse.Namespace) -> int:
         after = inspect_feature_dataset(feature_path, float(cfg.get("max_feature_age_days", 3)))
         feature_changed = before.get("sha256") != after.get("sha256")
         required_failures = [s for s in macro_steps if s.get("required") and not s.get("ok")]
+        stage64k_steps = [s for s in macro_steps if "stage64k" in str(s.get("name", "")).lower()]
+        stage64k_rebuild_ok = bool(stage64k_steps) and all(bool(s.get("ok")) for s in stage64k_steps)
 
         shadow_result: Dict[str, Any]
         if required_failures:
             shadow_result = {"ok": False, "skipped": True, "reason": "REQUIRED_MACRO_PIPELINE_STEP_FAILED"}
+        elif not stage64k_rebuild_ok:
+            shadow_result = {"ok": False, "skipped": True, "reason": "STAGE64K_REBUILD_NOT_CONFIRMED"}
         elif not after.get("fresh"):
             shadow_result = {"ok": False, "skipped": True, "reason": "STALE_FEATURE_DATASET", "feature_age_days": after.get("age_days")}
         elif not rule_path.exists():
@@ -441,15 +456,17 @@ def run_once(args: argparse.Namespace) -> int:
         amarkets = inspect_files(amarkets_paths, float(cfg.get("amarkets_stale_hours", 36)))
         finished = utc_now()
         if required_failures:
-            decision = "STAGE171F_REQUIRED_MACRO_REFRESH_FAILED_SHADOW_BLOCKED"
+            decision = "STAGE171F2_REQUIRED_MACRO_REFRESH_FAILED_SHADOW_BLOCKED"
+        elif not stage64k_rebuild_ok:
+            decision = "STAGE171F2_STAGE64K_REBUILD_FAILED_SHADOW_BLOCKED"
         elif not after.get("fresh"):
-            decision = "STAGE171F_MACRO_FEATURE_DATA_STALE_SHADOW_BLOCKED"
+            decision = "STAGE171F2_MACRO_FEATURE_DATA_STALE_SHADOW_BLOCKED"
         elif not shadow_result.get("ok"):
-            decision = "STAGE171F_FEATURES_FRESH_BUT_SHADOW_RUN_FAILED"
+            decision = "STAGE171F2_FEATURES_FRESH_BUT_SHADOW_RUN_FAILED"
         elif not gdelt_result.get("ok"):
-            decision = "STAGE171F_H64L_SHADOW_UPDATED_GDELT_GUARD_DEGRADED"
+            decision = "STAGE171F2_H64L_SHADOW_UPDATED_GDELT_GUARD_DEGRADED"
         else:
-            decision = "STAGE171F_4H_REFRESH_AND_SHADOW_COMPLETE_NO_ORDER"
+            decision = "STAGE171F2_4H_REFRESH_AND_SHADOW_COMPLETE_NO_ORDER"
         summary = {
             "stage": STAGE,
             "generated_utc": utc_iso(finished),
@@ -467,6 +484,7 @@ def run_once(args: argparse.Namespace) -> int:
             "feature_dataset_before": before,
             "feature_dataset_after": after,
             "feature_dataset_changed": feature_changed,
+            "stage64k_rebuild_ok": stage64k_rebuild_ok,
             "macro_pipeline_steps": macro_steps,
             "required_failure_count": len(required_failures),
             "gdelt_refresh": gdelt_result,
@@ -483,7 +501,7 @@ def run_once(args: argparse.Namespace) -> int:
             report_dir / "stage171f_pipeline_step_status.csv", macro_steps,
             ["name", "required", "ok", "returncode", "started_utc", "finished_utc", "elapsed_seconds", "error", "argv", "stdout_tail", "stderr_tail"],
         )
-        md = f"""# Stage171F H64L Four-Hour Macro + GDELT Orchestrator
+        md = f"""# Stage171F2 H64L Four-Hour Macro Rebuild + GDELT Orchestrator
 
 Generated UTC: `{summary['generated_utc']}`
 
@@ -494,6 +512,7 @@ Decision: `{decision}`
 - Feature dataset age days: `{after.get('age_days')}`
 - Feature dataset changed in this run: `{feature_changed}`
 - Required macro failures: `{len(required_failures)}`
+- Stage64K rebuild confirmed: `{stage64k_rebuild_ok}`
 - GDELT refresh OK: `{gdelt_result.get('ok')}`
 - Shadow run OK: `{shadow_result.get('ok')}`
 - Orders allowed: `False`
@@ -502,7 +521,7 @@ AMarkets remains manual. This orchestrator only checks its freshness. If the fea
 """
         (report_dir / "stage171f_decision.md").write_text(md, encoding="utf-8")
         print(json.dumps(summary, ensure_ascii=False, indent=2, default=str))
-        return 0 if decision in {"STAGE171F_4H_REFRESH_AND_SHADOW_COMPLETE_NO_ORDER", "STAGE171F_H64L_SHADOW_UPDATED_GDELT_GUARD_DEGRADED"} else 2
+        return 0 if decision in {"STAGE171F2_4H_REFRESH_AND_SHADOW_COMPLETE_NO_ORDER", "STAGE171F2_H64L_SHADOW_UPDATED_GDELT_GUARD_DEGRADED"} else 2
     finally:
         lock_path.unlink(missing_ok=True)
 
@@ -533,7 +552,7 @@ def write_plist(args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(description="Stage171F H64L four-hour macro/GDELT ops orchestrator")
+    p = argparse.ArgumentParser(description="Stage171F2 H64L four-hour macro rebuild/GDELT ops orchestrator")
     sub = p.add_subparsers(dest="mode", required=True)
     r = sub.add_parser("run-once")
     r.add_argument("--root", required=True)

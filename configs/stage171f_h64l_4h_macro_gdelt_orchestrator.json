@@ -1,0 +1,65 @@
+{
+  "interval_seconds": 14400,
+  "report_dir": "reports/stage171f_h64l_4h_macro_gdelt_orchestrator",
+  "lock_file": "data/forward_shadow/stage171f_orchestrator.lock",
+  "lock_stale_hours": 8,
+  "fundamental_event_inbox": "~/Downloads/xauusd_fundamental_event_inbox",
+  "feature_dataset": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+  "max_feature_age_days": 3,
+  "locked_rule": "reports/stage171e_h64l_exact_rule_lock_from_archive/stage171e_h64l_exact_locked_rule.json",
+  "shadow_script": "app/stage171d_h64l_shadow_scheduler_and_logger.py",
+  "shadow_ledger": "data/forward_shadow/h64l_manual_shadow_log.csv",
+  "shadow_timeout_seconds": 300,
+  "amarkets_stale_hours": 36,
+  "amarkets_manual_files": [
+    "~/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_1m.csv",
+    "~/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+    "~/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_15m.csv",
+    "~/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_30m.csv",
+    "~/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_1h.csv"
+  ],
+  "local_pipeline": [
+    {
+      "name": "official_macro_download_batch",
+      "argv": ["{python}", "scripts/download_xauusd_official_data_batch.py"],
+      "timeout_seconds": 2400,
+      "required": true
+    },
+    {
+      "name": "fundamental_unify_normalize_pipeline",
+      "argv": ["{python}", "scripts/run_xauusd_fundamental_unify_normalize_pipeline.py"],
+      "timeout_seconds": 1800,
+      "required": true
+    },
+    {
+      "name": "format_aware_macro_rebuild",
+      "argv": ["{python}", "app/stage67d6_download_format_aware_rebuild_macro.py"],
+      "timeout_seconds": 1800,
+      "required": false
+    },
+    {
+      "name": "stage64k_feature_dataset_rebuild_active",
+      "argv": ["{python}", "app/stage64k_full_scope_lag_safe_feature_dataset_preflight.py"],
+      "timeout_seconds": 1800,
+      "required": false
+    },
+    {
+      "name": "stage64k_feature_dataset_rebuild_archived_fallback",
+      "argv": ["{python}", "archive/repo_cleanup_20260626/old_app_stage_files/stage64k_full_scope_lag_safe_feature_dataset_preflight.py"],
+      "timeout_seconds": 1800,
+      "required": false
+    }
+  ],
+  "gdelt": {
+    "enabled": true,
+    "remote": "origin",
+    "branch": "automation/gdelt-latest",
+    "fetch_timeout_seconds": 180,
+    "compatible_panel": "reports/stage166_current_event_shock_overlay/stage166_current_event_intraday_panel.csv",
+    "downloads_dir": "~/Downloads",
+    "artifact_globs": [
+      "stage166f-gdelt-refresh-*.zip",
+      "stage166f-gdelt-backfill-*.zip"
+    ]
+  }
+}

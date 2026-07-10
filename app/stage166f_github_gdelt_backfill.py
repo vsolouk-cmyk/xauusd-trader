@@ -155,14 +155,39 @@ def build_gdelt_url(query: str, start: datetime, end: datetime, fmt: str = "csv"
     return GDELT_DOC_ENDPOINT + "?" + urllib.parse.urlencode(params)
 
 
-def fetch_url(url: str, timeout: float, user_agent: str) -> Tuple[bool, bytes, str]:
-    req = urllib.request.Request(url, headers={"User-Agent": user_agent})
-    try:
-        with urllib.request.urlopen(req, timeout=timeout) as r:
-            data = r.read()
-        return True, data, ""
-    except Exception as e:  # noqa: BLE001
-        return False, b"", f"{type(e).__name__}: {e}"
+def fetch_url(
+    url: str,
+    timeout: float,
+    user_agent: str,
+    max_retries: int = 0,
+    retry_backoff_seconds: float = 2.0,
+) -> Tuple[bool, bytes, str]:
+    """Fetch with bounded exponential backoff, including HTTP 429 handling."""
+    last_error = ""
+    attempts = max(1, int(max_retries) + 1)
+    for attempt in range(attempts):
+        req = urllib.request.Request(url, headers={"User-Agent": user_agent})
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                data = r.read()
+            return True, data, ""
+        except Exception as e:  # noqa: BLE001
+            last_error = f"{type(e).__name__}: {e}"
+            if attempt >= attempts - 1:
+                break
+            retry_after = None
+            try:
+                headers = getattr(e, "headers", None)
+                if headers is not None:
+                    retry_after = headers.get("Retry-After")
+            except Exception:
+                retry_after = None
+            try:
+                delay = float(retry_after) if retry_after else float(retry_backoff_seconds) * (2 ** attempt)
+            except Exception:
+                delay = float(retry_backoff_seconds) * (2 ** attempt)
+            time.sleep(max(0.0, min(delay, 90.0)))
+    return False, b"", last_error
 
 
 def parse_gdelt_timestamp(value: Any) -> Optional[datetime]:
@@ -270,7 +295,7 @@ def parse_json_points(data: bytes) -> List[Tuple[datetime, float]]:
     return walk_json_points(obj)
 
 
-def fetch_task(task: Dict[str, Any], timeout: float, user_agent: str, raw_dir: Path, skip_network: bool) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+def fetch_task(task: Dict[str, Any], timeout: float, user_agent: str, raw_dir: Path, skip_network: bool, max_retries: int, retry_backoff_seconds: float) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
     profile = task["profile"]
     start = task["start"]
     end = task["end"]
@@ -289,7 +314,7 @@ def fetch_task(task: Dict[str, Any], timeout: float, user_agent: str, raw_dir: P
     if skip_network:
         status["error"] = "SKIP_NETWORK"
         return [], status
-    ok, data, err = fetch_url(url, timeout, user_agent)
+    ok, data, err = fetch_url(url, timeout, user_agent, max_retries=max_retries, retry_backoff_seconds=retry_backoff_seconds)
     status["ok"] = ok
     status["bytes"] = len(data)
     status["error"] = err
@@ -301,7 +326,7 @@ def fetch_task(task: Dict[str, Any], timeout: float, user_agent: str, raw_dir: P
         if not points:
             # Try JSON fallback once if CSV shape changed.
             json_url = build_gdelt_url(task["query"], start, end, fmt="json")
-            ok2, data2, err2 = fetch_url(json_url, timeout, user_agent)
+            ok2, data2, err2 = fetch_url(json_url, timeout, user_agent, max_retries=max_retries, retry_backoff_seconds=retry_backoff_seconds)
             status["json_fallback_ok"] = ok2
             status["json_fallback_error"] = err2
             status["json_fallback_bytes"] = len(data2)
@@ -417,12 +442,14 @@ def run_fetch(args: argparse.Namespace) -> Dict[str, Any]:
     t0 = time.time()
     if int(args.max_workers) <= 1:
         for task in tasks:
-            rows, st = fetch_task(task, args.timeout_seconds, args.user_agent, raw_dir, args.skip_network)
+            rows, st = fetch_task(task, args.timeout_seconds, args.user_agent, raw_dir, args.skip_network, args.max_retries, args.retry_backoff_seconds)
             all_points.extend(rows)
             statuses.append(st)
+            if args.request_delay_seconds > 0:
+                time.sleep(args.request_delay_seconds)
     else:
         with ThreadPoolExecutor(max_workers=max(1, int(args.max_workers))) as ex:
-            futs = [ex.submit(fetch_task, task, args.timeout_seconds, args.user_agent, raw_dir, args.skip_network) for task in tasks]
+            futs = [ex.submit(fetch_task, task, args.timeout_seconds, args.user_agent, raw_dir, args.skip_network, args.max_retries, args.retry_backoff_seconds) for task in tasks]
             for fut in as_completed(futs):
                 rows, st = fut.result()
                 all_points.extend(rows)
@@ -452,6 +479,9 @@ def run_fetch(args: argparse.Namespace) -> Dict[str, Any]:
         "max_workers": int(args.max_workers),
         "max_queries": int(args.max_queries),
         "timeout_seconds": float(args.timeout_seconds),
+        "max_retries": int(args.max_retries),
+        "retry_backoff_seconds": float(args.retry_backoff_seconds),
+        "request_delay_seconds": float(args.request_delay_seconds),
         "task_count": len(tasks),
         "fetch_ok_count": sum(1 for s in statuses if s.get("ok")),
         "fetch_point_count": len(all_points),
@@ -528,7 +558,10 @@ def build_arg_parser() -> argparse.ArgumentParser:
     f.add_argument("--max-workers", type=int, default=4)
     f.add_argument("--max-queries", type=int, default=0, help="0 means no cap")
     f.add_argument("--timeout-seconds", type=float, default=20.0)
-    f.add_argument("--user-agent", default="xauusd-stage166f-github-actions/1.0")
+    f.add_argument("--user-agent", default="xauusd-stage166f-github-actions/2.0")
+    f.add_argument("--max-retries", type=int, default=3)
+    f.add_argument("--retry-backoff-seconds", type=float, default=2.0)
+    f.add_argument("--request-delay-seconds", type=float, default=0.0, help="Delay between tasks in sequential mode")
     f.add_argument("--skip-network", action="store_true")
 
     i = sub.add_parser("install-artifact", help="Install downloaded GitHub artifact locally into Stage166-compatible panel")

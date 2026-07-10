@@ -1,4 +1,4 @@
-name: XAUUSD Stage166F GDELT Backfill
+name: XAUUSD Stage166F GDELT Four-Hour Refresh
 
 on:
   workflow_dispatch:
@@ -12,64 +12,79 @@ on:
         required: false
         default: ''
       split_date:
-        description: 'Train/holdout split date YYYY-MM-DD, for health metadata only'
+        description: 'Train/holdout split date YYYY-MM-DD, health metadata only'
         required: true
         default: '2025-08-13'
       chunk_days:
         description: 'Days per GDELT query chunk'
         required: true
-        default: '180'
+        default: '90'
       max_workers:
-        description: 'Parallel workers'
+        description: 'Parallel workers; use 1-2 to reduce 429s'
         required: true
-        default: '4'
+        default: '2'
       max_queries:
         description: 'Probe cap; 0 means full run'
         required: true
-        default: '20'
+        default: '0'
       timeout_seconds:
         description: 'Per-request timeout'
         required: true
-        default: '20'
+        default: '30'
   schedule:
-    - cron: '37 2 * * *'
+    - cron: '17 */4 * * *'
+
+concurrency:
+  group: xauusd-stage166f-gdelt-refresh
+  cancel-in-progress: true
 
 permissions:
-  contents: read
+  contents: write
 
 env:
   OUT_DIR: reports/stage166f_github_gdelt_backfill
+  PUBLISH_BRANCH: automation/gdelt-latest
 
 jobs:
-  gdelt-backfill:
+  gdelt-refresh:
     runs-on: ubuntu-22.04
-    timeout-minutes: 45
+    timeout-minutes: 55
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Resolve inputs
+      - name: Resolve manual or scheduled inputs
         id: vars
         shell: bash
         run: |
           START_DATE="${{ github.event.inputs.start_date || '2022-01-01' }}"
           END_DATE="${{ github.event.inputs.end_date || '' }}"
           SPLIT_DATE="${{ github.event.inputs.split_date || '2025-08-13' }}"
-          CHUNK_DAYS="${{ github.event.inputs.chunk_days || '180' }}"
-          MAX_WORKERS="${{ github.event.inputs.max_workers || '4' }}"
-          MAX_QUERIES="${{ github.event.inputs.max_queries || '20' }}"
-          TIMEOUT_SECONDS="${{ github.event.inputs.timeout_seconds || '20' }}"
+          CHUNK_DAYS="${{ github.event.inputs.chunk_days || '90' }}"
+          MAX_WORKERS="${{ github.event.inputs.max_workers || '2' }}"
+          MAX_QUERIES="${{ github.event.inputs.max_queries || '0' }}"
+          TIMEOUT_SECONDS="${{ github.event.inputs.timeout_seconds || '30' }}"
+          MAX_RETRIES="4"
+          RETRY_BACKOFF_SECONDS="3"
+          REQUEST_DELAY_SECONDS="0"
+
           if [ "${{ github.event_name }}" = "schedule" ]; then
-            START_DATE="$(date -u -d '45 days ago' +%F)"
+            START_DATE="$(date -u -d '21 days ago' +%F)"
             END_DATE=""
+            CHUNK_DAYS="7"
+            MAX_WORKERS="1"
             MAX_QUERIES="0"
-            CHUNK_DAYS="45"
+            TIMEOUT_SECONDS="30"
+            REQUEST_DELAY_SECONDS="2.5"
           fi
+
           echo "start_date=$START_DATE" >> "$GITHUB_OUTPUT"
           echo "end_date=$END_DATE" >> "$GITHUB_OUTPUT"
           echo "split_date=$SPLIT_DATE" >> "$GITHUB_OUTPUT"
@@ -77,12 +92,16 @@ jobs:
           echo "max_workers=$MAX_WORKERS" >> "$GITHUB_OUTPUT"
           echo "max_queries=$MAX_QUERIES" >> "$GITHUB_OUTPUT"
           echo "timeout_seconds=$TIMEOUT_SECONDS" >> "$GITHUB_OUTPUT"
+          echo "max_retries=$MAX_RETRIES" >> "$GITHUB_OUTPUT"
+          echo "retry_backoff_seconds=$RETRY_BACKOFF_SECONDS" >> "$GITHUB_OUTPUT"
+          echo "request_delay_seconds=$REQUEST_DELAY_SECONDS" >> "$GITHUB_OUTPUT"
 
       - name: Compile Stage166F
         run: python -m py_compile app/stage166f_github_gdelt_backfill.py
 
-      - name: Run GDELT backfill
+      - name: Run GDELT refresh
         run: |
+          rm -rf "$OUT_DIR"
           mkdir -p "$OUT_DIR"
           python app/stage166f_github_gdelt_backfill.py fetch \
             --output-dir "$OUT_DIR" \
@@ -92,11 +111,35 @@ jobs:
             --chunk-days "${{ steps.vars.outputs.chunk_days }}" \
             --max-workers "${{ steps.vars.outputs.max_workers }}" \
             --max-queries "${{ steps.vars.outputs.max_queries }}" \
-            --timeout-seconds "${{ steps.vars.outputs.timeout_seconds }}"
+            --timeout-seconds "${{ steps.vars.outputs.timeout_seconds }}" \
+            --max-retries "${{ steps.vars.outputs.max_retries }}" \
+            --retry-backoff-seconds "${{ steps.vars.outputs.retry_backoff_seconds }}" \
+            --request-delay-seconds "${{ steps.vars.outputs.request_delay_seconds }}"
 
-      - name: Upload Stage166F artifact
+      - name: Upload immutable run artifact
         uses: actions/upload-artifact@v4
         with:
-          name: stage166f-gdelt-backfill-${{ github.run_id }}
+          name: stage166f-gdelt-refresh-${{ github.run_id }}
           path: reports/stage166f_github_gdelt_backfill
-          retention-days: 30
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Publish latest snapshot branch
+        shell: bash
+        run: |
+          PUBLISH_DIR="$(mktemp -d)"
+          cp "$OUT_DIR/stage166f_current_event_intraday_panel.csv" "$PUBLISH_DIR/"
+          cp "$OUT_DIR/stage166f_fetch_status.csv" "$PUBLISH_DIR/"
+          cp "$OUT_DIR/stage166f_gdelt_points.csv" "$PUBLISH_DIR/"
+          cp "$OUT_DIR/stage166f_gdelt_backfill_summary.json" "$PUBLISH_DIR/"
+          cp "$OUT_DIR/stage166f_artifact_manifest.json" "$PUBLISH_DIR/"
+          date -u +%Y-%m-%dT%H:%M:%SZ > "$PUBLISH_DIR/generated_utc.txt"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan stage166f-publish-tmp
+          git rm -rf .
+          cp -R "$PUBLISH_DIR"/. .
+          git add -A
+          git commit -m "Publish latest Stage166F GDELT snapshot"
+          git push --force origin "HEAD:refs/heads/$PUBLISH_BRANCH"

@@ -148,6 +148,25 @@ def inspect_feature_dataset(path: Path, max_age_days: float) -> Dict[str, Any]:
     return out
 
 
+def inspect_shadow_ledger(path: Path) -> Dict[str, Any]:
+    out: Dict[str, Any] = {"path": str(path), "exists": path.exists(), "row_count": 0, "latest_feature_date_utc": None, "latest_generated_utc": None}
+    if not path.exists() or path.stat().st_size == 0:
+        return out
+    try:
+        with path.open("r", encoding="utf-8-sig", errors="replace", newline="") as f:
+            rows = list(csv.DictReader(f, delimiter=detect_separator(path)))
+        out["row_count"] = len(rows)
+        if rows:
+            last = rows[-1]
+            out["latest_feature_date_utc"] = str(last.get("feature_date_utc") or "") or None
+            # First column in the durable ledger is generated UTC in current Stage171D schema.
+            first_key = next(iter(last.keys()), None)
+            out["latest_generated_utc"] = str(last.get(first_key) or "") if first_key else None
+    except Exception as exc:  # noqa: BLE001
+        out["error"] = f"{type(exc).__name__}:{exc}"
+    return out
+
+
 def inspect_files(paths: Sequence[Path], stale_hours: float) -> List[Dict[str, Any]]:
     rows: List[Dict[str, Any]] = []
     now = utc_now()
@@ -430,6 +449,11 @@ def run_once(args: argparse.Namespace) -> int:
         stage64k_steps = [s for s in macro_steps if "stage64k" in str(s.get("name", "")).lower()]
         stage64k_rebuild_ok = bool(stage64k_steps) and all(bool(s.get("ok")) for s in stage64k_steps)
 
+        last_shadow = inspect_shadow_ledger(ledger_path)
+        latest_feature_date = str(after.get("latest_feature_date_utc") or "")
+        last_logged_feature_date = str(last_shadow.get("latest_feature_date_utc") or "")
+        new_feature_snapshot = bool(feature_changed or (latest_feature_date and latest_feature_date != last_logged_feature_date))
+
         shadow_result: Dict[str, Any]
         if required_failures:
             shadow_result = {"ok": False, "skipped": True, "reason": "REQUIRED_MACRO_PIPELINE_STEP_FAILED"}
@@ -439,6 +463,14 @@ def run_once(args: argparse.Namespace) -> int:
             shadow_result = {"ok": False, "skipped": True, "reason": "STALE_FEATURE_DATASET", "feature_age_days": after.get("age_days")}
         elif not rule_path.exists():
             shadow_result = {"ok": False, "skipped": True, "reason": "EXACT_LOCKED_RULE_MISSING", "path": str(rule_path)}
+        elif not new_feature_snapshot:
+            shadow_result = {
+                "ok": True,
+                "skipped": True,
+                "reason": "NO_NEW_FEATURE_SNAPSHOT_NO_DUPLICATE",
+                "latest_feature_date_utc": latest_feature_date,
+                "last_logged_feature_date_utc": last_logged_feature_date,
+            }
         else:
             shadow_argv = [
                 python_exe,
@@ -463,6 +495,8 @@ def run_once(args: argparse.Namespace) -> int:
             decision = "STAGE171F2_MACRO_FEATURE_DATA_STALE_SHADOW_BLOCKED"
         elif not shadow_result.get("ok"):
             decision = "STAGE171F2_FEATURES_FRESH_BUT_SHADOW_RUN_FAILED"
+        elif shadow_result.get("reason") == "NO_NEW_FEATURE_SNAPSHOT_NO_DUPLICATE":
+            decision = "STAGE171G_REFRESH_COMPLETE_NO_NEW_FEATURE_SNAPSHOT_NO_DUPLICATE"
         elif not gdelt_result.get("ok"):
             decision = "STAGE171F2_H64L_SHADOW_UPDATED_GDELT_GUARD_DEGRADED"
         else:
@@ -488,6 +522,8 @@ def run_once(args: argparse.Namespace) -> int:
             "macro_pipeline_steps": macro_steps,
             "required_failure_count": len(required_failures),
             "gdelt_refresh": gdelt_result,
+            "last_shadow_ledger": last_shadow,
+            "new_feature_snapshot": new_feature_snapshot,
             "shadow_run": shadow_result,
             "next": [
                 "Keep the Stage171F four-hour LaunchAgent active; it replaces direct Stage171D scheduling.",

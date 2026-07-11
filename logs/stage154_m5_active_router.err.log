@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 414, in run
+    write_csv(Path(mt5_latest), [latest_row], list(latest_row.keys()))
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage151_locked_mtf_rule_state_writer.py", line 128, in write_csv
+    tmp.replace(path)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1385, in replace
+    self._accessor.replace(self, target)
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_latest.csv.tmp' -> '/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/xauusd_stage155_m5_active_router_rule_state_latest.csv'

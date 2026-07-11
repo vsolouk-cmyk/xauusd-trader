@@ -1,48 +1,37 @@
-name: XAUUSD Stage166F GDELT Four-Hour Refresh
+name: XAUUSD Stage166G Persistent GDELT Four-Hour Refresh
 
 on:
   workflow_dispatch:
     inputs:
       start_date:
-        description: 'UTC start date YYYY-MM-DD'
-        required: true
-        default: '2022-01-01'
+        description: 'UTC start date YYYY-MM-DD; empty defaults to 89 days ago'
+        required: false
+        default: ''
       end_date:
         description: 'UTC end date YYYY-MM-DD; empty means now'
         required: false
         default: ''
       split_date:
-        description: 'Train/holdout split date YYYY-MM-DD, health metadata only'
+        description: 'Train/holdout split date, health metadata only'
         required: true
         default: '2025-08-13'
       chunk_days:
-        description: 'Days per GDELT query chunk'
+        description: 'Days per query; 7 preserves hourly resolution with fewer requests'
         required: true
-        default: '90'
-      max_workers:
-        description: 'Parallel workers; use 1-2 to reduce 429s'
-        required: true
-        default: '2'
-      max_queries:
-        description: 'Probe cap; 0 means full run'
-        required: true
-        default: '0'
-      timeout_seconds:
-        description: 'Per-request timeout'
-        required: true
-        default: '30'
+        default: '7'
   schedule:
     - cron: '17 */4 * * *'
 
 concurrency:
-  group: xauusd-stage166f-gdelt-refresh
-  cancel-in-progress: true
+  group: xauusd-stage166g-gdelt-refresh
+  cancel-in-progress: false
 
 permissions:
   contents: write
 
 env:
-  OUT_DIR: reports/stage166f_github_gdelt_backfill
+  INCOMING_DIR: reports/stage166f_github_gdelt_backfill
+  PERSIST_DIR: reports/stage166g_gdelt_persistent_store
   PUBLISH_BRANCH: automation/gdelt-latest
 
 jobs:
@@ -60,101 +49,96 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Resolve manual or scheduled inputs
+      - name: Resolve bounded acquisition window
         id: vars
         shell: bash
         run: |
-          START_DATE="${{ github.event.inputs.start_date || '2022-01-01' }}"
+          START_DATE="${{ github.event.inputs.start_date || '' }}"
           END_DATE="${{ github.event.inputs.end_date || '' }}"
           SPLIT_DATE="${{ github.event.inputs.split_date || '2025-08-13' }}"
-          CHUNK_DAYS="${{ github.event.inputs.chunk_days || '90' }}"
-          MAX_WORKERS="${{ github.event.inputs.max_workers || '2' }}"
-          MAX_QUERIES="${{ github.event.inputs.max_queries || '0' }}"
-          TIMEOUT_SECONDS="${{ github.event.inputs.timeout_seconds || '30' }}"
-          MAX_RETRIES="4"
-          RETRY_BACKOFF_SECONDS="3"
-          REQUEST_DELAY_SECONDS="0"
+          CHUNK_DAYS="${{ github.event.inputs.chunk_days || '7' }}"
 
-          if [ "${{ github.event_name }}" = "schedule" ]; then
-            START_DATE="$(date -u -d '21 days ago' +%F)"
-            END_DATE=""
-            CHUNK_DAYS="7"
-            MAX_WORKERS="1"
-            MAX_QUERIES="0"
-            TIMEOUT_SECONDS="30"
-            REQUEST_DELAY_SECONDS="2.5"
+          if [ -z "$START_DATE" ]; then
+            if [ "${{ github.event_name }}" = "schedule" ]; then
+              START_DATE="$(date -u -d '7 days ago' +%F)"
+            else
+              START_DATE="$(date -u -d '89 days ago' +%F)"
+            fi
           fi
 
           echo "start_date=$START_DATE" >> "$GITHUB_OUTPUT"
           echo "end_date=$END_DATE" >> "$GITHUB_OUTPUT"
           echo "split_date=$SPLIT_DATE" >> "$GITHUB_OUTPUT"
           echo "chunk_days=$CHUNK_DAYS" >> "$GITHUB_OUTPUT"
-          echo "max_workers=$MAX_WORKERS" >> "$GITHUB_OUTPUT"
-          echo "max_queries=$MAX_QUERIES" >> "$GITHUB_OUTPUT"
-          echo "timeout_seconds=$TIMEOUT_SECONDS" >> "$GITHUB_OUTPUT"
-          echo "max_retries=$MAX_RETRIES" >> "$GITHUB_OUTPUT"
-          echo "retry_backoff_seconds=$RETRY_BACKOFF_SECONDS" >> "$GITHUB_OUTPUT"
-          echo "request_delay_seconds=$REQUEST_DELAY_SECONDS" >> "$GITHUB_OUTPUT"
 
-      - name: Compile Stage166F
-        run: python -m py_compile app/stage166f_github_gdelt_backfill.py
-
-      - name: Run GDELT refresh
+      - name: Compile collectors
         run: |
-          rm -rf "$OUT_DIR"
-          mkdir -p "$OUT_DIR"
+          python -m py_compile app/stage166f_github_gdelt_backfill.py
+          python -m py_compile app/stage166g_gdelt_persistent_store.py
+
+      - name: Fetch bounded hot window sequentially
+        run: |
+          rm -rf "$INCOMING_DIR" "$PERSIST_DIR"
+          mkdir -p "$INCOMING_DIR" "$PERSIST_DIR"
           python app/stage166f_github_gdelt_backfill.py fetch \
-            --output-dir "$OUT_DIR" \
+            --output-dir "$INCOMING_DIR" \
             --start-date "${{ steps.vars.outputs.start_date }}" \
             --end-date "${{ steps.vars.outputs.end_date }}" \
             --split-date "${{ steps.vars.outputs.split_date }}" \
             --chunk-days "${{ steps.vars.outputs.chunk_days }}" \
-            --max-workers "${{ steps.vars.outputs.max_workers }}" \
-            --max-queries "${{ steps.vars.outputs.max_queries }}" \
-            --timeout-seconds "${{ steps.vars.outputs.timeout_seconds }}" \
-            --max-retries "${{ steps.vars.outputs.max_retries }}" \
-            --retry-backoff-seconds "${{ steps.vars.outputs.retry_backoff_seconds }}" \
-            --request-delay-seconds "${{ steps.vars.outputs.request_delay_seconds }}"
+            --max-workers 1 \
+            --max-queries 0 \
+            --timeout-seconds 35 \
+            --max-retries 4 \
+            --retry-backoff-seconds 10 \
+            --request-delay-seconds 12
 
-      - name: Merge prior published history into refreshed panel
+      - name: Recover prior persistent snapshot
         shell: bash
         run: |
           PRIOR_DIR="$(mktemp -d)"
+          echo "$PRIOR_DIR" > /tmp/stage166g_prior_dir
           if git fetch --quiet --depth=1 origin "$PUBLISH_BRANCH"; then
-            git show "FETCH_HEAD:stage166f_current_event_intraday_panel.csv" > "$PRIOR_DIR/prior_panel.csv" || true
+            for name in \
+              stage166g_persistent_gdelt_points.csv \
+              stage166g_fetch_ledger.csv \
+              stage166g_persistent_manifest.json \
+              stage166f_gdelt_points.csv; do
+              git show "FETCH_HEAD:$name" > "$PRIOR_DIR/$name" 2>/dev/null || true
+            done
           fi
-          python app/stage166f_merge_refresh_snapshot.py \
-            --existing "$PRIOR_DIR/prior_panel.csv" \
-            --incoming "$OUT_DIR/stage166f_current_event_intraday_panel.csv" \
-            --out "$OUT_DIR/stage166f_current_event_intraday_panel.merged.csv"
-          mv -f "$OUT_DIR/stage166f_current_event_intraday_panel.merged.csv" \
-            "$OUT_DIR/stage166f_current_event_intraday_panel.csv"
+
+      - name: Merge status-aware persistent store
+        shell: bash
+        run: |
+          PRIOR_DIR="$(cat /tmp/stage166g_prior_dir)"
+          python app/stage166g_gdelt_persistent_store.py \
+            --prior-dir "$PRIOR_DIR" \
+            --incoming-dir "$INCOMING_DIR" \
+            --out-dir "$PERSIST_DIR" \
+            --freeze-lag-hours 72
 
       - name: Upload immutable run artifact
         uses: actions/upload-artifact@v4
         with:
-          name: stage166f-gdelt-refresh-${{ github.run_id }}
-          path: reports/stage166f_github_gdelt_backfill
-          retention-days: 14
+          name: stage166g-gdelt-persistent-${{ github.run_id }}
+          path: reports/stage166g_gdelt_persistent_store
+          retention-days: 30
           if-no-files-found: error
 
-      - name: Publish latest snapshot branch
+      - name: Publish persistent snapshot branch
         shell: bash
         run: |
           PUBLISH_DIR="$(mktemp -d)"
-          cp "$OUT_DIR/stage166f_current_event_intraday_panel.csv" "$PUBLISH_DIR/"
-          cp "$OUT_DIR/stage166f_fetch_status.csv" "$PUBLISH_DIR/"
-          cp "$OUT_DIR/stage166f_gdelt_points.csv" "$PUBLISH_DIR/"
-          cp "$OUT_DIR/stage166f_gdelt_backfill_summary.json" "$PUBLISH_DIR/"
-          cp "$OUT_DIR/stage166f_artifact_manifest.json" "$PUBLISH_DIR/"
+          cp -R "$PERSIST_DIR"/. "$PUBLISH_DIR"/
           date -u +%Y-%m-%dT%H:%M:%SZ > "$PUBLISH_DIR/generated_utc.txt"
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout --orphan stage166f-publish-tmp
+          git checkout --orphan stage166g-publish-tmp
           git rm -rf .
           git clean -fdx
           cp -R "$PUBLISH_DIR"/. .
           git add -A
-          git commit -m "Publish latest Stage166F GDELT snapshot"
+          git commit -m "Publish persistent Stage166G GDELT snapshot"
           git push --force origin "HEAD:refs/heads/$PUBLISH_BRANCH"

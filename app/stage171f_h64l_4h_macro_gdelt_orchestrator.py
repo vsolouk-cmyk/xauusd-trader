@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Stage171F2 — H64L Four-Hour Macro Rebuild + GDELT Snapshot Orchestrator.
+Stage171H — H64L Four-Hour Forward Feature + GDELT Orchestrator.
 
 Operational scope only:
 - checks the manually maintained AMarkets files;
@@ -35,10 +35,10 @@ import zipfile
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
-STAGE = "Stage171F2_H64L_4H_MACRO_REBUILD_GDELT_ORCHESTRATOR"
+STAGE = "Stage171H_H64L_4H_FORWARD_FEATURE_GDELT_ORCHESTRATOR"
 DEFAULT_CONFIG = "configs/stage171f_h64l_4h_macro_gdelt_orchestrator.json"
 DEFAULT_REPORT_DIR = "reports/stage171f_h64l_4h_macro_gdelt_orchestrator"
-DEFAULT_FEATURE_DATASET = "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv"
+DEFAULT_FEATURE_DATASET = "data/forward_shadow/h64l_forward_feature_snapshots.csv"
 DEFAULT_GDELT_PANEL = "reports/stage166_current_event_shock_overlay/stage166_current_event_intraday_panel.csv"
 DEFAULT_RULE = "reports/stage171e_h64l_exact_rule_lock_from_archive/stage171e_h64l_exact_locked_rule.json"
 DEFAULT_LEDGER = "data/forward_shadow/h64l_manual_shadow_log.csv"
@@ -272,6 +272,23 @@ def merge_gdelt_panel(existing_path: Path, incoming_path: Path) -> Dict[str, Any
     }
 
 
+def remote_to_https(root: Path, remote: str) -> Optional[str]:
+    cp = subprocess.run(["git", "remote", "get-url", remote], cwd=str(root), capture_output=True, text=True, check=False)
+    if cp.returncode != 0:
+        return None
+    url = cp.stdout.strip()
+    if url.startswith("https://"):
+        return url
+    if url.startswith("git@github.com:"):
+        return "https://github.com/" + url.split(":", 1)[1]
+    if "ssh.github.com" in url:
+        tail = url.split("github.com", 1)[-1].lstrip(":/")
+        return "https://github.com/" + tail
+    if url.startswith("ssh://git@github.com/"):
+        return "https://github.com/" + url.split("ssh://git@github.com/", 1)[1]
+    return None
+
+
 def git_import_gdelt(root: Path, cfg: Dict[str, Any], report_dir: Path) -> Dict[str, Any]:
     branch = str(cfg.get("branch", "automation/gdelt-latest"))
     remote = str(cfg.get("remote", "origin"))
@@ -280,11 +297,25 @@ def git_import_gdelt(root: Path, cfg: Dict[str, Any], report_dir: Path) -> Dict[
         tmp = Path(td)
         fetch = run_command("gdelt_git_fetch", ["git", "fetch", "--quiet", "--depth=1", remote, branch], root, int(cfg.get("fetch_timeout_seconds", 180)), {}, False)
         result["fetch"] = fetch
+        ref = "FETCH_HEAD"
+        if not fetch.get("ok") and cfg.get("https_fallback", True):
+            https_url = remote_to_https(root, remote)
+            result["https_remote"] = https_url
+            if https_url:
+                refspec = f"{branch}:refs/remotes/{remote}/{branch}"
+                fetch2 = run_command("gdelt_git_fetch_https_fallback", ["git", "fetch", "--quiet", "--depth=1", https_url, refspec], root, int(cfg.get("fetch_timeout_seconds", 180)), {}, False)
+                result["https_fetch"] = fetch2
+                if fetch2.get("ok"):
+                    ref = f"refs/remotes/{remote}/{branch}"
+                    fetch = fetch2
         if not fetch.get("ok"):
             result["error"] = "GDELT_BRANCH_NOT_PUBLISHED_OR_FETCH_FAILED"
             return result
         wanted = [
             "stage166f_current_event_intraday_panel.csv",
+            "stage166g_persistent_gdelt_points.csv",
+            "stage166g_fetch_ledger.csv",
+            "stage166g_persistent_manifest.json",
             "stage166f_fetch_status.csv",
             "stage166f_gdelt_points.csv",
             "stage166f_gdelt_backfill_summary.json",
@@ -292,7 +323,7 @@ def git_import_gdelt(root: Path, cfg: Dict[str, Any], report_dir: Path) -> Dict[
         ]
         extracted: Dict[str, str] = {}
         for name in wanted:
-            cp = subprocess.run(["git", "show", f"FETCH_HEAD:{name}"], cwd=str(root), capture_output=True, check=False)
+            cp = subprocess.run(["git", "show", f"{ref}:{name}"], cwd=str(root), capture_output=True, check=False)
             if cp.returncode == 0:
                 dest = tmp / name
                 dest.write_bytes(cp.stdout)
@@ -446,8 +477,8 @@ def run_once(args: argparse.Namespace) -> int:
         after = inspect_feature_dataset(feature_path, float(cfg.get("max_feature_age_days", 3)))
         feature_changed = before.get("sha256") != after.get("sha256")
         required_failures = [s for s in macro_steps if s.get("required") and not s.get("ok")]
-        stage64k_steps = [s for s in macro_steps if "stage64k" in str(s.get("name", "")).lower()]
-        stage64k_rebuild_ok = bool(stage64k_steps) and all(bool(s.get("ok")) for s in stage64k_steps)
+        forward_steps = [s for s in macro_steps if "forward_feature_materializer" in str(s.get("name", "")).lower()]
+        forward_feature_materializer_ok = bool(forward_steps) and all(bool(s.get("ok")) for s in forward_steps)
 
         last_shadow = inspect_shadow_ledger(ledger_path)
         latest_feature_date = str(after.get("latest_feature_date_utc") or "")
@@ -457,8 +488,8 @@ def run_once(args: argparse.Namespace) -> int:
         shadow_result: Dict[str, Any]
         if required_failures:
             shadow_result = {"ok": False, "skipped": True, "reason": "REQUIRED_MACRO_PIPELINE_STEP_FAILED"}
-        elif not stage64k_rebuild_ok:
-            shadow_result = {"ok": False, "skipped": True, "reason": "STAGE64K_REBUILD_NOT_CONFIRMED"}
+        elif not forward_feature_materializer_ok:
+            shadow_result = {"ok": False, "skipped": True, "reason": "FORWARD_FEATURE_MATERIALIZER_NOT_CONFIRMED"}
         elif not after.get("fresh"):
             shadow_result = {"ok": False, "skipped": True, "reason": "STALE_FEATURE_DATASET", "feature_age_days": after.get("age_days")}
         elif not rule_path.exists():
@@ -489,18 +520,18 @@ def run_once(args: argparse.Namespace) -> int:
         finished = utc_now()
         if required_failures:
             decision = "STAGE171F2_REQUIRED_MACRO_REFRESH_FAILED_SHADOW_BLOCKED"
-        elif not stage64k_rebuild_ok:
-            decision = "STAGE171F2_STAGE64K_REBUILD_FAILED_SHADOW_BLOCKED"
+        elif not forward_feature_materializer_ok:
+            decision = "STAGE171H_FORWARD_FEATURE_MATERIALIZER_FAILED_SHADOW_BLOCKED"
         elif not after.get("fresh"):
-            decision = "STAGE171F2_MACRO_FEATURE_DATA_STALE_SHADOW_BLOCKED"
+            decision = "STAGE171H_FORWARD_FEATURE_DATA_STALE_SHADOW_BLOCKED"
         elif not shadow_result.get("ok"):
-            decision = "STAGE171F2_FEATURES_FRESH_BUT_SHADOW_RUN_FAILED"
+            decision = "STAGE171H_FEATURES_FRESH_BUT_SHADOW_RUN_FAILED"
         elif shadow_result.get("reason") == "NO_NEW_FEATURE_SNAPSHOT_NO_DUPLICATE":
             decision = "STAGE171G_REFRESH_COMPLETE_NO_NEW_FEATURE_SNAPSHOT_NO_DUPLICATE"
         elif not gdelt_result.get("ok"):
-            decision = "STAGE171F2_H64L_SHADOW_UPDATED_GDELT_GUARD_DEGRADED"
+            decision = "STAGE171H_H64L_SHADOW_UPDATED_GDELT_GUARD_DEGRADED"
         else:
-            decision = "STAGE171F2_4H_REFRESH_AND_SHADOW_COMPLETE_NO_ORDER"
+            decision = "STAGE171H_4H_REFRESH_AND_SHADOW_COMPLETE_NO_ORDER"
         summary = {
             "stage": STAGE,
             "generated_utc": utc_iso(finished),
@@ -518,7 +549,7 @@ def run_once(args: argparse.Namespace) -> int:
             "feature_dataset_before": before,
             "feature_dataset_after": after,
             "feature_dataset_changed": feature_changed,
-            "stage64k_rebuild_ok": stage64k_rebuild_ok,
+            "forward_feature_materializer_ok": forward_feature_materializer_ok,
             "macro_pipeline_steps": macro_steps,
             "required_failure_count": len(required_failures),
             "gdelt_refresh": gdelt_result,
@@ -548,7 +579,7 @@ Decision: `{decision}`
 - Feature dataset age days: `{after.get('age_days')}`
 - Feature dataset changed in this run: `{feature_changed}`
 - Required macro failures: `{len(required_failures)}`
-- Stage64K rebuild confirmed: `{stage64k_rebuild_ok}`
+- Forward feature materializer confirmed: `{forward_feature_materializer_ok}`
 - GDELT refresh OK: `{gdelt_result.get('ok')}`
 - Shadow run OK: `{shadow_result.get('ok')}`
 - Orders allowed: `False`
@@ -557,7 +588,7 @@ AMarkets remains manual. This orchestrator only checks its freshness. If the fea
 """
         (report_dir / "stage171f_decision.md").write_text(md, encoding="utf-8")
         print(json.dumps(summary, ensure_ascii=False, indent=2, default=str))
-        return 0 if decision in {"STAGE171F2_4H_REFRESH_AND_SHADOW_COMPLETE_NO_ORDER", "STAGE171F2_H64L_SHADOW_UPDATED_GDELT_GUARD_DEGRADED"} else 2
+        return 0 if decision in {"STAGE171H_4H_REFRESH_AND_SHADOW_COMPLETE_NO_ORDER", "STAGE171H_H64L_SHADOW_UPDATED_GDELT_GUARD_DEGRADED", "STAGE171G_REFRESH_COMPLETE_NO_NEW_FEATURE_SNAPSHOT_NO_DUPLICATE"} else 2
     finally:
         lock_path.unlink(missing_ok=True)
 

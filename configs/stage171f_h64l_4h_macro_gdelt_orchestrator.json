@@ -4,8 +4,8 @@
   "lock_file": "data/forward_shadow/stage171f_orchestrator.lock",
   "lock_stale_hours": 8,
   "fundamental_event_inbox": "~/Downloads/xauusd_fundamental_event_inbox",
-  "feature_dataset": "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
-  "max_feature_age_days": 3,
+  "feature_dataset": "data/forward_shadow/h64l_forward_feature_snapshots.csv",
+  "max_feature_age_days": 4,
   "locked_rule": "reports/stage171e_h64l_exact_rule_lock_from_archive/stage171e_h64l_exact_locked_rule.json",
   "shadow_script": "app/stage171d_h64l_shadow_scheduler_and_logger.py",
   "shadow_ledger": "data/forward_shadow/h64l_manual_shadow_log.csv",
@@ -21,46 +21,27 @@
   "local_pipeline": [
     {
       "name": "official_macro_download_batch",
-      "argv": [
-        "{python}",
-        "scripts/download_xauusd_official_data_batch.py"
-      ],
+      "argv": ["{python}", "scripts/download_xauusd_official_data_batch.py"],
       "timeout_seconds": 2400,
       "required": true
     },
     {
       "name": "fundamental_unify_normalize_pipeline",
-      "argv": [
-        "{python}",
-        "scripts/run_xauusd_fundamental_unify_normalize_pipeline.py"
-      ],
+      "argv": ["{python}", "scripts/run_xauusd_fundamental_unify_normalize_pipeline.py"],
       "timeout_seconds": 1800,
       "required": true
     },
     {
-      "name": "stage64_archive_compat_materializer",
+      "name": "stage171h_forward_feature_materializer",
       "argv": [
         "{python}",
-        "app/stage171g_stage64_archive_compat_materializer.py",
-        "--root",
-        "{root}"
+        "app/stage171h_h64l_forward_feature_materializer.py",
+        "--root", "{root}",
+        "--inbox", "{inbox}",
+        "--out", "data/forward_shadow/h64l_forward_feature_snapshots.csv",
+        "--report-dir", "reports/stage171h_h64l_forward_feature_materializer"
       ],
-      "timeout_seconds": 600,
-      "required": true
-    },
-    {
-      "name": "stage64k_feature_dataset_rebuild_archived",
-      "argv": [
-        "{python}",
-        "archive/repo_cleanup_20260626/old_app_stage_files/stage64k_full_scope_lag_safe_feature_dataset_preflight.py",
-        "--root",
-        "{root}",
-        "--config",
-        "{root}/archive/repo_cleanup_20260626/configs_inactive/stage64k_full_scope_lag_safe_feature_dataset_preflight.json",
-        "--out",
-        "{root}/reports/stage64k_full_scope_lag_safe_feature_dataset_preflight"
-      ],
-      "timeout_seconds": 1800,
+      "timeout_seconds": 900,
       "required": true
     }
   ],
@@ -68,11 +49,13 @@
     "enabled": true,
     "remote": "origin",
     "branch": "automation/gdelt-latest",
-    "fetch_timeout_seconds": 180,
+    "https_fallback": true,
+    "fetch_timeout_seconds": 240,
     "compatible_panel": "reports/stage166_current_event_shock_overlay/stage166_current_event_intraday_panel.csv",
     "downloads_dir": "~/Downloads",
     "max_artifact_age_hours": 8,
     "artifact_globs": [
+      "stage166g-gdelt-persistent-*.zip",
       "stage166f-gdelt-refresh-*.zip",
       "stage166f-gdelt-backfill-*.zip"
     ]

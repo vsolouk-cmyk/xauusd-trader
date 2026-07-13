@@ -1,6 +1,6 @@
 {
   "stage": "Stage64K_FULL_SCOPE_LAG_SAFE_FEATURE_DATASET_PREFLIGHT_NO_VALIDATION",
-  "generated_utc": "2026-06-25T08:33:32Z",
+  "generated_utc": "2026-07-13T10:30:46Z",
   "dataset_csv": "/Users/vahid/Desktop/xauusd-trader/data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
   "source_feature_dataset": "/Users/vahid/Desktop/xauusd-trader/data/macro_regime/normalized/stage64f_reduced_scope_lag_safe_feature_dataset.csv",
   "etf_source": "/Users/vahid/Desktop/xauusd-trader/data/macro_regime/raw/gold_etf_holdings_or_flows.csv",

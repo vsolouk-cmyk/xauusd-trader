@@ -88,10 +88,10 @@ jobs:
             --chunk-days "${{ steps.vars.outputs.chunk_days }}" \
             --max-workers 1 \
             --max-queries 0 \
-            --timeout-seconds 35 \
-            --max-retries 4 \
-            --retry-backoff-seconds 10 \
-            --request-delay-seconds 12
+            --timeout-seconds 45 \
+            --max-retries 5 \
+            --retry-backoff-seconds 20 \
+            --request-delay-seconds 20
 
       - name: Recover prior persistent snapshot
         shell: bash

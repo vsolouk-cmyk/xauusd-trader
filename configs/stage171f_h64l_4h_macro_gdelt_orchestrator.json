@@ -26,6 +26,18 @@
       "required": true
     },
     {
+      "name": "stage171h4_exact_dxy_downloader",
+      "argv": [
+        "{python}",
+        "app/stage171h4_exact_dxy_downloader.py",
+        "--root", "{root}",
+        "--out", "data/exogenous/dxy.csv",
+        "--report-dir", "reports/stage171h4_exact_dxy_downloader"
+      ],
+      "timeout_seconds": 600,
+      "required": true
+    },
+    {
       "name": "fundamental_unify_normalize_pipeline",
       "argv": ["{python}", "scripts/run_xauusd_fundamental_unify_normalize_pipeline.py"],
       "timeout_seconds": 1800,
@@ -39,6 +51,7 @@
         "--root", "{root}",
         "--inbox", "{inbox}",
         "--out", "data/forward_shadow/h64l_forward_feature_snapshots.csv",
+        "--attempt-ledger", "data/forward_shadow/h64l_forward_feature_attempts.csv",
         "--report-dir", "reports/stage171h_h64l_forward_feature_materializer"
       ],
       "timeout_seconds": 900,

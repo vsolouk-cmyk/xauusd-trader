@@ -26,7 +26,7 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 import pandas as pd
 
-STAGE = "Stage171H_H64L_FORWARD_FEATURE_MATERIALIZER"
+STAGE = "Stage171H3_H64L_FORWARD_FEATURE_MATERIALIZER"
 DEFAULT_OUT = "data/forward_shadow/h64l_forward_feature_snapshots.csv"
 DEFAULT_REPORT = "reports/stage171h_h64l_forward_feature_materializer"
 DEFAULT_ATTEMPT_LEDGER = "data/forward_shadow/h64l_forward_feature_attempts.csv"
@@ -115,7 +115,7 @@ def load_gold_daily(path: Path, min_bars: int = 100) -> Tuple[pd.DataFrame, Dict
 
 def candidate_files(root: Path, inbox: Path, kind: str) -> List[Path]:
     tokens = {
-        "dxy": ["dxy", "dollar_index", "dtwex"],
+        "dxy": ["dxy", "dollar_index", "dtwex", "dx_f", "usdx"],
         "real_yield": ["real_yield", "realyield", "dfii10", "dfii5"],
     }[kind]
     roots = [root / "data", inbox]
@@ -171,18 +171,98 @@ def source_priority(root: Path, inbox: Path, path: Path, kind: str) -> int:
     return 20
 
 
+
+def source_contract(path: Path, kind: str, value_col: Optional[str] = None) -> str:
+    """Classify source identity without silently substituting a different index."""
+    if kind != "dxy":
+        return "REAL_YIELD_SERIES"
+    low = path.as_posix().lower()
+    vc = (value_col or "").strip().lower()
+    if "dtwex" in low or vc in {"dtwexbgs", "dtwexafegs"}:
+        return "BROAD_TRADE_WEIGHTED_USD_PROXY_NOT_DXY"
+    if any(x in low for x in ["stooq_dx_f", "dx.f", "dx_f", "usdx", "dxy"]):
+        return "DXY_OR_ICE_USDX_FUTURES_SERIES"
+    return "UNKNOWN_DOLLAR_SERIES"
+
+
+def parse_date_series(values: pd.Series) -> pd.Series:
+    raw = values.astype(str).str.strip()
+    out = pd.Series(pd.NaT, index=raw.index, dtype="datetime64[ns, UTC]")
+    ymd = raw.str.fullmatch(r"\d{8}")
+    if ymd.any():
+        out.loc[ymd] = pd.to_datetime(raw.loc[ymd], format="%Y%m%d", errors="coerce", utc=True)
+    rest = ~ymd
+    if rest.any():
+        out.loc[rest] = pd.to_datetime(raw.loc[rest], errors="coerce", utc=True)
+    return out.dt.floor("D")
+
+
+def content_block_reason(path: Path) -> Optional[str]:
+    try:
+        text = path.read_text(encoding="utf-8-sig", errors="replace")[:8192].strip().lower()
+    except Exception as exc:
+        return f"READ_ERROR:{type(exc).__name__}"
+    if not text:
+        return "EMPTY_FILE"
+    blockers = {
+        "<html": "HTML_RESPONSE_NOT_CSV",
+        "<!doctype": "HTML_RESPONSE_NOT_CSV",
+        "too many requests": "RATE_LIMIT_RESPONSE_NOT_CSV",
+        "exceeded the daily hits": "RATE_LIMIT_RESPONSE_NOT_CSV",
+        "access denied": "ACCESS_DENIED_RESPONSE_NOT_CSV",
+        "cloudflare": "BOT_PROTECTION_RESPONSE_NOT_CSV",
+        "no data": "NO_DATA_RESPONSE",
+    }
+    for token, reason in blockers.items():
+        if token in text:
+            return reason
+    return None
+
+
+def read_csv_robust(path: Path) -> Tuple[Optional[pd.DataFrame], Optional[str]]:
+    blocked = content_block_reason(path)
+    if blocked:
+        return None, blocked
+    attempts = []
+    for kwargs in [
+        {"sep": detect_sep(path), "low_memory": False},
+        {"sep": None, "engine": "python"},
+    ]:
+        try:
+            df = pd.read_csv(path, **kwargs)
+            attempts.append(df)
+        except Exception:
+            pass
+    # Stooq exports can occasionally arrive without a header.
+    try:
+        raw = pd.read_csv(path, sep=detect_sep(path), header=None, low_memory=False)
+        if raw.shape[1] in {5, 6, 7}:
+            names = ["Date", "Open", "High", "Low", "Close", "Volume", "OpenInt"][:raw.shape[1]]
+            raw.columns = names
+            attempts.append(raw)
+    except Exception:
+        pass
+    if not attempts:
+        return None, "CSV_PARSE_FAILED"
+    # Prefer a frame that exposes a recognizable date and close/value column.
+    for df in attempts:
+        lower = {str(c).strip().lower() for c in df.columns}
+        if any(x in lower for x in {"date", "timestamp", "observation_date", "date_utc", "<date>"}) and any(x in lower for x in {"close", "value", "dxy", "dtwexbgs", "dfii10", "dfii5", "<close>"}):
+            return df, None
+    return attempts[0], None
+
 def normalize_series_frame(df: pd.DataFrame, path: Path, kind: str) -> Optional[pd.DataFrame]:
     if df.empty:
         return None
     lower = {str(c).strip().lower(): c for c in df.columns}
-    date_names = ["timestamp", "date", "observation_date", "time", "datetime", "date_utc", "feature_date_utc"]
+    date_names = ["timestamp", "date", "<date>", "observation_date", "time", "datetime", "date_utc", "feature_date_utc"]
     date_col = next((lower[x] for x in date_names if x in lower), None)
     if date_col is None:
         date_col = next((c for c in df.columns if "date" in str(c).lower() or "time" in str(c).lower()), None)
     if date_col is None:
         return None
-    preferred = (["dxy", "close", "value", "dtwexbgs", "dtwexafegs"] if kind == "dxy"
-                 else ["real_yield", "close", "value", "dfii10", "dfii5"])
+    preferred = (["dxy", "close", "<close>", "value", "dtwexbgs", "dtwexafegs"] if kind == "dxy"
+                 else ["real_yield", "close", "<close>", "value", "dfii10", "dfii5"])
     value_col = next((lower[x] for x in preferred if x in lower), None)
     if value_col is None:
         numeric_candidates = [c for c in df.columns if c != date_col and pd.to_numeric(df[c], errors="coerce").notna().sum() >= 20]
@@ -191,30 +271,35 @@ def normalize_series_frame(df: pd.DataFrame, path: Path, kind: str) -> Optional[
     if value_col is None:
         return None
     out = pd.DataFrame({
-        "date": pd.to_datetime(df[date_col], errors="coerce", utc=True).dt.floor("D"),
+        "date": parse_date_series(df[date_col]),
         "value": pd.to_numeric(df[value_col], errors="coerce"),
     }).dropna().sort_values("date").drop_duplicates("date", keep="last")
     if len(out) < 25:
         return None
-    out.attrs.update({"path": str(path), "date_col": str(date_col), "value_col": str(value_col)})
+    out.attrs.update({"path": str(path), "date_col": str(date_col), "value_col": str(value_col), "source_contract": source_contract(path, kind, str(value_col))})
     return out
 
 
-def load_series_file(path: Path, kind: str) -> Optional[pd.DataFrame]:
+def load_series_file(path: Path, kind: str) -> Tuple[Optional[pd.DataFrame], Optional[str]]:
     try:
         if path.suffix.lower() == ".csv":
-            df = pd.read_csv(path, sep=detect_sep(path), low_memory=False)
-            return normalize_series_frame(df, path, kind)
+            df, reason = read_csv_robust(path)
+            if df is None:
+                return None, reason or "CSV_PARSE_FAILED"
+            out = normalize_series_frame(df, path, kind)
+            return (out, None) if out is not None else (None, "SCHEMA_OR_ROWS_INVALID")
         obj = json.loads(path.read_text(encoding="utf-8"))
         if isinstance(obj, list):
-            return normalize_series_frame(pd.DataFrame(obj), path, kind)
+            out = normalize_series_frame(pd.DataFrame(obj), path, kind)
+            return (out, None) if out is not None else (None, "SCHEMA_OR_ROWS_INVALID")
         if isinstance(obj, dict):
             for key in ["observations", "data", "series", "results"]:
                 if isinstance(obj.get(key), list):
-                    return normalize_series_frame(pd.DataFrame(obj[key]), path, kind)
-    except Exception:
-        return None
-    return None
+                    out = normalize_series_frame(pd.DataFrame(obj[key]), path, kind)
+                    return (out, None) if out is not None else (None, "SCHEMA_OR_ROWS_INVALID")
+    except Exception as exc:
+        return None, f"LOAD_ERROR:{type(exc).__name__}:{exc}"
+    return None, "UNSUPPORTED_FILE_STRUCTURE"
 
 
 def choose_series(root: Path, inbox: Path, kind: str, cutoff: pd.Timestamp) -> Tuple[pd.DataFrame, Dict[str, Any]]:
@@ -222,9 +307,13 @@ def choose_series(root: Path, inbox: Path, kind: str, cutoff: pd.Timestamp) -> T
     options: List[Tuple[Tuple[float, int, int], pd.DataFrame, Dict[str, Any]]] = []
     diagnostics: List[Dict[str, Any]] = []
     for path in candidate_files(root, inbox, kind):
-        s = load_series_file(path, kind)
+        s, load_reason = load_series_file(path, kind)
         if s is None:
-            diagnostics.append({"path": str(path), "usable": False, "reason": "SCHEMA_OR_ROWS_INVALID"})
+            diagnostics.append({"path": str(path), "usable": False, "reason": load_reason or "SCHEMA_OR_ROWS_INVALID"})
+            continue
+        contract = str(s.attrs.get("source_contract") or source_contract(path, kind, str(s.attrs.get("value_col") or "")))
+        if kind == "dxy" and contract == "BROAD_TRADE_WEIGHTED_USD_PROXY_NOT_DXY":
+            diagnostics.append({"path": str(path), "usable": False, "reason": "BROAD_DOLLAR_PROXY_NOT_EXACT_DXY", "source_contract": contract})
             continue
         usable = s[s["date"] <= cutoff].copy()
         if len(usable) < 21:
@@ -234,13 +323,13 @@ def choose_series(root: Path, inbox: Path, kind: str, cutoff: pd.Timestamp) -> T
         priority = source_priority(root, inbox, path, kind)
         diag = {
             "path": str(path), "usable": True, "rows": int(len(usable)),
-            "latest_date_utc": latest.date().isoformat(), "source_priority": priority,
+            "latest_date_utc": latest.date().isoformat(), "source_priority": priority, "source_contract": contract,
         }
         diagnostics.append(diag)
         score = (latest.timestamp(), priority, int(len(usable)))
         options.append((score, usable, diag))
     if not options:
-        raise ValueError(f"No valid active {kind} series with >=21 observations through {cutoff.date()}")
+        raise ValueError(f"No valid active exact {kind} series with >=21 observations through {cutoff.date()}")
     options.sort(key=lambda x: x[0], reverse=True)
     s = options[0][1]
     selected = options[0][2]
@@ -251,6 +340,7 @@ def choose_series(root: Path, inbox: Path, kind: str, cutoff: pd.Timestamp) -> T
         "latest_value": float(s.iloc[-1]["value"]),
         "selection_policy": "LATEST_DATE_THEN_ACTIVE_SOURCE_PRIORITY_THEN_ROWS",
         "selected_source_priority": selected["source_priority"],
+        "source_contract": str(s.attrs.get("source_contract") or source_contract(Path(str(s.attrs.get("path"))), kind, str(s.attrs.get("value_col") or ""))),
         "candidate_diagnostics": sorted(diagnostics, key=lambda x: str(x.get("path"))),
     }
     return s, meta
@@ -514,7 +604,7 @@ def main() -> int:
     }
     (report / "stage171h_forward_feature_summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False, default=str) + "\n", encoding="utf-8")
     (report / "stage171h_decision.md").write_text(
-        f"# Stage171H H64L Forward Feature Materializer\n\nDecision: `{summary['decision']}`\n\nReady: `{ready}`\n\nIssues: `{issues}`\n\nNo order/demo/live authorization.\n",
+        f"# Stage171H3 H64L Forward Feature Materializer\n\nDecision: `{summary['decision']}`\n\nReady: `{ready}`\n\nIssues: `{issues}`\n\nNo order/demo/live authorization.\n",
         encoding="utf-8",
     )
     print(json.dumps(summary, indent=2, ensure_ascii=False, default=str))

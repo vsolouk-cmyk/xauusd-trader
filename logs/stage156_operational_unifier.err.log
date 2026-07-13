@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage156_operational_unifier.py", line 303, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage156_operational_unifier.py", line 218, in main
+    commands.append(run_cmd(router_cmd, cwd=root, timeout=900))
+                    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage156_operational_unifier.py", line 139, in run_cmd
+    p = subprocess.run(cmd, cwd=str(cwd), shell=True, text=True, capture_output=True, timeout=timeout)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 556, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 1220, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 2153, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 1267, in _check_timeout
+    raise TimeoutExpired(
+    ...<2 lines>...
+            stderr=b''.join(stderr_seq) if stderr_seq else None)
+subprocess.TimeoutExpired: Command '/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 app/stage154_active_shortlist_rule_router.py --root /Users/vahid/Desktop/xauusd-trader --bars /Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv --score-csv /Users/vahid/Desktop/xauusd-trader/reports/stage150_mtf_separated_validation_discovery/m5/stage150_candidate_scores.csv --risk-summary /Users/vahid/Desktop/xauusd-trader/reports/stage145_clean_ledger_performance_gate/stage145_clean_ledger_performance_gate_summary.json --tf m5 --timeframe-minutes 5 --max-feature-age-sec 7200 --timestamp-shift-hours -3.0 --write-mt5' timed out after 900 seconds

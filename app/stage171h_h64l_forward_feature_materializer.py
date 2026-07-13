@@ -29,6 +29,7 @@ import pandas as pd
 STAGE = "Stage171H_H64L_FORWARD_FEATURE_MATERIALIZER"
 DEFAULT_OUT = "data/forward_shadow/h64l_forward_feature_snapshots.csv"
 DEFAULT_REPORT = "reports/stage171h_h64l_forward_feature_materializer"
+DEFAULT_ATTEMPT_LEDGER = "data/forward_shadow/h64l_forward_feature_attempts.csv"
 SNAPSHOT_FIELDS = [
     "feature_date_utc", "sample_available_after_utc", "gold_close",
     "gold_sma20_over_50", "dxy_ret_20d", "real_yield_change_20d",
@@ -119,18 +120,55 @@ def candidate_files(root: Path, inbox: Path, kind: str) -> List[Path]:
     }[kind]
     roots = [root / "data", inbox]
     out: List[Path] = []
+    excluded_tokens = {
+        "_repair_backups", "/archive/", "\\archive\\", "backup", "inactive",
+        "stage64k", "forward_shadow", "/reports/", "\\reports\\",
+    }
     for base in roots:
         if not base.exists():
             continue
         for p in base.rglob("*"):
             if not p.is_file() or p.suffix.lower() not in {".csv", ".json"}:
                 continue
-            low = str(p).lower()
-            if any(bad in low for bad in ["stage64k", "forward_shadow", "/reports/"]):
+            try:
+                low = p.relative_to(base).as_posix().lower()
+            except Exception:
+                low = p.name.lower()
+            if any(bad in low for bad in excluded_tokens):
                 continue
             if any(t in low for t in tokens):
                 out.append(p)
     return sorted(set(out))
+
+
+def source_priority(root: Path, inbox: Path, path: Path, kind: str) -> int:
+    """Prefer canonical active outputs, then normalized/raw active data, never backups."""
+    preferred = {
+        "dxy": [
+            root / "data/exogenous/dxy.csv",
+            root / "data/macro_regime/raw/dxy_daily_2011_present.csv",
+            root / "data/fundamental_event_inbox/normalized/dxy_reference_normalized.csv",
+        ],
+        "real_yield": [
+            root / "data/exogenous/real_yield.csv",
+            root / "data/macro_regime/raw/real_yield_or_proxy_daily_2011_present.csv",
+        ],
+    }[kind]
+    rp = path.resolve()
+    for idx, candidate in enumerate(preferred):
+        try:
+            if rp == candidate.resolve():
+                return 100 - idx * 10
+        except Exception:
+            pass
+    low = str(path).lower()
+    if "/normalized/" in low or "\\normalized\\" in low:
+        return 60
+    if "/raw/" in low or "\\raw\\" in low:
+        return 50
+    if path.parent == inbox:
+        return 40
+    return 20
 
 
 def normalize_series_frame(df: pd.DataFrame, path: Path, kind: str) -> Optional[pd.DataFrame]:
@@ -180,27 +218,40 @@ def load_series_file(path: Path, kind: str) -> Optional[pd.DataFrame]:
 
 
 def choose_series(root: Path, inbox: Path, kind: str, cutoff: pd.Timestamp) -> Tuple[pd.DataFrame, Dict[str, Any]]:
-    options: List[Tuple[Tuple[int, int, float], pd.DataFrame]] = []
+    # Freshness is the primary key. Canonical active-path priority only breaks ties.
+    options: List[Tuple[Tuple[float, int, int], pd.DataFrame, Dict[str, Any]]] = []
+    diagnostics: List[Dict[str, Any]] = []
     for path in candidate_files(root, inbox, kind):
         s = load_series_file(path, kind)
         if s is None:
+            diagnostics.append({"path": str(path), "usable": False, "reason": "SCHEMA_OR_ROWS_INVALID"})
             continue
         usable = s[s["date"] <= cutoff].copy()
         if len(usable) < 21:
+            diagnostics.append({"path": str(path), "usable": False, "reason": "LT_21_OBSERVATIONS", "rows": int(len(usable))})
             continue
         latest = usable.iloc[-1]["date"]
-        token_score = 3 if kind.replace("_", "") in path.name.lower().replace("_", "") else 1
-        score = (token_score, int(len(usable)), latest.timestamp())
-        options.append((score, usable))
+        priority = source_priority(root, inbox, path, kind)
+        diag = {
+            "path": str(path), "usable": True, "rows": int(len(usable)),
+            "latest_date_utc": latest.date().isoformat(), "source_priority": priority,
+        }
+        diagnostics.append(diag)
+        score = (latest.timestamp(), priority, int(len(usable)))
+        options.append((score, usable, diag))
     if not options:
-        raise ValueError(f"No valid {kind} series with >=21 observations through {cutoff.date()}")
+        raise ValueError(f"No valid active {kind} series with >=21 observations through {cutoff.date()}")
     options.sort(key=lambda x: x[0], reverse=True)
     s = options[0][1]
+    selected = options[0][2]
     meta = {
         "path": s.attrs.get("path"), "date_col": s.attrs.get("date_col"),
         "value_col": s.attrs.get("value_col"), "rows": int(len(s)),
         "latest_date_utc": s.iloc[-1]["date"].date().isoformat(),
         "latest_value": float(s.iloc[-1]["value"]),
+        "selection_policy": "LATEST_DATE_THEN_ACTIVE_SOURCE_PRIORITY_THEN_ROWS",
+        "selected_source_priority": selected["source_priority"],
+        "candidate_diagnostics": sorted(diagnostics, key=lambda x: str(x.get("path"))),
     }
     return s, meta
 
@@ -341,12 +392,27 @@ def write_history(path: Path, row: Dict[str, Any]) -> None:
             w.writerow(by_date[key])
 
 
+def append_attempt(path: Path, generated_utc: str, ready: bool, issues: Sequence[str], row: Dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fields = ["generated_utc", "feature_date_utc", "ready", "issues"] + SNAPSHOT_FIELDS[1:]
+    exists = path.exists() and path.stat().st_size > 0
+    payload = {"generated_utc": generated_utc, "feature_date_utc": row.get("feature_date_utc", ""),
+               "ready": ready, "issues": ";".join(issues)}
+    payload.update({k: row.get(k, "") for k in SNAPSHOT_FIELDS[1:]})
+    with path.open("a", encoding="utf-8", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=fields)
+        if not exists:
+            w.writeheader()
+        w.writerow(payload)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", default="~/Desktop/xauusd-trader")
     ap.add_argument("--inbox", default="~/Downloads/xauusd_fundamental_event_inbox")
     ap.add_argument("--out", default=DEFAULT_OUT)
     ap.add_argument("--report-dir", default=DEFAULT_REPORT)
+    ap.add_argument("--attempt-ledger", default=DEFAULT_ATTEMPT_LEDGER)
     ap.add_argument("--max-gold-age-days", type=float, default=4.0)
     ap.add_argument("--max-macro-age-days", type=float, default=7.0)
     ap.add_argument("--max-etf-source-age-days", type=float, default=60.0)
@@ -357,6 +423,7 @@ def main() -> int:
     inbox = Path(args.inbox).expanduser().resolve()
     out = resolve(root, args.out)
     report = resolve(root, args.report_dir)
+    attempt_ledger = resolve(root, args.attempt_ledger)
     report.mkdir(parents=True, exist_ok=True)
     generated = utc_now()
     issues: List[str] = []
@@ -430,6 +497,7 @@ def main() -> int:
     row["data_quality_pass"] = ready
     lineage = json.dumps({"row": row, "sources": sources}, sort_keys=True, default=str).encode()
     row["source_hash"] = hashlib.sha256(lineage).hexdigest()
+    append_attempt(attempt_ledger, utc_iso(generated), ready, issues, row)
     if ready:
         write_history(out, row)
 
@@ -441,6 +509,8 @@ def main() -> int:
         "threshold_reoptimization_allowed": False, "ready": ready,
         "issues": issues, "snapshot": row, "sources": sources,
         "output_dataset": str(out),
+        "attempt_ledger": str(attempt_ledger),
+        "output_written": bool(ready),
     }
     (report / "stage171h_forward_feature_summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False, default=str) + "\n", encoding="utf-8")
     (report / "stage171h_decision.md").write_text(

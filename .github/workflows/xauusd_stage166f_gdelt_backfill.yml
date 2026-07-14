@@ -37,7 +37,7 @@ env:
 jobs:
   gdelt-refresh:
     runs-on: ubuntu-22.04
-    timeout-minutes: 55
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -88,10 +88,10 @@ jobs:
             --chunk-days "${{ steps.vars.outputs.chunk_days }}" \
             --max-workers 1 \
             --max-queries 0 \
-            --timeout-seconds 45 \
-            --max-retries 5 \
-            --retry-backoff-seconds 20 \
-            --request-delay-seconds 20
+            --timeout-seconds 35 \
+            --max-retries 4 \
+            --retry-backoff-seconds 10 \
+            --request-delay-seconds 12
 
       - name: Recover prior persistent snapshot
         shell: bash
@@ -104,7 +104,21 @@ jobs:
               stage166g_fetch_ledger.csv \
               stage166g_persistent_manifest.json \
               stage166f_gdelt_points.csv; do
-              git show "FETCH_HEAD:$name" > "$PRIOR_DIR/$name" 2>/dev/null || true
+              tmp="$PRIOR_DIR/$name.tmp"
+              if git show "FETCH_HEAD:$name" > "$tmp" 2>/dev/null && [ -s "$tmp" ]; then
+                if [ "$name" = "stage166g_persistent_manifest.json" ]; then
+                  if python -m json.tool "$tmp" >/dev/null 2>&1; then
+                    mv "$tmp" "$PRIOR_DIR/$name"
+                  else
+                    echo "Ignoring invalid prior manifest from $PUBLISH_BRANCH"
+                    rm -f "$tmp"
+                  fi
+                else
+                  mv "$tmp" "$PRIOR_DIR/$name"
+                fi
+              else
+                rm -f "$tmp"
+              fi
             done
           fi
 

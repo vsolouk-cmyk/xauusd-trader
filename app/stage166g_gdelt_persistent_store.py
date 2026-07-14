@@ -77,6 +77,41 @@ def write_json(path: Path, obj: Dict[str, Any]) -> None:
     path.write_text(json.dumps(obj, ensure_ascii=False, indent=2, default=str) + "\n", encoding="utf-8")
 
 
+def read_json_object_safe(path: Path) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    """Read a prior JSON object without allowing a bad snapshot to kill refresh.
+
+    Git redirection can leave a zero-byte file when a path does not exist on an
+    older publication branch. A partially published/corrupted manifest is also
+    non-critical because the persistent point store and fetch ledger remain the
+    authoritative state. In both cases we fall back to an empty manifest and
+    report the degradation in the newly written manifest.
+    """
+    status: Dict[str, Any] = {
+        "path": str(path),
+        "exists": path.exists(),
+        "size_bytes": path.stat().st_size if path.exists() else 0,
+        "ok": False,
+        "reason": "MISSING",
+    }
+    if not path.exists():
+        return {}, status
+    if path.stat().st_size == 0:
+        status["reason"] = "EMPTY_FILE_IGNORED"
+        return {}, status
+    try:
+        obj = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        status["reason"] = "INVALID_JSON_IGNORED"
+        status["error"] = f"{type(exc).__name__}:{exc}"
+        return {}, status
+    if not isinstance(obj, dict):
+        status["reason"] = "NON_OBJECT_JSON_IGNORED"
+        return {}, status
+    status["ok"] = True
+    status["reason"] = "VALID_JSON_OBJECT"
+    return obj, status
+
+
 def as_bool(v: Any) -> bool:
     return str(v).strip().lower() in {"1", "true", "yes", "y", "ok"}
 
@@ -196,7 +231,7 @@ def main() -> int:
     prior_points = load_prior_points(prior_dir)
     prior_ledger = load_prior_ledger(prior_dir)
     prior_manifest_path = prior_dir / "stage166g_persistent_manifest.json"
-    prior_manifest = json.loads(prior_manifest_path.read_text(encoding="utf-8")) if prior_manifest_path.exists() else {}
+    prior_manifest, prior_manifest_read = read_json_object_safe(prior_manifest_path)
 
     generated = utc_iso()
     merged_points, metrics = merge_points(prior_points, incoming_points, statuses)
@@ -234,6 +269,7 @@ def main() -> int:
         "daily_shard_count": shard_count,
         "panel_rows": len(panel),
         **metrics,
+        "prior_manifest_read": prior_manifest_read,
         "source_contract": {
             "api": "GDELT DOC 2.0 timelinevolraw",
             "rolling_search_window": "last_3_months",

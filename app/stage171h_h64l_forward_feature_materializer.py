@@ -26,7 +26,7 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 import pandas as pd
 
-STAGE = "Stage171H3_H64L_FORWARD_FEATURE_MATERIALIZER"
+STAGE = "Stage171H5_H64L_FORWARD_FEATURE_MATERIALIZER_ETF_SEMANTICS_FIXED"
 DEFAULT_OUT = "data/forward_shadow/h64l_forward_feature_snapshots.csv"
 DEFAULT_REPORT = "reports/stage171h_h64l_forward_feature_materializer"
 DEFAULT_ATTEMPT_LEDGER = "data/forward_shadow/h64l_forward_feature_attempts.csv"
@@ -346,26 +346,98 @@ def choose_series(root: Path, inbox: Path, kind: str, cutoff: pd.Timestamp) -> T
     return s, meta
 
 
+def _is_fund_holding_key(name: Any) -> bool:
+    low = str(name).strip().lower()
+    return "equity" in low or low.endswith(" equity")
+
+
+def _resolve_wgc_holdings_records(records: Sequence[Dict[str, Any]], path: Path) -> Optional[pd.DataFrame]:
+    """Resolve global holdings by reconciling candidate totals to fund-level sums.
+
+    WGC's multi-row spreadsheet header can normalize the gold-price column as
+    "All units in tonnes unless otherwise specified" while the actual global
+    holdings total appears as an unnamed/col_3 field. We therefore never trust
+    that ambiguous label. A candidate total must reconcile to the sum of the
+    fund-level holdings columns across many monthly rows.
+    """
+    rows: List[Dict[str, Any]] = []
+    for obj in records:
+        d = obj.get("ticker") or obj.get("date") or obj.get("Date") or obj.get("month")
+        if d is None:
+            continue
+        fund_values = [parse_num(v) for k, v in obj.items() if _is_fund_holding_key(k)]
+        fund_values = [v for v in fund_values if v is not None]
+        if len(fund_values) < 5:
+            continue
+        row: Dict[str, Any] = {"date": d, "fund_sum": float(sum(fund_values))}
+        for k, v in obj.items():
+            if k in {"ticker", "date", "Date", "month"} or _is_fund_holding_key(k):
+                continue
+            x = parse_num(v)
+            if x is not None:
+                row[str(k)] = x
+        rows.append(row)
+    if len(rows) < 12:
+        return None
+    frame = pd.DataFrame(rows)
+    frame["date"] = pd.to_datetime(frame["date"], errors="coerce", utc=True).dt.floor("D")
+    frame = frame.dropna(subset=["date", "fund_sum"]).sort_values("date").drop_duplicates("date", keep="last")
+    candidates: List[Tuple[float, float, int, str]] = []
+    for c in frame.columns:
+        if c in {"date", "fund_sum"}:
+            continue
+        x = pd.to_numeric(frame[c], errors="coerce")
+        valid = x.notna() & frame["fund_sum"].notna() & (frame["fund_sum"] > 0)
+        if int(valid.sum()) < 12:
+            continue
+        rel = ((x[valid] - frame.loc[valid, "fund_sum"]).abs() / frame.loc[valid, "fund_sum"]).replace([math.inf, -math.inf], pd.NA).dropna()
+        if rel.empty:
+            continue
+        candidates.append((float(rel.median()), float(rel.quantile(0.90)), int(valid.sum()), str(c)))
+    if not candidates:
+        return None
+    candidates.sort(key=lambda z: (z[0], z[1], -z[2], z[3]))
+    median_rel, p90_rel, coverage, selected = candidates[0]
+    # The total should equal the sum of fund holdings to rounding/coverage noise.
+    if median_rel > 0.02 or p90_rel > 0.05:
+        return None
+    out = pd.DataFrame({
+        "date": frame["date"],
+        "holdings": pd.to_numeric(frame[selected], errors="coerce"),
+        "fund_sum": frame["fund_sum"],
+    }).dropna().sort_values("date").drop_duplicates("date", keep="last")
+    if len(out) < 12:
+        return None
+    if not out["holdings"].between(10.0, 10000.0).all():
+        return None
+    out.attrs.update({
+        "path": str(path),
+        "holdings_column": selected,
+        "resolver": "FUND_SUM_RECONCILIATION",
+        "median_fund_sum_relative_error": median_rel,
+        "p90_fund_sum_relative_error": p90_rel,
+        "reconciliation_rows": coverage,
+    })
+    return out
+
+
+def _records_from_frame(df: pd.DataFrame) -> List[Dict[str, Any]]:
+    return [{str(k): v for k, v in row.items()} for row in df.to_dict(orient="records")]
+
+
 def extract_wgc_series_from_normalized(path: Path) -> Optional[pd.DataFrame]:
     try:
         df = pd.read_csv(path, sep=detect_sep(path), low_memory=False)
     except Exception:
         return None
-    lower = {str(c).strip().lower(): c for c in df.columns}
-    # Direct extracted sheet.
-    date_col = next((c for c in df.columns if str(c).strip().lower() in {"ticker", "date", "month"}), None)
-    total_col = next((c for c in df.columns if "all units in tonnes" in str(c).lower()), None)
-    if date_col and total_col:
-        out = pd.DataFrame({"date": pd.to_datetime(df[date_col], errors="coerce", utc=True).dt.floor("D"), "holdings": pd.to_numeric(df[total_col], errors="coerce")}).dropna().sort_values("date").drop_duplicates("date", keep="last")
-        if len(out) >= 4:
-            out.attrs["path"] = str(path)
-            return out
+    # Direct extracted sheet: reconcile totals to fund-level holdings.
+    direct = _resolve_wgc_holdings_records(_records_from_frame(df), path)
+    if direct is not None:
+        return direct
     # Normalized rows with embedded JSON payload.
     sheet_col = next((c for c in df.columns if "sheet" in str(c).lower()), None)
     json_cols = [c for c in df.columns if "json" in str(c).lower() or "raw" in str(c).lower()]
-    if not json_cols:
-        return None
-    rows = []
+    records: List[Dict[str, Any]] = []
     for _, r in df.iterrows():
         if sheet_col and "holdings by month" not in str(r.get(sheet_col, "")).lower():
             continue
@@ -377,21 +449,10 @@ def extract_wgc_series_from_normalized(path: Path) -> Optional[pd.DataFrame]:
                 obj = json.loads(raw)
             except Exception:
                 continue
-            d = obj.get("ticker") or obj.get("date") or obj.get("Date")
-            h = next((v for k, v in obj.items() if "all units in tonnes" in str(k).lower()), None)
-            if d is not None and parse_num(h) is not None:
-                rows.append({"date": d, "holdings": parse_num(h)})
+            if isinstance(obj, dict):
+                records.append(obj)
                 break
-    if len(rows) < 4:
-        return None
-    out = pd.DataFrame(rows)
-    out["date"] = pd.to_datetime(out["date"], errors="coerce", utc=True).dt.floor("D")
-    out["holdings"] = pd.to_numeric(out["holdings"], errors="coerce")
-    out = out.dropna().sort_values("date").drop_duplicates("date", keep="last")
-    if len(out) >= 4:
-        out.attrs["path"] = str(path)
-        return out
-    return None
+    return _resolve_wgc_holdings_records(records, path)
 
 
 def extract_wgc_series_from_excel(path: Path) -> Optional[pd.DataFrame]:
@@ -402,30 +463,45 @@ def extract_wgc_series_from_excel(path: Path) -> Optional[pd.DataFrame]:
     for sheet in xl.sheet_names:
         if "holdings" not in sheet.lower() or "month" not in sheet.lower():
             continue
-        for header in range(0, 8):
+        for header in range(0, 10):
             try:
                 df = pd.read_excel(path, sheet_name=sheet, header=header)
             except Exception:
                 continue
-            s = extract_wgc_series_from_normalized_frame(df, path)
+            s = _resolve_wgc_holdings_records(_records_from_frame(df), path)
             if s is not None:
                 return s
     return None
 
 
-def extract_wgc_series_from_normalized_frame(df: pd.DataFrame, path: Path) -> Optional[pd.DataFrame]:
-    date_col = next((c for c in df.columns if str(c).strip().lower() in {"ticker", "date", "month"}), None)
-    total_col = next((c for c in df.columns if "all units in tonnes" in str(c).lower()), None)
-    if date_col is None or total_col is None:
+def _load_stage173_canonical_etf(path: Path) -> Optional[pd.DataFrame]:
+    if not path.exists() or path.stat().st_size == 0:
         return None
-    out = pd.DataFrame({"date": pd.to_datetime(df[date_col], errors="coerce", utc=True).dt.floor("D"), "holdings": pd.to_numeric(df[total_col], errors="coerce")}).dropna().sort_values("date").drop_duplicates("date", keep="last")
-    if len(out) < 4:
+    try:
+        df = pd.read_csv(path, low_memory=False)
+    except Exception:
         return None
-    out.attrs["path"] = str(path)
+    lower = {str(c).strip().lower(): c for c in df.columns}
+    dc = lower.get("date_utc") or lower.get("date")
+    hc = lower.get("holdings_tonnes") or lower.get("holdings")
+    if dc is None or hc is None:
+        return None
+    out = pd.DataFrame({
+        "date": pd.to_datetime(df[dc], errors="coerce", utc=True).dt.floor("D"),
+        "holdings": pd.to_numeric(df[hc], errors="coerce"),
+    }).dropna().sort_values("date").drop_duplicates("date", keep="last")
+    if len(out) < 12 or not out["holdings"].between(10.0, 10000.0).all():
+        return None
+    out.attrs.update({"path": str(path), "holdings_column": str(hc), "resolver": "STAGE173_CANONICAL_SERIES"})
     return out
 
 
 def choose_etf_series(root: Path, inbox: Path) -> Tuple[pd.DataFrame, Dict[str, Any]]:
+    canonical = root / "data/macro_regime/normalized/wgc_global_etf_holdings_monthly_stage173.csv"
+    options: List[Tuple[Tuple[float, int, int], pd.DataFrame, Path]] = []
+    c = _load_stage173_canonical_etf(canonical)
+    if c is not None:
+        options.append(((c.iloc[-1]["date"].timestamp(), 10**18, len(c)), c, canonical))
     candidates: List[Path] = []
     for base in [root / "data", inbox]:
         if not base.exists():
@@ -435,15 +511,14 @@ def choose_etf_series(root: Path, inbox: Path) -> Tuple[pd.DataFrame, Dict[str, 
                 low = str(p).lower()
                 if ("wgc" in low or "etf_flows" in low or "etf-flows" in low) and ("etf" in low or "holdings" in low):
                     candidates.append(p)
-    options = []
     for p in sorted(set(candidates)):
         s = extract_wgc_series_from_excel(p) if p.suffix.lower() == ".xlsx" else extract_wgc_series_from_normalized(p)
-        if s is None or len(s) < 4:
+        if s is None or len(s) < 12:
             continue
         latest = s.iloc[-1]["date"]
         options.append(((latest.timestamp(), p.stat().st_mtime, len(s)), s, p))
     if not options:
-        raise ValueError("No valid WGC total ETF holdings-by-month series found")
+        raise ValueError("No fund-sum-reconciled WGC total ETF holdings-by-month series found")
     options.sort(key=lambda x: x[0], reverse=True)
     s, p = options[0][1], options[0][2]
     latest = s.iloc[-1]
@@ -453,6 +528,8 @@ def choose_etf_series(root: Path, inbox: Path) -> Tuple[pd.DataFrame, Dict[str, 
         raise ValueError("WGC series lacks a 3-month prior observation")
     prior_row = prior.iloc[-1]
     flow = float(latest["holdings"] - prior_row["holdings"])
+    if abs(flow) > 500.0:
+        raise ValueError(f"WGC 3-month holdings change fails plausibility bound: {flow:.3f}t")
     available = dt.datetime.fromtimestamp(p.stat().st_mtime, tz=dt.timezone.utc)
     meta = {
         "path": str(p), "rows": int(len(s)),
@@ -463,9 +540,12 @@ def choose_etf_series(root: Path, inbox: Path) -> Tuple[pd.DataFrame, Dict[str, 
         "etf_flow_tonnes_3m": flow,
         "source_available_after_utc": utc_iso(available),
         "source_age_days": round((utc_now() - available).total_seconds() / 86400.0, 3),
+        "holdings_column": s.attrs.get("holdings_column"),
+        "resolver": s.attrs.get("resolver"),
+        "median_fund_sum_relative_error": s.attrs.get("median_fund_sum_relative_error"),
+        "p90_fund_sum_relative_error": s.attrs.get("p90_fund_sum_relative_error"),
     }
     return s, meta
-
 
 def write_history(path: Path, row: Dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -506,7 +586,7 @@ def main() -> int:
     ap.add_argument("--max-gold-age-days", type=float, default=4.0)
     ap.add_argument("--max-macro-age-days", type=float, default=7.0)
     ap.add_argument("--max-etf-source-age-days", type=float, default=60.0)
-    ap.add_argument("--max-abs-etf-flow-tonnes", type=float, default=2500.0)
+    ap.add_argument("--max-abs-etf-flow-tonnes", type=float, default=500.0)
     args = ap.parse_args()
 
     root = Path(args.root).expanduser().resolve()
@@ -604,7 +684,7 @@ def main() -> int:
     }
     (report / "stage171h_forward_feature_summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False, default=str) + "\n", encoding="utf-8")
     (report / "stage171h_decision.md").write_text(
-        f"# Stage171H3 H64L Forward Feature Materializer\n\nDecision: `{summary['decision']}`\n\nReady: `{ready}`\n\nIssues: `{issues}`\n\nNo order/demo/live authorization.\n",
+        f"# Stage171H5 H64L Forward Feature Materializer — ETF Semantics Fixed\n\nDecision: `{summary['decision']}`\n\nReady: `{ready}`\n\nIssues: `{issues}`\n\nNo order/demo/live authorization.\n",
         encoding="utf-8",
     )
     print(json.dumps(summary, indent=2, ensure_ascii=False, default=str))

@@ -1,0 +1,94 @@
+{
+  "stage": "Stage173",
+  "etf": {
+    "normalized_wgc_candidates": [
+      "data/fundamental_event_inbox/normalized/wgc_gold_etf_xlsx_rows.csv",
+      "~/Downloads/xauusd_fundamental_event_inbox/normalized/wgc_gold_etf_xlsx_rows.csv"
+    ],
+    "canonical_output": "data/macro_regime/normalized/wgc_global_etf_holdings_monthly_stage173.csv",
+    "historical_release_lag_days": 14,
+    "maximum_abs_3m_change_tonnes": 500.0,
+    "official_anchors": [
+      {
+        "date": "2026-02-27",
+        "holdings_tonnes": 4176.10934695,
+        "date_tolerance_days": 4,
+        "tonnes_tolerance": 3.0,
+        "basis": "WGC workbook row and official February record-high commentary"
+      },
+      {
+        "date": "2026-05-29",
+        "holdings_tonnes": 4121.0,
+        "date_tolerance_days": 4,
+        "tonnes_tolerance": 8.0,
+        "basis": "WGC May 2026 official commentary"
+      }
+    ]
+  },
+  "historical": {
+    "feature_dataset_candidates": [
+      "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+      "data/macro_regime/normalized/_repair_backups/stage64k_full_scope_lag_safe_feature_dataset_before_stage67e_20260627T075430Z.csv",
+      "data/macro_regime/normalized/_repair_backups/stage64k_full_scope_lag_safe_feature_dataset_before_stage67e_20260626T162302Z.csv"
+    ]
+  },
+  "archaeology": {
+    "roots": [
+      "app",
+      "configs",
+      "archive",
+      "reports",
+      "data/macro_regime",
+      "data/forward_shadow"
+    ],
+    "extensions": [".py", ".json", ".md", ".csv", ".txt", ".yml", ".yaml"],
+    "excluded_path_tokens": [".git/", "__pycache__/", ".ds_store"],
+    "maximum_file_size_bytes": 12000000
+  },
+  "stage172_correction": {
+    "summary_candidates": [
+      "reports/stage172_dual_track_decision_audit/stage172_summary.json",
+      "stage172_summary.json",
+      "~/Downloads/stage172_summary.json"
+    ]
+  },
+  "prior_thesis_gate": {
+    "families": [
+      {
+        "family": "HTF_TREND_INTRADAY_PULLBACK",
+        "prior_result": "STAGE172_EXACT_LONG_AND_SHORT_NEGATIVE_AFTER_COSTS",
+        "artifact_patterns": ["reports/stage172*/**/*", "archive/**/stage49*", "archive/**/trend*"],
+        "rerun_policy": "BLOCKED_NO_GENERIC_RERUN",
+        "required_material_delta": "A pre-written mechanism materially different from SMA-trend plus EMA pullback, with no parameter grid."
+      },
+      {
+        "family": "LONDON_NY_RANGE_BREAKOUT_OR_CONTINUATION",
+        "prior_result": "STAGE50_NO_HARD_AUDIT_PASS_AND_STAGE172_EXACT_LONG_SHORT_NEGATIVE",
+        "artifact_patterns": ["archive/**/stage50*", "reports/stage50*/**/*", "reports/stage172*/**/*"],
+        "rerun_policy": "BLOCKED_NO_GENERIC_RERUN",
+        "required_material_delta": "Must identify a different market mechanism, not a renamed session range breakout."
+      },
+      {
+        "family": "VOLATILITY_EXPANSION_WITH_GUARDS",
+        "prior_result": "STAGE52_FORWARD_NEGATIVE; STAGE172_BLOCKED_ZERO_TRADES",
+        "artifact_patterns": ["archive/**/stage52*", "archive/**/stage58*", "reports/stage52*/**/*", "reports/stage58*/**/*", "reports/stage172*/**/*"],
+        "rerun_policy": "BLOCKED_UNLESS_DELTA_FROM_STAGE51_52_58_IS_DOCUMENTED",
+        "required_material_delta": "New causal condition and pre-specified entry/exit—not another volatility threshold combination."
+      },
+      {
+        "family": "COT_POSITIONING",
+        "prior_result": "DATA_PRESENT_AND_STAGE38_OVERLAY_PREVIOUSLY_TESTED_NO_PROMOTION",
+        "artifact_patterns": ["archive/**/stage38*", "reports/stage38*/**/*", "data/**/cot*", "data/**/cftc*"],
+        "rerun_policy": "NO_NEW_BROAD_COT_TRACK",
+        "required_material_delta": "COT may only filter an independently positive generator or test one narrowly specified untested mechanism."
+      },
+      {
+        "family": "HIGH_SWEEP_CONTINUATION_LONG_WITH_H4_REGIME",
+        "prior_result": "POTENTIAL_UNFINISHED_DELTA_REQUIRES_ARTIFACT_PROOF",
+        "artifact_patterns": ["archive/**/stage36*", "reports/stage36*/**/*", "archive/**/*high_sweep*", "reports/**/*high_sweep*"],
+        "rerun_policy": "ELIGIBLE_FOR_NARROW_DELTA_SPEC_REVIEW_ONLY_NOT_YET_AUTHORIZED",
+        "required_material_delta": "Prove the exact H4 trend/regime-conditioned version was never completed and lock one formulation before testing."
+      }
+    ]
+  }
+}

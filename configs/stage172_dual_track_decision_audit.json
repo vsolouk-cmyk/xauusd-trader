@@ -1,0 +1,71 @@
+{
+  "stage": "Stage172",
+  "governance": {
+    "orders_allowed": false,
+    "demo_allowed": false,
+    "live_allowed": false,
+    "threshold_reoptimization_allowed": false,
+    "ml_allowed_before_holdout_baseline_pass": false,
+    "holdout_fraction": 0.2
+  },
+  "data": {
+    "m5_candidates": [
+      "~/Downloads/amarkets_xauusd_5m.csv",
+      "~/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+      "data/raw/amarkets_xauusd_5m.csv"
+    ],
+    "h1_candidates": [
+      "~/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_1h.csv",
+      "~/Downloads/amarkets_xauusd_1h.csv",
+      "~/Downloads/amarkets_xauusd_h1.csv",
+      "~/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_h1.csv",
+      "data/raw/amarkets_xauusd_h1.csv"
+    ],
+    "h64l_feature_candidates": [
+      "data/macro_regime/h64l_historical_asof_features_stage173.csv",
+      "data/macro_regime/h64l_historical_asof_features.csv",
+      "data/fundamental_event_inbox/features/h64l_historical_asof_features.csv"
+    ],
+    "news_calendar_candidates": [
+      "data/exogenous/news_calendar.csv",
+      "~/Downloads/xauusd_fundamental_event_inbox/news_calendar.csv"
+    ],
+    "dxy_candidates": [
+      "data/exogenous/dxy.csv",
+      "data/macro_regime/raw/dxy_daily_2011_present.csv"
+    ],
+    "real_yield_candidates": [
+      "data/exogenous/real_yield.csv",
+      "data/macro_regime/raw/real_yield_or_proxy_daily_2011_present.csv"
+    ]
+  },
+  "costs": {
+    "round_trip_cost_bps": 2.0,
+    "slippage_bps": 0.8,
+    "stress_multiplier": 1.5
+  },
+  "track_a": {
+    "holding_days": 20,
+    "minimum_holdout_episodes": 5,
+    "minimum_annual_frequency_for_shadow": 6.0,
+    "minimum_net_expectancy_bps": 3.0,
+    "maximum_drawdown_bps": 350.0,
+    "maximum_single_year_share": 0.55,
+    "maximum_single_regime_share": 0.7,
+    "minimum_days_between_independent_episodes": 20,
+    "etf_release_lag_days_if_missing": 26
+  },
+  "track_b": {
+    "holding_bars": 12,
+    "cooldown_bars": 12,
+    "minimum_holdout_trades": 30,
+    "minimum_net_expectancy_bps": 0.5,
+    "minimum_profit_factor": 1.05,
+    "maximum_drawdown_bps": 600.0,
+    "maximum_single_year_share": 0.55,
+    "maximum_single_session_share": 0.7,
+    "news_blackout_minutes": 60,
+    "volatility_expansion_multiplier": 1.5,
+    "atr_regime_multiplier": 1.25
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "stage": "Stage174",
+  "governance": {
+    "orders_allowed": false,
+    "demo_allowed": false,
+    "live_allowed": false,
+    "paper_order_allowed": false,
+    "ml_allowed": false,
+    "broad_scan_allowed": false,
+    "track_b_rerun_allowed": false,
+    "holdout_fraction": 0.2
+  },
+  "data": {
+    "stage64k_feature_candidates": [
+      "data/macro_regime/normalized/stage64k_full_scope_lag_safe_feature_dataset.csv",
+      "data/macro_regime/normalized/_repair_backups/stage64k_full_scope_lag_safe_feature_dataset_before_stage67e_20260627T075430Z.csv",
+      "data/macro_regime/normalized/_repair_backups/stage64k_full_scope_lag_safe_feature_dataset_before_stage67e_20260626T162302Z.csv"
+    ],
+    "normalized_h64l_output": "data/macro_regime/h64l_historical_asof_features_stage174.csv",
+    "h1_candidates": [
+      "~/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_1h.csv",
+      "~/Downloads/amarkets_xauusd_1h.csv",
+      "~/Downloads/amarkets_xauusd_h1.csv",
+      "data/raw/amarkets_xauusd_h1.csv"
+    ],
+    "dxy_candidates": [
+      "data/exogenous/dxy.csv",
+      "data/macro_regime/raw/dxy_daily_2011_present.csv",
+      "data/macro_regime/raw/DTWEXBGS.csv",
+      "data/fundamental_event_inbox/normalized/dxy.csv"
+    ],
+    "dxy_globs": [
+      "data/**/*dxy*.csv",
+      "data/**/*DXY*.csv",
+      "data/**/*DTWEXBGS*.csv",
+      "archive/**/*dxy*.csv",
+      "archive/**/*DTWEXBGS*.csv"
+    ]
+  },
+  "contracts": {
+    "horizon_authority": [
+      {"path": "reports/stage64r_external_spot_d1_intake_transfer_fastlane/stage64r_external_spot_d1_intake_transfer_fastlane_summary.json", "authority": "DIRECT_STAGE64R_RESULT", "weight": 10},
+      {"path": "archive/repo_cleanup_20260626/reports_inactive/stage64r_external_spot_d1_intake_transfer_fastlane/stage64r_external_spot_d1_intake_transfer_fastlane_summary.json", "authority": "ARCHIVED_DIRECT_STAGE64R_RESULT", "weight": 9},
+      {"path": "archive/repo_cleanup_20260626/configs_inactive/stage64r_external_spot_d1_intake_transfer_fastlane.json", "authority": "DIRECT_STAGE64R_CONFIG", "weight": 8},
+      {"path": "reports/stage64s_governance_replication_no_order_fastlane/stage64s_forward_shadow_contract.json", "authority": "POST_REPLICATION_LOCKED_CONTRACT", "weight": 8},
+      {"path": "reports/stage64n4_fastlane_replication_alignment_audit/stage64n4_immutable_reproduction_manifest.json", "authority": "IMMUTABLE_REPRODUCTION_MANIFEST", "weight": 7},
+      {"path": "reports/stage64q_broker_transfer_fastlane/stage64q_broker_transfer_fastlane_summary.json", "authority": "BROKER_TRANSFER_RESULT", "weight": 5},
+      {"path": "reports/stage64m_full_scope_walk_forward_validation_run/stage64m_full_scope_walk_forward_validation_run_summary.json", "authority": "EARLIER_WALK_FORWARD_RESULT", "weight": 2}
+    ],
+    "minimum_horizon_authority_weight": 15,
+    "minimum_horizon_vote_share": 0.65,
+    "dxy_authority_paths": [
+      "archive/repo_cleanup_20260626/old_app_stage_files/stage64k_full_scope_lag_safe_feature_dataset_preflight.py",
+      "archive/repo_cleanup_20260626/configs_inactive/stage64l_full_scope_walk_forward_validation_design.json",
+      "reports/stage64l_full_scope_walk_forward_validation_design/stage64l_feature_map.json",
+      "reports/stage64n4_fastlane_replication_alignment_audit/stage64n4_immutable_reproduction_manifest.json",
+      "reports/stage64r_external_spot_d1_intake_transfer_fastlane/stage64r_external_spot_d1_intake_transfer_fastlane_summary.json",
+      "data/macro_regime/manifests/stage64k_full_scope_lag_safe_feature_dataset_manifest.json"
+    ],
+    "maximum_dxy_candidates": 80,
+    "minimum_dxy_overlap_rows": 200,
+    "minimum_dxy_correlation": 0.995,
+    "minimum_dxy_sign_agreement": 0.98,
+    "maximum_dxy_median_abs_error": 0.0005
+  },
+  "costs": {
+    "round_trip_cost_bps": 2.0,
+    "slippage_bps": 0.8
+  },
+  "track_a": {
+    "minimum_holdout_episodes": 5,
+    "minimum_annual_frequency_for_shadow": 6.0,
+    "minimum_net_expectancy_bps": 3.0,
+    "maximum_drawdown_bps": 350.0,
+    "maximum_single_year_share": 0.55,
+    "maximum_single_regime_share": 0.70,
+    "minimum_days_between_independent_episodes": 120
+  }
+}

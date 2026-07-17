@@ -82,6 +82,49 @@ class Stage174Tests(unittest.TestCase):
             self.assertEqual(out["source_contract"], "FRED_DTWEXBGS")
             self.assertEqual(out["best_match"]["scale_factor"], 100.0)
 
+
+    def test_load_bars_accepts_real_mt5_split_schema(self):
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td) / "amarkets_h1.csv"
+            dates = pd.date_range("2022-01-01", periods=1200, freq="h")
+            close = 1800.0 + np.arange(1200) * 0.1
+            df = pd.DataFrame({
+                "<DATE>": dates.strftime("%Y.%m.%d"),
+                "<TIME>": dates.strftime("%H:%M:%S"),
+                "<OPEN>": close - 0.05,
+                "<HIGH>": close + 0.20,
+                "<LOW>": close - 0.20,
+                "<CLOSE>": close,
+                "<TICKVOL>": 100,
+                "<VOL>": 0,
+                "<SPREAD>": 25,
+            })
+            df.to_csv(p, sep="\t", index=False)
+            out = mod.load_bars(p)
+            self.assertEqual(len(out), 1200)
+            self.assertEqual(out.attrs["timestamp_contract"], "SPLIT:<DATE>+<TIME>")
+            self.assertTrue({"ts", "open", "high", "low", "close"}.issubset(out.columns))
+
+    def test_load_bars_accepts_normalized_direct_timestamp(self):
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td) / "h1.csv"
+            dates = pd.date_range("2022-01-01", periods=1200, freq="h", tz="UTC")
+            close = 1800.0 + np.arange(1200) * 0.1
+            pd.DataFrame({
+                "timestamp_utc": dates, "open": close - 0.05, "high": close + 0.2,
+                "low": close - 0.2, "close": close,
+            }).to_csv(p, index=False)
+            out = mod.load_bars(p)
+            self.assertEqual(len(out), 1200)
+            self.assertEqual(out.attrs["timestamp_contract"], "DIRECT:timestamp_utc")
+
+    def test_load_bars_error_surfaces_actual_columns(self):
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td) / "bad.csv"
+            pd.DataFrame({"foo": range(1200), "bar": range(1200)}).to_csv(p, index=False)
+            with self.assertRaisesRegex(ValueError, "columns="):
+                mod.load_bars(p)
+
     def test_no_execution_or_ml_path_in_source(self):
         text = MODULE.read_text().lower()
         self.assertNotIn("send_order", text)

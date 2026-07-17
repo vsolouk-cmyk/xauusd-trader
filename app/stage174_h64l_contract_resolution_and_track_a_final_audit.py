@@ -350,20 +350,55 @@ def normalize_h64l_features(stage64k: Path, output: Path) -> Dict[str, Any]:
 
 
 def load_bars(path: Path) -> pd.DataFrame:
+    """Load AMarkets/MT5 or normalized OHLC without silently changing time semantics.
+
+    Supported timestamp contracts:
+    - MT5 export: <DATE> + <TIME>
+    - normalized export: timestamp/timestamp_utc/datetime/date_utc/date
+    - split plain columns: date + time
+
+    Stage172 already consumed the same AMarkets file using the MT5 contract.
+    Stage174B restores that schema compatibility; it does not shift broker time.
+    """
     raw = pd.read_csv(path, sep=detect_sep(path), low_memory=False)
     cmap = {str(c).strip().lower(): c for c in raw.columns}
-    tc = next((cmap[k] for k in ["timestamp", "timestamp_utc", "time", "datetime", "date"] if k in cmap), None)
-    if tc is None:
-        raise ValueError("Bar timestamp missing")
-    cols = {}
+
+    date_col = next((cmap[k] for k in ["<date>", "date", "date_utc"] if k in cmap), None)
+    time_col = next((cmap[k] for k in ["<time>", "time"] if k in cmap), None)
+    direct_col = next((cmap[k] for k in ["timestamp", "timestamp_utc", "datetime", "datetime_utc"] if k in cmap), None)
+
+    if direct_col is not None:
+        ts = pd.to_datetime(raw[direct_col], errors="coerce", utc=True)
+        timestamp_contract = f"DIRECT:{direct_col}"
+    elif date_col is not None and time_col is not None:
+        ts = pd.to_datetime(
+            raw[date_col].astype(str).str.strip() + " " + raw[time_col].astype(str).str.strip(),
+            errors="coerce", utc=True,
+        )
+        timestamp_contract = f"SPLIT:{date_col}+{time_col}"
+    elif date_col is not None:
+        ts = pd.to_datetime(raw[date_col], errors="coerce", utc=True)
+        timestamp_contract = f"DATE_ONLY:{date_col}"
+    else:
+        raise ValueError(f"Bar timestamp missing; columns={list(raw.columns)}")
+
+    cols: Dict[str, pd.Series] = {}
     for k in ["open", "high", "low", "close"]:
-        if k not in cmap:
-            raise ValueError(f"Bar {k} missing")
-        cols[k] = pd.to_numeric(raw[cmap[k]], errors="coerce")
-    out = pd.DataFrame({"ts": pd.to_datetime(raw[tc], errors="coerce", utc=True), **cols}).dropna().sort_values("ts").drop_duplicates("ts", keep="last")
+        source = cmap.get(f"<{k}>") or cmap.get(k)
+        if source is None:
+            raise ValueError(f"Bar {k} missing; columns={list(raw.columns)}")
+        cols[k] = pd.to_numeric(raw[source], errors="coerce")
+
+    out = pd.DataFrame({"ts": ts, **cols}).dropna(subset=["ts", "open", "high", "low", "close"])
+    out = out.sort_values("ts").drop_duplicates("ts", keep="last")
+    bad = (out["high"] < out[["open", "close", "low"]].max(axis=1)) | (out["low"] > out[["open", "close", "high"]].min(axis=1))
+    if bad.any():
+        raise ValueError(f"OHLC invariant failures: {int(bad.sum())}")
     if len(out) < 1000:
-        raise ValueError("Insufficient H1 bars")
-    return out
+        raise ValueError(f"Insufficient H1 bars: {len(out)}; timestamp_contract={timestamp_contract}")
+    out.attrs["timestamp_contract"] = timestamp_contract
+    out.attrs["source_columns"] = [str(c) for c in raw.columns]
+    return out.reset_index(drop=True)
 
 
 def daily_from_h1(h1: pd.DataFrame) -> pd.DataFrame:
@@ -557,7 +592,10 @@ def main(argv: Optional[List[str]] = None) -> int:
     summary["track_a"] = track_a
 
     if track_a.get("status") != "COMPLETE":
-        program = "BLOCK_H64L_PENDING_EXACT_CONTRACT_OR_INPUT_RESOLUTION_NO_NEW_SCAN"
+        if horizon.get("status") != "RESOLVED" or dxy.get("status") != "RESOLVED":
+            program = "BLOCK_H64L_PENDING_EXACT_CONTRACT_RESOLUTION_NO_NEW_SCAN"
+        else:
+            program = "BLOCK_H64L_TRACK_A_INPUT_OR_INTEGRATION_DEFECT_REPAIR_ONLY_NO_NEW_SCAN"
     elif track_a.get("decision") == "KILL":
         program = "KILL_H64L_RESCUE_CLOSE_TRACK_A_NO_ML_AUTHORIZE_ONLY_NARROW_PREWRITTEN_NEW_THESIS_DELTA_REVIEW"
     elif track_a.get("decision") == "OVERLAY_ONLY":

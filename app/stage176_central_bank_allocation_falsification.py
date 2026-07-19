@@ -28,6 +28,7 @@ import re
 import ssl
 import sys
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
@@ -443,6 +444,30 @@ def fetch_url(
                     details={"url": url, "bytes": len(content), "attempt": attempt + 1},
                 )
             return True, content, ""
+        except urllib.error.HTTPError as exc:
+            last_error = f"HTTPError:{exc}"
+            permanent = int(getattr(exc, "code", 0)) in {400, 404, 410}
+            if progress is not None:
+                progress.emit(
+                    phase,
+                    f"fetch failed attempt={attempt + 1}/{attempts} duration={time.monotonic() - started:.1f}s error={last_error} permanent={permanent} {label}",
+                    details={
+                        "url": url,
+                        "attempt": attempt + 1,
+                        "error": last_error,
+                        "http_status": int(getattr(exc, "code", 0)),
+                        "permanent": permanent,
+                    },
+                )
+            if permanent:
+                if progress is not None:
+                    progress.emit(phase, f"permanent HTTP status; skip without retry {label}")
+                break
+            if attempt + 1 < attempts:
+                wait = min(60.0, delay * (2 ** attempt))
+                if progress is not None:
+                    progress.emit(phase, f"retry backoff {wait:.1f}s {label}")
+                time.sleep(wait)
         except Exception as exc:  # noqa: BLE001
             last_error = f"{type(exc).__name__}:{exc}"
             if progress is not None:
@@ -506,7 +531,13 @@ def discover_report_urls(
             if absolute is None or "/gold-demand-trends" not in absolute:
                 continue
             root = normalize_report_root(absolute)
-            if infer_quarter_from_text(root, root) is None:
+            qlabel = infer_quarter_from_text(root, root)
+            if qlabel is None:
+                continue
+            # Stage176's locked data contract begins at 2010Q1. Older report
+            # pages are irrelevant and many legacy URL shapes return permanent
+            # 404 responses, so they must never enter the fetch queue.
+            if quarter_end_from_label(qlabel) < quarter_end_from_label(str(LOCKED_CONTRACT["earliest_required_quarter"])):
                 continue
             if root not in urls:
                 urls.add(root)
@@ -531,7 +562,7 @@ def discover_report_urls(
             total=max_pages,
             status="BLOCKED" if stopped_early and not urls else "COMPLETE",
         )
-    return sorted(urls), ledger
+    return sorted(urls, key=lambda item: quarter_end_from_label(infer_quarter_from_text("", item) or "9999Q4")), ledger
 
 
 def extract_report_vintage(

@@ -277,6 +277,58 @@ class Stage176Tests(unittest.TestCase):
         finally:
             m.discover_report_urls = original
 
+
+    def test_fetch_url_does_not_retry_permanent_404(self):
+        original_urlopen = m.urllib.request.urlopen
+        original_sleep = m.time.sleep
+        calls = []
+        sleeps = []
+        try:
+            def raise_404(req, timeout=None, context=None):
+                calls.append(req.full_url)
+                raise m.urllib.error.HTTPError(req.full_url, 404, "Not Found", hdrs=None, fp=None)
+            m.urllib.request.urlopen = raise_404
+            m.time.sleep = lambda seconds: sleeps.append(seconds)
+            ok, content, error = m.fetch_url(
+                "https://www.gold.org/missing",
+                {"max_retries": 3, "timeout_seconds": 35, "retry_backoff_seconds": 4},
+            )
+            self.assertFalse(ok)
+            self.assertEqual(content, b"")
+            self.assertIn("404", error)
+            self.assertEqual(len(calls), 1)
+            self.assertEqual(sleeps, [])
+        finally:
+            m.urllib.request.urlopen = original_urlopen
+            m.time.sleep = original_sleep
+
+    def test_report_discovery_excludes_pre_2010_quarters(self):
+        original_fetch = m.fetch_url
+        html = ("<html><body>"
+                "<a href='/goldhub/research/gold-demand-trends/gold-demand-trends-q3-2007'>old</a>"
+                "<a href='/goldhub/research/gold-demand-trends/gold-demand-trends-q1-2010'>start</a>"
+                "<a href='/goldhub/research/gold-demand-trends/gold-demand-trends-q4-2025'>new</a>"
+                "</body></html>").encode("utf-8")
+        calls = []
+        try:
+            def fake_fetch(url, config, progress=None, **kwargs):
+                calls.append(url)
+                return True, html, ""
+            m.fetch_url = fake_fetch
+            cfg = {
+                "index_url_template": "https://www.gold.org/test?page={page}",
+                "max_index_pages": 3,
+                "max_consecutive_index_failures": 3,
+                "request_delay_seconds": 0,
+            }
+            urls, _ = m.discover_report_urls(cfg)
+            self.assertEqual(len(calls), 3)
+            self.assertFalse(any("2007" in url for url in urls))
+            self.assertTrue(any("q1-2010" in url for url in urls))
+            self.assertTrue(any("q4-2025" in url for url in urls))
+        finally:
+            m.fetch_url = original_fetch
+
     def test_end_to_end_synthetic_creates_terminal_outputs(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)

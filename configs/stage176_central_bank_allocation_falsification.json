@@ -1,0 +1,101 @@
+{
+  "stage": "Stage176",
+  "output_dir": "reports/stage176_central_bank_allocation_falsification",
+  "locked_contract": {
+    "product_type": "QUARTERLY_GOLD_ALLOCATION_DECISION_ENGINE",
+    "high_exposure": 1.0,
+    "low_exposure": 0.0,
+    "initial_state": "LOW",
+    "trailing_purchase_quarters": 4,
+    "prior_expanding_median_min_observations": 8,
+    "trend_sma_trading_days": 200,
+    "exit_consecutive_quarterly_declines": 2,
+    "holdout_fraction": 0.2,
+    "primary_switching_cost_bps": 10.0,
+    "stress_switching_cost_bps": 20.0,
+    "minimum_total_quarters": 56,
+    "maximum_missing_quarters": 2,
+    "minimum_high_episodes": 5,
+    "minimum_calendar_eras": 3,
+    "calendar_eras": [
+      [
+        2010,
+        2014,
+        "ERA_2010_2014"
+      ],
+      [
+        2015,
+        2019,
+        "ERA_2015_2019"
+      ],
+      [
+        2020,
+        2029,
+        "ERA_2020_2029"
+      ]
+    ],
+    "maximum_single_episode_positive_excess_share": 0.7,
+    "minimum_1q_observations_per_state": 8,
+    "maximum_1q_permutation_pvalue": 0.1,
+    "permutation_iterations": 10000,
+    "permutation_seed": 176,
+    "minimum_return_retention_vs_buy_hold": 0.8,
+    "minimum_drawdown_reduction_vs_buy_hold": 0.25,
+    "earliest_required_quarter": "2010Q1",
+    "minimum_release_lag_days": 10,
+    "maximum_release_lag_days": 180,
+    "maximum_abs_quarterly_purchases_tonnes": 600.0,
+    "maximum_duplicate_conflict_tonnes": 3.0,
+    "minimum_extraction_confidence": 0.85,
+    "price_minimum_start_date": "2010-03-31",
+    "price_minimum_latest_lag_days": 30
+  },
+  "wgc_vintages": {
+    "manifest_candidates": [
+      "data/macro_regime/vintages/wgc_official_sector_quarterly_vintages.csv",
+      "data/fundamental_event_inbox/normalized/wgc_official_sector_quarterly_vintages.csv",
+      "~/Downloads/xauusd_fundamental_event_inbox/wgc_official_sector_quarterly_vintages.csv",
+      "~/Downloads/wgc_official_sector_quarterly_vintages.csv"
+    ],
+    "online_collection": {
+      "enabled": true,
+      "index_url_template": "https://www.gold.org/goldhub/research/gold-demand-trends?page={page}",
+      "max_index_pages": 16,
+      "maximum_reports": 90,
+      "cache_dir": "data/macro_regime/vintages/wgc_gdt_original_report_pages",
+      "canonical_manifest_output": "data/macro_regime/vintages/wgc_official_sector_quarterly_vintages.csv",
+      "timeout_seconds": 35,
+      "max_retries": 3,
+      "retry_backoff_seconds": 4,
+      "request_delay_seconds": 0.5,
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Stage176-XAUUSD-Research/1.0"
+    }
+  },
+  "gold_prices": {
+    "candidates": [
+      "data/macro_regime/raw/gold_daily_2011_present.csv",
+      "data/macro_regime/raw/gold_spot_daily_2011_present.csv",
+      "data/exogenous/gold_daily.csv",
+      "data/fundamental_event_inbox/normalized/gold_daily.csv",
+      "data/fundamental_event_inbox/normalized/xauusd_d1.csv",
+      "~/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_d1.csv",
+      "~/Downloads/amarkets_xauusd_d1.csv"
+    ],
+    "globs": [
+      "data/**/*gold*daily*.csv",
+      "data/**/*gold*spot*.csv",
+      "data/**/*xauusd*d1*.csv",
+      "archive/**/*gold*daily*.csv",
+      "archive/**/*gold*spot*.csv",
+      "archive/**/*xauusd*d1*.csv",
+      "archive/**/*external*spot*d1*.csv"
+    ],
+    "maximum_candidates": 100
+  },
+  "progress": {
+    "enabled": true,
+    "checkpoint_every_reports": 1,
+    "max_consecutive_index_failures": 3,
+    "max_consecutive_report_failures": 8
+  }
+}

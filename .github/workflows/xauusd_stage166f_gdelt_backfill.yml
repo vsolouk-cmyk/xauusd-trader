@@ -1,4 +1,4 @@
-name: XAUUSD Stage166G Persistent GDELT Four-Hour Refresh
+name: XAUUSD Stage166G Persistent GDELT Manual Blackout Support
 
 on:
   workflow_dispatch:
@@ -19,8 +19,6 @@ on:
         description: 'Days per query; 7 preserves hourly resolution with fewer requests'
         required: true
         default: '7'
-  schedule:
-    - cron: '17 */4 * * *'
 
 concurrency:
   group: xauusd-stage166g-gdelt-refresh

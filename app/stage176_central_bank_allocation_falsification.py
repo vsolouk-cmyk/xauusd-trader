@@ -26,8 +26,11 @@ import math
 import random
 import re
 import ssl
+import subprocess
 import sys
+import tempfile
 import time
+import zipfile
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -327,7 +330,20 @@ def infer_quarter_from_text(text: str, url: str = "") -> Optional[str]:
     return None
 
 
-def extract_publication_timestamp(raw_html: str) -> Optional[pd.Timestamp]:
+def extract_publication_timestamp(
+    raw_html: str,
+    *,
+    visible_text: Optional[str] = None,
+    quarter: Optional[str] = None,
+) -> Optional[pd.Timestamp]:
+    """Extract the original publication timestamp from metadata or visible page text.
+
+    Several migrated WGC pages expose the publication date only in the rendered
+    body (for example ``28 April, 2022``) and omit ``datePublished`` metadata.
+    The fallback is constrained by the report quarter: only dates 10--180 days
+    after quarter-end are eligible, which prevents footer/copyright dates from
+    being mistaken for the publication date.
+    """
     patterns = [
         r'"datePublished"\s*:\s*"([^"]+)"',
         r'property=["\']article:published_time["\'][^>]*content=["\']([^"\']+)',
@@ -340,11 +356,337 @@ def extract_publication_timestamp(raw_html: str) -> Optional[pd.Timestamp]:
             ts = parse_timestamp(m.group(1))
             if ts is not None:
                 return ts
-    return None
+
+    text = visible_text if visible_text is not None else strip_html(raw_html)
+    # The report date appears near the title. Limit the scan to reduce false
+    # positives from copyright years and links to other reports.
+    head = str(text)[:5000]
+    month = (
+        r"January|February|March|April|May|June|July|August|"
+        r"September|October|November|December"
+    )
+    raw_dates: List[str] = []
+    raw_dates.extend(m.group(0) for m in re.finditer(rf"\b\d{{1,2}}\s+(?:{month})\s*,?\s+20\d{{2}}\b", head, flags=re.I))
+    raw_dates.extend(m.group(0) for m in re.finditer(rf"\b(?:{month})\s+\d{{1,2}}(?:st|nd|rd|th)?\s*,?\s+20\d{{2}}\b", head, flags=re.I))
+    candidates: List[pd.Timestamp] = []
+    for value in raw_dates:
+        cleaned = re.sub(r"(\d)(st|nd|rd|th)\b", r"\1", value, flags=re.I)
+        ts = parse_timestamp(cleaned)
+        if ts is None:
+            continue
+        ts = ts.floor("D") + pd.Timedelta(hours=12)
+        if quarter:
+            qend = quarter_end_from_label(quarter)
+            lag = (ts - qend).total_seconds() / 86400.0
+            if not (
+                float(LOCKED_CONTRACT["minimum_release_lag_days"])
+                <= lag
+                <= float(LOCKED_CONTRACT["maximum_release_lag_days"])
+            ):
+                continue
+        candidates.append(ts)
+    return min(candidates) if candidates else None
+
+
+_DOWNLOAD_EXTENSIONS = (".xlsx", ".xls", ".pdf", ".zip")
+
+
+def extract_download_links(raw_html: str, base_url: str) -> List[str]:
+    """Return original WGC report attachments in deterministic priority order."""
+    found: List[str] = []
+    seen: set[str] = set()
+    for href in re.findall(r"href=[\"']([^\"']+)[\"']", raw_html, flags=re.I):
+        href = html_lib.unescape(href.strip())
+        url = urllib.parse.urljoin(base_url, href)
+        parsed = urllib.parse.urlparse(url)
+        if parsed.netloc.lower() not in {"www.gold.org", "gold.org"}:
+            continue
+        lower_path = parsed.path.lower()
+        if "/download/file/" not in lower_path and not lower_path.endswith(_DOWNLOAD_EXTENSIONS):
+            continue
+        clean = urllib.parse.urlunparse(("https", "www.gold.org", parsed.path, "", parsed.query, ""))
+        if clean not in seen:
+            seen.add(clean)
+            found.append(clean)
+
+    def priority(url: str) -> Tuple[int, str]:
+        path = urllib.parse.urlparse(url).path.lower()
+        if path.endswith(".xlsx"):
+            return (0, url)
+        if path.endswith(".xls"):
+            return (1, url)
+        if path.endswith(".zip"):
+            return (2, url)
+        if path.endswith(".pdf"):
+            return (3, url)
+        return (4, url)
+
+    return sorted(found, key=priority)
+
+
+
+
+def extract_central_bank_section_links(raw_html: str, base_url: str) -> List[str]:
+    """Find report sub-pages specifically devoted to central banks/official sector."""
+    links: List[str] = []
+    seen: set[str] = set()
+    for match in re.finditer(r"(?is)<a\b[^>]*href=[\"']([^\"']+)[\"'][^>]*>(.*?)</a>", raw_html):
+        href, anchor_html = match.group(1), match.group(2)
+        anchor = strip_html(anchor_html).lower()
+        combined = f"{href} {anchor}".lower().replace("&amp;", "&")
+        if not re.search(r"central[\s-]*banks?|official[\s-]*sector", combined):
+            continue
+        absolute = absolute_gold_url(base_url, href)
+        if absolute is None or "/gold-demand-trends/" not in absolute:
+            continue
+        if absolute not in seen:
+            seen.add(absolute)
+            links.append(absolute)
+    # Canonical named sections first; numeric Drupal child nodes second.
+    return sorted(links, key=lambda u: (0 if "central-bank" in u.lower() or "official-sector" in u.lower() else 1, u))
+
+
+def attachment_cache_path(cache_dir: Path, quarter: str, url: str) -> Path:
+    parsed = urllib.parse.urlparse(url)
+    basename = Path(parsed.path).name or "attachment.bin"
+    safe = re.sub(r"[^a-zA-Z0-9_.-]+", "_", f"{quarter}_{basename}")[-180:]
+    return cache_dir / safe
+
+
+def _number_from_cell(value: Any) -> Optional[float]:
+    if isinstance(value, (int, float, np.integer, np.floating)) and not pd.isna(value):
+        x = float(value)
+        return x if math.isfinite(x) else None
+    text = str(value).strip().replace(",", "").replace("−", "-")
+    # Do not treat year/quarter labels as values.
+    if not re.fullmatch(r"[+-]?\d+(?:\.\d+)?", text):
+        return None
+    return parse_float(text)
+
+
+def _quarter_header_score(text: str, quarter: str) -> float:
+    year = int(quarter[:4])
+    qnum = int(quarter[-1])
+    normalized = str(text).lower().replace("’", "'")
+    normalized = re.sub(r"\s+", " ", normalized)
+    exact_patterns = [
+        rf"\bq\s*{qnum}\s*['-]?\s*{str(year)[-2:]}\b",
+        rf"\bq\s*{qnum}\s+{year}\b",
+        rf"\b{year}\s*q\s*{qnum}\b",
+        rf"\b{year}\s+q\s*{qnum}\b",
+    ]
+    if any(re.search(pat, normalized) for pat in exact_patterns):
+        return 0.34
+    if re.search(rf"\bq\s*{qnum}\b", normalized):
+        return 0.18
+    return 0.0
+
+
+def extract_excel_purchase_candidates(path: Path, quarter: str) -> List[Dict[str, Any]]:
+    """Extract the report-quarter official-sector value from WGC tables.
+
+    The workbook layouts change across vintages.  We therefore use the row label
+    plus the column headers above each numeric cell, rather than fixed sheet or
+    cell coordinates.  Exact quarter/year headers receive the strongest score.
+    """
+    candidates: List[Dict[str, Any]] = []
+    try:
+        book = pd.ExcelFile(path, engine="openpyxl")
+    except Exception:
+        return candidates
+    label_re = re.compile(r"central\s+banks?|official\s+sector|central\s+bank\s+and\s+other\s+institutions", re.I)
+    for sheet in book.sheet_names:
+        try:
+            frame = pd.read_excel(book, sheet_name=sheet, header=None, dtype=object)
+        except Exception:
+            continue
+        if frame.empty:
+            continue
+        frame = frame.iloc[:1200, :220]
+        sheet_head = " ".join(str(x) for x in frame.iloc[:20, :20].to_numpy().ravel() if pd.notna(x))
+        for r in range(len(frame)):
+            row_values = frame.iloc[r].tolist()
+            for label_col, raw_label in enumerate(row_values):
+                if pd.isna(raw_label) or not label_re.search(str(raw_label)):
+                    continue
+                label_text = str(raw_label)
+                for col in range(label_col + 1, len(row_values)):
+                    value = _number_from_cell(row_values[col])
+                    if value is None or abs(value) > float(LOCKED_CONTRACT["maximum_abs_quarterly_purchases_tonnes"]):
+                        continue
+                    header_values = []
+                    for rr in range(max(0, r - 14), r):
+                        cell = frame.iat[rr, col]
+                        if pd.notna(cell):
+                            header_values.append(str(cell))
+                    header = " | ".join(header_values)
+                    score = 0.58 + _quarter_header_score(header, quarter)
+                    if _quarter_header_score(sheet_head, quarter) > 0 and re.search(rf"\bq\s*{quarter[-1]}\b", header.lower()):
+                        score += 0.10
+                    if re.search(r"annual|full\s*year|year\s*total|fy\b", header, flags=re.I):
+                        score -= 0.28
+                    if re.search(r"change|%|growth|yoy|year.on.year", header, flags=re.I):
+                        score -= 0.25
+                    candidates.append({
+                        "value_tonnes": value,
+                        "confidence": max(0.0, min(1.0, score)),
+                        "method": "WGC_ATTACHMENT_EXCEL_TABLE",
+                        "context": f"sheet={sheet}; label={label_text}; header={header}",
+                        "start": r * 1000 + col,
+                    })
+    try:
+        book.close()
+    except Exception:
+        pass
+    dedup: Dict[Tuple[float, str], Dict[str, Any]] = {}
+    for row in candidates:
+        key = (round(float(row["value_tonnes"]), 6), str(row["method"]))
+        if key not in dedup or float(row["confidence"]) > float(dedup[key]["confidence"]):
+            dedup[key] = row
+    return sorted(dedup.values(), key=lambda x: (-float(x["confidence"]), int(x["start"])))
+
+
+def convert_legacy_xls(path: Path, work_dir: Path) -> Optional[Path]:
+    """Convert legacy XLS to XLSX with the system LibreOffice when available."""
+    work_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        proc = subprocess.run(
+            ["libreoffice", "--headless", "--convert-to", "xlsx", "--outdir", str(work_dir), str(path)],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            timeout=90,
+            check=False,
+        )
+    except Exception:
+        return None
+    candidate = work_dir / (path.stem + ".xlsx")
+    return candidate if proc.returncode == 0 and candidate.exists() else None
+
+
+def extract_pdf_text(path: Path) -> str:
+    try:
+        proc = subprocess.run(
+            ["pdftotext", "-layout", str(path), "-"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            timeout=90,
+            check=False,
+        )
+    except Exception:
+        return ""
+    return proc.stdout if proc.returncode == 0 else ""
+
+
+
+def _quarter_positions_in_line(line: str, quarter: str) -> List[int]:
+    year = int(quarter[:4])
+    yy = str(year)[-2:]
+    qnum = quarter[-1]
+    patterns = [
+        rf"q\s*{qnum}\s*['’\-]?\s*{yy}\b",
+        rf"q\s*{qnum}\s+{year}\b",
+        rf"{year}\s*q\s*{qnum}\b",
+    ]
+    positions: List[int] = []
+    for pattern in patterns:
+        positions.extend(m.start() for m in re.finditer(pattern, line, flags=re.I))
+    return positions
+
+
+def extract_pdf_purchase_candidates(path: Path, quarter: str) -> List[Dict[str, Any]]:
+    text = extract_pdf_text(path)
+    if not text:
+        return []
+    candidates = extract_purchase_candidates(text, quarter)
+    # Table rows sometimes separate the sector label and value without a verb.
+    qnum = quarter[-1]
+    year = quarter[:4]
+    lines = text.splitlines()
+    for idx, line in enumerate(lines):
+        if not re.search(r"central\s+banks?|official\s+sector", line, flags=re.I):
+            continue
+        header_lines = lines[max(0, idx - 12):idx]
+        target_positions: List[int] = []
+        for header_line in header_lines:
+            target_positions.extend(_quarter_positions_in_line(header_line, quarter))
+        nearby = " ".join(header_lines + [line])
+        numeric_matches = list(re.finditer(r"(?<![\d.])([+-]?\d{1,4}(?:,\d{3})*(?:\.\d+)?)\s*(?:t|tonnes?)?\b", line))
+        aligned_added = False
+        if target_positions and numeric_matches:
+            target = target_positions[-1]
+            ranked = sorted(numeric_matches, key=lambda match: abs(match.start(1) - target))
+            for match in ranked:
+                value = parse_float(match.group(1))
+                if value is None or 1900 <= abs(value) <= 2100 or abs(value) > float(LOCKED_CONTRACT["maximum_abs_quarterly_purchases_tonnes"]):
+                    continue
+                candidates.append({
+                    "value_tonnes": value,
+                    "confidence": 0.99,
+                    "method": "WGC_ATTACHMENT_PDF_ALIGNED_TABLE",
+                    "context": f"line={line.strip()}; target_column={target}; nearby={nearby[:500]}",
+                    "start": idx * 1000 + match.start(1),
+                })
+                aligned_added = True
+                break
+        if aligned_added:
+            continue
+        quarter_bonus = _quarter_header_score(nearby, quarter)
+        for match in numeric_matches:
+            value = parse_float(match.group(1))
+            if value is None or abs(value) > float(LOCKED_CONTRACT["maximum_abs_quarterly_purchases_tonnes"]):
+                continue
+            if 1900 <= abs(value) <= 2100:
+                continue
+            candidates.append({
+                "value_tonnes": value,
+                "confidence": min(1.0, 0.55 + quarter_bonus),
+                "method": "WGC_ATTACHMENT_PDF_TABLE",
+                "context": f"line={line.strip()}; nearby={nearby[:500]}",
+                "start": idx * 1000 + match.start(1),
+            })
+    dedup: Dict[Tuple[float, str], Dict[str, Any]] = {}
+    for row in candidates:
+        key = (round(float(row["value_tonnes"]), 6), str(row["method"]))
+        if key not in dedup or float(row["confidence"]) > float(dedup[key]["confidence"]):
+            dedup[key] = row
+    return sorted(dedup.values(), key=lambda x: (-float(x["confidence"]), int(x["start"])))
+
+
+def extract_attachment_candidates(path: Path, quarter: str, work_dir: Path) -> List[Dict[str, Any]]:
+    suffix = path.suffix.lower()
+    if suffix == ".xlsx":
+        return extract_excel_purchase_candidates(path, quarter)
+    if suffix == ".xls":
+        converted = convert_legacy_xls(path, work_dir)
+        return extract_excel_purchase_candidates(converted, quarter) if converted else []
+    if suffix == ".pdf":
+        return extract_pdf_purchase_candidates(path, quarter)
+    if suffix == ".zip":
+        rows: List[Dict[str, Any]] = []
+        try:
+            with zipfile.ZipFile(path) as zf:
+                extract_dir = work_dir / path.stem
+                extract_dir.mkdir(parents=True, exist_ok=True)
+                for info in zf.infolist():
+                    if info.is_dir() or Path(info.filename).suffix.lower() not in _DOWNLOAD_EXTENSIONS[:-1]:
+                        continue
+                    target = extract_dir / Path(info.filename).name
+                    with zf.open(info) as src, target.open("wb") as dst:
+                        dst.write(src.read())
+                    rows.extend(extract_attachment_candidates(target, quarter, work_dir))
+        except Exception:
+            return []
+        return rows
+    return []
 
 
 _PURCHASE_PATTERNS: List[Tuple[str, float, str]] = [
     (r"central\s+banks?\s+(?:bought|purchased|added|acquired)\s+(?:a\s+net\s+)?(?:estimated\s+)?([+-]?\d+(?:\.\d+)?)\s*(?:t|tonnes?)\b", 0.99, "CENTRAL_BANKS_VERB_VALUE"),
+    (r"official\s+sector\s+(?:was|were|became|remained)?\s*(?:a\s+)?net\s+(?:buyer|purchaser)\s+(?:of\s+)?([+-]?\d+(?:\.\d+)?)\s*(?:t|tonnes?)\b", 0.98, "OFFICIAL_SECTOR_NET_BUYER_VALUE"),
+    (r"official\s+sector\s+(?:net\s+)?(?:purchases|buying|demand)\s+(?:totalled|totaled|reached|was|stood\s+at|amounted\s+to)?\s*(?:an\s+estimated\s+)?([+-]?\d+(?:\.\d+)?)\s*(?:t|tonnes?)\b", 0.96, "OFFICIAL_SECTOR_CONTEXT_VALUE"),
+    (r"central\s+banks?\s+and\s+other\s+(?:official\s+)?institutions?[^.]{0,100}?([+-]?\d+(?:\.\d+)?)\s*(?:t|tonnes?)\b", 0.94, "CENTRAL_BANKS_OTHER_INSTITUTIONS_VALUE"),
     (r"central\s+bank\s+(?:gold\s+)?demand\s+(?:totalled|totaled|reached|was|stood\s+at|amounted\s+to)\s+(?:an\s+estimated\s+)?([+-]?\d+(?:\.\d+)?)\s*(?:t|tonnes?)\b", 0.98, "CENTRAL_BANK_DEMAND_VALUE"),
     (r"(?:estimated\s+)?net\s+purchases\s+of\s+([+-]?\d+(?:\.\d+)?)\s*(?:t|tonnes?)\b", 0.93, "NET_PURCHASES_OF_VALUE"),
     (r"central\s+banks?[^.]{0,180}?(?:net\s+)?(?:buying|purchases|demand)[^.]{0,100}?([+-]?\d+(?:\.\d+)?)\s*(?:t|tonnes?)\b", 0.90, "CENTRAL_BANK_CONTEXT_VALUE"),
@@ -352,7 +694,7 @@ _PURCHASE_PATTERNS: List[Tuple[str, float, str]] = [
 ]
 
 
-def extract_purchase_candidates(text: str) -> List[Dict[str, Any]]:
+def extract_purchase_candidates(text: str, quarter: Optional[str] = None) -> List[Dict[str, Any]]:
     lower = text.lower().replace(",", "").replace("−", "-")
     rows: List[Dict[str, Any]] = []
     for pattern, confidence, method in _PURCHASE_PATTERNS:
@@ -361,14 +703,28 @@ def extract_purchase_candidates(text: str) -> List[Dict[str, Any]]:
             if value is None:
                 continue
             context = lower[max(0, m.start() - 140): min(len(lower), m.end() + 140)]
-            local_before = lower[max(0, m.start() - 55): m.start()]
-            local_after = lower[m.end(): min(len(lower), m.end() + 55)]
-            local = local_before + " " + local_after
-            # Annual / multi-year values are common on full-year pages.
+            sentence_start = max(lower.rfind(".", 0, m.start()), lower.rfind(";", 0, m.start())) + 1
+            next_period = lower.find(".", m.end())
+            next_semicolon = lower.find(";", m.end())
+            sentence_ends = [x for x in [next_period, next_semicolon] if x >= 0]
+            sentence_end = min(sentence_ends) if sentence_ends else min(len(lower), m.end() + 220)
+            local = lower[sentence_start:sentence_end]
+            # Annual, YTD and multi-period values are common on report pages.
+            # The requested report quarter must dominate those summaries.
             adjusted = confidence
+            if any(token in local for token in ["year-to-date", "year to date", "ytd", "first half", "h1 buying", "h2 buying"]):
+                adjusted -= 0.38
             if any(token in local for token in ["full year", "annual", "year total", "for the year"]):
-                adjusted -= 0.22
-            if re.search(r"\bq[1-4]\b", local):
+                adjusted -= 0.30
+            if quarter:
+                qbonus = _quarter_header_score(local, quarter)
+                adjusted += qbonus
+                # Mentions of another explicit quarter near the value reduce confidence.
+                qnum = quarter[-1]
+                other_quarter = re.search(rf"\bq(?!{qnum}\b)[1-4]\b", local)
+                if other_quarter and qbonus == 0:
+                    adjusted -= 0.18
+            elif re.search(r"\bq[1-4]\b", local):
                 adjusted += 0.10
             if abs(value) > float(LOCKED_CONTRACT["maximum_abs_quarterly_purchases_tonnes"]):
                 adjusted -= 0.50
@@ -418,6 +774,8 @@ def fetch_url(
     *,
     phase: str = "WGC_FETCH",
     label: str = "",
+    extra_headers: Optional[Dict[str, str]] = None,
+    permanent_http_statuses: Optional[Sequence[int]] = None,
 ) -> Tuple[bool, bytes, str]:
     attempts = max(1, int(config.get("max_retries", 2)) + 1)
     timeout = float(config.get("timeout_seconds", 35))
@@ -432,7 +790,10 @@ def fetch_url(
                 f"fetch start attempt={attempt + 1}/{attempts} timeout={timeout:.0f}s {label} url={url}",
                 details={"url": url, "attempt": attempt + 1, "attempts": attempts, "timeout_seconds": timeout},
             )
-        req = urllib.request.Request(url, headers={"User-Agent": user_agent, "Accept": "text/html,application/xhtml+xml"})
+        headers = {"User-Agent": user_agent, "Accept": "text/html,application/xhtml+xml"}
+        if extra_headers:
+            headers.update({str(k): str(v) for k, v in extra_headers.items()})
+        req = urllib.request.Request(url, headers=headers)
         started = time.monotonic()
         try:
             with urllib.request.urlopen(req, timeout=timeout, context=context) as response:
@@ -446,7 +807,11 @@ def fetch_url(
             return True, content, ""
         except urllib.error.HTTPError as exc:
             last_error = f"HTTPError:{exc}"
-            permanent = int(getattr(exc, "code", 0)) in {400, 404, 410}
+            status_code = int(getattr(exc, "code", 0))
+            permanent_set = {400, 404, 410}
+            if permanent_http_statuses:
+                permanent_set.update(int(code) for code in permanent_http_statuses)
+            permanent = status_code in permanent_set
             if progress is not None:
                 progress.emit(
                     phase,
@@ -455,7 +820,7 @@ def fetch_url(
                         "url": url,
                         "attempt": attempt + 1,
                         "error": last_error,
-                        "http_status": int(getattr(exc, "code", 0)),
+                        "http_status": status_code,
                         "permanent": permanent,
                     },
                 )
@@ -530,6 +895,14 @@ def discover_report_urls(
             absolute = absolute_gold_url(url, href)
             if absolute is None or "/gold-demand-trends" not in absolute:
                 continue
+            parsed_path = urllib.parse.urlparse(absolute).path.lower()
+            # Only the global GDT report series is admissible. Regional,
+            # translated and India-focus pages can duplicate a quarter with a
+            # different publication time or non-global demand value.
+            if not parsed_path.startswith("/goldhub/research/gold-demand-trends/gold-demand-trends-"):
+                continue
+            if any(token in parsed_path for token in ["-japanese", "india-focus", "us-gold-demand-trends"]):
+                continue
             root = normalize_report_root(absolute)
             qlabel = infer_quarter_from_text(root, root)
             if qlabel is None:
@@ -574,8 +947,8 @@ def extract_report_vintage(
     title_match = re.search(r"(?is)<title[^>]*>(.*?)</title>", raw_html)
     title = strip_html(title_match.group(1)) if title_match else text[:300]
     qlabel = infer_quarter_from_text(title, report_url)
-    release = extract_publication_timestamp(raw_html)
-    candidates = extract_purchase_candidates(text)
+    release = extract_publication_timestamp(raw_html, visible_text=text, quarter=qlabel)
+    candidates = extract_purchase_candidates(text, qlabel)
     selected = choose_purchase_candidate(candidates)
     candidate_rows = []
     for rank, c in enumerate(candidates, start=1):
@@ -606,6 +979,236 @@ def extract_report_vintage(
     return row, candidate_rows
 
 
+
+
+def recover_vintage_from_sections(
+    report_url: str,
+    raw_html: str,
+    config: Dict[str, Any],
+    cache_dir: Path,
+    progress: Optional[ProgressReporter] = None,
+    *,
+    label: str = "",
+) -> Tuple[Optional[Dict[str, Any]], List[Dict[str, Any]], List[Dict[str, Any]]]:
+    """Prefer the period-specific WGC central-bank section over report summaries."""
+    qlabel = infer_quarter_from_text("", report_url) or "unknown"
+    rows: List[Dict[str, Any]] = []
+    ledger: List[Dict[str, Any]] = []
+    for idx, section_url in enumerate(extract_central_bank_section_links(raw_html, report_url), start=1):
+        safe = re.sub(r"[^a-zA-Z0-9_.-]+", "_", f"{qlabel}_section_{urllib.parse.urlparse(section_url).path.strip('/')}")[-180:]
+        snapshot = cache_dir / f"{safe}.html"
+        payload: Optional[bytes] = None
+        if snapshot.exists() and snapshot.stat().st_size > 500:
+            payload = snapshot.read_bytes()
+            ledger.append({"kind": "SECTION_CACHE", "url": section_url, "success": True, "error": "", "bytes": len(payload)})
+            if progress is not None:
+                progress.emit("WGC_SECTION", f"cache hit quarter={qlabel} section={idx} bytes={len(payload)} {label}")
+        else:
+            ok, content, error = fetch_url(
+                section_url,
+                config,
+                progress,
+                phase="WGC_SECTION_FETCH",
+                label=f"quarter={qlabel} section={idx} {label}",
+                extra_headers={"Referer": report_url},
+            )
+            ledger.append({"kind": "SECTION", "url": section_url, "success": ok, "error": error, "bytes": len(content)})
+            if ok and len(content) > 500:
+                snapshot.write_bytes(content)
+                payload = content
+        if payload is None:
+            continue
+        row, candidates = extract_report_vintage(section_url, payload.decode("utf-8", errors="replace"), snapshot)
+        rows.extend(candidates)
+        if row is not None:
+            row["source_kind"] = "WGC_GOLD_DEMAND_TRENDS_ORIGINAL_CENTRAL_BANK_SECTION"
+            row["notes"] = "Quarter-specific value extracted from the original WGC central-bank section page."
+            return row, rows, ledger
+    return None, rows, ledger
+
+
+
+def fetch_attachment_with_curl(
+    url: str,
+    report_url: str,
+    config: Dict[str, Any],
+    work_dir: Path,
+    progress: Optional[ProgressReporter] = None,
+    *,
+    label: str = "",
+) -> Tuple[bool, bytes, str]:
+    """Browser-like curl fallback for WGC download endpoints that reject urllib."""
+    work_dir.mkdir(parents=True, exist_ok=True)
+    output = work_dir / ("curl_" + sha256_text(url)[:16] + ".bin")
+    cookies = work_dir / ".wgc_cookies.txt"
+    user_agent = str(config.get("user_agent", "Mozilla/5.0 Stage176 Research Audit"))
+    timeout = max(10, int(float(config.get("timeout_seconds", 35))))
+    try:
+        # Establish a same-site cookie context. Failure here is non-fatal.
+        subprocess.run(
+            ["curl", "-L", "--silent", "--max-time", str(timeout), "-A", user_agent, "-c", str(cookies), "-o", "/dev/null", report_url],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=timeout + 5,
+            check=False,
+        )
+        proc = subprocess.run(
+            [
+                "curl", "-L", "--fail", "--silent", "--show-error",
+                "--max-time", str(timeout), "-A", user_agent, "-e", report_url,
+                "-b", str(cookies), "-c", str(cookies), "-o", str(output), url,
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=timeout + 10,
+            check=False,
+        )
+    except Exception as exc:
+        return False, b"", f"CURL:{type(exc).__name__}:{exc}"
+    if proc.returncode == 0 and output.exists() and output.stat().st_size > 500:
+        payload = output.read_bytes()
+        if progress is not None:
+            progress.emit("WGC_ATTACHMENT_FETCH", f"curl fallback success bytes={len(payload)} {label}")
+        return True, payload, ""
+    error = proc.stderr.decode("utf-8", errors="replace").strip() if isinstance(proc.stderr, bytes) else str(proc.stderr).strip()
+    if progress is not None:
+        progress.emit("WGC_ATTACHMENT_FETCH", f"curl fallback failed returncode={proc.returncode} error={error} {label}")
+    return False, b"", f"CURL_RETURN_{proc.returncode}:{error}"
+
+
+def recover_vintage_from_attachments(
+    report_url: str,
+    raw_html: str,
+    snapshot_path: Path,
+    config: Dict[str, Any],
+    attachment_cache_dir: Path,
+    progress: Optional[ProgressReporter] = None,
+    *,
+    label: str = "",
+) -> Tuple[Optional[Dict[str, Any]], List[Dict[str, Any]], List[Dict[str, Any]]]:
+    """Recover a quarter value from original XLS/XLSX/PDF/ZIP attachments."""
+    text = strip_html(raw_html)
+    title_match = re.search(r"(?is)<title[^>]*>(.*?)</title>", raw_html)
+    title = strip_html(title_match.group(1)) if title_match else text[:300]
+    qlabel = infer_quarter_from_text(title, report_url)
+    release = extract_publication_timestamp(raw_html, visible_text=text, quarter=qlabel)
+    if qlabel is None or release is None:
+        return None, [], []
+    links = extract_download_links(raw_html, report_url)
+    max_links = max(1, int(config.get("maximum_attachments_per_report", 10)))
+    attachment_cache_dir.mkdir(parents=True, exist_ok=True)
+    work_dir = attachment_cache_dir / "_converted"
+    candidate_rows: List[Dict[str, Any]] = []
+    ledger: List[Dict[str, Any]] = []
+    runtime_state = config.setdefault(
+        "_runtime_attachment_fetch_state",
+        {"disabled": False, "consecutive_forbidden": 0, "disable_reason": ""},
+    )
+    forbidden_limit = max(1, int(config.get("attachment_forbidden_circuit_breaker", 2)))
+    for link_index, attachment_url in enumerate(links[:max_links], start=1):
+        target = attachment_cache_path(attachment_cache_dir, qlabel, attachment_url)
+        content: Optional[bytes] = None
+        if target.exists() and target.stat().st_size > 500:
+            content = target.read_bytes()
+            ledger.append({"kind": "ATTACHMENT_CACHE", "url": attachment_url, "success": True, "error": "", "bytes": len(content)})
+            if progress is not None:
+                progress.emit("WGC_ATTACHMENT", f"cache hit quarter={qlabel} file={target.name} bytes={len(content)} {label}")
+        elif bool(runtime_state.get("disabled", False)):
+            error = str(runtime_state.get("disable_reason") or "ATTACHMENT_FETCH_DISABLED_AFTER_REPEATED_403")
+            ledger.append({"kind": "ATTACHMENT_SKIPPED", "url": attachment_url, "success": False, "error": error, "bytes": 0})
+            if progress is not None:
+                progress.emit(
+                    "WGC_ATTACHMENT_FETCH",
+                    f"attachment network fetch disabled for this run; use page/section/cache only quarter={qlabel} "
+                    f"attachment={link_index}/{min(len(links), max_links)} {label}",
+                )
+            continue
+        else:
+            ok, payload, error = fetch_url(
+                attachment_url,
+                config,
+                progress,
+                phase="WGC_ATTACHMENT_FETCH",
+                label=f"quarter={qlabel} attachment={link_index}/{min(len(links), max_links)} {label}",
+                extra_headers={
+                    "Referer": report_url,
+                    "Accept": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/pdf,application/zip,*/*",
+                },
+                permanent_http_statuses={403},
+            )
+            forbidden = (not ok) and ("HTTP Error 403" in error or "HTTP_403" in error)
+            if forbidden:
+                runtime_state["consecutive_forbidden"] = int(runtime_state.get("consecutive_forbidden", 0)) + 1
+                if progress is not None:
+                    progress.emit(
+                        "WGC_ATTACHMENT_FETCH",
+                        f"403 is permanent for this attachment endpoint; skip curl and retry "
+                        f"streak={runtime_state['consecutive_forbidden']}/{forbidden_limit} quarter={qlabel} {label}",
+                    )
+                if int(runtime_state["consecutive_forbidden"]) >= forbidden_limit:
+                    runtime_state["disabled"] = True
+                    runtime_state["disable_reason"] = "ATTACHMENT_FETCH_DISABLED_AFTER_REPEATED_403"
+                    if progress is not None:
+                        progress.emit(
+                            "WGC_ATTACHMENT_FETCH",
+                            "circuit breaker: repeated attachment 403 responses; disable uncached attachment downloads "
+                            "for the rest of this run and continue with report/section evidence",
+                            status="DEGRADED",
+                        )
+            elif not ok:
+                curl_ok, curl_payload, curl_error = fetch_attachment_with_curl(
+                    attachment_url,
+                    report_url,
+                    config,
+                    attachment_cache_dir / "_curl",
+                    progress,
+                    label=f"quarter={qlabel} attachment={link_index}/{min(len(links), max_links)} {label}",
+                )
+                if curl_ok:
+                    ok, payload, error = True, curl_payload, ""
+                else:
+                    error = f"{error};{curl_error}" if error else curl_error
+            if ok:
+                runtime_state["consecutive_forbidden"] = 0
+            ledger.append({"kind": "ATTACHMENT", "url": attachment_url, "success": ok, "error": error, "bytes": len(payload)})
+            if ok and len(payload) > 500:
+                target.write_bytes(payload)
+                content = payload
+        if content is None:
+            continue
+        extracted = extract_attachment_candidates(target, qlabel, work_dir)
+        for rank, candidate in enumerate(extracted, start=1):
+            candidate_rows.append({
+                "report_url": report_url,
+                "quarter": qlabel,
+                "release_timestamp_utc": release.isoformat(),
+                "rank": rank,
+                "attachment_url": attachment_url,
+                "source_file": str(target),
+                **candidate,
+            })
+        selected = choose_purchase_candidate(extracted)
+        if selected.get("status") != "PASS":
+            continue
+        best = selected["best"]
+        row = {
+            "quarter": qlabel,
+            "quarter_end_utc": quarter_end_from_label(qlabel).isoformat(),
+            "release_timestamp_utc": release.isoformat(),
+            "official_sector_purchases_tonnes": float(best["value_tonnes"]),
+            "source_url": attachment_url,
+            "source_file": str(target),
+            "source_sha256": sha256(target),
+            "source_kind": "WGC_GOLD_DEMAND_TRENDS_ORIGINAL_ATTACHMENT",
+            "extraction_method": str(best["method"]),
+            "extraction_confidence": float(best["confidence"]),
+            "is_original_publication": True,
+            "notes": "Quarter-specific value extracted from an original attachment linked by the WGC report page; latest revised workbook not used.",
+        }
+        return row, candidate_rows, ledger
+    return None, candidate_rows, ledger
+
+
 def collect_wgc_vintages(
     root: Path,
     config: Dict[str, Any],
@@ -614,6 +1217,11 @@ def collect_wgc_vintages(
 ) -> Dict[str, Any]:
     cache_dir = resolve(root, config["cache_dir"])
     cache_dir.mkdir(parents=True, exist_ok=True)
+    attachment_cache_dir = resolve(
+        root,
+        config.get("attachment_cache_dir", str(Path(config["cache_dir"]).parent / (Path(config["cache_dir"]).name + "_attachments"))),
+    )
+    attachment_cache_dir.mkdir(parents=True, exist_ok=True)
     ledger_path = out_dir / "stage176_wgc_online_fetch_ledger.csv"
     candidate_path = out_dir / "stage176_wgc_extraction_candidates.csv"
     urls, fetch_ledger = discover_report_urls(config, progress, ledger_path)
@@ -700,13 +1308,48 @@ def collect_wgc_vintages(
                 break
             continue
         consecutive_failures = 0
-        row, cand = extract_report_vintage(source_url, raw.decode("utf-8", errors="replace"), snapshot)
+        raw_html = raw.decode("utf-8", errors="replace")
+        root_row, cand = extract_report_vintage(source_url, raw_html, snapshot)
         candidates.extend(cand)
+        section_row, section_candidates, section_ledger = recover_vintage_from_sections(
+            report_url,
+            raw_html,
+            config,
+            cache_dir,
+            progress,
+            label=f"report={index}/{len(selected_urls)}",
+        )
+        candidates.extend(section_candidates)
+        fetch_ledger.extend(section_ledger)
+        # A dedicated central-bank section is more period-specific than a report
+        # summary, which often mixes quarterly, YTD and full-year values.
+        row = section_row or root_row
+        attachment_candidates: List[Dict[str, Any]] = []
+        if row is None:
+            recovered, attachment_candidates, attachment_ledger = recover_vintage_from_attachments(
+                report_url,
+                raw_html,
+                snapshot,
+                config,
+                attachment_cache_dir,
+                progress,
+                label=f"report={index}/{len(selected_urls)}",
+            )
+            candidates.extend(attachment_candidates)
+            fetch_ledger.extend(attachment_ledger)
+            if recovered is not None:
+                row = recovered
         if row:
             rows.append(row)
-            extraction = f"PASS value={row['official_sector_purchases_tonnes']:.3f}t release={row['release_timestamp_utc']}"
+            extraction = (
+                f"PASS value={row['official_sector_purchases_tonnes']:.3f}t "
+                f"release={row['release_timestamp_utc']} source_kind={row['source_kind']}"
+            )
         else:
-            extraction = f"NO_VALID_ROW candidate_count={len(cand)}"
+            extraction = (
+                f"NO_VALID_ROW page_candidates={len(cand)} "
+                f"section_candidates={len(section_candidates)} attachment_candidates={len(attachment_candidates)}"
+            )
         if progress is not None:
             progress.emit(
                 "WGC_REPORTS",
@@ -750,6 +1393,7 @@ def collect_wgc_vintages(
         "manifest_output": str(canonical),
         "candidate_output": str(candidate_path),
         "fetch_ledger_output": str(ledger_path),
+        "attachment_cache_dir": str(attachment_cache_dir),
     }
 
 
@@ -1415,6 +2059,35 @@ def run(root: Path, config: Dict[str, Any], args: argparse.Namespace) -> Dict[st
         except Exception as exc:  # noqa: BLE001
             vintage_status = {"status": "FAIL", "reason": f"{type(exc).__name__}:{exc}", "path": str(manifest_path), "collector": collector_result}
             progress.emit("VINTAGE_PREFLIGHT", f"manifest validation failed error={type(exc).__name__}:{exc}", status="FAILED")
+
+    online_enabled = bool(config["wgc_vintages"].get("online_collection", {}).get("enabled", False))
+    if vintage_status.get("status") != "PASS" and (args.online or online_enabled) and collector_result.get("status") == "NOT_RUN":
+        progress.emit(
+            "MANIFEST_REPAIR",
+            "existing manifest failed the vintage contract; rebuilding from cached/original WGC publications",
+        )
+        collector_cfg = dict(config["wgc_vintages"]["online_collection"])
+        collector_cfg.setdefault("checkpoint_every_reports", int(progress_cfg.get("checkpoint_every_reports", 1)))
+        collector_cfg.setdefault("max_consecutive_index_failures", int(progress_cfg.get("max_consecutive_index_failures", 3)))
+        collector_cfg.setdefault("max_consecutive_report_failures", int(progress_cfg.get("max_consecutive_report_failures", 8)))
+        collector_result = collect_wgc_vintages(root, collector_cfg, out_dir, progress)
+        rebuilt = resolve(root, config["wgc_vintages"]["online_collection"]["canonical_manifest_output"])
+        if rebuilt.exists():
+            manifest_path = rebuilt.resolve()
+            try:
+                raw_vintages = load_vintage_manifest(manifest_path)
+                vintage_status, vintages, vintage_audit_rows = validate_vintage_manifest(raw_vintages, root)
+                vintage_status.update({"path": str(manifest_path), "sha256": sha256(manifest_path), "collector": collector_result})
+                progress.emit(
+                    "VINTAGE_PREFLIGHT",
+                    f"rebuilt manifest validation status={vintage_status.get('status')} valid_quarters={len(vintages) if vintages is not None else 0}",
+                    status="COMPLETE" if vintage_status.get("status") == "PASS" else "FAILED",
+                )
+            except Exception as exc:  # noqa: BLE001
+                vintage_status = {"status": "FAIL", "reason": f"{type(exc).__name__}:{exc}", "path": str(manifest_path), "collector": collector_result}
+                vintages = None
+                vintage_audit_rows = []
+                progress.emit("VINTAGE_PREFLIGHT", f"rebuilt manifest validation failed error={type(exc).__name__}:{exc}", status="FAILED")
     write_csv(out_dir / "stage176_wgc_vintage_preflight.csv", vintage_audit_rows)
 
     price_status: Dict[str, Any] = {"status": "NOT_RUN"}

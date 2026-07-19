@@ -329,6 +329,214 @@ class Stage176Tests(unittest.TestCase):
         finally:
             m.fetch_url = original_fetch
 
+
+
+
+    def test_section_recovery_prefers_quarter_value_over_ytd(self):
+        root_html = """
+        <html><head><title>Gold Demand Trends Q3 2016</title></head><body>
+        <p>8 November, 2016</p>
+        <a href="/goldhub/research/gold-demand-trends/gold-demand-trends-q3-2016/12858">Central banks and other institutions</a>
+        <p>Year-to-date central banks purchased 271.1t.</p>
+        </body></html>
+        """ + (" " * 600)
+        section_html = """
+        <html><head><title>Gold Demand Trends Q3 2016 - Central banks</title></head><body>
+        <p>8 November, 2016</p>
+        <p>In Q3 2016 central bank net purchases fell to 81.7t.</p>
+        <p>Year-to-date central banks purchased 271.1t.</p>
+        </body></html>
+        """ + (" " * 600)
+        original_fetch = m.fetch_url
+        try:
+            with tempfile.TemporaryDirectory() as td:
+                root = Path(td)
+                m.fetch_url = lambda url, config, progress=None, **kwargs: (True, section_html.encode("utf-8"), "")
+                row, candidates, ledger = m.recover_vintage_from_sections(
+                    "https://www.gold.org/goldhub/research/gold-demand-trends/gold-demand-trends-q3-2016",
+                    root_html,
+                    {"timeout_seconds": 5},
+                    root,
+                )
+                self.assertIsNotNone(row)
+                self.assertAlmostEqual(row["official_sector_purchases_tonnes"], 81.7)
+                self.assertEqual(row["source_kind"], "WGC_GOLD_DEMAND_TRENDS_ORIGINAL_CENTRAL_BANK_SECTION")
+                self.assertTrue(candidates)
+                self.assertTrue(ledger[0]["success"])
+        finally:
+            m.fetch_url = original_fetch
+
+    def test_pdf_layout_alignment_selects_report_quarter_column(self):
+        original = m.extract_pdf_text
+        try:
+            m.extract_pdf_text = lambda path: (
+                "                              Q1'09        Q1'10       YoY\n"
+                "Official sector net purchases   10.0         22.7       127%\n"
+            )
+            with tempfile.TemporaryDirectory() as td:
+                path = Path(td) / "report.pdf"
+                path.write_bytes(b"fake")
+                selected = m.choose_purchase_candidate(m.extract_pdf_purchase_candidates(path, "2010Q1"))
+                self.assertEqual(selected["status"], "PASS")
+                self.assertAlmostEqual(selected["best"]["value_tonnes"], 22.7)
+                self.assertEqual(selected["best"]["method"], "WGC_ATTACHMENT_PDF_ALIGNED_TABLE")
+        finally:
+            m.extract_pdf_text = original
+
+    def test_quarter_specific_text_beats_ytd_summary(self):
+        text = (
+            "In Q3 2016 central bank net purchases fell 56% year-on-year to 81.7t. "
+            "Year-to-date, central banks purchased 271.1t."
+        )
+        selected = m.choose_purchase_candidate(m.extract_purchase_candidates(text, "2016Q3"))
+        self.assertEqual(selected["status"], "PASS")
+        self.assertAlmostEqual(selected["best"]["value_tonnes"], 81.7)
+
+    def test_central_bank_section_link_discovery(self):
+        raw = """
+        <html><body>
+        <a href="/goldhub/research/gold-demand-trends/gold-demand-trends-q3-2016/12858">Central banks and other institutions</a>
+        <a href="/goldhub/research/gold-demand-trends/gold-demand-trends-q3-2016/jewellery">Jewellery</a>
+        </body></html>
+        """
+        links = m.extract_central_bank_section_links(
+            raw,
+            "https://www.gold.org/goldhub/research/gold-demand-trends/gold-demand-trends-q3-2016",
+        )
+        self.assertEqual(len(links), 1)
+        self.assertTrue(links[0].endswith("/12858"))
+
+    def test_report_discovery_excludes_regional_duplicates(self):
+        original_fetch = m.fetch_url
+        html = ("<html><body>"
+                "<a href='/goldhub/research/gold-demand-trends/gold-demand-trends-q1-2025'>global</a>"
+                "<a href='/ja/goldhub/research/gold-demand-trends/gold-demand-trends-q1-2025'>jp</a>"
+                "<a href='/goldhub/research/gold-demand-trends/us-gold-demand-trends-q1-2025'>us</a>"
+                "<a href='/goldhub/research/gold-demand-trends/gold-demand-trends-india-focus-q1-2025'>india</a>"
+                "</body></html>").encode("utf-8")
+        try:
+            m.fetch_url = lambda url, config, progress=None, **kwargs: (True, html, "")
+            urls, _ = m.discover_report_urls({
+                "index_url_template": "https://www.gold.org/test?page={page}",
+                "max_index_pages": 3,
+                "max_consecutive_index_failures": 3,
+                "request_delay_seconds": 0,
+            })
+            self.assertEqual(urls, ["https://www.gold.org/goldhub/research/gold-demand-trends/gold-demand-trends-q1-2025"])
+        finally:
+            m.fetch_url = original_fetch
+
+    def test_visible_publication_date_fallback(self):
+        raw = """
+        <html><head><title>Gold Demand Trends Q1 2022</title></head>
+        <body><h1>Gold Demand Trends Q1 2022</h1><p>28 April, 2022</p>
+        <p>Central banks added 84t to global official reserves.</p></body></html>
+        """
+        with tempfile.TemporaryDirectory() as td:
+            snap = Path(td) / "q1.html"
+            snap.write_text(raw, encoding="utf-8")
+            row, _ = m.extract_report_vintage(
+                "https://www.gold.org/goldhub/research/gold-demand-trends/gold-demand-trends-q1-2022",
+                raw,
+                snap,
+            )
+            self.assertIsNotNone(row)
+            self.assertEqual(row["release_timestamp_utc"], "2022-04-28T12:00:00+00:00")
+            self.assertAlmostEqual(row["official_sector_purchases_tonnes"], 84.0)
+
+    def test_excel_attachment_table_extracts_exact_quarter(self):
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "gdt.xlsx"
+            frame = pd.DataFrame([
+                ["Sector", "Q4 2021", "Q1 2022", "Full year 2022"],
+                ["Central banks and other institutions", 48.0, 84.0, 1136.0],
+            ])
+            with pd.ExcelWriter(path, engine="openpyxl") as writer:
+                frame.to_excel(writer, index=False, header=False, sheet_name="Supply and demand")
+            candidates = m.extract_excel_purchase_candidates(path, "2022Q1")
+            selected = m.choose_purchase_candidate(candidates)
+            self.assertEqual(selected["status"], "PASS")
+            self.assertAlmostEqual(selected["best"]["value_tonnes"], 84.0)
+
+    def test_attachment_recovery_uses_original_xlsx_and_visible_date(self):
+        raw = """
+        <html><head><title>Gold Demand Trends Q1 2016</title></head>
+        <body><h1>Gold Demand Trends Q1 2016</h1><p>11 May, 2016</p>
+        <a href="https://www.gold.org/download/file/10270/GDT_Q1_16_tables.xlsx">Statistics XLSX</a>
+        </body></html>
+        """ + (" " * 600)
+        original_fetch = m.fetch_url
+        try:
+            with tempfile.TemporaryDirectory() as td:
+                root = Path(td)
+                workbook = root / "source.xlsx"
+                pd.DataFrame([
+                    ["Sector", "Q4 2015", "Q1 2016"],
+                    ["Central banks and other institutions", 45.0, 109.4],
+                ]).to_excel(workbook, index=False, header=False)
+                payload = workbook.read_bytes()
+                def fake_fetch(url, config, progress=None, **kwargs):
+                    return True, payload, ""
+                m.fetch_url = fake_fetch
+                snap = root / "report.html"
+                snap.write_text(raw, encoding="utf-8")
+                row, candidates, ledger = m.recover_vintage_from_attachments(
+                    "https://www.gold.org/goldhub/research/gold-demand-trends/gold-demand-trends-q1-2016",
+                    raw,
+                    snap,
+                    {"maximum_attachments_per_report": 5},
+                    root / "attachments",
+                )
+                self.assertIsNotNone(row)
+                self.assertAlmostEqual(row["official_sector_purchases_tonnes"], 109.4)
+                self.assertEqual(row["source_kind"], "WGC_GOLD_DEMAND_TRENDS_ORIGINAL_ATTACHMENT")
+                self.assertTrue(candidates)
+                self.assertTrue(ledger[0]["success"])
+        finally:
+            m.fetch_url = original_fetch
+
+
+    def test_invalid_existing_manifest_is_rebuilt_online(self):
+        original_collect = m.collect_wgc_vintages
+        try:
+            with tempfile.TemporaryDirectory() as td:
+                root = Path(td)
+                invalid_tmp = synthetic_manifest(root, quarters=10)
+                invalid = root / "invalid.csv"
+                invalid_tmp.replace(invalid)
+                valid_tmp = synthetic_manifest(root, quarters=60)
+                valid = root / "valid.csv"
+                valid_tmp.replace(valid)
+                gold = synthetic_gold(root)
+
+                def fake_collect(root_arg, config_arg, out_dir, progress=None):
+                    Path(config_arg["canonical_manifest_output"]).write_bytes(valid.read_bytes())
+                    return {"status": "COLLECTED", "valid_quarter_rows": 60}
+
+                m.collect_wgc_vintages = fake_collect
+                cfg = {
+                    "output_dir": "reports/stage176",
+                    "locked_contract": dict(m.LOCKED_CONTRACT),
+                    "wgc_vintages": {
+                        "manifest_candidates": [str(invalid)],
+                        "online_collection": {
+                            "enabled": True,
+                            "index_url_template": "https://invalid?page={page}",
+                            "max_index_pages": 0,
+                            "maximum_reports": 0,
+                            "cache_dir": "cache",
+                            "canonical_manifest_output": str(invalid),
+                        },
+                    },
+                    "gold_prices": {"candidates": [str(gold)], "globs": [], "maximum_candidates": 10},
+                }
+                args = argparse.Namespace(vintage_manifest="", online=False, no_progress=True)
+                summary = m.run(root, cfg, args)
+                self.assertEqual(summary["wgc_vintage_preflight"]["status"], "PASS")
+                self.assertNotEqual(summary["program_decision"], "KILL_ASOF_DATA_CONTRACT_UNAVAILABLE")
+        finally:
+            m.collect_wgc_vintages = original_collect
+
     def test_end_to_end_synthetic_creates_terminal_outputs(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
@@ -364,6 +572,77 @@ class Stage176Tests(unittest.TestCase):
             self.assertTrue((out / "stage176_decision.md").exists())
             self.assertTrue((out / "stage176_decision_panel.csv").exists())
             self.assertTrue((out / "stage176_gate_checks.csv").exists())
+
+
+class Stage176AttachmentForbiddenRegression(unittest.TestCase):
+    def test_fetch_url_treats_attachment_403_as_permanent_when_requested(self):
+        original_urlopen = m.urllib.request.urlopen
+        original_sleep = m.time.sleep
+        calls = []
+        sleeps = []
+        try:
+            def raise_403(req, timeout=None, context=None):
+                calls.append(req.full_url)
+                raise m.urllib.error.HTTPError(req.full_url, 403, "Forbidden", hdrs=None, fp=None)
+            m.urllib.request.urlopen = raise_403
+            m.time.sleep = lambda seconds: sleeps.append(seconds)
+            ok, content, error = m.fetch_url(
+                "https://www.gold.org/download/file/test.pdf",
+                {"max_retries": 3, "timeout_seconds": 35, "retry_backoff_seconds": 4},
+                permanent_http_statuses={403},
+            )
+            self.assertFalse(ok)
+            self.assertEqual(content, b"")
+            self.assertIn("403", error)
+            self.assertEqual(len(calls), 1)
+            self.assertEqual(sleeps, [])
+        finally:
+            m.urllib.request.urlopen = original_urlopen
+            m.time.sleep = original_sleep
+
+    def test_attachment_403_circuit_breaker_disables_uncached_downloads(self):
+        raw = """
+        <html><head><title>Gold Demand Trends Q1 2016</title></head>
+        <body><p>11 May, 2016</p>
+        <a href="https://www.gold.org/download/file/1/a.pdf">A</a>
+        <a href="https://www.gold.org/download/file/2/b.pdf">B</a>
+        <a href="https://www.gold.org/download/file/3/c.pdf">C</a>
+        </body></html>
+        """ + (" " * 600)
+        original_fetch = m.fetch_url
+        original_curl = m.fetch_attachment_with_curl
+        fetch_calls = []
+        curl_calls = []
+        try:
+            def fake_fetch(url, config, progress=None, **kwargs):
+                fetch_calls.append(url)
+                return False, b"", "HTTPError:HTTP Error 403: Forbidden"
+            def fake_curl(*args, **kwargs):
+                curl_calls.append(args[0])
+                return False, b"", "should-not-run"
+            m.fetch_url = fake_fetch
+            m.fetch_attachment_with_curl = fake_curl
+            with tempfile.TemporaryDirectory() as td:
+                root = Path(td)
+                snap = root / "report.html"
+                snap.write_text(raw, encoding="utf-8")
+                cfg = {"maximum_attachments_per_report": 5, "attachment_forbidden_circuit_breaker": 2}
+                row, candidates, ledger = m.recover_vintage_from_attachments(
+                    "https://www.gold.org/goldhub/research/gold-demand-trends/gold-demand-trends-q1-2016",
+                    raw,
+                    snap,
+                    cfg,
+                    root / "attachments",
+                )
+                self.assertIsNone(row)
+                self.assertEqual(candidates, [])
+                self.assertEqual(len(fetch_calls), 2)
+                self.assertEqual(curl_calls, [])
+                self.assertTrue(cfg["_runtime_attachment_fetch_state"]["disabled"])
+                self.assertEqual(sum(1 for r in ledger if r["kind"] == "ATTACHMENT_SKIPPED"), 1)
+        finally:
+            m.fetch_url = original_fetch
+            m.fetch_attachment_with_curl = original_curl
 
 
 if __name__ == "__main__":

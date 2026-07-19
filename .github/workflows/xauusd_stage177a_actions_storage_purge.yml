@@ -1,0 +1,71 @@
+name: XAUUSD Stage177A One-Time Actions Storage Purge
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Preview only; run once with true before the destructive run
+        required: true
+        type: choice
+        options: ['true', 'false']
+        default: 'true'
+      confirmation:
+        description: PREVIEW for dry-run; DELETE_ALL_XAUUSD_ACTIONS_STORAGE for deletion
+        required: true
+        type: string
+        default: PREVIEW
+      purge_caches:
+        description: Delete all GitHub Actions caches as well
+        required: true
+        type: choice
+        options: ['true', 'false']
+        default: 'true'
+      delete_gdelt_snapshot_branch:
+        description: Delete obsolete automation/gdelt-latest snapshot branch
+        required: true
+        type: choice
+        options: ['true', 'false']
+        default: 'true'
+
+permissions:
+  actions: write
+  contents: write
+
+concurrency:
+  group: xauusd-stage177a-storage-purge
+  cancel-in-progress: false
+
+jobs:
+  purge:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Compile purge tool
+        run: python -m py_compile app/stage177a_actions_storage_purge.py
+
+      - name: Purge repository Actions storage
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          DRY_FLAG="--dry-run"
+          CACHE_FLAG="--purge-caches"
+          BRANCH_FLAG="--delete-gdelt-branch"
+          [ "${{ inputs.dry_run }}" = "false" ] && DRY_FLAG="--no-dry-run"
+          [ "${{ inputs.purge_caches }}" = "false" ] && CACHE_FLAG="--no-purge-caches"
+          [ "${{ inputs.delete_gdelt_snapshot_branch }}" = "false" ] && BRANCH_FLAG="--no-delete-gdelt-branch"
+          python app/stage177a_actions_storage_purge.py \
+            --repository "${{ github.repository }}" \
+            --confirmation "${{ inputs.confirmation }}" \
+            "$DRY_FLAG" "$CACHE_FLAG" "$BRANCH_FLAG"
+
+      - name: Display summary
+        if: always()
+        run: cat stage177a_storage_purge_summary.json || true

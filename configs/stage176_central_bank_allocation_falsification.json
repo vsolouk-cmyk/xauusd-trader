@@ -68,7 +68,10 @@
       "max_retries": 3,
       "retry_backoff_seconds": 4,
       "request_delay_seconds": 0.5,
-      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Stage176-XAUUSD-Research/1.0"
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Stage176-XAUUSD-Research/1.0",
+      "attachment_cache_dir": "data/macro_regime/vintages/wgc_gdt_original_report_attachments",
+      "maximum_attachments_per_report": 10,
+      "attachment_forbidden_circuit_breaker": 2
     }
   },
   "gold_prices": {

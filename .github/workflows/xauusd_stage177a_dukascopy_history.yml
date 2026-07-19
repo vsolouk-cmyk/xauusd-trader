@@ -1,0 +1,109 @@
+name: XAUUSD Stage177A Dukascopy Extended History
+
+on:
+  workflow_dispatch:
+    inputs:
+      preset:
+        description: Start with smoke; full presets are long-running
+        required: true
+        type: choice
+        options:
+          - smoke_h1_2025
+          - h1_full
+          - m5_full
+          - custom
+        default: smoke_h1_2025
+      timeframe:
+        description: Used only for custom preset
+        required: false
+        type: choice
+        options: [h1, h4, d1, m5, m15]
+        default: h1
+      date_from:
+        description: Used only for custom preset, YYYY-MM-DD
+        required: false
+        type: string
+        default: '2024-01-01'
+      date_to:
+        description: Used only for custom preset, YYYY-MM-DD
+        required: false
+        type: string
+        default: '2025-01-01'
+      chunk_months:
+        description: Used only for custom preset; 1-36
+        required: false
+        type: string
+        default: '12'
+      price_type:
+        description: bid is enough for discovery; both doubles runtime/storage
+        required: true
+        type: choice
+        options: [bid, ask, both]
+        default: bid
+
+permissions:
+  contents: read
+
+concurrency:
+  group: xauusd-stage177a-dukascopy-${{ inputs.preset }}-${{ inputs.price_type }}
+  cancel-in-progress: false
+
+jobs:
+  download:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 330
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Compile downloader
+        run: python -m py_compile app/stage177a_dukascopy_history.py
+
+      - name: Show pinned downloader version
+        run: npx --yes dukascopy-node@1.49.0 --help >/dev/null
+
+      - name: Download and validate XAUUSD history
+        id: acquire
+        continue-on-error: true
+        run: |
+          EXTRA_ARGS=()
+          if [ "${{ inputs.preset }}" = "custom" ]; then
+            EXTRA_ARGS+=(--timeframe "${{ inputs.timeframe }}")
+            EXTRA_ARGS+=(--date-from "${{ inputs.date_from }}")
+            EXTRA_ARGS+=(--date-to "${{ inputs.date_to }}")
+            EXTRA_ARGS+=(--chunk-months "${{ inputs.chunk_months }}")
+          fi
+          python app/stage177a_dukascopy_history.py \
+            --preset "${{ inputs.preset }}" \
+            --price-type "${{ inputs.price_type }}" \
+            --output-dir reports/stage177a_dukascopy_history \
+            "${EXTRA_ARGS[@]}"
+
+      - name: Upload compressed chunks and validation manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage177a-dukascopy-${{ inputs.preset }}-${{ inputs.price_type }}-${{ github.run_id }}
+          path: |
+            reports/stage177a_dukascopy_history/chunks/*.csv.gz
+            reports/stage177a_dukascopy_history/stage177a_dukascopy_manifest.json
+            reports/stage177a_dukascopy_history/stage177a_dukascopy_summary.json
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+      - name: Fail workflow when any chunk failed
+        if: steps.acquire.outcome != 'success'
+        run: |
+          echo "One or more chunks failed. Partial validated chunks were uploaded for diagnosis."
+          exit 1

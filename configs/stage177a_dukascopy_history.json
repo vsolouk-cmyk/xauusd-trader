@@ -1,0 +1,31 @@
+{
+  "stage": "Stage177A_ACTIONS_RESET_AND_DUKASCOPY_HISTORY",
+  "instrument": "xauusd",
+  "dukascopy_node_version": "1.49.0",
+  "presets": {
+    "smoke_h1_2025": {
+      "timeframe": "h1",
+      "date_from": "2025-01-01",
+      "date_to": "2025-02-01",
+      "chunk_months": 1
+    },
+    "h1_full": {
+      "timeframe": "h1",
+      "date_from": "2003-05-05",
+      "date_to": "runtime_utc_today",
+      "chunk_months": 24
+    },
+    "m5_full": {
+      "timeframe": "m5",
+      "date_from": "2010-01-01",
+      "date_to": "runtime_utc_today",
+      "chunk_months": 12
+    }
+  },
+  "artifact_retention_days": 1,
+  "actions_cache_used": false,
+  "orders_allowed": false,
+  "paper_allowed": false,
+  "demo_allowed": false,
+  "live_allowed": false
+}

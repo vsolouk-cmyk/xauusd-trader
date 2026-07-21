@@ -636,7 +636,11 @@ def derive_h1_from_aligned_m5(frame: pd.DataFrame) -> pd.DataFrame:
 
 def transition_profile(segments: pd.DataFrame) -> dict[str, Any]:
     if segments.empty:
-        return {"transition_count": 0, "transitions_per_year": {}}
+        return {
+            "transition_count": 0,
+            "transitions_per_year": {},
+            "max_transitions_in_year": 0,
+        }
     transitions = segments.iloc[1:].copy()
     years = pd.to_datetime(transitions["segment_start"]).dt.year
     counts = years.value_counts().sort_index()
@@ -645,6 +649,75 @@ def transition_profile(segments: pd.DataFrame) -> dict[str, Any]:
         "transitions_per_year": {str(int(k)): int(v) for k, v in counts.items()},
         "max_transitions_in_year": int(counts.max()) if len(counts) else 0,
     }
+
+
+def collapse_isolated_transient_segments(
+    segments: pd.DataFrame,
+    *,
+    max_transient_weeks: int = 1,
+) -> pd.DataFrame:
+    """Collapse isolated short excursions between identical offset states.
+
+    The weekly Viterbi path is diagnostic evidence, not the operational clock
+    contract. A single high-noise week can create two extra transitions even
+    when the deterministic DST template agrees with more than 99% of confident
+    weeks and passes untouched holdout. For the transition-frequency gate only,
+    collapse a segment when all of these are true:
+
+    * it is not the first or last segment;
+    * its duration is at most ``max_transient_weeks``;
+    * the neighbouring segments have the same shift; and
+    * the middle segment has a different shift.
+
+    Longer excursions are preserved and remain capable of failing the gate.
+    """
+    if segments.empty or len(segments) < 3 or max_transient_weeks < 1:
+        return segments.copy().reset_index(drop=True)
+
+    records = segments.sort_values("segment_start").to_dict("records")
+    changed = True
+    while changed and len(records) >= 3:
+        changed = False
+        for index in range(1, len(records) - 1):
+            previous = records[index - 1]
+            current = records[index]
+            following = records[index + 1]
+            if (
+                int(current.get("weeks") or 0) <= int(max_transient_weeks)
+                and int(previous["shift_minutes"]) == int(following["shift_minutes"])
+                and int(current["shift_minutes"]) != int(previous["shift_minutes"])
+            ):
+                total_weeks = (
+                    int(previous.get("weeks") or 0)
+                    + int(current.get("weeks") or 0)
+                    + int(following.get("weeks") or 0)
+                )
+                merged = dict(previous)
+                merged["segment_end_exclusive"] = following["segment_end_exclusive"]
+                merged["weeks"] = total_weeks
+
+                # These fields are diagnostic summaries only. Use weighted
+                # averages rather than claiming a recomputed exact median from
+                # already-aggregated segment records.
+                for field in ("median_selected_score", "median_raw_margin"):
+                    values = []
+                    weights = []
+                    for item in (previous, current, following):
+                        value = item.get(field)
+                        if value is not None and np.isfinite(float(value)):
+                            values.append(float(value))
+                            weights.append(int(item.get("weeks") or 0))
+                    merged[field] = (
+                        float(np.average(values, weights=weights))
+                        if values and sum(weights) > 0
+                        else None
+                    )
+
+                records[index - 1 : index + 2] = [merged]
+                changed = True
+                break
+
+    return pd.DataFrame(records).reset_index(drop=True)
 
 
 def write_sqlite(
@@ -1000,7 +1073,14 @@ def main() -> int:
         max_transition_minutes=int(config.get("max_transition_minutes", 60)),
     )
     segments = build_segments(weekly_states)
-    transitions = transition_profile(segments)
+    max_transient_weeks = int(
+        config.get("max_transient_segment_weeks_for_transition_gate", 1)
+    )
+    persistent_segments = collapse_isolated_transient_segments(
+        segments, max_transient_weeks=max_transient_weeks
+    )
+    raw_transitions = transition_profile(segments)
+    persistent_transitions = transition_profile(persistent_segments)
     selected_all_agreement = weekly_agreement(
         weekly_states,
         selected_contract,
@@ -1030,7 +1110,7 @@ def main() -> int:
         selected_eval,
         h1_derived_metrics,
         selected_all_agreement,
-        transitions,
+        persistent_transitions,
         config["pass_thresholds"],
     )
 
@@ -1071,6 +1151,9 @@ def main() -> int:
     weekly_scores.to_csv(report_dir / "stage177c_weekly_offset_scores.csv", index=False)
     weekly_states.to_csv(report_dir / "stage177c_weekly_selected_states.csv", index=False)
     segments.to_csv(report_dir / "stage177c_offset_segments.csv", index=False)
+    persistent_segments.to_csv(
+        report_dir / "stage177c_persistent_offset_segments.csv", index=False
+    )
 
     flat_rows = []
     for item in evaluations:
@@ -1113,9 +1196,16 @@ def main() -> int:
         "selected_train_weekly_agreement": train_agreements[selected_contract.name],
         "selected_all_weekly_agreement": selected_all_agreement,
         "train_transition_profile": transition_profile(train_segments),
-        "full_transition_profile": transitions,
+        "full_transition_profile": persistent_transitions,
+        "full_transition_profile_raw": raw_transitions,
+        "full_transition_profile_persistent": persistent_transitions,
+        "transition_gate_max_transient_weeks": max_transient_weeks,
+        "collapsed_transient_segments_full": int(
+            len(segments) - len(persistent_segments)
+        ),
         "train_offset_segments": int(len(train_segments)),
         "full_offset_segments": int(len(segments)),
+        "full_persistent_offset_segments": int(len(persistent_segments)),
         "h1_from_m5_metrics": h1_derived_metrics,
         "h1_direct_metrics": h1_direct_metrics,
         "output_db": str(output_db) if decision.startswith("PASS") else None,
@@ -1162,6 +1252,13 @@ def main() -> int:
         "",
         f"- return correlation: `{h1_derived_metrics.get('return_corr_1bar')}`",
         f"- overlap: `{h1_derived_metrics.get('overlap_rows')}`",
+        "",
+        "## Transition diagnostic",
+        "",
+        f"- raw max transitions/year: `{raw_transitions.get('max_transitions_in_year')}`",
+        f"- persistent max transitions/year: `{persistent_transitions.get('max_transitions_in_year')}`",
+        f"- isolated transient segments collapsed for gate: `{len(segments) - len(persistent_segments)}`",
+        f"- max transient duration collapsed: `{max_transient_weeks}` week(s)",
         "",
         f"Failed checks: `{failed_checks}`",
         "",

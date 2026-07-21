@@ -1,0 +1,26 @@
+{
+  "stage178_report_dir": "reports/stage178_commercial_edge_decision_sprint",
+  "output_dir": "reports/stage179_selected_candidate_commercial_audit",
+  "parity_tolerance": 1e-08,
+  "bootstrap_reps": 10000,
+  "bootstrap_block_length": 4,
+  "random_seed": 179,
+  "cost_stress_bps": [
+    3.0,
+    4.5,
+    6.0,
+    8.0,
+    10.0
+  ],
+  "required_stress_cost_bps": 8.0,
+  "gates": {
+    "minimum_trades": 40,
+    "minimum_profit_factor": 1.15,
+    "minimum_stress_mean_bps": 0.0,
+    "minimum_candidate_bootstrap_p10_bps": 0.0,
+    "minimum_margin_over_full_long_bps": 3.0,
+    "minimum_paired_alpha_mean_bps": 0.0,
+    "maximum_month_share": 0.25,
+    "maximum_drawdown_bps": 2000.0
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "stage": "178",
+  "reference_db": "data/local/stage177b_extended_history/xauusd_extended_history.sqlite",
+  "amarkets_db": "data/local/stage177c_amarkets_alignment/xauusd_amarkets_alignment.sqlite",
+  "output_dir": "reports/stage178_commercial_edge_decision_sprint",
+  "model_output_dir": "data/local/stage178_commercial_edge_decision_sprint",
+  "random_state": 178,
+  "training_stride_hours": 2,
+  "minimum_training_rows": 20000,
+  "probability_threshold": 0.6,
+  "round_trip_cost_bps": 3.0,
+  "severe_round_trip_cost_bps": 4.5,
+  "final_holdout_start": "2025-01-01T00:00:00",
+  "models": [
+    "logistic",
+    "hist_gb"
+  ],
+  "targets": [
+    {
+      "key": "direction_6h",
+      "kind": "directional",
+      "horizon_hours": 6,
+      "barrier_atr_mult": null
+    },
+    {
+      "key": "direction_12h",
+      "kind": "directional",
+      "horizon_hours": 12,
+      "barrier_atr_mult": null
+    },
+    {
+      "key": "direction_24h",
+      "kind": "directional",
+      "horizon_hours": 24,
+      "barrier_atr_mult": null
+    },
+    {
+      "key": "triple_barrier_24h",
+      "kind": "triple_barrier",
+      "horizon_hours": 24,
+      "barrier_atr_mult": 1.25
+    }
+  ],
+  "reference_walk_forward_folds": [
+    {
+      "name": "WF_2014_2017",
+      "test_start": "2014-01-01T00:00:00",
+      "test_end": "2018-01-01T00:00:00"
+    },
+    {
+      "name": "WF_2018_2021",
+      "test_start": "2018-01-01T00:00:00",
+      "test_end": "2022-01-01T00:00:00"
+    },
+    {
+      "name": "WF_2022_2024",
+      "test_start": "2022-01-01T00:00:00",
+      "test_end": "2025-01-01T00:00:00"
+    }
+  ],
+  "reference_gates": {
+    "minimum_trades": 120,
+    "minimum_mean_net_bps": 0.75,
+    "minimum_mean_severe_net_bps": 0.0,
+    "minimum_profit_factor": 1.1,
+    "minimum_positive_fold_share": 0.6666666667,
+    "maximum_year_share": 0.45,
+    "minimum_margin_over_trend24_bps": 0.0
+  },
+  "holdout_gates": {
+    "minimum_trades": 20,
+    "minimum_mean_net_bps": 0.5,
+    "minimum_mean_severe_net_bps": 0.0,
+    "minimum_profit_factor": 1.05,
+    "maximum_month_share": 0.5,
+    "minimum_degradation_ratio": 0.25,
+    "minimum_margin_over_trend24_bps": 0.0
+  }
+}

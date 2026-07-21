@@ -148,6 +148,105 @@ class Stage177CTest(unittest.TestCase):
         self.assertEqual(result.notna().sum(), 3)
         self.assertEqual(result.index.tolist(), close.index.tolist())
 
+    def test_transition_gate_collapses_observed_2019_one_week_excursion(self):
+        segments = pd.DataFrame(
+            [
+                {
+                    "segment_start": "2018-10-29",
+                    "segment_end_exclusive": "2019-04-01",
+                    "shift_minutes": -120,
+                    "weeks": 22,
+                    "median_selected_score": 0.99,
+                    "median_raw_margin": 0.90,
+                },
+                {
+                    "segment_start": "2019-04-01",
+                    "segment_end_exclusive": "2019-10-07",
+                    "shift_minutes": -180,
+                    "weeks": 27,
+                    "median_selected_score": 0.99,
+                    "median_raw_margin": 0.88,
+                },
+                {
+                    "segment_start": "2019-10-07",
+                    "segment_end_exclusive": "2019-10-14",
+                    "shift_minutes": -120,
+                    "weeks": 1,
+                    "median_selected_score": 0.99,
+                    "median_raw_margin": 0.87,
+                },
+                {
+                    "segment_start": "2019-10-14",
+                    "segment_end_exclusive": "2019-10-28",
+                    "shift_minutes": -180,
+                    "weeks": 2,
+                    "median_selected_score": 0.99,
+                    "median_raw_margin": 0.85,
+                },
+                {
+                    "segment_start": "2019-10-28",
+                    "segment_end_exclusive": "2020-03-30",
+                    "shift_minutes": -120,
+                    "weeks": 22,
+                    "median_selected_score": 0.99,
+                    "median_raw_margin": 0.90,
+                },
+            ]
+        )
+        raw = stage177c.transition_profile(segments)
+        persistent = stage177c.collapse_isolated_transient_segments(
+            segments, max_transient_weeks=1
+        )
+        repaired = stage177c.transition_profile(persistent)
+        self.assertEqual(raw["max_transitions_in_year"], 4)
+        self.assertEqual(repaired["max_transitions_in_year"], 2)
+        self.assertEqual(len(persistent), 3)
+        self.assertEqual(int(persistent.iloc[1]["shift_minutes"]), -180)
+        self.assertEqual(persistent.iloc[1]["segment_end_exclusive"], "2019-10-28")
+
+    def test_transition_gate_preserves_two_week_excursion(self):
+        segments = pd.DataFrame(
+            [
+                {"segment_start": "2019-01-01", "segment_end_exclusive": "2019-06-01", "shift_minutes": -120, "weeks": 20},
+                {"segment_start": "2019-06-01", "segment_end_exclusive": "2019-06-15", "shift_minutes": -180, "weeks": 2},
+                {"segment_start": "2019-06-15", "segment_end_exclusive": "2020-01-01", "shift_minutes": -120, "weeks": 28},
+            ]
+        )
+        persistent = stage177c.collapse_isolated_transient_segments(
+            segments, max_transient_weeks=1
+        )
+        self.assertEqual(len(persistent), 3)
+
+    def test_decision_passes_with_persistent_transition_profile(self):
+        selected = {
+            "all": {
+                "overlap_pct_of_amarkets": 99.9,
+                "return_corr_60m": 0.997,
+                "median_abs_close_bps": 0.32,
+            },
+            "holdout": {"return_corr_60m": 0.999},
+        }
+        h1 = {"return_corr_1bar": 0.995}
+        agreement = {"agreement_pct": 99.6}
+        thresholds = {
+            "min_overlap_pct": 95.0,
+            "min_all_return_corr_60m": 0.90,
+            "min_holdout_return_corr_60m": 0.88,
+            "max_median_abs_close_bps": 5.0,
+            "min_h1_derived_return_corr": 0.90,
+            "min_weekly_agreement_pct": 85.0,
+            "max_transitions_per_year": 3,
+        }
+        decision, failures = stage177c.decision_from_metrics(
+            selected,
+            h1,
+            agreement,
+            {"max_transitions_in_year": 2},
+            thresholds,
+        )
+        self.assertEqual(decision, "PASS_AMARKETS_DST_AWARE_UTC_CONTRACT")
+        self.assertEqual(failures, [])
+
     def test_sqlite_writer_is_separate_and_complete(self):
         m5 = pd.DataFrame(
             {

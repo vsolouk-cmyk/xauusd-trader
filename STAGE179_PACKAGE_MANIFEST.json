@@ -1,0 +1,15 @@
+{
+  "stage": "179",
+  "files": [
+    "app/stage179_selected_candidate_commercial_audit.py",
+    "configs/stage179_selected_candidate_commercial_audit.json",
+    "tests/test_stage179_selected_candidate_commercial_audit.py",
+    "docs/STAGE179_SELECTED_CANDIDATE_COMMERCIAL_AUDIT.md"
+  ],
+  "order_execution_code": false,
+  "expected_inputs": [
+    "reports/stage178_commercial_edge_decision_sprint/stage178_summary.json",
+    "reports/stage178_commercial_edge_decision_sprint/stage178_selected_holdout_trades.csv",
+    "reports/stage178_commercial_edge_decision_sprint/stage178_holdout_baselines.csv"
+  ]
+}

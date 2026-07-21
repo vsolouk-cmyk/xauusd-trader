@@ -1,0 +1,27 @@
+{
+  "artifact_patterns": {
+    "h1": "stage177a-dukascopy-h1_full-bid-*.zip",
+    "m5": "stage177a-dukascopy-m5_full-bid-*.zip"
+  },
+  "artifact_search_directories": [
+    "~/Downloads",
+    "."
+  ],
+  "amarkets_h1_candidates": [
+    "~/Downloads/amarkets_xauusd_1h.csv",
+    "~/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_1h.csv",
+    "~/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_h1.csv"
+  ],
+  "amarkets_m5_candidates": [
+    "~/Downloads/amarkets_xauusd_5m.csv",
+    "~/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+    "~/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_m5.csv"
+  ],
+  "canonical_contract": {
+    "before_m5_start": "direct_dukascopy_h1",
+    "inside_m5_coverage": "h1_derived_from_dukascopy_m5",
+    "execution_reference": "amarkets",
+    "research_only": true,
+    "execution_allowed": false
+  }
+}

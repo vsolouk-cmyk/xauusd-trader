@@ -18,7 +18,10 @@
   "hard_drawdown_kill_switch_equity_pct": 8.0,
   "normal_execution_cost_floor_bps": 3.0,
   "severe_execution_cost_floor_bps": 4.5,
-  "stress_cost_bps": [8.0, 10.0],
+  "stress_cost_bps": [
+    8.0,
+    10.0
+  ],
   "observed_entry_spread_guard_bps": 3.0764778059487488,
   "required_execution_coverage": 0.9,
   "expected_historical_signals": 168,
@@ -62,5 +65,16 @@
     ]
   },
   "ledger_path": "data/controlled_paper/xauusd_controlled_paper.sqlite",
-  "report_dir": "reports/xauusd_controlled_paper"
+  "report_dir": "reports/xauusd_controlled_paper",
+  "spread_source": {
+    "time_contract_globs": [
+      "reports/**/stage177c_time_contract.json",
+      "data/**/stage177c_time_contract.json"
+    ],
+    "csv_candidates": [
+      "~/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+      "~/Downloads/amarkets_xauusd_5m.csv"
+    ],
+    "maximum_latest_lag_minutes": 15.0
+  }
 }

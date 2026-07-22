@@ -1,12 +1,19 @@
-# XAUUSD Integrated Controlled-Paper Package
+# XAUUSD Controlled-Paper Contract/Test-Isolation Repair
 
-This package operationalizes the frozen `logistic__direction_24h` candidate as a **paper-log-only** process.
+This overlay repairs two defects exposed by the first spread-source repair:
 
-It does not retrain the model, change the `0.60` threshold, import a broker API, or send an order. It verifies the frozen model and contract hashes against the latest Stage180 summary, consumes only the frozen Stage180 observation, and applies exact aligned-H1 row semantics:
+1. the unit fixture inherited the production `~/Downloads/...` spread candidates and could read the user's real AMarkets file, so the deliberate missing-file test was not isolated;
+2. the Stage177C contract gate used brittle raw-string equality and did not report the decision/semantic evidence needed to diagnose a valid contract.
 
-- entry: open of row `i+1`;
-- exit: close of row `i+24`.
+The repaired logger now:
 
-The package remains fail-closed until its bounded audit identifies exactly 22 missing historical executions and confirms that they are pre-operational or bounded historical M5-coverage gaps rather than a current-period systematic defect.
+- pins every unit fixture to its own temporary spread path;
+- validates the Stage177C contract from exact substantive semantics;
+- normalizes harmless decision/calendar/contract casing and whitespace;
+- requires the locked `-120/-180` EU mapping, exact timestamp-shift semantics, and `selection_used_holdout=false`;
+- retains fail-closed rejection for any actual shift, calendar, semantic, or holdout mismatch;
+- preserves the AMarkets raw-CSV parity audit, spread guard, Stage180 frozen observation contract, and no-broker boundary.
+
+No candidate, model, threshold, H1 entry/exit rule, risk limit, event guard, ledger data, or order authorization is changed.
 
 See `docs/XAUUSD_CONTROLLED_PAPER_RUNBOOK.md` for installation and operation.

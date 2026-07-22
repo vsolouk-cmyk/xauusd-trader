@@ -9,6 +9,7 @@ idempotent SQLite/CSV/JSON paper ledger.
 from __future__ import annotations
 
 import argparse
+import calendar
 import csv
 import hashlib
 import importlib.util
@@ -25,7 +26,7 @@ from pathlib import Path
 from typing import Any, Iterable, Iterator, Mapping, Sequence
 
 UTC = timezone.utc
-PROGRAM_VERSION = "XAUUSD_CONTROLLED_PAPER_V1"
+PROGRAM_VERSION = "XAUUSD_CONTROLLED_PAPER_V1_2_CONTRACT_AND_TEST_ISOLATION_REPAIR"
 ALLOWED_STAGE180_DECISIONS = {
     "STAGE180_FROZEN_MODEL_SHADOW_ACTIVE_NO_ORDER",
     "STAGE180_WAITING_FOR_POST_ACTIVATION_COMPLETE_BAR",
@@ -288,6 +289,9 @@ class PreflightContext:
     market: "MarketDatabase"
     h1: MarketTable
     m5: MarketTable
+    spread_provider: "SpreadProvider"
+    spread_source_path: Path
+    spread_time_contract_path: Path | None
     checks: dict[str, Any]
 
 
@@ -523,6 +527,332 @@ class MarketDatabase:
         dedup = {bar.timestamp_ms: bar for bar in bars}
         return [dedup[key] for key in sorted(dedup)]
 
+    def latest_timestamp_ms(self, spec: MarketTable) -> int:
+        sql = (
+            f"SELECT {quote_ident(spec.timestamp_col)} AS ts FROM {quote_ident(spec.table)} "
+            f"{spec.where_sql} ORDER BY {quote_ident(spec.timestamp_col)} DESC LIMIT 1"
+        )
+        row = self.conn.execute(sql, spec.where_params).fetchone()
+        if row is None:
+            raise ControlledPaperError(f"market table is empty: {spec.table}")
+        return timestamp_ms(row[0])
+
+
+@dataclass(frozen=True)
+class SpreadBucket:
+    source: str
+    row_count: int
+    first_spread_points: float | None
+    first_timestamp_ms: int | None
+    last_timestamp_ms: int | None
+
+
+class SpreadProvider:
+    source_path: Path
+
+    def bucket(self, start_ms: int, end_ms: int) -> SpreadBucket:
+        raise NotImplementedError
+
+    def describe(self) -> dict[str, Any]:
+        raise NotImplementedError
+
+
+class DatabaseSpreadProvider(SpreadProvider):
+    def __init__(self, market: MarketDatabase, spec: MarketTable):
+        if spec.spread_col is None:
+            raise ControlledPaperError("database spread provider requires a spread column")
+        self.market = market
+        self.spec = spec
+        self.source_path = market.path
+
+    def bucket(self, start_ms: int, end_ms: int) -> SpreadBucket:
+        rows = self.market.bucket(self.spec, start_ms, end_ms)
+        first = next((row.spread_points for row in rows if row.spread_points is not None and row.spread_points >= 0), None)
+        return SpreadBucket(
+            source="ALIGNED_DB_M5_SPREAD",
+            row_count=len(rows),
+            first_spread_points=first,
+            first_timestamp_ms=rows[0].timestamp_ms if rows else None,
+            last_timestamp_ms=rows[-1].timestamp_ms if rows else None,
+        )
+
+    def describe(self) -> dict[str, Any]:
+        return {
+            "kind": "ALIGNED_DB_M5_SPREAD",
+            "path": str(self.source_path),
+            "table": self.spec.table,
+            "spread_column": self.spec.spread_col,
+            "pass": True,
+        }
+
+
+def last_sunday(year: int, month: int) -> datetime:
+    day = calendar.monthrange(year, month)[1]
+    dt = datetime(year, month, day, tzinfo=UTC)
+    return dt - timedelta(days=(dt.weekday() + 1) % 7)
+
+
+def eu_dst_active_utc(dt_utc: datetime) -> bool:
+    dt_utc = dt_utc.astimezone(UTC)
+    start = last_sunday(dt_utc.year, 3).replace(hour=1)
+    end = last_sunday(dt_utc.year, 10).replace(hour=1)
+    return start <= dt_utc < end
+
+
+def parse_amarkets_naive(date_value: Any, time_value: Any) -> datetime:
+    text = f"{str(date_value).strip()} {str(time_value).strip()}".replace("/", ".").replace("-", ".")
+    for fmt in ("%Y.%m.%d %H:%M:%S", "%Y.%m.%d %H:%M"):
+        try:
+            return datetime.strptime(text, fmt)
+        except ValueError:
+            continue
+    raise ValueError(f"unparseable AMarkets date/time: {date_value!r} {time_value!r}")
+
+
+def broker_naive_to_utc(naive: datetime, standard_shift_minutes: int, dst_shift_minutes: int) -> datetime:
+    if naive.tzinfo is not None:
+        naive = naive.replace(tzinfo=None)
+    dst_candidate = (naive + timedelta(minutes=dst_shift_minutes)).replace(tzinfo=UTC)
+    if eu_dst_active_utc(dst_candidate):
+        return dst_candidate
+    return (naive + timedelta(minutes=standard_shift_minutes)).replace(tzinfo=UTC)
+
+
+def detect_delimiter(header_line: str) -> str:
+    counts = {"\t": header_line.count("\t"), ",": header_line.count(","), ";": header_line.count(";")}
+    delimiter = max(counts, key=counts.get)
+    if counts[delimiter] <= 0:
+        raise ControlledPaperError("cannot detect AMarkets M5 CSV delimiter")
+    return delimiter
+
+
+def normalized_header(value: str) -> str:
+    return value.strip().strip("<>").strip().lower().replace(" ", "_")
+
+
+def tail_lines(path: Path, count: int = 600, block_size: int = 65536) -> list[str]:
+    with path.open("rb") as handle:
+        handle.seek(0, os.SEEK_END)
+        position = handle.tell()
+        chunks: list[bytes] = []
+        newline_count = 0
+        while position > 0 and newline_count <= count:
+            take = min(block_size, position)
+            position -= take
+            handle.seek(position)
+            chunk = handle.read(take)
+            chunks.append(chunk)
+            newline_count += chunk.count(b"\n")
+    text = b"".join(reversed(chunks)).decode("utf-8-sig", errors="replace")
+    return [line for line in text.splitlines() if line.strip()][-count:]
+
+
+class AMarketsCsvSpreadProvider(SpreadProvider):
+    REQUIRED = ("date", "time", "open", "high", "low", "close", "spread")
+
+    def __init__(
+        self,
+        path: Path,
+        *,
+        standard_shift_minutes: int,
+        dst_shift_minutes: int,
+        dst_calendar: str,
+    ):
+        self.source_path = path.resolve()
+        self.standard_shift_minutes = int(standard_shift_minutes)
+        self.dst_shift_minutes = int(dst_shift_minutes)
+        self.dst_calendar = str(dst_calendar).upper()
+        if self.dst_calendar != "EU":
+            raise ControlledPaperError(f"unsupported spread-source DST calendar: {dst_calendar}")
+        if not self.source_path.is_file():
+            raise ControlledPaperError(f"AMarkets M5 spread source missing: {self.source_path}")
+        with self.source_path.open("r", encoding="utf-8-sig", newline="") as handle:
+            header_line = handle.readline().rstrip("\r\n")
+        self.delimiter = detect_delimiter(header_line)
+        raw_headers = next(csv.reader([header_line], delimiter=self.delimiter))
+        self.header_map = {normalized_header(value): value for value in raw_headers}
+        missing = [name for name in self.REQUIRED if name not in self.header_map]
+        if missing:
+            raise ControlledPaperError(f"AMarkets M5 spread source missing columns: {missing}")
+
+    def _parse_row(self, row: Mapping[str, Any]) -> tuple[int, float, float] | None:
+        try:
+            naive = parse_amarkets_naive(row[self.header_map["date"]], row[self.header_map["time"]])
+            dt_utc = broker_naive_to_utc(naive, self.standard_shift_minutes, self.dst_shift_minutes)
+            spread = float(row[self.header_map["spread"]])
+            close = float(row[self.header_map["close"]])
+        except (KeyError, TypeError, ValueError, OverflowError):
+            return None
+        if not math.isfinite(spread) or spread < 0 or not math.isfinite(close) or close <= 0:
+            return None
+        return int(round(dt_utc.timestamp() * 1000.0)), spread, close
+
+    def _tail_records(self, count: int = 600) -> list[tuple[int, float, float]]:
+        with self.source_path.open("r", encoding="utf-8-sig", newline="") as handle:
+            header_line = handle.readline().rstrip("\r\n")
+        lines = tail_lines(self.source_path, count=count)
+        if lines and lines[0].lstrip("\ufeff") == header_line.lstrip("\ufeff"):
+            lines = lines[1:]
+        reader = csv.DictReader([header_line, *lines], delimiter=self.delimiter)
+        records = [parsed for row in reader if (parsed := self._parse_row(row)) is not None]
+        dedup = {record[0]: record for record in records}
+        return [dedup[key] for key in sorted(dedup)]
+
+    def audit_against_market(self, market: MarketDatabase, m5: MarketTable, max_lag_minutes: float) -> dict[str, Any]:
+        records = self._tail_records(600)
+        if len(records) < 60:
+            raise ControlledPaperError(f"insufficient valid tail rows in AMarkets M5 spread source: {len(records)}")
+        timestamps = [record[0] for record in records]
+        diffs = [(b - a) / 1000.0 for a, b in zip(timestamps, timestamps[1:]) if 0 < b - a <= 86400000]
+        cadence = float(statistics.median(diffs)) if diffs else float("inf")
+        start_ms, end_ms = timestamps[0], timestamps[-1] + 300000
+        aligned = {bar.timestamp_ms: bar for bar in market.bucket(m5, start_ms, end_ms)}
+        overlap = []
+        for ts, _, close in records:
+            bar = aligned.get(ts)
+            if bar is not None:
+                overlap.append(abs(close / bar.close - 1.0) * 10000.0)
+        latest_aligned = market.latest_timestamp_ms(m5)
+        latest_source = timestamps[-1]
+        lag_minutes = abs(latest_source - latest_aligned) / 60000.0
+        median_close_diff_bps = float(statistics.median(overlap)) if overlap else float("inf")
+        audit = {
+            "kind": "AMARKETS_M5_RAW_CSV_SPREAD",
+            "path": str(self.source_path),
+            "delimiter": "TAB" if self.delimiter == "\t" else self.delimiter,
+            "standard_shift_minutes": self.standard_shift_minutes,
+            "dst_shift_minutes": self.dst_shift_minutes,
+            "dst_calendar": self.dst_calendar,
+            "tail_valid_rows": len(records),
+            "tail_cadence_seconds": cadence,
+            "tail_overlap_rows": len(overlap),
+            "tail_median_close_diff_bps": median_close_diff_bps,
+            "latest_source_utc": iso_utc(datetime.fromtimestamp(latest_source / 1000.0, tz=UTC)),
+            "latest_aligned_m5_utc": iso_utc(datetime.fromtimestamp(latest_aligned / 1000.0, tz=UTC)),
+            "latest_lag_minutes": lag_minutes,
+        }
+        audit["checks"] = {
+            "cadence_is_m5": abs(cadence - 300.0) <= 30.0,
+            "minimum_tail_overlap": len(overlap) >= 50,
+            "close_parity": median_close_diff_bps <= 0.10,
+            "latest_alignment": lag_minutes <= float(max_lag_minutes),
+        }
+        audit["pass"] = all(audit["checks"].values())
+        if not audit["pass"]:
+            raise ControlledPaperError(f"AMarkets M5 spread source parity failed: {audit}")
+        return audit
+
+    def bucket(self, start_ms: int, end_ms: int) -> SpreadBucket:
+        count = 0
+        first_spread: float | None = None
+        first_ts: int | None = None
+        last_ts: int | None = None
+        with self.source_path.open("r", encoding="utf-8-sig", newline="") as handle:
+            reader = csv.DictReader(handle, delimiter=self.delimiter)
+            for row in reader:
+                parsed = self._parse_row(row)
+                if parsed is None:
+                    continue
+                ts, spread, _ = parsed
+                if ts < start_ms:
+                    continue
+                if ts >= end_ms:
+                    break
+                count += 1
+                if first_spread is None:
+                    first_spread = spread
+                    first_ts = ts
+                last_ts = ts
+        return SpreadBucket(
+            source="AMARKETS_M5_RAW_CSV_SPREAD",
+            row_count=count,
+            first_spread_points=first_spread,
+            first_timestamp_ms=first_ts,
+            last_timestamp_ms=last_ts,
+        )
+
+    def describe(self) -> dict[str, Any]:
+        return {
+            "kind": "AMARKETS_M5_RAW_CSV_SPREAD",
+            "path": str(self.source_path),
+            "standard_shift_minutes": self.standard_shift_minutes,
+            "dst_shift_minutes": self.dst_shift_minutes,
+            "dst_calendar": self.dst_calendar,
+            "pass": True,
+        }
+
+
+def normalized_contract_token(value: Any) -> str:
+    return str(value or "").strip().upper()
+
+
+def validate_spread_time_contract(time_contract: Mapping[str, Any]) -> dict[str, Any]:
+    """Validate Stage177C by substantive semantics, not brittle raw-string equality.
+
+    The primary route requires the canonical PASS decision.  A secondary route
+    is allowed only when the JSON carries the exact Stage177C semantics used to
+    derive the broker-to-UTC mapping.  This keeps the bridge fail-closed while
+    tolerating harmless whitespace/casing or legacy omission of the decision
+    field.
+    """
+    try:
+        standard_shift = int(time_contract.get("standard_shift_minutes"))
+        dst_shift = int(time_contract.get("dst_shift_minutes"))
+    except (TypeError, ValueError):
+        standard_shift = None
+        dst_shift = None
+
+    contract_token = normalized_contract_token(time_contract.get("contract"))
+    calendar_token = normalized_contract_token(time_contract.get("dst_calendar"))
+    decision_token = normalized_contract_token(time_contract.get("decision"))
+    stage_token = normalized_contract_token(time_contract.get("stage"))
+    shift_semantics = " ".join(str(time_contract.get("shift_semantics") or "").strip().lower().split())
+    selection_used_holdout = time_contract.get("selection_used_holdout")
+
+    structural_checks = {
+        "contract": contract_token == "EU_DST_GMT_OFFSET_PAIR",
+        "dst_calendar": calendar_token == "EU",
+        "standard_shift_minutes": standard_shift == -120,
+        "dst_shift_minutes": dst_shift == -180,
+        "shift_semantics": shift_semantics == "timestamp_utc = timestamp_naive + shift_minutes",
+        "selection_no_holdout": selection_used_holdout is False,
+    }
+    canonical_decision = decision_token == "PASS_AMARKETS_DST_AWARE_UTC_CONTRACT"
+    semantic_evidence = stage_token in {"177C", "STAGE177C"}
+    passed = all(structural_checks.values()) and (canonical_decision or semantic_evidence)
+    return {
+        "pass": passed,
+        "evidence_route": (
+            "CANONICAL_PASS_DECISION" if canonical_decision
+            else "EXACT_STAGE177C_SEMANTICS" if semantic_evidence
+            else "NONE"
+        ),
+        "checks": {
+            **structural_checks,
+            "canonical_pass_decision": canonical_decision,
+            "exact_stage177c_semantics": semantic_evidence,
+        },
+        "contract": time_contract.get("contract"),
+        "decision": time_contract.get("decision"),
+        "stage": time_contract.get("stage"),
+        "shift_semantics": time_contract.get("shift_semantics"),
+        "selection_used_holdout": selection_used_holdout,
+        "standard_shift_minutes": time_contract.get("standard_shift_minutes"),
+        "dst_shift_minutes": time_contract.get("dst_shift_minutes"),
+        "dst_calendar": time_contract.get("dst_calendar"),
+    }
+
+
+def stage180_m5_source_candidates(stage180: Mapping[str, Any]) -> list[str]:
+    found: list[str] = []
+    for value in deep_values(stage180, "sources"):
+        if isinstance(value, list):
+            for item in value:
+                text = str(item)
+                if "5m" in Path(text).name.lower() or "m5" in Path(text).name.lower():
+                    found.append(text)
+    return found
+
 
 class EventGuard:
     def __init__(self, root: Path, config: Mapping[str, Any]):
@@ -754,14 +1084,44 @@ def validate_preflight(root: Path, config: dict[str, Any]) -> PreflightContext:
         aligned_candidates.insert(0, str(stage180["aligned_db"]))
     aligned_db_path = resolve_existing(root, aligned_candidates)
     market = MarketDatabase(aligned_db_path)
+    spread_time_contract_path: Path | None = None
     try:
         h1, m5, diagnostics = market.discover()
         checks["market_schema_introspection"] = diagnostics
         checks["h1_table"] = asdict(h1)
         checks["m5_table"] = asdict(m5)
-        checks["m5_spread_present"] = m5.spread_col is not None
-        if m5.spread_col is None:
-            raise ControlledPaperError("M5 spread column missing; spread guard cannot operate")
+        checks["m5_spread_present_in_aligned_db"] = m5.spread_col is not None
+        if m5.spread_col is not None:
+            spread_provider: SpreadProvider = DatabaseSpreadProvider(market, m5)
+            spread_source_path = aligned_db_path
+            checks["spread_source"] = spread_provider.describe()
+        else:
+            spread_cfg = dict(config.get("spread_source", {}))
+            spread_time_contract_path = newest_glob(root, spread_cfg.get("time_contract_globs", []))
+            time_contract = load_json(spread_time_contract_path)
+            contract_audit = validate_spread_time_contract(time_contract)
+            checks["spread_time_contract"] = {
+                "path": str(spread_time_contract_path),
+                **contract_audit,
+            }
+            if not contract_audit["pass"]:
+                raise ControlledPaperError(f"spread-source time contract mismatch: {checks['spread_time_contract']}")
+            spread_candidates = []
+            if time_contract.get("source_amarkets_m5"):
+                spread_candidates.append(str(time_contract["source_amarkets_m5"]))
+            spread_candidates.extend(stage180_m5_source_candidates(stage180))
+            spread_candidates.extend(spread_cfg.get("csv_candidates", []))
+            spread_source_path = resolve_existing(root, spread_candidates)
+            csv_provider = AMarketsCsvSpreadProvider(
+                spread_source_path,
+                standard_shift_minutes=int(time_contract["standard_shift_minutes"]),
+                dst_shift_minutes=int(time_contract["dst_shift_minutes"]),
+                dst_calendar=str(time_contract["dst_calendar"]),
+            )
+            checks["spread_source"] = csv_provider.audit_against_market(
+                market, m5, float(spread_cfg.get("maximum_latest_lag_minutes", 15.0))
+            )
+            spread_provider = csv_provider
     except Exception:
         market.close()
         raise
@@ -781,6 +1141,9 @@ def validate_preflight(root: Path, config: dict[str, Any]) -> PreflightContext:
         market=market,
         h1=h1,
         m5=m5,
+        spread_provider=spread_provider,
+        spread_source_path=spread_source_path,
+        spread_time_contract_path=spread_time_contract_path,
         checks=checks,
     )
 
@@ -1314,10 +1677,7 @@ def iso_week(dt: datetime) -> str:
     return f"{year}-W{week:02d}"
 
 
-def first_spread_bps(m5_rows: Sequence[Bar], point_size: float, entry_price: float) -> tuple[float | None, float | None]:
-    if not m5_rows:
-        return None, None
-    spread_points = m5_rows[0].spread_points
+def first_spread_bps(spread_points: float | None, point_size: float, entry_price: float) -> tuple[float | None, float | None]:
     if spread_points is None or spread_points < 0:
         return spread_points, None
     return spread_points, spread_points * point_size / entry_price * 10000.0
@@ -1372,9 +1732,23 @@ def advance_waiting(
         if len(m5_rows) < int(config["minimum_m5_rows_per_complete_h1_bucket"]):
             # The H1 entry row is not execution-complete yet. Keep pending rather than infer a spread.
             continue
-        spread_points, spread_bps = first_spread_bps(m5_rows, float(config["point_size"]), entry_bar.open)
+        spread_bucket = context.spread_provider.bucket(entry_bar.timestamp_ms, entry_bar.timestamp_ms + 3600 * 1000)
+        if spread_bucket.row_count < int(config["minimum_m5_rows_per_complete_h1_bucket"]):
+            ledger.block(signal_key, "ENTRY_SPREAD_BUCKET_INCOMPLETE_FAIL_CLOSED", {
+                "aligned_m5_rows": len(m5_rows),
+                "spread_source_rows": spread_bucket.row_count,
+                "spread_source": spread_bucket.source,
+            })
+            continue
+        spread_points, spread_bps = first_spread_bps(
+            spread_bucket.first_spread_points, float(config["point_size"]), entry_bar.open
+        )
         if spread_bps is None:
-            ledger.block(signal_key, "ENTRY_SPREAD_MISSING_FAIL_CLOSED", {"m5_rows": len(m5_rows)})
+            ledger.block(signal_key, "ENTRY_SPREAD_MISSING_FAIL_CLOSED", {
+                "aligned_m5_rows": len(m5_rows),
+                "spread_source_rows": spread_bucket.row_count,
+                "spread_source": spread_bucket.source,
+            })
             continue
         if spread_bps > float(config["observed_entry_spread_guard_bps"]):
             ledger.block(signal_key, "ENTRY_SPREAD_GUARD", {"entry_spread_bps": spread_bps, "limit_bps": config["observed_entry_spread_guard_bps"]})
@@ -1399,6 +1773,9 @@ def advance_waiting(
                 "event_guard": event_reason,
                 "event_detail": event_detail,
                 "entry_m5_rows": len(m5_rows),
+                "spread_source_rows": spread_bucket.row_count,
+                "spread_source": spread_bucket.source,
+                "spread_source_path": str(context.spread_source_path),
                 "broker_order_sent": False,
             },
         })
@@ -1538,6 +1915,7 @@ def export_reports(root: Path, config: Mapping[str, Any], ledger: Ledger, audit:
         "stage180_summary": str(context.stage180_path),
         "stage180_decision": context.stage180.get("decision"),
         "aligned_db": str(context.aligned_db_path),
+        "spread_source": context.spread_provider.describe(),
         "missing_coverage_audit": dict(audit),
         "run_result": dict(run_result),
         "counts": {
@@ -1599,6 +1977,8 @@ def execute(root: Path, config_path: Path | None, command: str) -> tuple[int, di
                 "frozen_contract": str(context.frozen_contract_path),
                 "frozen_model": str(context.frozen_model_path),
                 "aligned_db": str(context.aligned_db_path),
+                "spread_source": str(context.spread_source_path),
+                "spread_time_contract": str(context.spread_time_contract_path) if context.spread_time_contract_path else None,
             },
             "hashes": {
                 "stage180_summary": sha256_file(context.stage180_path),
@@ -1607,6 +1987,8 @@ def execute(root: Path, config_path: Path | None, command: str) -> tuple[int, di
                 "frozen_contract": sha256_file(context.frozen_contract_path),
                 "frozen_model": sha256_file(context.frozen_model_path),
                 "aligned_db": sha256_file(context.aligned_db_path),
+                "spread_source": sha256_file(context.spread_source_path),
+                "spread_time_contract": sha256_file(context.spread_time_contract_path) if context.spread_time_contract_path else None,
             },
             "missing_coverage_audit": audit,
             "broker_order_allowed": False,

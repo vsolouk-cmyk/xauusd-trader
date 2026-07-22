@@ -1,26 +1,52 @@
-# XAUUSD Controlled-Paper QA Report
+# QA Report — Controlled-Paper Contract/Test-Isolation Repair
 
-## Build environment
+## Defects reproduced
 
-- Build interpreter: Python 3.13.5
-- Python 3.14 interpreter in build container: unavailable
-- GitHub Actions workflow includes an explicit Python 3.14 matrix job
+### 1. Unit-test environment leak
 
-## Checks completed before delivery
+The missing-raw-CSV regression fixture retained production fallback candidates such as `~/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv`. On the user's Mac, that real file exists, so the test did not exercise the intended missing-file branch and instead compared a current 2026 CSV against the fixture's 2015 SQLite data.
 
-- Clean source compilation: PASS
-- Seven unit/regression tests: PASS
-- Exact H1 row-position entry/exit (`i+1`, `i+24`): PASS
-- Bounded missing-coverage classification (`168 / 146 / 22`): PASS on synthetic contract fixture
-- SQLite schema/cadence introspection: PASS
-- M5 observed-spread guard: PASS
-- Required event context absent → fail closed: PASS
-- Missing project dependencies → fail closed: PASS
-- Idempotent frozen Stage180 observation ingestion: PASS
-- Dynamic import with `sys.modules` registration before `exec_module`: PASS
-- Static broker-execution dependency scan: PASS
-- Clean ZIP extraction, compilation, and tests: performed after ZIP creation
+### 2. Brittle Stage177C contract gate
 
-## Python 3.14 boundary
+The production Stage177C artifact contains the correct EU DST contract, shifts, timestamp semantics, PASS decision, and no-holdout selection. The bridge nevertheless used a brittle raw decision comparison and emitted insufficient diagnostics.
 
-The exact dynamic-import regression is included in `tests/test_xauusd_controlled_paper.py`. The build container does not provide a Python 3.14 executable, so local execution used Python 3.13.5. The included manual GitHub Actions workflow executes the same suite on both Python 3.13 and Python 3.14.
+## Repair
+
+- Unit fixtures now override `spread_source.csv_candidates` with one temporary fixture-only path.
+- No unit test can fall through to the user's home or Downloads directories.
+- Stage177C validation now checks substantive fields:
+  - `contract = EU_DST_GMT_OFFSET_PAIR`
+  - `dst_calendar = EU`
+  - `standard_shift_minutes = -120`
+  - `dst_shift_minutes = -180`
+  - `shift_semantics = timestamp_utc = timestamp_naive + shift_minutes`
+  - `selection_used_holdout = false`
+  - canonical PASS decision or exact Stage177C identity
+- Harmless casing and surrounding whitespace are normalized.
+- Diagnostics now include decision, stage, shift semantics, no-holdout state, individual checks, and evidence route.
+- Actual semantic mismatch remains fail-closed.
+
+## Checks executed
+
+```text
+Python source compilation                              PASS
+Missing-file fixture isolation                         PASS
+No fallback to real ~/Downloads during unit tests      PASS
+Exact Stage177C production-contract semantics           PASS
+Decision casing/whitespace normalization               PASS
+Invalid DST shift fail-closed                          PASS
+Aligned DB without spread + raw CSV regression         PASS
+Exact i+1 / i+24 semantics                             PASS
+Raw spread guard high-spread block                     PASS
+One-hour source misalignment fail-closed               PASS
+EU DST winter/summer mapping                           PASS
+Missing event context fail-closed                      PASS
+No-signal idempotency                                  PASS
+Python 3.14 dynamic-import regression                  PASS
+Static broker-execution dependency scan                PASS
+Unit/regression tests                                  11/11 PASS
+```
+
+## Remaining environment limitation
+
+Local execution used the available container Python. The included GitHub workflow retains Python 3.13 and 3.14 matrix validation.

@@ -1,47 +1,43 @@
 {
-  "package": "XAUUSD_CONTROLLED_PAPER_OPERATIONAL_FRESHNESS_GUARD",
-  "program_version": "XAUUSD_CONTROLLED_PAPER_V1_4_OPERATIONAL_FRESHNESS_GUARD",
-  "purpose": "Block all controlled-paper ledger mutation when Stage180 or AMarkets market data is stale during an expected-open XAUUSD market, while preserving all existing model, risk, spread, event, and no-broker boundaries.",
-  "files": [
-    {
-      "path": ".github/workflows/xauusd_controlled_paper_qa.yml",
-      "sha256": "7f6435abfaabc17319d847488520e20adcd3186d680459a28b93f261fcc4dba7",
-      "size_bytes": 687
+  "files": {
+    ".github/workflows/xauusd_controlled_paper_qa.yml": {
+      "sha256": "9b865f0862e1168795d878d02a732fd134c7afa9cd59dfe76b0b8492ad54fa82",
+      "size_bytes": 801
     },
-    {
-      "path": "QA_REPORT.md",
-      "sha256": "8ebd40d343cf160c50e198674de820d513de8ab7abb8c9d818273baebd380160",
-      "size_bytes": 1428
+    "QA_REPORT.md": {
+      "sha256": "af3f20060ae6a74a0dbdd4f07e446e27fb3ed7b5bd241ea11a28ef81556d4657",
+      "size_bytes": 2413
     },
-    {
-      "path": "README.md",
-      "sha256": "ef5bf7ca52fb37f48090346a07b5619a98a63b5cd476078a4e97d4934b65517d",
-      "size_bytes": 1283
+    "README.md": {
+      "sha256": "d6802576d3f20c85328df27a2c5d96e2ff8c41d76db796d1aedbee29f78c8588",
+      "size_bytes": 2283
     },
-    {
-      "path": "app/xauusd_controlled_paper.py",
-      "sha256": "aa75452600fc967e05cc444d7565ef9d38590d49a37dd4435dcda445892df568",
-      "size_bytes": 105833
+    "app/xauusd_controlled_paper_historical_replay.py": {
+      "sha256": "99d1f07818b9f579a79f1b3a0ba8aad198ee84bb287dbbbe21a5062c97555679",
+      "size_bytes": 51962
     },
-    {
-      "path": "config/xauusd_controlled_paper.json",
-      "sha256": "6ebdf0668744168f18f159eb4191a58f8d9885fa6ed6fe31fbf6cb2682ca11d2",
-      "size_bytes": 3096
+    "config/xauusd_controlled_paper_replay.json": {
+      "sha256": "ca75625bf305d908d38c1b62372b4cb0575919f8e6b4180990cae59835faae16",
+      "size_bytes": 629
     },
-    {
-      "path": "docs/XAUUSD_CONTROLLED_PAPER_RUNBOOK.md",
-      "sha256": "b4398d271100e4b9894b9e0724977873cc133195947611bbf465ee84a10a2d24",
-      "size_bytes": 5233
+    "docs/XAUUSD_CONTROLLED_PAPER_HISTORICAL_REPLAY_RUNBOOK.md": {
+      "sha256": "34e0f72a9fc743215e485cd19b3e4f6ba67e9bd289edff4013499068d6ddd478",
+      "size_bytes": 1727
     },
-    {
-      "path": "tests/__init__.py",
+    "tests/__init__.py": {
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "size_bytes": 0
     },
-    {
-      "path": "tests/test_xauusd_controlled_paper.py",
-      "sha256": "0ac03be7b6bfa2ec5aa932f1c48603f66482bc820e8b12888fbf2120652a7fd9",
-      "size_bytes": 25704
+    "tests/test_xauusd_controlled_paper_historical_replay.py": {
+      "sha256": "0c474538def0d1d0713e397c8af5173f14ecd4d4e2fb1bd2aafe4ad68545540c",
+      "size_bytes": 20591
     }
-  ]
+  },
+  "forensic_source_hashes": {
+    "app/commercial_closure_sprint.py": "1c114d624fa56115c92a0bb1ac270c05c5ca55cea4c96a122bde0bef53ceddcc",
+    "reports/commercial_closure_sprint/commercial_closure_execution_ledger.csv": "7d2bb519a280e09136afc7779d953206bde556cb6a2671a051d079fb121c2b5b",
+    "reports/commercial_closure_sprint/commercial_closure_summary.json": "878c01d0495a951b4bf709ede70bafaeb86a2b7e3231fd6c1de5fc685c5be99f"
+  },
+  "package": "XAUUSD_CONTROLLED_PAPER_HISTORICAL_REPLAY_SOURCE_PROVEN_COST_CONTRACT_REPAIR",
+  "program": "XAUUSD_CONTROLLED_PAPER_HISTORICAL_ASOF_REPLAY_V5_SOURCE_PROVEN_COST_CONTRACT_REPAIR"
 }

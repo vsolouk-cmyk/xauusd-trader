@@ -1,22 +1,78 @@
-# XAUUSD Controlled-Paper Operational Freshness Guard
+# XAUUSD Historical-As-Of Replay — Source-Proven Cost Contract Repair
 
-This overlay repairs an operational safety gap discovered after the first successful controlled-paper run: the logger reported `CONTROLLED_PAPER_ACTIVE_PAPER_LOG_ONLY_NO_BROKER` even though the newest AMarkets data and Stage180 summary were several hours old.
+This overlay replaces the four speculative replay repairs with a contract taken
+from the actual Commercial Closure generator and validated against the actual
+168-row execution ledger supplied by the user.
 
-The repair adds a mandatory, non-disableable freshness gate. During an expected-open XAUUSD market, the logger blocks all ledger mutation unless:
+## Proven frozen formulas
 
-- the Stage180 summary is at most 180 minutes old;
-- the aligned H1 table is at most 180 minutes old;
-- the AMarkets spread source is at most 90 minutes old;
-- no required timestamp is more than 15 minutes in the future.
+Source: `app/commercial_closure_sprint.py`, lines 523–565 in the forensic input.
 
-During the conservative weekend/daily maintenance closure schedule, age limits are deferred because new bars are not expected, but future-clock anomalies remain blocking.
+```text
+side/gross:
+  gross = direction * (exit_close / entry_open - 1) * 10,000
 
-A stale run still writes `controlled_paper_summary.json`, with decision:
+stress 8:
+  m5_gross_bps - max(8.0, observed_spread_bps + 4.0)
 
-`CONTROLLED_PAPER_BLOCKED_STALE_MARKET_DATA_NO_INGEST`
+stress 10:
+  m5_gross_bps - max(10.0, observed_spread_bps + 6.0)
+```
 
-It does not insert signals, open positions, resolve positions, or alter risk state.
+The earlier V4 formula omitted the `+4` and `+6` slippage add-ons. That is why
+exactly four high-spread rows failed.
 
-No model, threshold, H1 row semantics, spread guard, event guard, risk limit, existing ledger state, or broker boundary is changed.
+## Real-artifact validation completed before packaging
 
-See `docs/XAUUSD_CONTROLLED_PAPER_RUNBOOK.md` for installation and operation.
+The supplied canonical artifacts were read directly:
+
+```text
+signals                 168
+evaluated               146
+missing                  22
+LONG                     55
+SHORT                    91
+spread-sensitive rows     4
+row-level cost errors      0
+commercial metric errors  0
+```
+
+All normal, severe, stress-8, and stress-10 aggregate metrics reproduced the
+saved `commercial_closure_summary.json` within floating-point precision.
+
+## Expected decision
+
+Because the current forward logger remains `LONG_ONLY` while the frozen
+commercial reference contains both LONG and SHORT trades, the expected replay
+result is:
+
+```text
+PASS_HISTORICAL_COMMERCIAL_REPLAY_BLOCK_FORWARD_POLICY_PARITY
+```
+
+This means historical replay is complete without forward waiting, but demo/live
+remain blocked until forward direction policy is reconciled.
+
+## Run
+
+```bash
+cd ~/Desktop/xauusd-trader
+
+python3 -m py_compile \
+  app/xauusd_controlled_paper.py \
+  app/xauusd_controlled_paper_historical_replay.py \
+  tests/test_xauusd_controlled_paper.py \
+  tests/test_xauusd_controlled_paper_historical_replay.py
+
+python3 -m unittest -v \
+  tests.test_xauusd_controlled_paper \
+  tests.test_xauusd_controlled_paper_historical_replay
+
+rm -f \
+  reports/xauusd_controlled_paper_replay/historical_asof_replay_summary.json \
+  reports/xauusd_controlled_paper_replay/historical_asof_replay_failure.json
+
+python3 app/xauusd_controlled_paper_historical_replay.py --root .
+```
+
+No broker, demo, or live order path is added.

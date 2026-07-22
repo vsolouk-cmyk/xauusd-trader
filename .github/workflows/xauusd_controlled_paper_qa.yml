@@ -3,29 +3,26 @@ name: XAUUSD Controlled Paper QA
 on:
   workflow_dispatch:
 
-permissions:
-  contents: read
-
 jobs:
   qa:
-    runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
         python-version: ["3.13", "3.14"]
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-
       - name: Compile
         run: |
-          python -m py_compile app/xauusd_controlled_paper.py tests/test_xauusd_controlled_paper.py
-
-      - name: Unit and regression tests
+          python -m py_compile \
+            app/xauusd_controlled_paper.py \
+            app/xauusd_controlled_paper_historical_replay.py \
+            tests/test_xauusd_controlled_paper.py \
+            tests/test_xauusd_controlled_paper_historical_replay.py
+      - name: Tests
         run: |
-          python -m unittest -v tests.test_xauusd_controlled_paper
+          python -m unittest -v \
+            tests.test_xauusd_controlled_paper \
+            tests.test_xauusd_controlled_paper_historical_replay

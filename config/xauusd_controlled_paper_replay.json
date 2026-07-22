@@ -1,0 +1,15 @@
+{
+  "execution_ledger": null,
+  "commercial_summary": null,
+  "aligned_db": "data/local/stage177c_amarkets_alignment/xauusd_amarkets_alignment.sqlite",
+  "report_dir": "reports/xauusd_controlled_paper_replay",
+  "replay_ledger": "data/controlled_paper_replay/xauusd_historical_asof_replay.sqlite",
+  "gross_parity_tolerance_bps": 0.25,
+  "price_parity_tolerance_bps": 0.10,
+  "net_parity_tolerance_bps": 0.01,
+  "commercial_metric_tolerance": 0.00001,
+  "historical_event_guard": {
+    "prefer_macro_context_db": true,
+    "reason": "A sparse event-list CSV cannot prove no-event coverage for every historical entry hour."
+  }
+}

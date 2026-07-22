@@ -1,0 +1,18 @@
+{
+  "stage178_summary": "reports/stage178_commercial_edge_decision_sprint/stage178_summary.json",
+  "stage179_summary": "reports/stage179_selected_candidate_commercial_audit/stage179_summary.json",
+  "model_contract": "data/local/stage178_commercial_edge_decision_sprint/stage178_selected_model_contract.json",
+  "model_candidates": [
+    "data/local/stage178_commercial_edge_decision_sprint/stage178_selected_model.pkl",
+    "data/local/stage178_commercial_edge_decision_sprint/stage178_selected_model.joblib"
+  ],
+  "stage178_app": "app/stage178_commercial_edge_decision_sprint.py",
+  "stage177c_time_contract": "reports/stage177c_amarkets_dst_contract/stage177c_time_contract.json",
+  "aligned_amarkets_db": "data/local/stage177c_amarkets_alignment/xauusd_amarkets_alignment.sqlite",
+  "aligned_h1_table": "amarkets_h1_from_m5_utc",
+  "minimum_m5_bar_count": 12,
+  "ledger_db": "data/local/stage180_frozen_model_shadow/stage180_shadow.sqlite",
+  "output_dir": "reports/stage180_frozen_model_shadow",
+  "frozen_alignment_refresh_script": "app/stage180_refresh_frozen_amarkets_alignment.py",
+  "frozen_alignment_refresh_report": "reports/stage180_frozen_model_shadow/stage180_frozen_alignment_refresh.json"
+}

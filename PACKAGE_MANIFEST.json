@@ -1,0 +1,75 @@
+{
+  "execution_boundary": {
+    "broker_api": false,
+    "demo_allowed": false,
+    "live_allowed": false,
+    "paper_log_only": true,
+    "retraining_allowed": false,
+    "threshold_tuning_allowed": false
+  },
+  "files": [
+    {
+      "path": ".github/workflows/xauusd_controlled_paper_qa.yml",
+      "sha256": "7f6435abfaabc17319d847488520e20adcd3186d680459a28b93f261fcc4dba7",
+      "size_bytes": 687
+    },
+    {
+      "path": "QA_REPORT.md",
+      "sha256": "0454c84ebe372bac790b9131e30030adedcbd7e235a8fbbb255b190169bfe049",
+      "size_bytes": 1250
+    },
+    {
+      "path": "README.md",
+      "sha256": "71ee951960ebf06de0da2bdf6e2203d7c45760995e9acc6a2f11ebc5f577dca6",
+      "size_bytes": 808
+    },
+    {
+      "path": "app/xauusd_controlled_paper.py",
+      "sha256": "f7d7f7af57d650f0af403e05f3ad12ebbb0270d187f6b2bd0975ccf7c0475d65",
+      "size_bytes": 76618
+    },
+    {
+      "path": "config/xauusd_controlled_paper.json",
+      "sha256": "44da4db67a660cf5a7570a4d99641392e7857d4e7f1d5474c352e57f2e46d417",
+      "size_bytes": 2221
+    },
+    {
+      "path": "data/controlled_paper/event_blackout.csv",
+      "sha256": "8080d0b61bc885c3fea90a071d1218032165fac789f0175cc3c26620b3dda7e2",
+      "size_bytes": 77
+    },
+    {
+      "path": "docs/XAUUSD_CONTROLLED_PAPER_RUNBOOK.md",
+      "sha256": "08de91cb78d4cc188c22812cfc0c796f9dc1479f03338df775628dce3f650747",
+      "size_bytes": 5175
+    },
+    {
+      "path": "tests/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "tests/test_xauusd_controlled_paper.py",
+      "sha256": "240c2e567d5287ef400375573fcfe1bd017789bbf6b54183d0e388b6585e51b2",
+      "size_bytes": 12797
+    }
+  ],
+  "locked_candidate": {
+    "candidate": "logistic__direction_24h",
+    "entry": "open of aligned H1 row i+1",
+    "exit": "close of aligned H1 row i+24",
+    "model": "logistic",
+    "target": "direction_24h",
+    "threshold": 0.6
+  },
+  "package": "XAUUSD_CONTROLLED_PAPER_INTEGRATED_PACKAGE",
+  "purpose": "Frozen Stage178/Stage180 controlled-paper logger with bounded missing-coverage audit",
+  "qa": {
+    "build_python": "3.13.5",
+    "local_python_3_14_available": false,
+    "python_3_14_workflow": ".github/workflows/xauusd_controlled_paper_qa.yml",
+    "status_before_clean_extract": "PASS",
+    "unit_regression_tests": 7
+  },
+  "version": 1
+}

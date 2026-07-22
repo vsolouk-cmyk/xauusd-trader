@@ -1,0 +1,14 @@
+{
+  "purpose": "repair execution horizon parity with Stage178 shift-based target",
+  "files": [
+    "app/commercial_closure_sprint.py",
+    "tests/test_commercial_closure_sprint.py",
+    "docs/COMMERCIAL_CLOSURE_H1_ROW_HORIZON_REPAIR.md"
+  ],
+  "gates_changed": false,
+  "candidate_changed": false,
+  "cost_model_changed": false,
+  "risk_model_changed": false,
+  "broker_order_code": false,
+  "prior_kill_valid": false
+}

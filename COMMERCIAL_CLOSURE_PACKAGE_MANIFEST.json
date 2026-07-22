@@ -1,0 +1,14 @@
+{
+  "purpose": "single bounded commercial-readiness decision",
+  "files": [
+    "app/commercial_closure_sprint.py",
+    "configs/commercial_closure_sprint.json",
+    "tests/test_commercial_closure_sprint.py",
+    "docs/COMMERCIAL_CLOSURE_SPRINT.md"
+  ],
+  "numbered_stage_created": false,
+  "model_retraining_for_discovery": false,
+  "hyperparameter_scan": false,
+  "broker_order_code": false,
+  "dukascopy_refresh_required_now": false
+}

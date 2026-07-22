@@ -1,0 +1,12 @@
+{
+  "stage": "180",
+  "files": [
+    "app/stage180_frozen_model_shadow.py",
+    "configs/stage180_frozen_model_shadow.json",
+    "tests/test_stage180_frozen_model_shadow.py",
+    "docs/STAGE180_FROZEN_MODEL_PARALLEL_SHADOW.md"
+  ],
+  "broker_order_code": false,
+  "model_retraining": false,
+  "threshold_tuning": false
+}

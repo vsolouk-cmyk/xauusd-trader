@@ -1,0 +1,42 @@
+{
+  "output_dir": "reports/commercial_closure_sprint",
+  "stage178_app": "app/stage178_commercial_edge_decision_sprint.py",
+  "stage177b_app": "app/stage177b_amarkets_crossfeed.py",
+  "stage177c_app": "app/stage177c_amarkets_dst_contract.py",
+  "stage178_config": "configs/stage178_commercial_edge_decision_sprint.json",
+  "stage178_summary": "reports/stage178_commercial_edge_decision_sprint/stage178_summary.json",
+  "stage179_summary": "reports/stage179_selected_candidate_commercial_audit/stage179_summary.json",
+  "stage178_holdout_trades": "reports/stage178_commercial_edge_decision_sprint/stage178_selected_holdout_trades.csv",
+  "aligned_amarkets_db": "data/local/stage177c_amarkets_alignment/xauusd_amarkets_alignment.sqlite",
+  "raw_amarkets_m5": "~/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+  "execution": {
+    "minimum_normal_cost_bps": 3.0,
+    "minimum_severe_cost_bps": 4.5,
+    "normal_slippage_bps": 0.5,
+    "severe_slippage_bps": 2.0,
+    "severe_spread_multiplier": 1.5
+  },
+  "bootstrap": {
+    "reps": 10000,
+    "block_length": 5,
+    "seed": 20260722
+  },
+  "risk": {
+    "target_q95_trade_loss_equity_pct": 0.5,
+    "maximum_bootstrap_drawdown_pct": 10.0,
+    "bootstrap_reps": 5000,
+    "block_length": 5,
+    "seed": 20260723
+  },
+  "gates": {
+    "minimum_execution_coverage": 0.9,
+    "minimum_trades": 120,
+    "minimum_normal_mean_bps": 1.0,
+    "minimum_severe_mean_bps": 0.0,
+    "minimum_profit_factor": 1.1,
+    "minimum_positive_period_share": 0.75,
+    "minimum_holdout_trades": 20,
+    "minimum_transfer_ratio": 0.5,
+    "maximum_year_share": 0.35
+  }
+}

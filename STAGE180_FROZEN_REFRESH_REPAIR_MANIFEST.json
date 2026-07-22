@@ -1,0 +1,14 @@
+{
+  "purpose": "repair Stage180 routine refresh after AMarkets history was extended to 2011",
+  "files": [
+    "app/stage180_refresh_frozen_amarkets_alignment.py",
+    "app/stage180_frozen_model_shadow.py",
+    "configs/stage180_frozen_model_shadow.json",
+    "tests/test_stage180_frozen_alignment_refresh.py",
+    "tests/test_stage180_frozen_model_shadow.py",
+    "docs/STAGE180_FROZEN_OPERATIONAL_ALIGNMENT_REFRESH.md"
+  ],
+  "full_stage177c_audit_per_refresh": false,
+  "dukascopy_required_for_routine_refresh": false,
+  "broker_order_code": false
+}

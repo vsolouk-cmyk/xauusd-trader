@@ -207,21 +207,62 @@ class Fixture:
             "demo_allowed": False,
             "live_allowed": False,
         })
-        ledger_path = report / "commercial_closure_ledger.csv"
+        ledger_path = report / "commercial_closure_execution_ledger.csv"
+        fieldnames = [
+            "timestamp", "dt", "source_period", "fold", "direction", "probability_up",
+            "resolution_hours", "research_gross_bps", "horizon_semantics",
+            "entry_bucket_timestamp", "exit_bucket_timestamp", "entry_bucket_utc",
+            "exit_bucket_utc", "status", "m5_gross_bps",
+            "gross_transfer_difference_bps", "entry_open", "exit_close",
+            "observed_spread_bps", "normal_execution_cost_bps",
+            "severe_execution_cost_bps", "normal_net_bps", "severe_net_bps",
+            "stress_8bps_net_bps", "stress_10bps_net_bps",
+        ]
         with ledger_path.open("w", newline="", encoding="utf-8") as handle:
-            writer = csv.DictWriter(handle, fieldnames=["signal_dt", "execution_status", "normal_net_bps"])
+            writer = csv.DictWriter(handle, fieldnames=fieldnames)
             writer.writeheader()
             for i in range(22):
+                signal_dt = datetime(2014, 1, 1, tzinfo=UTC) + timedelta(hours=i)
                 writer.writerow({
-                    "signal_dt": (datetime(2014, 1, 1, tzinfo=UTC) + timedelta(hours=i)).isoformat(),
-                    "execution_status": "MISSING_EXECUTION_COVERAGE",
-                    "normal_net_bps": "",
+                    "timestamp": signal_dt.isoformat(),
+                    "dt": signal_dt.isoformat(),
+                    "source_period": "pre_operational",
+                    "fold": 0,
+                    "direction": 1,
+                    "probability_up": 0.70,
+                    "resolution_hours": 24,
+                    "research_gross_bps": 12.0,
+                    "horizon_semantics": "i+1/i+24",
+                    "status": "UNEVALUATED_MISSING_M5_COVERAGE",
                 })
             for i in range(146):
+                signal_dt = self.start + timedelta(hours=i)
                 writer.writerow({
-                    "signal_dt": (self.start + timedelta(hours=i)).isoformat(),
-                    "execution_status": "EVALUATED",
+                    "timestamp": signal_dt.isoformat(),
+                    "dt": signal_dt.isoformat(),
+                    "source_period": "operational",
+                    "fold": 1,
+                    "direction": 1,
+                    "probability_up": 0.70,
+                    "resolution_hours": 24,
+                    "research_gross_bps": 15.0,
+                    "horizon_semantics": "i+1/i+24",
+                    "entry_bucket_timestamp": signal_dt.isoformat(),
+                    "exit_bucket_timestamp": (signal_dt + timedelta(hours=24)).isoformat(),
+                    "entry_bucket_utc": signal_dt.isoformat(),
+                    "exit_bucket_utc": (signal_dt + timedelta(hours=24)).isoformat(),
+                    "status": "EVALUATED",
+                    "m5_gross_bps": 13.0,
+                    "gross_transfer_difference_bps": -2.0,
+                    "entry_open": 2000.0,
+                    "exit_close": 2002.6,
+                    "observed_spread_bps": 1.0,
+                    "normal_execution_cost_bps": 3.0,
+                    "severe_execution_cost_bps": 4.5,
                     "normal_net_bps": 10.0,
+                    "severe_net_bps": 8.5,
+                    "stress_8bps_net_bps": 5.0,
+                    "stress_10bps_net_bps": 3.0,
                 })
 
     def _stage180(self, signal: bool) -> None:
@@ -389,6 +430,43 @@ class ControlledPaperTests(unittest.TestCase):
         invalid = dict(semantic, dst_shift_minutes=-120)
         audit = MOD.validate_spread_time_contract(invalid)
         self.assertFalse(audit["pass"], audit)
+
+
+    def test_unevaluated_status_never_matches_evaluated_substring(self) -> None:
+        row = {
+            "status": "UNEVALUATED_MISSING_M5_COVERAGE",
+            "research_gross_bps": "12.5",
+            "normal_net_bps": "",
+            "entry_open": "",
+            "exit_close": "",
+        }
+        classification, diagnostic = MOD.coverage_row_classification(row)
+        self.assertEqual(classification, "MISSING", diagnostic)
+        self.assertTrue(diagnostic["status_negative"])
+        self.assertFalse(diagnostic["status_positive"])
+        self.assertFalse(MOD.row_has_execution(row))
+
+    def test_production_execution_ledger_schema_resolves_168_146_22(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            Fixture(root, signal=False)
+            config = json.loads((root / "config/xauusd_controlled_paper.json").read_text(encoding="utf-8"))
+
+            # A stale invalid-clock diagnostic ledger must not outrank the canonical ledger.
+            invalid_dir = root / "reports/commercial_closure_sprint_invalid_clock_horizon_20260722"
+            invalid_dir.mkdir(parents=True, exist_ok=True)
+            invalid_path = invalid_dir / "commercial_closure_execution_ledger.csv"
+            canonical_path = root / "reports/commercial_closure/commercial_closure_execution_ledger.csv"
+            invalid_path.write_bytes(canonical_path.read_bytes())
+
+            evaluated, missing, source = MOD.locate_coverage_rows(root, config)
+            self.assertEqual(len(evaluated), 146)
+            self.assertEqual(len(missing), 22)
+            self.assertEqual(source["mode"], "single_execution_ledger_status_and_fields")
+            self.assertEqual(Path(source["signal_source"]), canonical_path.resolve())
+            self.assertEqual(source["classification_counts"], {
+                "EVALUATED": 146, "MISSING": 22, "CONFLICT": 0,
+            })
 
     def test_missing_dependencies_fail_closed(self) -> None:
         with tempfile.TemporaryDirectory() as td:

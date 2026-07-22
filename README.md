@@ -1,19 +1,21 @@
-# XAUUSD Controlled-Paper Contract/Test-Isolation Repair
+# XAUUSD Controlled-Paper Execution-Ledger Parser Repair
 
-This overlay repairs two defects exposed by the first spread-source repair:
+This overlay repairs the bounded missing-coverage audit for the actual Commercial Closure ledger schema.
 
-1. the unit fixture inherited the production `~/Downloads/...` spread candidates and could read the user's real AMarkets file, so the deliberate missing-file test was not isolated;
-2. the Stage177C contract gate used brittle raw-string equality and did not report the decision/semantic evidence needed to diagnose a valid contract.
+The production artifact is one 168-row `commercial_closure_execution_ledger.csv` containing:
 
-The repaired logger now:
+- 146 execution-evaluated rows;
+- 22 rows with missing execution coverage;
+- a shared `status` column and execution-result fields.
 
-- pins every unit fixture to its own temporary spread path;
-- validates the Stage177C contract from exact substantive semantics;
-- normalizes harmless decision/calendar/contract casing and whitespace;
-- requires the locked `-120/-180` EU mapping, exact timestamp-shift semantics, and `selection_used_holdout=false`;
-- retains fail-closed rejection for any actual shift, calendar, semantic, or holdout mismatch;
-- preserves the AMarkets raw-CSV parity audit, spread guard, Stage180 frozen observation contract, and no-broker boundary.
+The previous parser used unsafe substring matching, so `UNEVALUATED` could match `EVALUATED`. The repaired parser:
 
-No candidate, model, threshold, H1 entry/exit rule, risk limit, event guard, ledger data, or order authorization is changed.
+1. evaluates negative status tokens before positive tokens;
+2. distinguishes research-only values from execution evidence;
+3. verifies the locked `168 / 146 / 22` split in the same ledger;
+4. rejects contradictory status/evidence combinations fail-closed;
+5. prefers the canonical closure ledger over stale `invalid`, `archive`, or backup outputs.
+
+No model, threshold, H1 row semantics, spread guard, event guard, risk limit, ledger state, or broker boundary is changed.
 
 See `docs/XAUUSD_CONTROLLED_PAPER_RUNBOOK.md` for installation and operation.

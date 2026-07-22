@@ -7,18 +7,18 @@
     },
     {
       "path": "QA_REPORT.md",
-      "sha256": "4745f1506e3177b3bb5e332144b008b1fe87698d2a3881ca96ee08d783e7b298",
-      "size_bytes": 2678
+      "sha256": "f62c06c4d5eceb00f1e05139d9681b1e59ff126f3acab696565a85318aa05fca",
+      "size_bytes": 2476
     },
     {
       "path": "README.md",
-      "sha256": "86df0a6de0353e0289d3cfc416170eb214234bbc5c9a7914cfaa6cb181103ba2",
-      "size_bytes": 1233
+      "sha256": "174e16176b3b460df1f5c5f26e8327a5389b2fd426e3fc35149f9dc3ac416a7e",
+      "size_bytes": 1057
     },
     {
       "path": "app/xauusd_controlled_paper.py",
-      "sha256": "1f4ea8bb377672418f2854b1c0b06b300b9e624fc6708da211a1770c2b52a8a7",
-      "size_bytes": 94270
+      "sha256": "7e3152f566342c3f4ea6caab54a4ea5f28fd825d86ae9adf03c965516728a7d2",
+      "size_bytes": 99720
     },
     {
       "path": "config/xauusd_controlled_paper.json",
@@ -27,8 +27,8 @@
     },
     {
       "path": "docs/XAUUSD_CONTROLLED_PAPER_RUNBOOK.md",
-      "sha256": "dddd5bf28261e3561d30ec4c5528802bbdb04f174ec4916217b40a54869b3176",
-      "size_bytes": 5081
+      "sha256": "8523244a6845a3a012ace3110521c2a77937357d43d40317534b275dd3168c9c",
+      "size_bytes": 4244
     },
     {
       "path": "tests/__init__.py",
@@ -37,11 +37,11 @@
     },
     {
       "path": "tests/test_xauusd_controlled_paper.py",
-      "sha256": "91d0deab561cfbcfcf71b5e918be8391e4d8d2399127b1a200e31c379fc8f1eb",
-      "size_bytes": 19050
+      "sha256": "c9779e478f17c6dc6789cf36ce0f347b0bc6a419c36eef230b4b167d4213b413",
+      "size_bytes": 23069
     }
   ],
-  "package": "XAUUSD_CONTROLLED_PAPER_CONTRACT_TEST_ISOLATION_REPAIR",
-  "program_version": "XAUUSD_CONTROLLED_PAPER_V1_2_CONTRACT_AND_TEST_ISOLATION_REPAIR",
-  "purpose": "Repair Stage177C contract validation diagnostics and isolate unit tests from production Downloads paths without changing trading logic or order boundaries."
+  "package": "XAUUSD_CONTROLLED_PAPER_EXECUTION_LEDGER_PARSER_REPAIR",
+  "program_version": "XAUUSD_CONTROLLED_PAPER_V1_3_EXECUTION_LEDGER_STATUS_PARSER_REPAIR",
+  "purpose": "Repair the bounded missing-coverage audit for the real single-file 168-row Commercial Closure execution ledger, preserving all trading and order boundaries."
 }

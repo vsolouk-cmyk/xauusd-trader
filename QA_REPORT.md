@@ -1,52 +1,47 @@
-# QA Report — Controlled-Paper Contract/Test-Isolation Repair
+# QA Report — Controlled-Paper Execution-Ledger Parser Repair
 
-## Defects reproduced
+## Reported failure
 
-### 1. Unit-test environment leak
+Preflight located the correct 168-row Commercial Closure execution ledger but failed to prove the 146 evaluated / 22 missing split.
 
-The missing-raw-CSV regression fixture retained production fallback candidates such as `~/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv`. On the user's Mac, that real file exists, so the test did not exercise the intended missing-file branch and instead compared a current 2026 CSV against the fixture's 2015 SQLite data.
+## Root cause
 
-### 2. Brittle Stage177C contract gate
+The parser searched status text with positive substring matching before negative matching. Therefore a status such as `UNEVALUATED_MISSING_M5_COVERAGE` could be interpreted as evaluated because it contains the substring `EVALUATED`.
 
-The production Stage177C artifact contains the correct EU DST contract, shifts, timestamp semantics, PASS decision, and no-holdout selection. The bridge nevertheless used a brittle raw decision comparison and emitted insufficient diagnostics.
+The test fixture also used a simplified three-column ledger and therefore did not exercise the real 25-column production schema.
 
 ## Repair
 
-- Unit fixtures now override `spread_source.csv_candidates` with one temporary fixture-only path.
-- No unit test can fall through to the user's home or Downloads directories.
-- Stage177C validation now checks substantive fields:
-  - `contract = EU_DST_GMT_OFFSET_PAIR`
-  - `dst_calendar = EU`
-  - `standard_shift_minutes = -120`
-  - `dst_shift_minutes = -180`
-  - `shift_semantics = timestamp_utc = timestamp_naive + shift_minutes`
-  - `selection_used_holdout = false`
-  - canonical PASS decision or exact Stage177C identity
-- Harmless casing and surrounding whitespace are normalized.
-- Diagnostics now include decision, stage, shift semantics, no-holdout state, individual checks, and evidence route.
-- Actual semantic mismatch remains fail-closed.
+- Normalize status into exact tokens.
+- Give negative statuses (`UNEVALUATED`, `MISSING`, `NO_COVERAGE`, and related states) precedence.
+- Use only execution fields as execution evidence; `research_gross_bps` is not execution evidence.
+- Accept evaluated rows only when status and execution fields are consistent.
+- Treat contradictory complete execution evidence plus a negative status as a blocking conflict.
+- Prefer the canonical execution ledger over paths marked invalid/archive/backup/old/tmp.
+- Emit status counts, classification counts, and conflict examples in future fail-closed diagnostics.
+- Replace the simplified fixture with the real production column layout.
 
 ## Checks executed
 
 ```text
-Python source compilation                              PASS
-Missing-file fixture isolation                         PASS
-No fallback to real ~/Downloads during unit tests      PASS
-Exact Stage177C production-contract semantics           PASS
-Decision casing/whitespace normalization               PASS
-Invalid DST shift fail-closed                          PASS
-Aligned DB without spread + raw CSV regression         PASS
-Exact i+1 / i+24 semantics                             PASS
-Raw spread guard high-spread block                     PASS
-One-hour source misalignment fail-closed               PASS
-EU DST winter/summer mapping                           PASS
-Missing event context fail-closed                      PASS
-No-signal idempotency                                  PASS
-Python 3.14 dynamic-import regression                  PASS
-Static broker-execution dependency scan                PASS
-Unit/regression tests                                  11/11 PASS
+Python 3.13.5 source compilation                         PASS
+Production 25-column ledger schema                      PASS
+Locked 168 / 146 / 22 split                             PASS
+UNEVALUATED substring regression                        PASS
+Research-only gross value not execution evidence        PASS
+Canonical ledger preferred over invalid-clock copy      PASS
+Exact i+1 / i+24 semantics                              PASS
+Raw AMarkets spread-source parity                        PASS
+High-spread blocking                                    PASS
+Missing raw spread source fail-closed                    PASS
+One-hour spread-source mismatch fail-closed              PASS
+Stage177C semantic contract validation                   PASS
+Missing event context fail-closed                        PASS
+Python 3.14 dynamic-import regression                    PASS
+Static broker-execution dependency scan                  PASS
+Unit/regression tests                                    13/13 PASS
 ```
 
-## Remaining environment limitation
+## Environment limitation
 
-Local execution used the available container Python. The included GitHub workflow retains Python 3.13 and 3.14 matrix validation.
+The local container provides Python 3.13.5. The included manual GitHub Actions workflow retains matrix validation on Python 3.13 and 3.14.

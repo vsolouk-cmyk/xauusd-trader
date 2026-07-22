@@ -1,13 +1,36 @@
-# XAUUSD Controlled-Paper Runbook — Contract/Test-Isolation Repair
+# XAUUSD Controlled-Paper Runbook — Execution-Ledger Parser Repair
 
-## Defects repaired
+## Defect repaired
 
-The first spread-source repair exposed two implementation defects:
+The bounded coverage audit found the correct production file:
 
-1. the deliberately missing-CSV unit test retained production Downloads fallbacks, so it could read the user's real AMarkets M5 file and compare it with temporary 2015 fixture data;
-2. the Stage177C contract gate used brittle raw-string equality and omitted the decision/semantic evidence from its failure payload.
+```text
+reports/commercial_closure_sprint/commercial_closure_execution_ledger.csv
+rows = 168
+```
 
-Neither defect is a failure of the AMarkets data or Stage177C research contract.
+but did not derive the expected split of 146 evaluated rows and 22 missing-coverage rows.
+
+The defect was unsafe status substring matching. `UNEVALUATED` contains `EVALUATED`; therefore positive-first matching could classify a missing row as evaluated.
+
+## Repaired coverage contract
+
+The canonical Commercial Closure ledger is a single 168-row file. The parser now proves:
+
+```text
+signals = 168
+evaluated = 146
+missing execution coverage = 22
+```
+
+Classification rules:
+
+- negative status tokens are processed first;
+- `research_gross_bps` alone never proves execution coverage;
+- evaluated rows require consistent execution evidence such as `normal_net_bps`, or entry + exit + M5 gross values;
+- missing rows may retain research fields and partial execution fields;
+- contradictory full execution evidence plus a negative status blocks fail-closed;
+- stale paths containing `invalid`, `archive`, `backup`, `old`, or `tmp` are ranked below the canonical ledger.
 
 ## Hard boundary
 
@@ -15,39 +38,8 @@ Neither defect is a failure of the AMarkets data or Stage177C research contract.
 - No broker library or order call.
 - No demo or live authorization.
 - No retraining or threshold tuning.
-- Stage180 remains the sole frozen inference producer.
-- Missing spread, wrong DST mapping, time-contract semantic mismatch, parity failure, stale source, incomplete entry bucket, or missing event context remains fail-closed.
-
-## Stage177C spread-time contract
-
-The repaired bridge requires all substantive fields below:
-
-```text
-contract = EU_DST_GMT_OFFSET_PAIR
-dst_calendar = EU
-standard_shift_minutes = -120
-dst_shift_minutes = -180
-shift_semantics = timestamp_utc = timestamp_naive + shift_minutes
-selection_used_holdout = false
-```
-
-It additionally requires either:
-
-```text
-decision = PASS_AMARKETS_DST_AWARE_UTC_CONTRACT
-```
-
-or exact Stage177C identity in the same artifact. Contract, calendar and decision tokens are normalized only for harmless surrounding whitespace and case. Numeric shifts and semantics are not relaxed.
-
-## Spread-source hierarchy
-
-1. Use aligned M5 SQLite spread only if a real spread column exists.
-2. Otherwise load the passed Stage177C contract.
-3. Resolve the M5 CSV first from `source_amarkets_m5`, then Stage180 refresh sources, then configured Downloads paths.
-4. Require `<DATE>`, `<TIME>`, `<OPEN>`, `<HIGH>`, `<LOW>`, `<CLOSE>`, and `<SPREAD>`.
-5. Convert broker-naive timestamps using the locked EU DST mapping.
-6. Require recent cadence, timestamp overlap, close parity and latest-source alignment against aligned M5.
-7. At entry, require 12 aligned M5 rows and 12 valid spread rows in the exact H1 bucket.
+- Stage180 remains the frozen inference producer.
+- Missing spread, wrong DST mapping, source parity failure, stale source, unresolved historical coverage, incomplete entry bucket, or missing event context remains fail-closed.
 
 ## Unchanged trading contract
 
@@ -67,73 +59,69 @@ severe cost floor = 4.5 bps
 entry spread guard = 3.0764778059487488 bps
 ```
 
-## Installation over the existing package
+## Installation over the current package
 
-This overlay does not delete the ledger or existing reports.
+This overlay does not delete the controlled-paper SQLite ledger or existing reports.
 
 ```bash
 cd ~/Downloads
-mv XAUUSD_CONTROLLED_PAPER_CONTRACT_TEST_ISOLATION_REPAIR.zip ~/Desktop/xauusd-trader/
+mv XAUUSD_CONTROLLED_PAPER_EXECUTION_LEDGER_PARSER_REPAIR.zip \
+  ~/Desktop/xauusd-trader/
 
 cd ~/Desktop/xauusd-trader
-rm -rf _incoming_xauusd_controlled_paper_contract_test_repair
-mkdir -p _incoming_xauusd_controlled_paper_contract_test_repair
-unzip -q XAUUSD_CONTROLLED_PAPER_CONTRACT_TEST_ISOLATION_REPAIR.zip \
-  -d _incoming_xauusd_controlled_paper_contract_test_repair
-rsync -a _incoming_xauusd_controlled_paper_contract_test_repair/ ./
+rm -rf _incoming_xauusd_controlled_paper_ledger_parser_repair
+mkdir -p _incoming_xauusd_controlled_paper_ledger_parser_repair
+
+unzip -q XAUUSD_CONTROLLED_PAPER_EXECUTION_LEDGER_PARSER_REPAIR.zip \
+  -d _incoming_xauusd_controlled_paper_ledger_parser_repair
+
+rsync -a _incoming_xauusd_controlled_paper_ledger_parser_repair/ ./
+
 rm -rf \
-  _incoming_xauusd_controlled_paper_contract_test_repair \
-  XAUUSD_CONTROLLED_PAPER_CONTRACT_TEST_ISOLATION_REPAIR.zip
+  _incoming_xauusd_controlled_paper_ledger_parser_repair \
+  XAUUSD_CONTROLLED_PAPER_EXECUTION_LEDGER_PARSER_REPAIR.zip
 ```
 
 ## Local QA and preflight
 
 ```bash
 cd ~/Desktop/xauusd-trader
-python3 -m py_compile app/xauusd_controlled_paper.py tests/test_xauusd_controlled_paper.py
+python3 -m py_compile \
+  app/xauusd_controlled_paper.py \
+  tests/test_xauusd_controlled_paper.py
+
 python3 -m unittest -v tests.test_xauusd_controlled_paper
 python3 app/xauusd_controlled_paper.py preflight --root .
 ```
 
-Expected tests:
+Expected test result:
 
 ```text
-Ran 11 tests
+Ran 13 tests
 OK
 ```
 
-A successful preflight must include:
+A successful preflight must contain:
 
 ```text
-PASS_CONTROLLED_PAPER_PREFLIGHT
-PASS_BOUNDED_MISSING_COVERAGE_NOT_CURRENT_SYSTEMATIC_DEFECT
-```
-
-The preflight JSON should show:
-
-```text
-checks.spread_time_contract.pass = true
-checks.spread_time_contract.evidence_route = CANONICAL_PASS_DECISION
-checks.spread_time_contract.checks.contract = true
-checks.spread_time_contract.checks.dst_calendar = true
-checks.spread_time_contract.checks.standard_shift_minutes = true
-checks.spread_time_contract.checks.dst_shift_minutes = true
-checks.spread_time_contract.checks.shift_semantics = true
-checks.spread_time_contract.checks.selection_no_holdout = true
-checks.spread_source.kind = AMARKETS_M5_RAW_CSV_SPREAD
-checks.spread_source.pass = true
+decision = PASS_CONTROLLED_PAPER_PREFLIGHT
+missing_coverage_audit.decision = PASS_BOUNDED_MISSING_COVERAGE_NOT_CURRENT_SYSTEMATIC_DEFECT
+missing_coverage_audit.source.mode = single_execution_ledger_status_and_fields
+missing_coverage_audit.source.classification_counts.EVALUATED = 146
+missing_coverage_audit.source.classification_counts.MISSING = 22
+missing_coverage_audit.source.classification_counts.CONFLICT = 0
 ```
 
 ## Operational run
 
-After Stage180 refreshes the frozen observation:
+Only after preflight passes:
 
 ```bash
 cd ~/Desktop/xauusd-trader
 python3 app/xauusd_controlled_paper.py run --root .
 ```
 
-The command remains idempotent. A current `NO_SIGNAL` observation is logged without opening a position.
+The run is idempotent. A current Stage180 `NO_SIGNAL` observation is logged without opening a paper position.
 
 ## GitHub Actions QA
 
@@ -143,7 +131,7 @@ From GitHub UI run:
 Actions → XAUUSD Controlled Paper QA → Run workflow
 ```
 
-The workflow compiles and runs the regression suite on Python 3.13 and 3.14. It does not execute Stage180 or access the local ledger.
+The workflow compiles and runs tests on Python 3.13 and 3.14. It does not execute Stage180 or access local market data.
 
 ## Safe Git commands
 
@@ -152,7 +140,7 @@ After local preflight passes:
 ```bash
 cd ~/Desktop/xauusd-trader
 git add -A
-git commit -m "Repair controlled-paper contract validation and test isolation"
+git commit -m "Repair controlled-paper execution ledger parser"
 git pull --rebase
 git push
 ```

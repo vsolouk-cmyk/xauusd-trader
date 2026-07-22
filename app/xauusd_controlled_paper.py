@@ -16,6 +16,7 @@ import importlib.util
 import json
 import math
 import os
+import re
 import sqlite3
 import statistics
 import sys
@@ -26,7 +27,7 @@ from pathlib import Path
 from typing import Any, Iterable, Iterator, Mapping, Sequence
 
 UTC = timezone.utc
-PROGRAM_VERSION = "XAUUSD_CONTROLLED_PAPER_V1_2_CONTRACT_AND_TEST_ISOLATION_REPAIR"
+PROGRAM_VERSION = "XAUUSD_CONTROLLED_PAPER_V1_3_EXECUTION_LEDGER_STATUS_PARSER_REPAIR"
 ALLOWED_STAGE180_DECISIONS = {
     "STAGE180_FROZEN_MODEL_SHADOW_ACTIVE_NO_ORDER",
     "STAGE180_WAITING_FOR_POST_ACTIVATION_COMPLETE_BAR",
@@ -1166,31 +1167,123 @@ def signal_key_from_row(row: Mapping[str, Any]) -> str | None:
         return str(value).strip() or None
 
 
-def row_has_execution(row: Mapping[str, Any]) -> bool:
-    status = str(first_present(row, ("execution_status", "status", "evaluation_status", "outcome_status")) or "").upper()
-    if any(token in status for token in ("EVALUATED", "RESOLVED", "EXECUTED", "COMPLETE")):
-        return True
-    if any(token in status for token in ("MISSING", "UNEVALUATED", "NO_COVERAGE", "BLOCKED")):
+def normalized_status(value: Any) -> str:
+    """Normalize a ledger status without substring ambiguity.
+
+    In particular, ``UNEVALUATED`` must never be treated as ``EVALUATED`` merely
+    because the latter is a substring of the former.
+    """
+    return re.sub(r"[^A-Z0-9]+", "_", str(value or "").strip().upper()).strip("_")
+
+
+def finite_field(row: Mapping[str, Any], aliases: Sequence[str]) -> bool:
+    value = first_present(row, aliases)
+    if value in (None, ""):
         return False
-    for alias in (
-        "normal_net_bps", "net_normal_bps", "execution_net_bps", "net_bps", "gross_bps",
-        "entry_price", "exit_price",
-    ):
-        value = first_present(row, (alias,))
-        if value not in (None, ""):
-            try:
-                if math.isfinite(float(value)):
-                    return True
-            except (TypeError, ValueError):
-                continue
-    return False
+    try:
+        return math.isfinite(float(value))
+    except (TypeError, ValueError):
+        return False
+
+
+def coverage_row_classification(row: Mapping[str, Any]) -> tuple[str, dict[str, Any]]:
+    """Classify one commercial-closure ledger row.
+
+    The Stage180 closure ledger carries all 168 signals in one file.  The 146
+    execution-evaluated rows contain execution fields, while the 22 uncovered
+    rows retain research fields but have a missing/unevaluated status and no
+    complete execution outcome.  Status negatives are evaluated before
+    positives, and research-only values are intentionally not accepted as
+    execution evidence.
+    """
+    raw_status = first_present(row, ("execution_status", "status", "evaluation_status", "outcome_status"))
+    status = normalized_status(raw_status)
+    tokens = {token for token in status.split("_") if token}
+
+    negative = (
+        "UNEVALUATED" in tokens
+        or "UNRESOLVED" in tokens
+        or "MISSING" in tokens
+        or "BLOCKED" in tokens
+        or "UNAVAILABLE" in tokens
+        or "INCOMPLETE" in tokens
+        or "NO_COVERAGE" in status
+        or "NO_EXECUTION" in status
+        or "NOT_EVALUATED" in status
+    )
+    positive = bool(
+        tokens.intersection({"EVALUATED", "RESOLVED", "EXECUTED", "COMPLETE", "COMPLETED"})
+    )
+
+    evidence = {
+        "entry": finite_field(row, ("entry_open", "entry_price", "execution_entry_price")),
+        "exit": finite_field(row, ("exit_close", "exit_price", "execution_exit_price")),
+        "m5_gross": finite_field(row, ("m5_gross_bps", "execution_gross_bps", "gross_transfer_difference_bps")),
+        "normal_net": finite_field(row, ("normal_net_bps", "net_normal_bps", "execution_net_bps", "net_bps")),
+        "severe_net": finite_field(row, ("severe_net_bps", "net_severe_bps")),
+        "observed_spread": finite_field(row, ("observed_spread_bps", "entry_spread_bps")),
+    }
+    complete_execution = evidence["normal_net"] or (
+        evidence["entry"] and evidence["exit"] and evidence["m5_gross"]
+    )
+    any_execution = any(evidence.values())
+
+    diagnostic = {
+        "status_raw": "" if raw_status is None else str(raw_status),
+        "status_normalized": status,
+        "status_negative": negative,
+        "status_positive": positive,
+        "execution_evidence": evidence,
+        "complete_execution_evidence": complete_execution,
+    }
+
+    # Negative status has precedence over positive-looking substrings such as
+    # UNEVALUATED. Partial execution fields are expected for some coverage
+    # failures and remain missing; a fully calculated net result conflicts with
+    # a negative status and is therefore fail-closed.
+    if negative:
+        if complete_execution:
+            return "CONFLICT", diagnostic
+        return "MISSING", diagnostic
+
+    if positive:
+        if complete_execution:
+            return "EVALUATED", diagnostic
+        return "CONFLICT", diagnostic
+
+    # Some historical ledgers used neutral status labels. Strong execution
+    # evidence is sufficient; no execution evidence is a missing row. Partial
+    # evidence without an explicit negative reason is ambiguous and blocks.
+    if complete_execution:
+        return "EVALUATED", diagnostic
+    if not any_execution:
+        return "MISSING", diagnostic
+    return "CONFLICT", diagnostic
+
+
+def row_has_execution(row: Mapping[str, Any]) -> bool:
+    """Compatibility wrapper used by external callers and tests."""
+    classification, _ = coverage_row_classification(row)
+    return classification == "EVALUATED"
+
+
+def coverage_candidate_rank(path: Path) -> tuple[int, int, str]:
+    text = str(path).lower()
+    penalty = 0
+    if any(token in text for token in ("invalid", "archive", "backup", "old", "tmp")):
+        penalty += 100
+    if path.name == "commercial_closure_execution_ledger.csv":
+        penalty -= 20
+    elif "execution_ledger" in path.name:
+        penalty -= 10
+    return penalty, len(path.parts), text
 
 
 def locate_coverage_rows(root: Path, config: Mapping[str, Any]) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
     files: list[Path] = []
     for pattern in config["commercial_csv_globs"]:
         files.extend(path.resolve() for path in root.glob(pattern) if path.is_file())
-    unique = sorted(set(files))
+    unique = sorted(set(files), key=coverage_candidate_rank)
     candidates: list[tuple[Path, list[dict[str, str]]]] = []
     inventory: list[dict[str, Any]] = []
     for path in unique:
@@ -1199,23 +1292,60 @@ def locate_coverage_rows(root: Path, config: Mapping[str, Any]) -> tuple[list[di
         except (OSError, csv.Error, UnicodeDecodeError):
             continue
         headers = list(rows[0].keys()) if rows else []
-        inventory.append({"path": str(path), "rows": len(rows), "headers": headers})
+        item: dict[str, Any] = {"path": str(path), "rows": len(rows), "headers": headers}
+        if rows and any(alias in headers for alias in ("status", "execution_status", "evaluation_status", "outcome_status")):
+            status_counts: dict[str, int] = {}
+            for row in rows:
+                status = normalized_status(first_present(row, ("execution_status", "status", "evaluation_status", "outcome_status"))) or "<EMPTY>"
+                status_counts[status] = status_counts.get(status, 0) + 1
+            item["status_counts"] = status_counts
+        inventory.append(item)
         if rows:
             candidates.append((path, rows))
 
     expected_signals = int(config["expected_historical_signals"])
     expected_evaluated = int(config["expected_execution_evaluated_trades"])
+    expected_missing = int(config["expected_missing_execution_signals"])
     signal_candidates = [(path, rows) for path, rows in candidates if len(rows) == expected_signals]
     trade_candidates = [(path, rows) for path, rows in candidates if len(rows) == expected_evaluated]
+    candidate_diagnostics: list[dict[str, Any]] = []
 
-    # Preferred: a single 168-row ledger containing evaluated and missing rows.
+    # Preferred and production schema: one 168-row execution ledger containing
+    # both the 146 evaluated rows and the 22 uncovered rows.
     for path, rows in signal_candidates:
-        evaluated = [dict(row) for row in rows if row_has_execution(row)]
-        missing = [dict(row) for row in rows if not row_has_execution(row)]
-        if len(evaluated) == expected_evaluated and len(missing) == expected_signals - expected_evaluated:
-            return evaluated, missing, {"mode": "single_ledger", "signal_source": str(path), "inventory": inventory}
+        evaluated: list[dict[str, Any]] = []
+        missing: list[dict[str, Any]] = []
+        conflicts: list[dict[str, Any]] = []
+        classification_counts = {"EVALUATED": 0, "MISSING": 0, "CONFLICT": 0}
+        for index, row in enumerate(rows):
+            classification, diagnostic = coverage_row_classification(row)
+            classification_counts[classification] += 1
+            if classification == "EVALUATED":
+                evaluated.append(dict(row))
+            elif classification == "MISSING":
+                missing.append(dict(row))
+            else:
+                if len(conflicts) < 10:
+                    conflicts.append({"row_index": index, **diagnostic})
+        candidate_diagnostics.append({
+            "path": str(path),
+            "classification_counts": classification_counts,
+            "conflict_examples": conflicts,
+        })
+        if (
+            not conflicts
+            and len(evaluated) == expected_evaluated
+            and len(missing) == expected_missing
+        ):
+            return evaluated, missing, {
+                "mode": "single_execution_ledger_status_and_fields",
+                "signal_source": str(path),
+                "classification_counts": classification_counts,
+                "inventory": inventory,
+            }
 
-    # Alternative: a 168-row signal file and a 146-row execution file, diffed by timestamp key.
+    # Alternative legacy shape: a 168-row signal file and a separate 146-row
+    # execution file, diffed by timestamp key.
     for signal_path, signals in signal_candidates:
         signal_keys = {signal_key_from_row(row) for row in signals}
         if None in signal_keys or len(signal_keys) != len(signals):
@@ -1236,10 +1366,10 @@ def locate_coverage_rows(root: Path, config: Mapping[str, Any]) -> tuple[list[di
                         "inventory": inventory,
                     }
     raise ControlledPaperError(
-        "bounded missing-coverage audit could not locate a 168-row signal ledger and 146 evaluated rows; "
-        f"inventory={inventory}"
+        "bounded missing-coverage audit found candidate ledgers but could not prove the locked "
+        f"{expected_signals}/{expected_evaluated}/{expected_missing} split; "
+        f"candidate_diagnostics={candidate_diagnostics}; inventory={inventory}"
     )
-
 
 def classify_missing_row(
     row: Mapping[str, Any],

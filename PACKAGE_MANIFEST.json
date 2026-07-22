@@ -1,4 +1,7 @@
 {
+  "package": "XAUUSD_CONTROLLED_PAPER_OPERATIONAL_FRESHNESS_GUARD",
+  "program_version": "XAUUSD_CONTROLLED_PAPER_V1_4_OPERATIONAL_FRESHNESS_GUARD",
+  "purpose": "Block all controlled-paper ledger mutation when Stage180 or AMarkets market data is stale during an expected-open XAUUSD market, while preserving all existing model, risk, spread, event, and no-broker boundaries.",
   "files": [
     {
       "path": ".github/workflows/xauusd_controlled_paper_qa.yml",
@@ -7,28 +10,28 @@
     },
     {
       "path": "QA_REPORT.md",
-      "sha256": "f62c06c4d5eceb00f1e05139d9681b1e59ff126f3acab696565a85318aa05fca",
-      "size_bytes": 2476
+      "sha256": "8ebd40d343cf160c50e198674de820d513de8ab7abb8c9d818273baebd380160",
+      "size_bytes": 1428
     },
     {
       "path": "README.md",
-      "sha256": "174e16176b3b460df1f5c5f26e8327a5389b2fd426e3fc35149f9dc3ac416a7e",
-      "size_bytes": 1057
+      "sha256": "ef5bf7ca52fb37f48090346a07b5619a98a63b5cd476078a4e97d4934b65517d",
+      "size_bytes": 1283
     },
     {
       "path": "app/xauusd_controlled_paper.py",
-      "sha256": "7e3152f566342c3f4ea6caab54a4ea5f28fd825d86ae9adf03c965516728a7d2",
-      "size_bytes": 99720
+      "sha256": "aa75452600fc967e05cc444d7565ef9d38590d49a37dd4435dcda445892df568",
+      "size_bytes": 105833
     },
     {
       "path": "config/xauusd_controlled_paper.json",
-      "sha256": "400cf616cdcfcbde7e794c574d5ccf6707f1dc5855e117401543af552362bc5f",
-      "size_bytes": 2577
+      "sha256": "6ebdf0668744168f18f159eb4191a58f8d9885fa6ed6fe31fbf6cb2682ca11d2",
+      "size_bytes": 3096
     },
     {
       "path": "docs/XAUUSD_CONTROLLED_PAPER_RUNBOOK.md",
-      "sha256": "8523244a6845a3a012ace3110521c2a77937357d43d40317534b275dd3168c9c",
-      "size_bytes": 4244
+      "sha256": "b4398d271100e4b9894b9e0724977873cc133195947611bbf465ee84a10a2d24",
+      "size_bytes": 5233
     },
     {
       "path": "tests/__init__.py",
@@ -37,11 +40,8 @@
     },
     {
       "path": "tests/test_xauusd_controlled_paper.py",
-      "sha256": "c9779e478f17c6dc6789cf36ce0f347b0bc6a419c36eef230b4b167d4213b413",
-      "size_bytes": 23069
+      "sha256": "0ac03be7b6bfa2ec5aa932f1c48603f66482bc820e8b12888fbf2120652a7fd9",
+      "size_bytes": 25704
     }
-  ],
-  "package": "XAUUSD_CONTROLLED_PAPER_EXECUTION_LEDGER_PARSER_REPAIR",
-  "program_version": "XAUUSD_CONTROLLED_PAPER_V1_3_EXECUTION_LEDGER_STATUS_PARSER_REPAIR",
-  "purpose": "Repair the bounded missing-coverage audit for the real single-file 168-row Commercial Closure execution ledger, preserving all trading and order boundaries."
+  ]
 }

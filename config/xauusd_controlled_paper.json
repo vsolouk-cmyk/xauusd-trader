@@ -76,5 +76,15 @@
       "~/Downloads/amarkets_xauusd_5m.csv"
     ],
     "maximum_latest_lag_minutes": 15.0
+  },
+  "maximum_stage180_summary_age_minutes_open_market": 180.0,
+  "maximum_aligned_h1_age_minutes_open_market": 180.0,
+  "maximum_spread_source_age_minutes_open_market": 90.0,
+  "maximum_future_clock_skew_minutes": 15.0,
+  "freshness_guard": {
+    "required": true,
+    "market_schedule": "CONSERVATIVE_XAUUSD_UTC_WEEKLY_WITH_DAILY_MAINTENANCE",
+    "open_market_behavior": "BLOCK_ALL_LEDGER_MUTATION_IF_ANY_REQUIRED_SOURCE_IS_STALE",
+    "closed_market_behavior": "DEFER_AGE_LIMITS_BUT_BLOCK_FUTURE_CLOCK_ANOMALIES"
   }
 }

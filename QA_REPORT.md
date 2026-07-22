@@ -1,47 +1,36 @@
-# QA Report — Controlled-Paper Execution-Ledger Parser Repair
+# QA Report — Controlled-Paper Operational Freshness Guard
 
-## Reported failure
+## Defect reproduced
 
-Preflight located the correct 168-row Commercial Closure execution ledger but failed to prove the 146 evaluated / 22 missing split.
+A controlled-paper run generated at `2026-07-22T12:50:32Z` reported ACTIVE while:
 
-## Root cause
+- latest aligned H1 was `2026-07-22T03:00:00Z`;
+- latest AMarkets M5/spread source was `2026-07-22T03:50:00Z`;
+- the Stage180 summary/observation was from the earlier refresh cycle.
 
-The parser searched status text with positive substring matching before negative matching. Therefore a status such as `UNEVALUATED_MISSING_M5_COVERAGE` could be interpreted as evaluated because it contains the substring `EVALUATED`.
-
-The test fixture also used a simplified three-column ledger and therefore did not exercise the real 25-column production schema.
+The previous implementation checked source-to-database parity but did not check wall-clock freshness.
 
 ## Repair
 
-- Normalize status into exact tokens.
-- Give negative statuses (`UNEVALUATED`, `MISSING`, `NO_COVERAGE`, and related states) precedence.
-- Use only execution fields as execution evidence; `research_gross_bps` is not execution evidence.
-- Accept evaluated rows only when status and execution fields are consistent.
-- Treat contradictory complete execution evidence plus a negative status as a blocking conflict.
-- Prefer the canonical execution ledger over paths marked invalid/archive/backup/old/tmp.
-- Emit status counts, classification counts, and conflict examples in future fail-closed diagnostics.
-- Replace the simplified fixture with the real production column layout.
+- Added conservative XAUUSD open/closed schedule handling.
+- Added mandatory Stage180-summary, aligned-H1, and spread-source age gates.
+- Added future-clock-skew blocking.
+- Added stale-data decision output while preserving summary/report generation.
+- Ensured stale runs perform no signal or position ledger mutation.
+- Kept weekend closure usable without weakening future-clock checks.
 
-## Checks executed
+## QA results
 
-```text
-Python 3.13.5 source compilation                         PASS
-Production 25-column ledger schema                      PASS
-Locked 168 / 146 / 22 split                             PASS
-UNEVALUATED substring regression                        PASS
-Research-only gross value not execution evidence        PASS
-Canonical ledger preferred over invalid-clock copy      PASS
-Exact i+1 / i+24 semantics                              PASS
-Raw AMarkets spread-source parity                        PASS
-High-spread blocking                                    PASS
-Missing raw spread source fail-closed                    PASS
-One-hour spread-source mismatch fail-closed              PASS
-Stage177C semantic contract validation                   PASS
-Missing event context fail-closed                        PASS
-Python 3.14 dynamic-import regression                    PASS
-Static broker-execution dependency scan                  PASS
-Unit/regression tests                                    13/13 PASS
-```
+- Python compilation: PASS
+- Unit/regression tests: 15/15 PASS
+- Open-market stale-data reproduction: PASS
+- No-ingest/no-position mutation under stale data: PASS
+- Fresh open-market run: PASS
+- Weekend closure age deferral: PASS
+- Existing exact i+1/i+24 semantics: PASS
+- Existing 168/146/22 coverage parser: PASS
+- Existing AMarkets spread parity and guard: PASS
+- Missing dependency/event/spread fail-closed tests: PASS
+- Broker dependency static scan: PASS
 
-## Environment limitation
-
-The local container provides Python 3.13.5. The included manual GitHub Actions workflow retains matrix validation on Python 3.13 and 3.14.
+The package must also be run through the included GitHub Actions matrix on Python 3.13 and 3.14.

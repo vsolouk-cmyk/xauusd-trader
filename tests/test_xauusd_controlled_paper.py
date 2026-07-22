@@ -19,6 +19,7 @@ sys.modules[SPEC.name] = MOD
 SPEC.loader.exec_module(MOD)
 
 UTC = timezone.utc
+TEST_NOW = datetime(2015, 2, 17, 3, 0, tzinfo=UTC)
 
 
 def write_json(path: Path, payload: dict) -> None:
@@ -273,7 +274,10 @@ class Fixture:
         p = 0.70 if signal else 0.47
         direction = 1 if signal else 0
         status = "SIGNAL" if signal else "NO_SIGNAL"
+        latest_h1 = self.start + timedelta(hours=1099)
         write_json(report / "stage180_summary.json", {
+            "generated_utc": (latest_h1 + timedelta(minutes=30)).isoformat(),
+            "aligned_last_complete_bar_utc": latest_h1.isoformat(),
             "decision": "STAGE180_FROZEN_MODEL_SHADOW_ACTIVE_NO_ORDER",
             "broker_order_allowed": False,
             "demo_order_allowed": False,
@@ -297,6 +301,13 @@ class Fixture:
 
 
 class ControlledPaperTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self._real_utc_now = MOD.utc_now
+        MOD.utc_now = lambda: TEST_NOW
+
+    def tearDown(self) -> None:
+        MOD.utc_now = self._real_utc_now
+
     def test_python314_dynamic_import_regression(self) -> None:
         with tempfile.TemporaryDirectory() as td:
             path = Path(td) / "decorated_module.py"
@@ -321,6 +332,11 @@ class ControlledPaperTests(unittest.TestCase):
             self.assertFalse(payload["checks"]["m5_spread_present_in_aligned_db"])
             self.assertEqual(payload["checks"]["spread_source"]["kind"], "AMARKETS_M5_RAW_CSV_SPREAD")
             self.assertTrue(payload["checks"]["spread_source"]["pass"])
+            self.assertTrue(payload["checks"]["operational_freshness"]["pass"])
+            self.assertEqual(
+                payload["checks"]["operational_freshness"]["decision"],
+                "PASS_OPERATIONAL_FRESHNESS_OPEN_MARKET",
+            )
             code, summary = MOD.execute(root, None, "run")
             self.assertEqual(code, 0, summary)
             self.assertEqual(summary["decision"], "CONTROLLED_PAPER_ACTIVE_PAPER_LOG_ONLY_NO_BROKER")
@@ -467,6 +483,43 @@ class ControlledPaperTests(unittest.TestCase):
             self.assertEqual(source["classification_counts"], {
                 "EVALUATED": 146, "MISSING": 22, "CONFLICT": 0,
             })
+
+    def test_stale_open_market_blocks_without_ingest(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            Fixture(root, signal=True)
+            MOD.utc_now = lambda: TEST_NOW + timedelta(hours=10)
+            code, summary = MOD.execute(root, None, "run")
+            self.assertEqual(code, 2, summary)
+            self.assertEqual(
+                summary["decision"],
+                "CONTROLLED_PAPER_BLOCKED_STALE_MARKET_DATA_NO_INGEST",
+            )
+            self.assertFalse(summary["operational_freshness"]["pass"])
+            self.assertEqual(
+                summary["operational_freshness"]["decision"],
+                "BLOCK_STALE_MARKET_DATA_OPEN_MARKET",
+            )
+            self.assertEqual(summary["run_result"]["ingest"]["status"], "SKIPPED_STALE_MARKET_DATA")
+            self.assertEqual(summary["counts"]["signals"], 0)
+            conn = sqlite3.connect(root / "data/controlled_paper/xauusd_controlled_paper.sqlite")
+            self.assertEqual(conn.execute("SELECT COUNT(*) FROM signals").fetchone()[0], 0)
+            self.assertEqual(conn.execute("SELECT COUNT(*) FROM positions").fetchone()[0], 0)
+            conn.close()
+
+    def test_weekend_closure_defers_age_limits_but_keeps_clock_guard(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            Fixture(root, signal=False)
+            MOD.utc_now = lambda: datetime(2015, 2, 21, 12, 0, tzinfo=UTC)  # Saturday
+            code, summary = MOD.execute(root, None, "run")
+            self.assertEqual(code, 0, summary)
+            self.assertEqual(
+                summary["operational_freshness"]["decision"],
+                "PASS_MARKET_CLOSED_FRESHNESS_DEFERRED",
+            )
+            self.assertFalse(summary["operational_freshness"]["market_expected_open"])
+            self.assertEqual(summary["run_result"]["ingest"]["status"], "NO_SIGNAL")
 
     def test_missing_dependencies_fail_closed(self) -> None:
         with tempfile.TemporaryDirectory() as td:

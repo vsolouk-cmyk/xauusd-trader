@@ -59,30 +59,51 @@ severe cost floor = 4.5 bps
 entry spread guard = 3.0764778059487488 bps
 ```
 
+## Operational freshness boundary
+
+During an expected-open XAUUSD market, all three freshness checks must pass:
+
+```text
+Stage180 summary age <= 180 minutes
+aligned H1 age <= 180 minutes
+AMarkets M5/spread-source age <= 90 minutes
+future clock skew <= 15 minutes
+```
+
+If any open-market freshness check fails, the run writes its normal summary but returns exit code 2 with:
+
+```text
+CONTROLLED_PAPER_BLOCKED_STALE_MARKET_DATA_NO_INGEST
+```
+
+No signal, position, resolution, or risk-state mutation is allowed in that run. During the conservative weekend/daily maintenance closure schedule, age limits are deferred because new bars are not expected; future-clock anomalies still block.
+
 ## Installation over the current package
 
 This overlay does not delete the controlled-paper SQLite ledger or existing reports.
 
 ```bash
 cd ~/Downloads
-mv XAUUSD_CONTROLLED_PAPER_EXECUTION_LEDGER_PARSER_REPAIR.zip \
+mv XAUUSD_CONTROLLED_PAPER_OPERATIONAL_FRESHNESS_GUARD.zip \
   ~/Desktop/xauusd-trader/
 
 cd ~/Desktop/xauusd-trader
-rm -rf _incoming_xauusd_controlled_paper_ledger_parser_repair
-mkdir -p _incoming_xauusd_controlled_paper_ledger_parser_repair
+rm -rf _incoming_xauusd_controlled_paper_freshness_guard
+mkdir -p _incoming_xauusd_controlled_paper_freshness_guard
 
-unzip -q XAUUSD_CONTROLLED_PAPER_EXECUTION_LEDGER_PARSER_REPAIR.zip \
-  -d _incoming_xauusd_controlled_paper_ledger_parser_repair
+unzip -q XAUUSD_CONTROLLED_PAPER_OPERATIONAL_FRESHNESS_GUARD.zip \
+  -d _incoming_xauusd_controlled_paper_freshness_guard
 
-rsync -a _incoming_xauusd_controlled_paper_ledger_parser_repair/ ./
+rsync -a _incoming_xauusd_controlled_paper_freshness_guard/ ./
 
 rm -rf \
-  _incoming_xauusd_controlled_paper_ledger_parser_repair \
-  XAUUSD_CONTROLLED_PAPER_EXECUTION_LEDGER_PARSER_REPAIR.zip
+  _incoming_xauusd_controlled_paper_freshness_guard \
+  XAUUSD_CONTROLLED_PAPER_OPERATIONAL_FRESHNESS_GUARD.zip
 ```
 
 ## Local QA and preflight
+
+Update the AMarkets H1 and M5 CSV files and run the existing Stage180 frozen refresh before operational preflight. Then:
 
 ```bash
 cd ~/Desktop/xauusd-trader
@@ -97,16 +118,17 @@ python3 app/xauusd_controlled_paper.py preflight --root .
 Expected test result:
 
 ```text
-Ran 13 tests
+Ran 15 tests
 OK
 ```
 
-A successful preflight must contain:
+A successful open-market preflight must contain:
 
 ```text
 decision = PASS_CONTROLLED_PAPER_PREFLIGHT
+checks.operational_freshness.pass = true
+checks.operational_freshness.decision = PASS_OPERATIONAL_FRESHNESS_OPEN_MARKET
 missing_coverage_audit.decision = PASS_BOUNDED_MISSING_COVERAGE_NOT_CURRENT_SYSTEMATIC_DEFECT
-missing_coverage_audit.source.mode = single_execution_ledger_status_and_fields
 missing_coverage_audit.source.classification_counts.EVALUATED = 146
 missing_coverage_audit.source.classification_counts.MISSING = 22
 missing_coverage_audit.source.classification_counts.CONFLICT = 0
@@ -121,7 +143,14 @@ cd ~/Desktop/xauusd-trader
 python3 app/xauusd_controlled_paper.py run --root .
 ```
 
-The run is idempotent. A current Stage180 `NO_SIGNAL` observation is logged without opening a paper position.
+A stale open-market run returns exit code 2 and writes:
+
+```text
+decision = CONTROLLED_PAPER_BLOCKED_STALE_MARKET_DATA_NO_INGEST
+run_result.ingest.status = SKIPPED_STALE_MARKET_DATA
+```
+
+Refresh the AMarkets files and rerun Stage180; do not bypass or increase the limits.
 
 ## GitHub Actions QA
 
@@ -140,7 +169,7 @@ After local preflight passes:
 ```bash
 cd ~/Desktop/xauusd-trader
 git add -A
-git commit -m "Repair controlled-paper execution ledger parser"
+git commit -m "Add controlled-paper operational freshness guard"
 git pull --rebase
 git push
 ```

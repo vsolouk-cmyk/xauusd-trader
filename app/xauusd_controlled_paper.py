@@ -27,7 +27,7 @@ from pathlib import Path
 from typing import Any, Iterable, Iterator, Mapping, Sequence
 
 UTC = timezone.utc
-PROGRAM_VERSION = "XAUUSD_CONTROLLED_PAPER_V1_3_EXECUTION_LEDGER_STATUS_PARSER_REPAIR"
+PROGRAM_VERSION = "XAUUSD_CONTROLLED_PAPER_V1_4_OPERATIONAL_FRESHNESS_GUARD"
 ALLOWED_STAGE180_DECISIONS = {
     "STAGE180_FROZEN_MODEL_SHADOW_ACTIVE_NO_ORDER",
     "STAGE180_WAITING_FOR_POST_ACTIVATION_COMPLETE_BAR",
@@ -47,6 +47,10 @@ LOCKED_NUMERIC = {
     "expected_historical_signals": 168,
     "expected_execution_evaluated_trades": 146,
     "expected_missing_execution_signals": 22,
+    "maximum_stage180_summary_age_minutes_open_market": 180.0,
+    "maximum_aligned_h1_age_minutes_open_market": 180.0,
+    "maximum_spread_source_age_minutes_open_market": 90.0,
+    "maximum_future_clock_skew_minutes": 15.0,
 }
 
 
@@ -61,6 +65,34 @@ def utc_now() -> datetime:
 def iso_utc(value: datetime | None = None) -> str:
     value = value or utc_now()
     return value.astimezone(UTC).isoformat().replace("+00:00", "Z")
+
+
+def xauusd_market_expected_open_utc(value: datetime) -> bool:
+    """Conservative XAUUSD/FX market-open approximation in UTC.
+
+    The guard treats Saturday as closed, Sunday before 22:00 UTC as closed,
+    Friday from 21:00 UTC onward as closed, and the normal daily maintenance
+    window 21:00-22:00 UTC as closed Monday through Thursday.  The schedule is
+    intentionally conservative: it prevents stale weekday data from being
+    reported as operationally active without demanding fresh bars while the
+    market is normally shut.
+    """
+    dt = value.astimezone(UTC)
+    weekday = dt.weekday()  # Monday=0, Sunday=6
+    minute = dt.hour * 60 + dt.minute
+    if weekday == 5:
+        return False
+    if weekday == 6:
+        return minute >= 22 * 60
+    if weekday == 4:
+        return minute < 21 * 60
+    if 21 * 60 <= minute < 22 * 60:
+        return False
+    return True
+
+
+def age_minutes(now: datetime, value: datetime) -> float:
+    return (now.astimezone(UTC) - value.astimezone(UTC)).total_seconds() / 60.0
 
 
 def parse_timestamp(value: Any) -> datetime:
@@ -1007,6 +1039,8 @@ def load_config(root: Path, config_path: Path | None) -> dict[str, Any]:
         raise ControlledPaperError("direction must remain LONG_ONLY")
     if not bool(config.get("event_guard", {}).get("required", True)):
         raise ControlledPaperError("event guard cannot be disabled")
+    if not bool(config.get("freshness_guard", {}).get("required", True)):
+        raise ControlledPaperError("operational freshness guard cannot be disabled")
     return config
 
 
@@ -1147,6 +1181,87 @@ def validate_preflight(root: Path, config: dict[str, Any]) -> PreflightContext:
         spread_time_contract_path=spread_time_contract_path,
         checks=checks,
     )
+
+
+def operational_freshness_audit(
+    context: PreflightContext,
+    h1_bars: Sequence[Bar],
+    *,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    """Prove that the frozen shadow and broker data are current enough to ingest.
+
+    This is a wall-clock operational gate, not a research gate.  During an
+    expected-open market, a stale Stage180 summary, stale aligned H1 table, or
+    stale spread source blocks all ledger mutation.  During expected market
+    closure, age limits are deferred but future-dated clock anomalies remain
+    blocking.
+    """
+    now = (now or utc_now()).astimezone(UTC)
+    cfg = context.config
+    guard_cfg = dict(cfg.get("freshness_guard", {}))
+    market_open = xauusd_market_expected_open_utc(now)
+
+    generated_raw = context.stage180.get("generated_utc")
+    if generated_raw in (None, ""):
+        raise ControlledPaperError("Stage180 summary missing generated_utc; operational freshness cannot be proven")
+    stage180_generated = parse_timestamp(generated_raw)
+    if not h1_bars:
+        raise ControlledPaperError("aligned H1 table is empty; operational freshness cannot be proven")
+    aligned_h1_latest = datetime.fromtimestamp(h1_bars[-1].timestamp_ms / 1000.0, tz=UTC)
+
+    spread_check = context.checks.get("spread_source", {})
+    spread_latest_raw = spread_check.get("latest_source_utc") if isinstance(spread_check, Mapping) else None
+    if spread_latest_raw not in (None, ""):
+        spread_latest = parse_timestamp(spread_latest_raw)
+    else:
+        spread_latest = datetime.fromtimestamp(
+            context.market.latest_timestamp_ms(context.m5) / 1000.0, tz=UTC
+        )
+
+    timestamps = {
+        "stage180_summary": stage180_generated,
+        "aligned_h1": aligned_h1_latest,
+        "spread_source": spread_latest,
+    }
+    ages = {name: age_minutes(now, value) for name, value in timestamps.items()}
+    future_limit = float(cfg["maximum_future_clock_skew_minutes"])
+    future_checks = {name: value >= -future_limit for name, value in ages.items()}
+
+    limits = {
+        "stage180_summary": float(cfg["maximum_stage180_summary_age_minutes_open_market"]),
+        "aligned_h1": float(cfg["maximum_aligned_h1_age_minutes_open_market"]),
+        "spread_source": float(cfg["maximum_spread_source_age_minutes_open_market"]),
+    }
+    open_market_age_checks = {name: ages[name] <= limits[name] for name in limits}
+    age_checks = open_market_age_checks if market_open else {name: True for name in limits}
+    passed = all(future_checks.values()) and all(age_checks.values())
+
+    if not all(future_checks.values()):
+        decision = "BLOCK_FUTURE_DATED_MARKET_CLOCK_ANOMALY"
+    elif market_open and not all(open_market_age_checks.values()):
+        decision = "BLOCK_STALE_MARKET_DATA_OPEN_MARKET"
+    elif market_open:
+        decision = "PASS_OPERATIONAL_FRESHNESS_OPEN_MARKET"
+    else:
+        decision = "PASS_MARKET_CLOSED_FRESHNESS_DEFERRED"
+
+    return {
+        "required": bool(guard_cfg.get("required", True)),
+        "pass": passed,
+        "decision": decision,
+        "now_utc": iso_utc(now),
+        "market_expected_open": market_open,
+        "timestamps_utc": {name: iso_utc(value) for name, value in timestamps.items()},
+        "ages_minutes": ages,
+        "limits_minutes": limits,
+        "maximum_future_clock_skew_minutes": future_limit,
+        "checks": {
+            "future_clock": future_checks,
+            "open_market_age": open_market_age_checks,
+            "effective_age": age_checks,
+        },
+    }
 
 
 def read_csv(path: Path) -> list[dict[str, str]]:
@@ -2021,10 +2136,13 @@ def export_reports(root: Path, config: Mapping[str, Any], ledger: Ledger, audit:
     atomic_write_csv(report_dir / "resolved_positions.csv", resolved)
     atomic_write_csv(report_dir / "all_positions.csv", all_positions)
     atomic_write_json(report_dir / "risk_state.json", risk)
+    freshness = run_result.get("freshness", {}) if isinstance(run_result, Mapping) else {}
     if risk["hard_kill_latched"]:
         decision = "CONTROLLED_PAPER_HARD_DRAWDOWN_KILL_SWITCH_ACTIVE"
     elif not audit.get("pass"):
         decision = "CONTROLLED_PAPER_FAIL_CLOSED_MISSING_COVERAGE_AUDIT"
+    elif isinstance(freshness, Mapping) and freshness.get("pass") is False:
+        decision = "CONTROLLED_PAPER_BLOCKED_STALE_MARKET_DATA_NO_INGEST"
     else:
         decision = "CONTROLLED_PAPER_ACTIVE_PAPER_LOG_ONLY_NO_BROKER"
     summary = {
@@ -2047,6 +2165,7 @@ def export_reports(root: Path, config: Mapping[str, Any], ledger: Ledger, audit:
         "aligned_db": str(context.aligned_db_path),
         "spread_source": context.spread_provider.describe(),
         "missing_coverage_audit": dict(audit),
+        "operational_freshness": dict(run_result.get("freshness", {})),
         "run_result": dict(run_result),
         "counts": {
             "signals": len(signals),
@@ -2094,11 +2213,14 @@ def execute(root: Path, config_path: Path | None, command: str) -> tuple[int, di
             raise ControlledPaperError(f"insufficient aligned H1 rows: {len(h1_bars)}")
         h1_index = {bar.timestamp_ms: idx for idx, bar in enumerate(h1_bars)}
         audit = run_missing_coverage_audit(root, context, h1_bars)
+        freshness = operational_freshness_audit(context, h1_bars)
+        context.checks["operational_freshness"] = freshness
+        preflight_pass = bool(audit["pass"] and freshness["pass"])
         preflight_payload = {
             "program": PROGRAM_VERSION,
             "generated_utc": iso_utc(),
-            "decision": "PASS_CONTROLLED_PAPER_PREFLIGHT" if audit["pass"] else "BLOCK_CONTROLLED_PAPER_PREFLIGHT",
-            "pass": bool(audit["pass"]),
+            "decision": "PASS_CONTROLLED_PAPER_PREFLIGHT" if preflight_pass else "BLOCK_CONTROLLED_PAPER_PREFLIGHT_STALE_OR_INVALID_DATA",
+            "pass": preflight_pass,
             "checks": context.checks,
             "paths": {
                 "stage180_summary": str(context.stage180_path),
@@ -2129,16 +2251,33 @@ def execute(root: Path, config_path: Path | None, command: str) -> tuple[int, di
         atomic_write_json(report_dir / "controlled_paper_preflight.json", preflight_payload)
         if command == "preflight":
             decision = preflight_payload["decision"]
-            ledger.finish_run(run_id, status="PASS" if audit["pass"] else "BLOCKED", decision=decision, error=None, context=context, audit=audit)
+            ledger.finish_run(run_id, status="PASS" if preflight_pass else "BLOCKED", decision=decision, error=None, context=context, audit=audit)
             context.market.close()
-            return (0 if audit["pass"] else 2), preflight_payload
+            return (0 if preflight_pass else 2), preflight_payload
+
+        if not freshness["pass"]:
+            run_result = {
+                "freshness": freshness,
+                "ingest": {"status": "SKIPPED_STALE_MARKET_DATA", "new_signal": False},
+                "h1_rows": len(h1_bars),
+                "latest_h1_utc": h1_bars[-1].dt_utc,
+            }
+            summary = export_reports(root, config, ledger, audit, context, run_result)
+            ledger.finish_run(run_id, status="BLOCKED", decision=summary["decision"], error=None, context=context, audit=audit)
+            context.market.close()
+            return 2, summary
 
         resolve_open(ledger, context, h1_bars)
         advance_waiting(ledger, context, h1_bars, h1_index, bool(audit["pass"]))
         ingest = ingest_latest_observation(ledger, context, bool(audit["pass"]))
         advance_waiting(ledger, context, h1_bars, h1_index, bool(audit["pass"]))
         resolve_open(ledger, context, h1_bars)
-        run_result = {"ingest": ingest, "h1_rows": len(h1_bars), "latest_h1_utc": h1_bars[-1].dt_utc}
+        run_result = {
+            "freshness": freshness,
+            "ingest": ingest,
+            "h1_rows": len(h1_bars),
+            "latest_h1_utc": h1_bars[-1].dt_utc,
+        }
         summary = export_reports(root, config, ledger, audit, context, run_result)
         ledger.finish_run(run_id, status="PASS" if audit["pass"] else "BLOCKED", decision=summary["decision"], error=None, context=context, audit=audit)
         context.market.close()

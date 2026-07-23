@@ -311,7 +311,27 @@ class ReplayTests(unittest.TestCase):
 
     def test_bidirectional_forward_policy_would_match_side_scope(self):
         signals, _, _ = m.validate_and_build_signals(self.rows, self.bars)
-        diagnostic = m.current_forward_policy_diagnostic(signals, {"direction": "BIDIRECTIONAL"})
+        config = {
+            "direction": "BIDIRECTIONAL_PROBABILITY_TAILS",
+            "threshold": 0.60,
+            "lower_probability_threshold": 0.40,
+            "entry_offset_h1_rows": 1,
+            "exit_offset_h1_rows": 24,
+            "maximum_notional_to_equity": 0.1570396406876166,
+            "maximum_concurrent_positions": 1,
+            "daily_new_positions_cap": 1,
+            "weekly_loss_pause_equity_pct": 2.0,
+            "hard_drawdown_kill_switch_equity_pct": 8.0,
+            "observed_entry_spread_guard_bps": 3.0764778059487488,
+            "normal_execution_cost_floor_bps": 3.0,
+            "severe_execution_cost_floor_bps": 4.5,
+            "normal_slippage_bps": 0.5,
+            "severe_spread_multiplier": 1.5,
+            "severe_slippage_bps": 2.0,
+            "stress_8_spread_addon_bps": 4.0,
+            "stress_10_spread_addon_bps": 6.0,
+        }
+        diagnostic = m.current_forward_policy_diagnostic(signals, config)
         self.assertTrue(diagnostic["pass"])
         self.assertEqual(diagnostic["forward_policy_eligible_trade_count"], 146)
 

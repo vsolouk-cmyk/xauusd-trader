@@ -1,58 +1,45 @@
-# XAUUSD Controlled-Paper Historical Replay Runbook
+# XAUUSD Historical-As-Of Replay V6 Runbook
 
 ## Purpose
 
-Complete historical-as-of validation without waiting for a future low-frequency
-signal.
+Close the forward direction-policy mismatch without waiting for a future signal.
 
-## Frozen side and horizon
+## Inputs
+
+- canonical Commercial Closure execution ledger;
+- canonical Commercial Closure summary;
+- aligned AMarkets H1 database;
+- controlled-paper runtime config.
+
+## Validated formulation
 
 ```text
-LONG  := probability_up >= 0.60
-SHORT := probability_up <= 0.40
-entry := open of aligned H1 row i+1
-exit  := close of aligned H1 row i+24
+LONG  = probability_up >= 0.60
+SHORT = probability_up <= 0.40
+entry = H1 i+1 open
+exit  = H1 i+24 close
 ```
 
-The `direction` column is retained as metadata; executable side is proved from
-probability tails and signed gross P&L.
+The replay validates all 146 evaluated trades, 22 missing-evidence rows, source-proven cost formulas, and all saved commercial metric blocks.
 
-## Source-proven execution-cost contract
+## Command
 
-The replay validates the exact formulas used by the Commercial Closure source:
-
-```text
-stress_8bps_net_bps =
-  m5_gross_bps - max(8.0, observed_spread_bps + 4.0)
-
-stress_10bps_net_bps =
-  m5_gross_bps - max(10.0, observed_spread_bps + 6.0)
+```bash
+python3 app/xauusd_controlled_paper_historical_replay.py --root .
 ```
 
-The `+4` and `+6` terms are stress slippage add-ons. They must not be removed or
-replaced by inferred alternatives.
-
-## Fail-closed conditions
-
-- inventory differs from `168 / 146 / 22`;
-- an evaluated probability is inside the neutral band;
-- side-adjusted gross differs from `m5_gross_bps`;
-- H1 `i+1/i+24` or entry/exit price parity fails;
-- normal or severe net/cost parity fails;
-- either source-proven stress formula fails on any row;
-- aggregate commercial metrics differ from the saved summary.
-
-## Expected output
-
-With the current forward logger configuration:
+## Expected result after this overlay
 
 ```text
-decision = PASS_HISTORICAL_COMMERCIAL_REPLAY_BLOCK_FORWARD_POLICY_PARITY
+program = XAUUSD_CONTROLLED_PAPER_HISTORICAL_ASOF_REPLAY_V6_FORWARD_DIRECTION_POLICY_PARITY_CLOSURE
+current_forward_policy_parity.pass = true
 forward_wait_required_for_replay = false
-validation.stress_cost_contract.source_proven = true
-validation.stress_cost_contract.commercial_execution_parity_pass = true
 ```
 
-This is not demo/live authorization. It identifies the remaining formulation
-drift: historical reference is bidirectional, current forward logger is
-`LONG_ONLY`.
+With currently absent historical event context, the expected decision is:
+
+```text
+PASS_CORE_HISTORICAL_ASOF_REPLAY_FORWARD_DIRECTION_POLICY_PARITY_CLOSED_EVENT_COVERAGE_INCOMPLETE
+```
+
+This permits continued controlled paper logging but does not authorize demo/live design. Historical event context remains the bounded pre-demo gap.

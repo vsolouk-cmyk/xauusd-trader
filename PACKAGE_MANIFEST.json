@@ -1,43 +1,68 @@
 {
-  "files": {
-    ".github/workflows/xauusd_controlled_paper_qa.yml": {
-      "sha256": "9b865f0862e1168795d878d02a732fd134c7afa9cd59dfe76b0b8492ad54fa82",
-      "size_bytes": 801
+  "package": "XAUUSD_CONTROLLED_PAPER_BIDIRECTIONAL_DIRECTION_PARITY_CLOSURE",
+  "controlled_paper_program": "XAUUSD_CONTROLLED_PAPER_V1_5_BIDIRECTIONAL_PROBABILITY_TAILS_DIRECTION_PARITY",
+  "historical_replay_program": "XAUUSD_CONTROLLED_PAPER_HISTORICAL_ASOF_REPLAY_V6_FORWARD_DIRECTION_POLICY_PARITY_CLOSURE",
+  "files": [
+    {
+      "path": ".github/workflows/xauusd_controlled_paper_qa.yml",
+      "size_bytes": 801,
+      "sha256": "9b865f0862e1168795d878d02a732fd134c7afa9cd59dfe76b0b8492ad54fa82"
     },
-    "QA_REPORT.md": {
-      "sha256": "af3f20060ae6a74a0dbdd4f07e446e27fb3ed7b5bd241ea11a28ef81556d4657",
-      "size_bytes": 2413
+    {
+      "path": "QA_REPORT.md",
+      "size_bytes": 2250,
+      "sha256": "45a8d5647f8f75689e734173092575653617835524a901f85e4b76fb6ac72c9c"
     },
-    "README.md": {
-      "sha256": "d6802576d3f20c85328df27a2c5d96e2ff8c41d76db796d1aedbee29f78c8588",
-      "size_bytes": 2283
+    {
+      "path": "README.md",
+      "size_bytes": 1860,
+      "sha256": "0cce4c027cb3c21fa35a63b0825ef70f3a8d4bf8c0b0920a39ceb9f2aaff3364"
     },
-    "app/xauusd_controlled_paper_historical_replay.py": {
-      "sha256": "99d1f07818b9f579a79f1b3a0ba8aad198ee84bb287dbbbe21a5062c97555679",
-      "size_bytes": 51962
+    {
+      "path": "app/xauusd_controlled_paper.py",
+      "size_bytes": 116341,
+      "sha256": "ad2d623dd7f3457b060e868da3b42f7f0f756fe7a38aced9cdba94a860b67faf"
     },
-    "config/xauusd_controlled_paper_replay.json": {
-      "sha256": "ca75625bf305d908d38c1b62372b4cb0575919f8e6b4180990cae59835faae16",
-      "size_bytes": 629
+    {
+      "path": "app/xauusd_controlled_paper_historical_replay.py",
+      "size_bytes": 55815,
+      "sha256": "e9f07403f1a8ea2143c769c9900e8b031edd0ed4bc3b934738af0b32a9734809"
     },
-    "docs/XAUUSD_CONTROLLED_PAPER_HISTORICAL_REPLAY_RUNBOOK.md": {
-      "sha256": "34e0f72a9fc743215e485cd19b3e4f6ba67e9bd289edff4013499068d6ddd478",
-      "size_bytes": 1727
+    {
+      "path": "config/xauusd_controlled_paper.json",
+      "size_bytes": 3659,
+      "sha256": "737ab8c6a0b43f937e743e5f8aea6dd39d1e8b3e3d48889194c1a9af34ced0ea"
     },
-    "tests/__init__.py": {
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "size_bytes": 0
+    {
+      "path": "config/xauusd_controlled_paper_replay.json",
+      "size_bytes": 629,
+      "sha256": "ca75625bf305d908d38c1b62372b4cb0575919f8e6b4180990cae59835faae16"
     },
-    "tests/test_xauusd_controlled_paper_historical_replay.py": {
-      "sha256": "0c474538def0d1d0713e397c8af5173f14ecd4d4e2fb1bd2aafe4ad68545540c",
-      "size_bytes": 20591
+    {
+      "path": "docs/XAUUSD_CONTROLLED_PAPER_HISTORICAL_REPLAY_RUNBOOK.md",
+      "size_bytes": 1253,
+      "sha256": "0012f32f5d14e0ee89e2566b4a668381819083acda6914aabe1c7f9727a6f545"
+    },
+    {
+      "path": "docs/XAUUSD_CONTROLLED_PAPER_RUNBOOK.md",
+      "size_bytes": 1673,
+      "sha256": "a3dd8562311f2d437c06efe60497ce52eb906c9cd1694219349b42e673ce6337"
+    },
+    {
+      "path": "tests/__init__.py",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/test_xauusd_controlled_paper.py",
+      "size_bytes": 35050,
+      "sha256": "f868c5718549729848bf8494d58f8a1c30a12f71f444d8d2f0a1d9703fb22e7b"
+    },
+    {
+      "path": "tests/test_xauusd_controlled_paper_historical_replay.py",
+      "size_bytes": 21460,
+      "sha256": "ea1b24cbd85abee3a2b3aeb425a297a56a1299f3aefbadcabc81ea6adfd3efb1"
     }
-  },
-  "forensic_source_hashes": {
-    "app/commercial_closure_sprint.py": "1c114d624fa56115c92a0bb1ac270c05c5ca55cea4c96a122bde0bef53ceddcc",
-    "reports/commercial_closure_sprint/commercial_closure_execution_ledger.csv": "7d2bb519a280e09136afc7779d953206bde556cb6a2671a051d079fb121c2b5b",
-    "reports/commercial_closure_sprint/commercial_closure_summary.json": "878c01d0495a951b4bf709ede70bafaeb86a2b7e3231fd6c1de5fc685c5be99f"
-  },
-  "package": "XAUUSD_CONTROLLED_PAPER_HISTORICAL_REPLAY_SOURCE_PROVEN_COST_CONTRACT_REPAIR",
-  "program": "XAUUSD_CONTROLLED_PAPER_HISTORICAL_ASOF_REPLAY_V5_SOURCE_PROVEN_COST_CONTRACT_REPAIR"
+  ],
+  "file_count": 12
 }

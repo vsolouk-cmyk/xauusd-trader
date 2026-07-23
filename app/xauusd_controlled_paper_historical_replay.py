@@ -30,7 +30,7 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 UTC = timezone.utc
-PROGRAM_VERSION = "XAUUSD_CONTROLLED_PAPER_HISTORICAL_ASOF_REPLAY_V5_SOURCE_PROVEN_COST_CONTRACT_REPAIR"
+PROGRAM_VERSION = "XAUUSD_CONTROLLED_PAPER_HISTORICAL_ASOF_REPLAY_V6_FORWARD_DIRECTION_POLICY_PARITY_CLOSURE"
 LOCKED = {
     "upper_probability_threshold": 0.60,
     "lower_probability_threshold": 0.40,
@@ -47,6 +47,11 @@ LOCKED = {
     "expected_missing": 22,
     "stress_8_floor_bps": 8.0,
     "stress_10_floor_bps": 10.0,
+    "normal_execution_cost_floor_bps": 3.0,
+    "severe_execution_cost_floor_bps": 4.5,
+    "normal_slippage_bps": 0.5,
+    "severe_spread_multiplier": 1.5,
+    "severe_slippage_bps": 2.0,
     "stress_8_spread_addon_bps": 4.0,
     "stress_10_spread_addon_bps": 6.0,
 }
@@ -888,30 +893,85 @@ def current_forward_policy_diagnostic(
 ) -> dict[str, Any]:
     direction_policy = str(runtime_config.get("direction") or "").strip().upper()
     side_counts = Counter(signal.side for signal in signals)
+    checks = {
+        "direction_policy": direction_policy == "BIDIRECTIONAL_PROBABILITY_TAILS",
+        "upper_probability_threshold": close_enough(
+            runtime_config.get("threshold"), LOCKED["upper_probability_threshold"], 1e-12
+        ),
+        "lower_probability_threshold": close_enough(
+            runtime_config.get("lower_probability_threshold"), LOCKED["lower_probability_threshold"], 1e-12
+        ),
+        "entry_offset_h1_rows": close_enough(
+            runtime_config.get("entry_offset_h1_rows"), LOCKED["entry_offset_h1_rows"], 0.0
+        ),
+        "exit_offset_h1_rows": close_enough(
+            runtime_config.get("exit_offset_h1_rows"), LOCKED["exit_offset_h1_rows"], 0.0
+        ),
+        "maximum_notional_to_equity": close_enough(
+            runtime_config.get("maximum_notional_to_equity"), LOCKED["maximum_notional_to_equity"], 1e-12
+        ),
+        "maximum_concurrent_positions": close_enough(
+            runtime_config.get("maximum_concurrent_positions"), LOCKED["maximum_concurrent_positions"], 0.0
+        ),
+        "daily_new_positions_cap": close_enough(
+            runtime_config.get("daily_new_positions_cap"), LOCKED["daily_new_positions_cap"], 0.0
+        ),
+        "weekly_loss_pause_equity_pct": close_enough(
+            runtime_config.get("weekly_loss_pause_equity_pct"), LOCKED["weekly_loss_pause_equity_pct"], 1e-12
+        ),
+        "hard_drawdown_kill_switch_equity_pct": close_enough(
+            runtime_config.get("hard_drawdown_kill_switch_equity_pct"), LOCKED["hard_drawdown_kill_switch_equity_pct"], 1e-12
+        ),
+        "observed_entry_spread_guard_bps": close_enough(
+            runtime_config.get("observed_entry_spread_guard_bps"), LOCKED["observed_entry_spread_guard_bps"], 1e-12
+        ),
+        "normal_execution_cost_floor_bps": close_enough(
+            runtime_config.get("normal_execution_cost_floor_bps"), LOCKED["normal_execution_cost_floor_bps"], 1e-12
+        ),
+        "severe_execution_cost_floor_bps": close_enough(
+            runtime_config.get("severe_execution_cost_floor_bps"), LOCKED["severe_execution_cost_floor_bps"], 1e-12
+        ),
+        "normal_slippage_bps": close_enough(
+            runtime_config.get("normal_slippage_bps"), LOCKED["normal_slippage_bps"], 1e-12
+        ),
+        "severe_spread_multiplier": close_enough(
+            runtime_config.get("severe_spread_multiplier"), LOCKED["severe_spread_multiplier"], 1e-12
+        ),
+        "severe_slippage_bps": close_enough(
+            runtime_config.get("severe_slippage_bps"), LOCKED["severe_slippage_bps"], 1e-12
+        ),
+        "stress_8_spread_addon_bps": close_enough(
+            runtime_config.get("stress_8_spread_addon_bps"), LOCKED["stress_8_spread_addon_bps"], 1e-12
+        ),
+        "stress_10_spread_addon_bps": close_enough(
+            runtime_config.get("stress_10_spread_addon_bps"), LOCKED["stress_10_spread_addon_bps"], 1e-12
+        ),
+        "historical_reference_has_long": side_counts.get("LONG", 0) > 0,
+        "historical_reference_has_short": side_counts.get("SHORT", 0) > 0,
+    }
+    parity = all(checks.values())
     if direction_policy == "LONG_ONLY":
         eligible = [signal for signal in signals if signal.side == "LONG"]
-        parity = side_counts.get("SHORT", 0) == 0
-        excluded_reason = "REFERENCE_CONTAINS_SHORT_TRADES_BUT_FORWARD_LOGGER_IS_LONG_ONLY"
-    elif direction_policy in {"BIDIRECTIONAL", "LONG_SHORT"}:
+    elif direction_policy == "BIDIRECTIONAL_PROBABILITY_TAILS":
         eligible = list(signals)
-        parity = True
-        excluded_reason = ""
     else:
         eligible = []
-        parity = False
-        excluded_reason = f"UNSUPPORTED_FORWARD_DIRECTION_POLICY:{direction_policy or 'MISSING'}"
+    failures = [key for key, value in checks.items() if not value]
     return {
         "pass": parity,
         "forward_direction_policy": direction_policy,
+        "execution_side_source": "PROBABILITY_TAILS_ONLY",
+        "checks": checks,
+        "failures": failures,
         "historical_reference_direction_counts": dict(side_counts),
         "historical_reference_trade_count": len(signals),
         "forward_policy_eligible_trade_count": len(eligible),
         "excluded_reference_trade_count": len(signals) - len(eligible),
-        "excluded_reason": excluded_reason,
+        "excluded_reason": "" if parity else "FORWARD_LOGGER_CONTRACT_DOES_NOT_MATCH_FROZEN_BIDIRECTIONAL_FORMULATION",
         "eligible_reference_metrics": metric_block([signal.normal_net_bps for signal in eligible]),
         "interpretation": (
-            "Historical replay is valid independently of this check. Demo/live design remains blocked "
-            "until the forward logger side policy matches the frozen commercial formulation."
+            "Historical replay is independent of forward waiting. Controlled paper may continue only when "
+            "the forward logger derives LONG/SHORT from the frozen probability tails and preserves the locked risk contract."
         ),
     }
 
@@ -1102,10 +1162,10 @@ def run(root: Path, config_path: Path) -> dict[str, Any]:
         decision = "PASS_HISTORICAL_COMMERCIAL_REPLAY_BLOCK_FORWARD_POLICY_PARITY"
         passed = True
     elif event_coverage_complete and not strict_summary["hard_kill_latched"]:
-        decision = "PASS_FULL_HISTORICAL_ASOF_REPLAY_NO_FORWARD_WAIT"
+        decision = "PASS_FULL_HISTORICAL_ASOF_REPLAY_FORWARD_DIRECTION_POLICY_PARITY_CLOSED_NO_FORWARD_WAIT"
         passed = True
     else:
-        decision = "PASS_CORE_HISTORICAL_ASOF_REPLAY_EVENT_COVERAGE_INCOMPLETE"
+        decision = "PASS_CORE_HISTORICAL_ASOF_REPLAY_FORWARD_DIRECTION_POLICY_PARITY_CLOSED_EVENT_COVERAGE_INCOMPLETE"
         passed = True
 
     report_dir = root / config["report_dir"]
@@ -1127,7 +1187,10 @@ def run(root: Path, config_path: Path) -> dict[str, Any]:
         "broker_order_allowed": False,
         "demo_order_allowed": False,
         "live_order_allowed": False,
-        "controlled_paper_promotion_allowed": False,
+        "controlled_paper_promotion_allowed": bool(
+            passed and stress_contract["commercial_execution_parity_pass"]
+            and forward_policy["pass"] and not core_summary["hard_kill_latched"]
+        ),
         "forward_wait_required_for_replay": False,
         "source_execution_ledger": str(ledger_path),
         "source_execution_ledger_sha256": sha256_file(ledger_path),
@@ -1163,7 +1226,11 @@ def run(root: Path, config_path: Path) -> dict[str, Any]:
             else (
                 "RECONCILE_FORWARD_LOGGER_DIRECTION_POLICY_WITH_FROZEN_COMMERCIAL_FORMULATION_BEFORE_DEMO_DESIGN"
                 if not forward_policy["pass"]
-                else "NO_FORWARD_WAIT_REQUIRED_FOR_HISTORICAL_REPLAY"
+                else (
+                    "COMPLETE_BOUNDED_HISTORICAL_EVENT_CONTEXT_BEFORE_DEMO_DESIGN"
+                    if not event_coverage_complete
+                    else "HISTORICAL_REPLAY_COMPLETE_NO_FORWARD_WAIT"
+                )
             )
         ),
         "outputs": {
@@ -1201,7 +1268,7 @@ Decision: `{decision}`
 
 ## Boundary
 
-The historical replay no longer waits for a future signal. It proves the saved commercial ledger as a bidirectional probability-tail formulation; the generic direction column is metadata, not execution side. The current forward logger remains blocked from demo/live promotion when its direction policy does not match that frozen formulation.
+The historical replay no longer waits for a future signal. It proves the saved commercial ledger as a bidirectional probability-tail formulation; the generic direction column is metadata, not execution side. The forward logger now closes bidirectional probability-tail policy parity when its runtime config matches the frozen formulation. Historical event-context coverage remains a bounded pre-demo data requirement and never requires waiting for a future trading signal.
 """
     atomic_write(report_dir / "historical_asof_replay_decision.md", decision_md)
     persist_sqlite(sqlite_path, source_rows, all_replay_rows, summary)

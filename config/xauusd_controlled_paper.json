@@ -5,7 +5,7 @@
   "model": "logistic",
   "target": "direction_24h",
   "threshold": 0.6,
-  "direction": "LONG_ONLY",
+  "direction": "BIDIRECTIONAL_PROBABILITY_TAILS",
   "entry_offset_h1_rows": 1,
   "exit_offset_h1_rows": 24,
   "operational_history_floor_utc": "2015-01-02T07:00:00Z",
@@ -86,5 +86,18 @@
     "market_schedule": "CONSERVATIVE_XAUUSD_UTC_WEEKLY_WITH_DAILY_MAINTENANCE",
     "open_market_behavior": "BLOCK_ALL_LEDGER_MUTATION_IF_ANY_REQUIRED_SOURCE_IS_STALE",
     "closed_market_behavior": "DEFER_AGE_LIMITS_BUT_BLOCK_FUTURE_CLOCK_ANOMALIES"
-  }
+  },
+  "lower_probability_threshold": 0.4,
+  "normal_slippage_bps": 0.5,
+  "severe_spread_multiplier": 1.5,
+  "severe_slippage_bps": 2.0,
+  "stress_8_spread_addon_bps": 4.0,
+  "stress_10_spread_addon_bps": 6.0,
+  "commercial_execution_ledger_candidates": [
+    "reports/commercial_closure_sprint/commercial_closure_execution_ledger.csv",
+    "reports/commercial_closure/commercial_closure_execution_ledger.csv"
+  ],
+  "historical_replay_summary_candidates": [
+    "reports/xauusd_controlled_paper_replay/historical_asof_replay_summary.json"
+  ]
 }

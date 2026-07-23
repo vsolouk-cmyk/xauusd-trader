@@ -1,78 +1,43 @@
-# XAUUSD Historical-As-Of Replay — Source-Proven Cost Contract Repair
+# XAUUSD Bidirectional Controlled-Paper Direction-Parity Closure
 
-This overlay replaces the four speculative replay repairs with a contract taken
-from the actual Commercial Closure generator and validated against the actual
-168-row execution ledger supplied by the user.
+This overlay closes the direction-policy mismatch identified by the source-proven historical replay.
 
-## Proven frozen formulas
+## Locked execution-side contract
 
-Source: `app/commercial_closure_sprint.py`, lines 523–565 in the forensic input.
+- LONG when `probability_up >= 0.60`.
+- SHORT when `probability_up <= 0.40`.
+- Neutral band `(0.40, 0.60)` creates no position.
+- Stage180 `direction` is retained as metadata only and is never used to derive execution side.
+- A legacy Stage180 `NO_SIGNAL` status is acceptable for a low-tail SHORT because Stage180 was originally long-only.
 
-```text
-side/gross:
-  gross = direction * (exit_close / entry_open - 1) * 10,000
+## Exact paper lifecycle
 
-stress 8:
-  m5_gross_bps - max(8.0, observed_spread_bps + 4.0)
+- Signal row: aligned H1 row `i`.
+- Entry: open of aligned H1 row `i+1`.
+- Exit: close of aligned H1 row `i+24`.
+- Entry admissibility spread guard: observable entry spread for both sides; no future leakage.
+- Commercial execution cost:
+  - LONG uses entry spread.
+  - SHORT uses the final M5 spread of the exit H1 bucket, matching the source generator.
+- Normal cost: `max(3.0, observed_spread + 0.5)` bps.
+- Severe cost: `max(4.5, observed_spread * 1.5 + 2.0)` bps.
+- Stress 8: `max(8.0, observed_spread + 4.0)` bps.
+- Stress 10: `max(10.0, observed_spread + 6.0)` bps.
 
-stress 10:
-  m5_gross_bps - max(10.0, observed_spread_bps + 6.0)
-```
+## Safety boundary
 
-The earlier V4 formula omitted the `+4` and `+6` slippage add-ons. That is why
-exactly four high-spread rows failed.
+- Paper ledger only.
+- No broker API.
+- No demo or live order path.
+- Existing V1.4 SQLite ledger is migrated in place; it is not reset.
+- Bidirectional preflight is blocked until the V6 historical replay proves source hashes, 55/91 direction scope, commercial metric parity, source-proven stress cost, and zero forward-wait dependency.
 
-## Real-artifact validation completed before packaging
+## Required execution order
 
-The supplied canonical artifacts were read directly:
+1. Install this overlay.
+2. Run the combined tests.
+3. Run V6 historical replay.
+4. Confirm direction parity is closed.
+5. Refresh Stage180 and run controlled-paper preflight/run.
 
-```text
-signals                 168
-evaluated               146
-missing                  22
-LONG                     55
-SHORT                    91
-spread-sensitive rows     4
-row-level cost errors      0
-commercial metric errors  0
-```
-
-All normal, severe, stress-8, and stress-10 aggregate metrics reproduced the
-saved `commercial_closure_summary.json` within floating-point precision.
-
-## Expected decision
-
-Because the current forward logger remains `LONG_ONLY` while the frozen
-commercial reference contains both LONG and SHORT trades, the expected replay
-result is:
-
-```text
-PASS_HISTORICAL_COMMERCIAL_REPLAY_BLOCK_FORWARD_POLICY_PARITY
-```
-
-This means historical replay is complete without forward waiting, but demo/live
-remain blocked until forward direction policy is reconciled.
-
-## Run
-
-```bash
-cd ~/Desktop/xauusd-trader
-
-python3 -m py_compile \
-  app/xauusd_controlled_paper.py \
-  app/xauusd_controlled_paper_historical_replay.py \
-  tests/test_xauusd_controlled_paper.py \
-  tests/test_xauusd_controlled_paper_historical_replay.py
-
-python3 -m unittest -v \
-  tests.test_xauusd_controlled_paper \
-  tests.test_xauusd_controlled_paper_historical_replay
-
-rm -f \
-  reports/xauusd_controlled_paper_replay/historical_asof_replay_summary.json \
-  reports/xauusd_controlled_paper_replay/historical_asof_replay_failure.json
-
-python3 app/xauusd_controlled_paper_historical_replay.py --root .
-```
-
-No broker, demo, or live order path is added.
+Historical event context remains incomplete. This does not require waiting for a future signal, but it remains a bounded pre-demo data requirement.

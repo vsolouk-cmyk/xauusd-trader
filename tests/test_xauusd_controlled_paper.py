@@ -244,7 +244,7 @@ class Fixture:
                     "source_period": "operational",
                     "fold": 1,
                     "direction": 1,
-                    "probability_up": 0.70,
+                    "probability_up": 0.70 if i < 55 else 0.30,
                     "resolution_hours": 24,
                     "research_gross_bps": 15.0,
                     "horizon_semantics": "i+1/i+24",
@@ -265,6 +265,31 @@ class Fixture:
                     "stress_8bps_net_bps": 5.0,
                     "stress_10bps_net_bps": 3.0,
                 })
+
+        replay_report = self.root / "reports/xauusd_controlled_paper_replay"
+        replay_report.mkdir(parents=True, exist_ok=True)
+        commercial_summary_path = report / "commercial_closure_summary.json"
+        write_json(replay_report / "historical_asof_replay_summary.json", {
+            "program": "XAUUSD_CONTROLLED_PAPER_HISTORICAL_ASOF_REPLAY_V6_FORWARD_DIRECTION_POLICY_PARITY_CLOSURE",
+            "decision": "PASS_CORE_HISTORICAL_ASOF_REPLAY_FORWARD_DIRECTION_POLICY_PARITY_CLOSED_EVENT_COVERAGE_INCOMPLETE",
+            "pass": True,
+            "forward_wait_required_for_replay": False,
+            "source_execution_ledger_sha256": sha(ledger_path),
+            "commercial_summary_sha256": sha(commercial_summary_path),
+            "controlled_paper_promotion_allowed": True,
+            "validation": {
+                "evaluated_side_counts": {"LONG": 55, "SHORT": 91},
+                "commercial_reference_metric_parity": {"pass": True},
+                "stress_cost_contract": {
+                    "source_proven": True,
+                    "commercial_execution_parity_pass": True,
+                },
+            },
+            "current_forward_policy_parity": {
+                "pass": True,
+                "forward_direction_policy": "BIDIRECTIONAL_PROBABILITY_TAILS",
+            },
+        })
 
     def _stage180(self, signal: bool) -> None:
         report = self.root / "reports/stage180_frozen_model_parallel_shadow"
@@ -519,7 +544,156 @@ class ControlledPaperTests(unittest.TestCase):
                 "PASS_MARKET_CLOSED_FRESHNESS_DEFERRED",
             )
             self.assertFalse(summary["operational_freshness"]["market_expected_open"])
-            self.assertEqual(summary["run_result"]["ingest"]["status"], "NO_SIGNAL")
+            self.assertEqual(summary["run_result"]["ingest"]["status"], "NO_SIGNAL_NEUTRAL_BAND")
+
+    def test_short_probability_tail_queues_and_resolves_with_source_proven_costs(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            fixture = Fixture(root, signal=False, spread_points=20.0)
+            stage_path = root / "reports/stage180_frozen_model_parallel_shadow/stage180_summary.json"
+            stage = json.loads(stage_path.read_text(encoding="utf-8"))
+            observation = stage["latest_observation"]
+            observation["probability_up"] = 0.35
+            observation["direction"] = 1  # legacy non-execution metadata
+            observation["observation_status"] = "NO_SIGNAL"  # expected under legacy long-only Stage180 status
+            write_json(stage_path, stage)
+
+            # Prove SHORT execution uses the final M5 spread of the exit H1 bucket,
+            # not the entry spread or the first spread in the exit bucket.
+            exit_dt = fixture.start + timedelta(hours=1024, minutes=55)
+            exit_broker = fixture._broker_naive(exit_dt)
+            with fixture.spread_csv.open("r", encoding="utf-8", newline="") as handle:
+                rows = list(csv.DictReader(handle, delimiter="\t"))
+                fieldnames = list(rows[0].keys())
+            changed = 0
+            for row in rows:
+                if row["<DATE>"] == exit_broker.strftime("%Y.%m.%d") and row["<TIME>"] == exit_broker.strftime("%H:%M:%S"):
+                    row["<SPREAD>"] = "130.0"
+                    changed += 1
+            self.assertEqual(changed, 1)
+            with fixture.spread_csv.open("w", encoding="utf-8", newline="") as handle:
+                writer = csv.DictWriter(handle, fieldnames=fieldnames, delimiter="\t")
+                writer.writeheader()
+                writer.writerows(rows)
+
+            code, summary = MOD.execute(root, None, "run")
+            self.assertEqual(code, 0, summary)
+            self.assertEqual(summary["run_result"]["ingest"]["status"], "SHORT_SIGNAL_QUEUED")
+            self.assertEqual(summary["position_side_counts"]["SHORT"], 1)
+            conn = sqlite3.connect(root / "data/controlled_paper/xauusd_controlled_paper.sqlite")
+            conn.row_factory = sqlite3.Row
+            row = conn.execute("SELECT * FROM positions").fetchone()
+            self.assertEqual(row["status"], "RESOLVED")
+            self.assertEqual(row["side"], "SHORT")
+            self.assertEqual(row["side_source"], "PROBABILITY_TAILS_ONLY")
+            self.assertLess(row["gross_bps"], 0.0)
+            self.assertAlmostEqual(row["exit_spread_points"], 130.0, places=12)
+            self.assertIsNotNone(row["exit_spread_bps"])
+            observed = float(row["observed_cost_bps"])
+            self.assertAlmostEqual(observed, float(row["exit_spread_bps"]), places=12)
+            self.assertAlmostEqual(row["normal_cost_bps"], max(3.0, observed + 0.5), places=12)
+            self.assertAlmostEqual(row["severe_cost_bps"], max(4.5, observed * 1.5 + 2.0), places=12)
+            self.assertAlmostEqual(row["stress_8_cost_bps"], max(8.0, observed + 4.0), places=12)
+            self.assertAlmostEqual(row["stress_10_cost_bps"], max(10.0, observed + 6.0), places=12)
+            conn.close()
+
+    def test_neutral_probability_band_never_creates_position(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            Fixture(root, signal=False)
+            code, summary = MOD.execute(root, None, "run")
+            self.assertEqual(code, 0, summary)
+            self.assertEqual(summary["run_result"]["ingest"]["status"], "NO_SIGNAL_NEUTRAL_BAND")
+            self.assertEqual(summary["position_side_counts"], {"LONG": 0, "SHORT": 0})
+
+    def test_probability_tail_side_source_ignores_direction_metadata_for_short(self) -> None:
+        self.assertEqual(MOD.execution_side_from_probability(0.35, 0.60, 0.40), "SHORT")
+        self.assertEqual(MOD.execution_side_from_probability(0.65, 0.60, 0.40), "LONG")
+        self.assertIsNone(MOD.execution_side_from_probability(0.50, 0.60, 0.40))
+
+    def test_existing_v14_ledger_schema_migrates_without_reset(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            db = Path(td) / "legacy.sqlite"
+            conn = sqlite3.connect(db)
+            conn.executescript(
+                """
+                CREATE TABLE signals (
+                    signal_key TEXT PRIMARY KEY,
+                    signal_timestamp_ms INTEGER NOT NULL,
+                    signal_utc TEXT NOT NULL,
+                    probability_up REAL NOT NULL,
+                    direction INTEGER NOT NULL,
+                    observation_status TEXT NOT NULL,
+                    stage180_created_utc TEXT,
+                    ingested_utc TEXT NOT NULL,
+                    raw_json TEXT NOT NULL
+                );
+                CREATE TABLE positions (
+                    position_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    signal_key TEXT NOT NULL UNIQUE,
+                    status TEXT NOT NULL,
+                    created_utc TEXT NOT NULL,
+                    updated_utc TEXT NOT NULL,
+                    signal_timestamp_ms INTEGER NOT NULL,
+                    signal_utc TEXT NOT NULL,
+                    entry_row_index INTEGER,
+                    entry_timestamp_ms INTEGER,
+                    entry_utc TEXT,
+                    entry_price REAL,
+                    entry_spread_points REAL,
+                    entry_spread_bps REAL,
+                    exit_row_index INTEGER,
+                    exit_timestamp_ms INTEGER,
+                    exit_utc TEXT,
+                    exit_price REAL,
+                    notional_to_equity REAL NOT NULL,
+                    gross_bps REAL,
+                    observed_cost_bps REAL,
+                    normal_cost_bps REAL,
+                    severe_cost_bps REAL,
+                    stress_8_cost_bps REAL,
+                    stress_10_cost_bps REAL,
+                    normal_net_bps REAL,
+                    severe_net_bps REAL,
+                    stress_8_net_bps REAL,
+                    stress_10_net_bps REAL,
+                    equity_before REAL,
+                    equity_after REAL,
+                    equity_pnl_pct REAL,
+                    block_reason TEXT,
+                    detail_json TEXT NOT NULL
+                );
+                """
+            )
+            conn.execute(
+                "INSERT INTO signals VALUES(?,?,?,?,?,?,?,?,?)",
+                ("legacy", 1, "1970-01-01T00:00:00.001Z", 0.5, 1, "NO_SIGNAL", None, "now", "{}"),
+            )
+            conn.commit()
+            conn.close()
+
+            ledger = MOD.Ledger(db)
+            signal_cols = {row[1] for row in ledger.conn.execute("PRAGMA table_info(signals)")}
+            position_cols = {row[1] for row in ledger.conn.execute("PRAGMA table_info(positions)")}
+            self.assertIn("execution_side", signal_cols)
+            self.assertIn("side_source", signal_cols)
+            self.assertIn("side", position_cols)
+            self.assertIn("exit_spread_bps", position_cols)
+            self.assertEqual(ledger.conn.execute("SELECT COUNT(*) FROM signals").fetchone()[0], 1)
+            ledger.close()
+
+    def test_stale_v5_replay_summary_cannot_authorize_bidirectional_logger(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            Fixture(root, signal=False)
+            path = root / "reports/xauusd_controlled_paper_replay/historical_asof_replay_summary.json"
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            payload["program"] = "XAUUSD_CONTROLLED_PAPER_HISTORICAL_ASOF_REPLAY_V5_SOURCE_PROVEN_COST_CONTRACT_REPAIR"
+            payload["current_forward_policy_parity"]["pass"] = False
+            write_json(path, payload)
+            code, failure = MOD.execute(root, None, "preflight")
+            self.assertEqual(code, 2)
+            self.assertIn("historical replay evidence", failure["error"])
 
     def test_missing_dependencies_fail_closed(self) -> None:
         with tempfile.TemporaryDirectory() as td:

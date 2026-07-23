@@ -27,13 +27,14 @@ from pathlib import Path
 from typing import Any, Iterable, Iterator, Mapping, Sequence
 
 UTC = timezone.utc
-PROGRAM_VERSION = "XAUUSD_CONTROLLED_PAPER_V1_4_OPERATIONAL_FRESHNESS_GUARD"
+PROGRAM_VERSION = "XAUUSD_CONTROLLED_PAPER_V1_5_BIDIRECTIONAL_PROBABILITY_TAILS_DIRECTION_PARITY"
 ALLOWED_STAGE180_DECISIONS = {
     "STAGE180_FROZEN_MODEL_SHADOW_ACTIVE_NO_ORDER",
     "STAGE180_WAITING_FOR_POST_ACTIVATION_COMPLETE_BAR",
 }
 LOCKED_NUMERIC = {
     "threshold": 0.60,
+    "lower_probability_threshold": 0.40,
     "entry_offset_h1_rows": 1,
     "exit_offset_h1_rows": 24,
     "maximum_notional_to_equity": 0.1570396406876166,
@@ -43,6 +44,11 @@ LOCKED_NUMERIC = {
     "hard_drawdown_kill_switch_equity_pct": 8.0,
     "normal_execution_cost_floor_bps": 3.0,
     "severe_execution_cost_floor_bps": 4.5,
+    "normal_slippage_bps": 0.5,
+    "severe_spread_multiplier": 1.5,
+    "severe_slippage_bps": 2.0,
+    "stress_8_spread_addon_bps": 4.0,
+    "stress_10_spread_addon_bps": 6.0,
     "observed_entry_spread_guard_bps": 3.0764778059487488,
     "expected_historical_signals": 168,
     "expected_execution_evaluated_trades": 146,
@@ -313,6 +319,9 @@ class PreflightContext:
     stage180: dict[str, Any]
     commercial_summary_path: Path
     commercial_summary: dict[str, Any]
+    commercial_execution_ledger_path: Path
+    historical_replay_summary_path: Path
+    historical_replay_summary: dict[str, Any]
     risk_contract_path: Path
     risk_contract: dict[str, Any]
     frozen_contract_path: Path
@@ -576,6 +585,7 @@ class SpreadBucket:
     source: str
     row_count: int
     first_spread_points: float | None
+    last_spread_points: float | None
     first_timestamp_ms: int | None
     last_timestamp_ms: int | None
 
@@ -600,11 +610,14 @@ class DatabaseSpreadProvider(SpreadProvider):
 
     def bucket(self, start_ms: int, end_ms: int) -> SpreadBucket:
         rows = self.market.bucket(self.spec, start_ms, end_ms)
-        first = next((row.spread_points for row in rows if row.spread_points is not None and row.spread_points >= 0), None)
+        valid = [row.spread_points for row in rows if row.spread_points is not None and row.spread_points >= 0]
+        first = valid[0] if valid else None
+        last = valid[-1] if valid else None
         return SpreadBucket(
             source="ALIGNED_DB_M5_SPREAD",
             row_count=len(rows),
             first_spread_points=first,
+            last_spread_points=last,
             first_timestamp_ms=rows[0].timestamp_ms if rows else None,
             last_timestamp_ms=rows[-1].timestamp_ms if rows else None,
         )
@@ -778,6 +791,7 @@ class AMarketsCsvSpreadProvider(SpreadProvider):
     def bucket(self, start_ms: int, end_ms: int) -> SpreadBucket:
         count = 0
         first_spread: float | None = None
+        last_spread: float | None = None
         first_ts: int | None = None
         last_ts: int | None = None
         with self.source_path.open("r", encoding="utf-8-sig", newline="") as handle:
@@ -795,11 +809,13 @@ class AMarketsCsvSpreadProvider(SpreadProvider):
                 if first_spread is None:
                     first_spread = spread
                     first_ts = ts
+                last_spread = spread
                 last_ts = ts
         return SpreadBucket(
             source="AMARKETS_M5_RAW_CSV_SPREAD",
             row_count=count,
             first_spread_points=first_spread,
+            last_spread_points=last_spread,
             first_timestamp_ms=first_ts,
             last_timestamp_ms=last_ts,
         )
@@ -1035,8 +1051,10 @@ def load_config(root: Path, config_path: Path | None) -> dict[str, Any]:
     for key, expected in LOCKED_NUMERIC.items():
         if not isclose(config.get(key), expected):
             raise ControlledPaperError(f"locked config mismatch {key}: {config.get(key)!r} != {expected!r}")
-    if config.get("direction") != "LONG_ONLY":
-        raise ControlledPaperError("direction must remain LONG_ONLY")
+    if config.get("direction") != "BIDIRECTIONAL_PROBABILITY_TAILS":
+        raise ControlledPaperError("direction must be BIDIRECTIONAL_PROBABILITY_TAILS")
+    if not isclose(config.get("threshold"), 0.60) or not isclose(config.get("lower_probability_threshold"), 0.40):
+        raise ControlledPaperError("probability-tail thresholds must remain 0.60/0.40")
     if not bool(config.get("event_guard", {}).get("required", True)):
         raise ControlledPaperError("event guard cannot be disabled")
     if not bool(config.get("freshness_guard", {}).get("required", True)):
@@ -1070,6 +1088,63 @@ def validate_preflight(root: Path, config: dict[str, Any]) -> PreflightContext:
     checks["commercial_reference_parity"] = bool(commercial_summary.get("reference_parity", {}).get("pass"))
     if not all((checks["commercial_only_coverage_failed"], checks["commercial_counts"], checks["commercial_reference_parity"])):
         raise ControlledPaperError(f"commercial closure contract mismatch: {checks}")
+
+    commercial_execution_ledger_path = resolve_existing(
+        root, config["commercial_execution_ledger_candidates"]
+    )
+    historical_replay_summary_path = resolve_existing(
+        root, config["historical_replay_summary_candidates"]
+    )
+    historical_replay_summary = load_json(historical_replay_summary_path)
+    replay_validation = historical_replay_summary.get("validation", {})
+    replay_forward = historical_replay_summary.get("current_forward_policy_parity", {})
+    replay_stress = replay_validation.get("stress_cost_contract", {})
+    replay_counts = replay_validation.get("evaluated_side_counts", {})
+    checks["historical_replay_program"] = (
+        historical_replay_summary.get("program")
+        == "XAUUSD_CONTROLLED_PAPER_HISTORICAL_ASOF_REPLAY_V6_FORWARD_DIRECTION_POLICY_PARITY_CLOSURE"
+    )
+    checks["historical_replay_pass"] = historical_replay_summary.get("pass") is True
+    checks["historical_replay_no_forward_wait"] = (
+        historical_replay_summary.get("forward_wait_required_for_replay") is False
+    )
+    checks["historical_replay_commercial_metric_parity"] = bool(
+        replay_validation.get("commercial_reference_metric_parity", {}).get("pass")
+    )
+    checks["historical_replay_source_proven_cost"] = bool(
+        replay_stress.get("source_proven")
+        and replay_stress.get("commercial_execution_parity_pass")
+    )
+    checks["historical_replay_bidirectional_counts"] = (
+        int(replay_counts.get("LONG", 0)) > 0
+        and int(replay_counts.get("SHORT", 0)) > 0
+        and int(replay_counts.get("LONG", 0)) + int(replay_counts.get("SHORT", 0))
+        == int(config["expected_execution_evaluated_trades"])
+    )
+    checks["historical_replay_forward_direction_parity"] = replay_forward.get("pass") is True
+    checks["historical_replay_ledger_hash"] = (
+        historical_replay_summary.get("source_execution_ledger_sha256")
+        == sha256_file(commercial_execution_ledger_path)
+    )
+    checks["historical_replay_commercial_summary_hash"] = (
+        historical_replay_summary.get("commercial_summary_sha256")
+        == sha256_file(commercial_summary_path)
+    )
+    replay_check_names = (
+        "historical_replay_program", "historical_replay_pass",
+        "historical_replay_no_forward_wait",
+        "historical_replay_commercial_metric_parity",
+        "historical_replay_source_proven_cost",
+        "historical_replay_bidirectional_counts",
+        "historical_replay_forward_direction_parity",
+        "historical_replay_ledger_hash",
+        "historical_replay_commercial_summary_hash",
+    )
+    if not all(checks[name] for name in replay_check_names):
+        raise ControlledPaperError(
+            "historical replay evidence does not close bidirectional forward-direction parity: "
+            + str({name: checks[name] for name in replay_check_names})
+        )
 
     risk_contract_path = newest_glob(root, config["risk_contract_globs"])
     risk_contract = load_json(risk_contract_path)
@@ -1167,6 +1242,9 @@ def validate_preflight(root: Path, config: dict[str, Any]) -> PreflightContext:
         stage180=stage180,
         commercial_summary_path=commercial_summary_path,
         commercial_summary=commercial_summary,
+        commercial_execution_ledger_path=commercial_execution_ledger_path,
+        historical_replay_summary_path=historical_replay_summary_path,
+        historical_replay_summary=historical_replay_summary,
         risk_contract_path=risk_contract_path,
         risk_contract=risk_contract,
         frozen_contract_path=frozen_contract_path,
@@ -1657,6 +1735,8 @@ class Ledger:
                 signal_utc TEXT NOT NULL,
                 probability_up REAL NOT NULL,
                 direction INTEGER NOT NULL,
+                execution_side TEXT,
+                side_source TEXT,
                 observation_status TEXT NOT NULL,
                 stage180_created_utc TEXT,
                 ingested_utc TEXT NOT NULL,
@@ -1678,12 +1758,16 @@ class Ledger:
                 updated_utc TEXT NOT NULL,
                 signal_timestamp_ms INTEGER NOT NULL,
                 signal_utc TEXT NOT NULL,
+                side TEXT,
+                side_source TEXT,
                 entry_row_index INTEGER,
                 entry_timestamp_ms INTEGER,
                 entry_utc TEXT,
                 entry_price REAL,
                 entry_spread_points REAL,
                 entry_spread_bps REAL,
+                exit_spread_points REAL,
+                exit_spread_bps REAL,
                 exit_row_index INTEGER,
                 exit_timestamp_ms INTEGER,
                 exit_utc TEXT,
@@ -1721,7 +1805,20 @@ class Ledger:
             );
             """
         )
+        self._ensure_column("signals", "execution_side", "TEXT")
+        self._ensure_column("signals", "side_source", "TEXT")
+        self._ensure_column("positions", "side", "TEXT")
+        self._ensure_column("positions", "side_source", "TEXT")
+        self._ensure_column("positions", "exit_spread_points", "REAL")
+        self._ensure_column("positions", "exit_spread_bps", "REAL")
         self.conn.commit()
+
+    def _ensure_column(self, table: str, column: str, definition: str) -> None:
+        columns = {str(row[1]) for row in self.conn.execute(f"PRAGMA table_info({quote_ident(table)})").fetchall()}
+        if column not in columns:
+            self.conn.execute(
+                f"ALTER TABLE {quote_ident(table)} ADD COLUMN {quote_ident(column)} {definition}"
+            )
 
     def start_run(self, command: str, metadata: Mapping[str, Any]) -> int:
         cursor = self.conn.execute(
@@ -1750,16 +1847,19 @@ class Ledger:
     def signal_exists(self, signal_key: str) -> bool:
         return self.conn.execute("SELECT 1 FROM signals WHERE signal_key=?", (signal_key,)).fetchone() is not None
 
-    def insert_signal(self, observation: Mapping[str, Any]) -> str:
+    def insert_signal(
+        self, observation: Mapping[str, Any], execution_side: str | None, side_source: str
+    ) -> str:
         signal_ms = timestamp_ms(observation["signal_timestamp"] if observation.get("signal_timestamp") is not None else observation["signal_dt"])
         key = str(signal_ms)
         self.conn.execute(
             """INSERT OR IGNORE INTO signals(signal_key, signal_timestamp_ms, signal_utc, probability_up,
-               direction, observation_status, stage180_created_utc, ingested_utc, raw_json)
-               VALUES(?,?,?,?,?,?,?,?,?)""",
+               direction, execution_side, side_source, observation_status, stage180_created_utc, ingested_utc, raw_json)
+               VALUES(?,?,?,?,?,?,?,?,?,?,?)""",
             (
                 key, signal_ms, iso_utc(datetime.fromtimestamp(signal_ms / 1000, tz=UTC)),
                 float(observation["probability_up"]), int(observation.get("direction") or 0),
+                execution_side, side_source,
                 str(observation.get("observation_status") or "UNKNOWN"), observation.get("created_utc"),
                 iso_utc(), json.dumps(dict(observation), ensure_ascii=False, sort_keys=True),
             ),
@@ -1780,11 +1880,15 @@ class Ledger:
             )
         self.conn.commit()
 
-    def ensure_waiting_position(self, signal_key: str, signal_ms: int, signal_utc: str, notional: float) -> None:
+    def ensure_waiting_position(
+        self, signal_key: str, signal_ms: int, signal_utc: str, side: str, side_source: str, notional: float
+    ) -> None:
+        if side not in {"LONG", "SHORT"}:
+            raise ControlledPaperError(f"invalid waiting-position side: {side!r}")
         self.conn.execute(
             """INSERT OR IGNORE INTO positions(signal_key,status,created_utc,updated_utc,signal_timestamp_ms,
-               signal_utc,notional_to_equity,detail_json) VALUES(?,?,?,?,?,?,?,?)""",
-            (signal_key, "WAIT_ENTRY", iso_utc(), iso_utc(), signal_ms, signal_utc, notional, "{}"),
+               signal_utc,side,side_source,notional_to_equity,detail_json) VALUES(?,?,?,?,?,?,?,?,?,?)""",
+            (signal_key, "WAIT_ENTRY", iso_utc(), iso_utc(), signal_ms, signal_utc, side, side_source, notional, "{}"),
         )
         self.conn.commit()
 
@@ -1826,7 +1930,7 @@ class Ledger:
 
     def resolve_position(self, signal_key: str, payload: Mapping[str, Any]) -> None:
         columns = [
-            "exit_price", "gross_bps", "observed_cost_bps", "normal_cost_bps", "severe_cost_bps",
+            "exit_price", "exit_spread_points", "exit_spread_bps", "gross_bps", "observed_cost_bps", "normal_cost_bps", "severe_cost_bps",
             "stress_8_cost_bps", "stress_10_cost_bps", "normal_net_bps", "severe_net_bps",
             "stress_8_net_bps", "stress_10_net_bps", "equity_before", "equity_after", "equity_pnl_pct",
         ]
@@ -1940,6 +2044,10 @@ def advance_waiting(
     risk = ledger.recompute_risk(config)
     for position in ledger.waiting():
         signal_key = str(position["signal_key"])
+        side = str(position["side"] or "").upper()
+        if side not in {"LONG", "SHORT"}:
+            ledger.block(signal_key, "MISSING_OR_INVALID_POSITION_SIDE", {"side": position["side"]})
+            continue
         if not audit_pass:
             ledger.block(signal_key, "MISSING_COVERAGE_AUDIT_NOT_PASSED", {})
             continue
@@ -2015,6 +2123,9 @@ def advance_waiting(
             "detail": {
                 "entry_semantics": "open of aligned AMarkets H1 row i+1",
                 "exit_semantics": "close of aligned AMarkets H1 row i+24",
+                "side": side,
+                "side_source": str(position["side_source"] or "PROBABILITY_TAILS_ONLY"),
+                "entry_spread_guard_semantics": "observable entry spread for both LONG and SHORT; no future leakage",
                 "event_guard": event_reason,
                 "event_detail": event_detail,
                 "entry_m5_rows": len(m5_rows),
@@ -2029,26 +2140,57 @@ def advance_waiting(
 def resolve_open(ledger: Ledger, context: PreflightContext, h1_bars: Sequence[Bar]) -> None:
     config = context.config
     for position in ledger.open_positions():
+        signal_key = str(position["signal_key"])
+        side = str(position["side"] or "").upper()
+        if side not in {"LONG", "SHORT"}:
+            ledger.block(signal_key, "MISSING_OR_INVALID_POSITION_SIDE", {"side": position["side"]})
+            continue
         exit_i = int(position["exit_row_index"])
         if exit_i >= len(h1_bars):
             continue
         exit_bar = h1_bars[exit_i]
         if exit_bar.timestamp_ms != int(position["exit_timestamp_ms"]):
-            ledger.block(str(position["signal_key"]), "EXACT_EXIT_ROW_IDENTITY_MISMATCH", {
+            ledger.block(signal_key, "EXACT_EXIT_ROW_IDENTITY_MISMATCH", {
                 "expected": int(position["exit_timestamp_ms"]), "actual": exit_bar.timestamp_ms,
             })
             continue
         exit_m5 = context.market.bucket(context.m5, exit_bar.timestamp_ms, exit_bar.timestamp_ms + 3600 * 1000)
         if len(exit_m5) < int(config["minimum_m5_rows_per_complete_h1_bucket"]):
             continue
+        exit_spread_bucket = context.spread_provider.bucket(
+            exit_bar.timestamp_ms, exit_bar.timestamp_ms + 3600 * 1000
+        )
+        if exit_spread_bucket.row_count < int(config["minimum_m5_rows_per_complete_h1_bucket"]):
+            continue
+
         entry_price = float(position["entry_price"])
         exit_price = float(exit_bar.close)
-        gross_bps = (exit_price / entry_price - 1.0) * 10000.0
-        observed_cost = float(position["entry_spread_bps"])
-        normal_cost = max(float(config["normal_execution_cost_floor_bps"]), observed_cost)
-        severe_cost = max(float(config["severe_execution_cost_floor_bps"]), observed_cost)
-        stress_8_cost = max(8.0, observed_cost)
-        stress_10_cost = max(10.0, observed_cost)
+        raw_return_bps = (exit_price / entry_price - 1.0) * 10000.0
+        gross_bps = raw_return_bps if side == "LONG" else -raw_return_bps
+
+        exit_spread_points, exit_spread_bps = first_spread_bps(
+            exit_spread_bucket.last_spread_points, float(config["point_size"]), exit_price
+        )
+        if exit_spread_bps is None:
+            ledger.block(signal_key, "EXIT_SPREAD_MISSING_FAIL_CLOSED", {
+                "side": side, "exit_utc": exit_bar.dt_utc,
+                "spread_source": exit_spread_bucket.source,
+            })
+            continue
+
+        entry_spread_bps = float(position["entry_spread_bps"])
+        observed_cost = entry_spread_bps if side == "LONG" else float(exit_spread_bps)
+        normal_cost = max(
+            float(config["normal_execution_cost_floor_bps"]),
+            observed_cost + float(config["normal_slippage_bps"]),
+        )
+        severe_cost = max(
+            float(config["severe_execution_cost_floor_bps"]),
+            observed_cost * float(config["severe_spread_multiplier"])
+            + float(config["severe_slippage_bps"]),
+        )
+        stress_8_cost = max(8.0, observed_cost + float(config["stress_8_spread_addon_bps"]))
+        stress_10_cost = max(10.0, observed_cost + float(config["stress_10_spread_addon_bps"]))
         normal_net = gross_bps - normal_cost
         severe_net = gross_bps - severe_cost
         stress_8_net = gross_bps - stress_8_cost
@@ -2057,8 +2199,10 @@ def resolve_open(ledger: Ledger, context: PreflightContext, h1_bars: Sequence[Ba
         equity_before = float(risk_before["equity"])
         pnl_fraction = normal_net / 10000.0 * float(position["notional_to_equity"])
         equity_after = equity_before * (1.0 + pnl_fraction)
-        ledger.resolve_position(str(position["signal_key"]), {
+        ledger.resolve_position(signal_key, {
             "exit_price": exit_price,
+            "exit_spread_points": exit_spread_points,
+            "exit_spread_bps": exit_spread_bps,
             "gross_bps": gross_bps,
             "observed_cost_bps": observed_cost,
             "normal_cost_bps": normal_cost,
@@ -2073,13 +2217,34 @@ def resolve_open(ledger: Ledger, context: PreflightContext, h1_bars: Sequence[Ba
             "equity_after": equity_after,
             "equity_pnl_pct": pnl_fraction * 100.0,
             "detail": {
+                "side": side,
+                "side_source": str(position["side_source"] or "PROBABILITY_TAILS_ONLY"),
                 "exit_semantics": "close of exact aligned AMarkets H1 row i+24",
                 "exit_m5_rows": len(exit_m5),
-                "normal_cost_semantics": "max(3.0 bps, observed entry spread bps)",
+                "spread_source_rows": exit_spread_bucket.row_count,
+                "execution_observed_spread_semantics": (
+                    "entry spread for LONG; final M5 spread of exit H1 bucket for SHORT"
+                ),
+                "normal_cost_semantics": "max(3.0, observed spread + 0.5) bps",
+                "severe_cost_semantics": "max(4.5, observed spread * 1.5 + 2.0) bps",
+                "stress_8_semantics": "max(8.0, observed spread + 4.0) bps",
+                "stress_10_semantics": "max(10.0, observed spread + 6.0) bps",
                 "broker_order_sent": False,
             },
         })
     ledger.recompute_risk(config)
+
+
+def execution_side_from_probability(
+    probability_up: float, upper_threshold: float, lower_threshold: float
+) -> str | None:
+    if not math.isfinite(probability_up):
+        raise ControlledPaperError(f"non-finite probability_up: {probability_up!r}")
+    if probability_up >= upper_threshold:
+        return "LONG"
+    if probability_up <= lower_threshold:
+        return "SHORT"
+    return None
 
 
 def ingest_latest_observation(ledger: Ledger, context: PreflightContext, audit_pass: bool) -> dict[str, Any]:
@@ -2088,7 +2253,7 @@ def ingest_latest_observation(ledger: Ledger, context: PreflightContext, audit_p
         return {"status": "NO_STAGE180_OBSERVATION", "new_signal": False}
     if not isinstance(observation, Mapping):
         raise ControlledPaperError("Stage180 latest_observation must be an object")
-    required = ("probability_up", "direction", "observation_status")
+    required = ("probability_up", "observation_status")
     missing = [key for key in required if key not in observation]
     if missing or ("signal_timestamp" not in observation and "signal_dt" not in observation):
         raise ControlledPaperError(f"Stage180 latest_observation missing fields: {missing}")
@@ -2096,29 +2261,51 @@ def ingest_latest_observation(ledger: Ledger, context: PreflightContext, audit_p
     signal_key = str(signal_ms)
     if ledger.signal_exists(signal_key):
         return {"status": "OBSERVATION_ALREADY_INGESTED", "signal_key": signal_key, "new_signal": False}
-    signal_key = ledger.insert_signal(observation)
+
     probability = float(observation["probability_up"])
-    direction = int(observation.get("direction") or 0)
+    upper = float(context.config["threshold"])
+    lower = float(context.config["lower_probability_threshold"])
+    side = execution_side_from_probability(probability, upper, lower)
+    side_source = "PROBABILITY_TAILS_ONLY"
+    signal_key = ledger.insert_signal(observation, side, side_source)
     status = str(observation.get("observation_status") or "UNKNOWN").upper()
-    threshold = float(context.config["threshold"])
-    is_signal = probability >= threshold and direction == 1
-    if ("NO_SIGNAL" in status) and is_signal:
-        ledger.block(signal_key, "STAGE180_OBSERVATION_CONTRADICTION", {
-            "probability_up": probability, "threshold": threshold, "direction": direction, "status": status,
+
+    # Stage180 was originally long-only, so a low-tail SHORT may legitimately
+    # arrive with legacy NO_SIGNAL metadata.  Execution side is therefore
+    # derived solely from the source-proven probability tails.
+    if side == "LONG" and "NO_SIGNAL" in status:
+        ledger.block(signal_key, "STAGE180_LONG_OBSERVATION_CONTRADICTION", {
+            "probability_up": probability, "upper_threshold": upper,
+            "legacy_direction_metadata": observation.get("direction"), "status": status,
         })
-        return {"status": "BLOCKED_CONTRADICTORY_OBSERVATION", "signal_key": signal_key, "new_signal": False}
-    if not is_signal:
-        return {"status": "NO_SIGNAL", "signal_key": signal_key, "new_signal": False}
+        return {"status": "BLOCKED_CONTRADICTORY_LONG_OBSERVATION", "signal_key": signal_key, "new_signal": False}
+    if side is None:
+        if "SIGNAL" in status and "NO_SIGNAL" not in status:
+            ledger.block(signal_key, "STAGE180_NEUTRAL_BAND_OBSERVATION_CONTRADICTION", {
+                "probability_up": probability, "upper_threshold": upper,
+                "lower_threshold": lower, "status": status,
+            })
+            return {"status": "BLOCKED_CONTRADICTORY_NEUTRAL_OBSERVATION", "signal_key": signal_key, "new_signal": False}
+        return {
+            "status": "NO_SIGNAL_NEUTRAL_BAND", "signal_key": signal_key, "new_signal": False,
+            "probability_up": probability, "upper_threshold": upper, "lower_threshold": lower,
+        }
+
     ledger.ensure_waiting_position(
         signal_key=signal_key,
         signal_ms=signal_ms,
         signal_utc=iso_utc(datetime.fromtimestamp(signal_ms / 1000, tz=UTC)),
+        side=side,
+        side_source=side_source,
         notional=float(context.config["maximum_notional_to_equity"]),
     )
     if not audit_pass:
         ledger.block(signal_key, "MISSING_COVERAGE_AUDIT_NOT_PASSED", {})
-        return {"status": "SIGNAL_BLOCKED_AUDIT", "signal_key": signal_key, "new_signal": True}
-    return {"status": "SIGNAL_QUEUED", "signal_key": signal_key, "new_signal": True}
+        return {"status": f"{side}_SIGNAL_BLOCKED_AUDIT", "signal_key": signal_key, "new_signal": True, "side": side}
+    return {
+        "status": f"{side}_SIGNAL_QUEUED", "signal_key": signal_key, "new_signal": True,
+        "side": side, "side_source": side_source,
+    }
 
 
 def export_reports(root: Path, config: Mapping[str, Any], ledger: Ledger, audit: Mapping[str, Any], context: PreflightContext, run_result: Mapping[str, Any]) -> dict[str, Any]:
@@ -2158,10 +2345,16 @@ def export_reports(root: Path, config: Mapping[str, Any], ledger: Ledger, audit:
         "model": config["model"],
         "target": config["target"],
         "threshold": config["threshold"],
+        "lower_probability_threshold": config["lower_probability_threshold"],
+        "direction_policy": config["direction"],
+        "side_source": "PROBABILITY_TAILS_ONLY",
         "entry_semantics": "open of aligned AMarkets H1 row i+1",
         "exit_semantics": "close of aligned AMarkets H1 row i+24",
         "stage180_summary": str(context.stage180_path),
         "stage180_decision": context.stage180.get("decision"),
+        "historical_replay_summary": str(context.historical_replay_summary_path),
+        "historical_replay_decision": context.historical_replay_summary.get("decision"),
+        "historical_replay_forward_direction_parity": context.historical_replay_summary.get("current_forward_policy_parity", {}).get("pass"),
         "aligned_db": str(context.aligned_db_path),
         "spread_source": context.spread_provider.describe(),
         "missing_coverage_audit": dict(audit),
@@ -2173,12 +2366,18 @@ def export_reports(root: Path, config: Mapping[str, Any], ledger: Ledger, audit:
             "pending_positions": len(pending),
             "resolved_positions": len(resolved),
         },
+        "position_side_counts": {
+            side: sum(1 for row in all_positions if str(row.get("side") or "").upper() == side)
+            for side in ("LONG", "SHORT")
+        },
         "risk_state": risk,
         "risk_contract": {
             key: config[key] for key in (
                 "maximum_notional_to_equity", "maximum_concurrent_positions", "daily_new_positions_cap",
                 "weekly_loss_pause_equity_pct", "hard_drawdown_kill_switch_equity_pct",
                 "normal_execution_cost_floor_bps", "severe_execution_cost_floor_bps",
+                "normal_slippage_bps", "severe_spread_multiplier", "severe_slippage_bps",
+                "stress_8_spread_addon_bps", "stress_10_spread_addon_bps",
                 "observed_entry_spread_guard_bps",
             )
         },
@@ -2225,6 +2424,8 @@ def execute(root: Path, config_path: Path | None, command: str) -> tuple[int, di
             "paths": {
                 "stage180_summary": str(context.stage180_path),
                 "commercial_summary": str(context.commercial_summary_path),
+                "commercial_execution_ledger": str(context.commercial_execution_ledger_path),
+                "historical_replay_summary": str(context.historical_replay_summary_path),
                 "risk_contract": str(context.risk_contract_path),
                 "frozen_contract": str(context.frozen_contract_path),
                 "frozen_model": str(context.frozen_model_path),
@@ -2235,6 +2436,8 @@ def execute(root: Path, config_path: Path | None, command: str) -> tuple[int, di
             "hashes": {
                 "stage180_summary": sha256_file(context.stage180_path),
                 "commercial_summary": sha256_file(context.commercial_summary_path),
+                "commercial_execution_ledger": sha256_file(context.commercial_execution_ledger_path),
+                "historical_replay_summary": sha256_file(context.historical_replay_summary_path),
                 "risk_contract": sha256_file(context.risk_contract_path),
                 "frozen_contract": sha256_file(context.frozen_contract_path),
                 "frozen_model": sha256_file(context.frozen_model_path),

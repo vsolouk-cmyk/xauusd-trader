@@ -1,51 +1,87 @@
 {
-  "package": "XAUUSD_STAGE116C_FRED_CORE_RELEASE_HISTORY_REPAIR",
-  "program": "XAUUSD_STAGE116C_FRED_CORE_RELEASE_HISTORY_REPAIR_V1",
+  "package": "XAUUSD_BOUNDED_DEMO_RISK_SOURCE_PROVENANCE_REPAIR_NO_ORDER",
+  "program": "XAUUSD_BOUNDED_DEMO_DESIGN_V1_1_RISK_SOURCE_PROVENANCE_REPAIR_NO_ORDER",
+  "file_count": 16,
   "files": [
     {
+      "path": ".github/workflows/xauusd_bounded_demo_qa.yml",
+      "sha256": "33c49e1a1a66fe853f4e8d6e0b1601f3051e1f380e3d7cfc604638711b41a661",
+      "size_bytes": 793
+    },
+    {
       "path": "QA_REPORT.md",
-      "sha256": "7d86c63c7b365435bec13308371e7c15693236833c0c1164f14f6eb2e522caec",
-      "size_bytes": 1022
+      "sha256": "4820ad2d4f6bca0138f34e0b5ada8602c0d7dabdde9513be5f5b74adf4d85377",
+      "size_bytes": 1650
     },
     {
       "path": "README.md",
-      "sha256": "b5f74e019c73a85e0c6fec9322346a29197d7af96c70822ef730bd3bdb0ca782",
-      "size_bytes": 1455
+      "sha256": "a0a0eb1773065c6858c133a4c4829c87011bc7a65287e62fbfcb08d55d2f999b",
+      "size_bytes": 967
     },
     {
-      "path": "app/stage115_feature_grade_macro_fundamental_builder.py",
-      "sha256": "35c2f1c7b2276f30272285a6e98f18d669a3d55966a852d1876f190705fa2686",
-      "size_bytes": 49171
+      "path": "app/xauusd_bounded_demo_design.py",
+      "sha256": "535dd74a47b8ffade26591cf06f09f58a390addc6cf14906545c0e3e8350412e",
+      "size_bytes": 26596
     },
     {
-      "path": "docs/XAUUSD_STAGE116C_FRED_CORE_RELEASE_HISTORY_RUNBOOK.md",
-      "sha256": "8ccfa64b009ea265ecb2369bc875de1755275c55fa9caf995ece332eff73f16b",
-      "size_bytes": 695
+      "path": "config/xauusd_bounded_demo_design.json",
+      "sha256": "9122e406d5f3b1f08d4ba0a23aeab5a72746e21cf1158dfb0485b24bca57be3b",
+      "size_bytes": 2306
     },
     {
-      "path": "scripts/download_xauusd_official_data_batch.py",
-      "sha256": "522e3fca217840c3aedf607d8c5ac47da63931c1f83983f0dfc042811c4af537",
-      "size_bytes": 45191
+      "path": "config/xauusd_controlled_paper.json",
+      "sha256": "7c49b13275e075289b9b939e53433abaf012eee8419223428b8515cc1a865f8c",
+      "size_bytes": 3750
     },
     {
-      "path": "scripts/run_xauusd_fundamental_unify_normalize_pipeline.py",
-      "sha256": "d9884ee1a972c4521bbb56aebf81d1d3fcbe675c2c71bbde78cb606a34607a64",
-      "size_bytes": 10489
+      "path": "docs/XAUUSD_BOUNDED_DEMO_DESIGN_RUNBOOK.md",
+      "sha256": "7582b83c6022c803715af4e534efca2870ad8f87025080c6f1b5438dfa279991",
+      "size_bytes": 1692
     },
     {
-      "path": "tests/test_stage116c_event_context_bridge_cli.py",
-      "sha256": "414fb3fa716eeb06b95a79c035d6b5896444e3964127ea8bf777bf0c22eea7da",
-      "size_bytes": 1535
+      "path": "docs/XAUUSD_BOUNDED_DEMO_RISK_SOURCE_PROVENANCE_REPAIR.md",
+      "sha256": "69ee5d305827f16097875e9dec1a294716a94c52aae5cd239898315ede726ba7",
+      "size_bytes": 875
     },
     {
-      "path": "tests/test_stage116c_fred_core_release_history.py",
-      "sha256": "15f96229a15d457c2c7ec40e2f7d95743b91399ae68de9e219b9cb2e198f8765",
-      "size_bytes": 12801
+      "path": "docs/XAUUSD_MT5_DEMO_BRIDGE_CONTRACT.md",
+      "sha256": "09abcb1ed78af739ed6b18ae0d883cfead3be131e312460b67b6d218974afbd4",
+      "size_bytes": 731
     },
     {
-      "path": "tests/test_stage116c_progress_and_fred_pagination.py",
-      "sha256": "e892af8a9ec93a3f66fa123a0b0f6622f707f47b049fcede66aad3e4d2e43abc",
-      "size_bytes": 5014
+      "path": "schemas/xauusd_demo_intent.schema.json",
+      "sha256": "5ca7efce4cfc706b651938cdd44fb20ae11f4e5d9cd2bee57b5c05299e667bea",
+      "size_bytes": 1081
+    },
+    {
+      "path": "tests/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "tests/fixtures/controlled_paper_preflight_v1_5.json",
+      "sha256": "973bcf8f11270c612bbd48540c2a8c534351cf06f29cae76de589dd3e905ac47",
+      "size_bytes": 13660
+    },
+    {
+      "path": "tests/fixtures/controlled_paper_summary_v1_5.json",
+      "sha256": "c1c4785fd635be616057d6672707b7b17e4d15763e9ee9f27daf35591a803c49",
+      "size_bytes": 11412
+    },
+    {
+      "path": "tests/fixtures/historical_asof_replay_summary_v7.json",
+      "sha256": "85d6ae9446a86e8bb9f9d78f89e2a88b17fc455d2ea5b6cadc854ef36408f72d",
+      "size_bytes": 28929
+    },
+    {
+      "path": "tests/fixtures/historical_event_context_summary_v1_2.json",
+      "sha256": "88742b92eca33e8159f318df35b0b2986035ca49aeb485ae51040cbec9409bae",
+      "size_bytes": 8857
+    },
+    {
+      "path": "tests/test_xauusd_bounded_demo_design.py",
+      "sha256": "e3d94f677cc122b2f440239e73937a0e360ee3081c1f9a491773b184442dd3af",
+      "size_bytes": 12687
     }
   ]
 }

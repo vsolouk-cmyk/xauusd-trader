@@ -55,6 +55,7 @@
   "event_guard": {
     "required": true,
     "csv_candidates": [
+      "data/fundamental_event_inbox/features/stage115_official_core_event_timestamps.csv",
       "data/controlled_paper/event_blackout.csv"
     ],
     "macro_db_candidates": [

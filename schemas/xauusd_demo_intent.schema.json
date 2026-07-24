@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "xauusd-demo-intent-v1",
+  "title": "XAUUSD bounded demo intent",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "intent_id",
+    "created_utc",
+    "symbol",
+    "side",
+    "signal_utc",
+    "entry_semantics",
+    "exit_semantics",
+    "notional_to_equity",
+    "event_guard_pass",
+    "spread_guard_pass",
+    "demo_order_allowed"
+  ],
+  "properties": {
+    "schema_version": {"const": "XAUUSD_DEMO_INTENT_V1"},
+    "intent_id": {"type": "string", "minLength": 1},
+    "created_utc": {"type": "string"},
+    "symbol": {"const": "XAUUSD"},
+    "side": {"enum": ["LONG", "SHORT"]},
+    "signal_utc": {"type": "string"},
+    "entry_semantics": {"const": "OPEN_OF_ALIGNED_H1_ROW_I_PLUS_1"},
+    "exit_semantics": {"const": "CLOSE_OF_ALIGNED_H1_ROW_I_PLUS_24"},
+    "notional_to_equity": {"type": "number", "exclusiveMinimum": 0},
+    "event_guard_pass": {"const": true},
+    "spread_guard_pass": {"const": true},
+    "demo_order_allowed": {"const": false}
+  }
+}

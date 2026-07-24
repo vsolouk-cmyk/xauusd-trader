@@ -1,0 +1,331 @@
+{
+  "allow_direct_network_fetch": false,
+  "blackout_after_minutes": 60.0,
+  "blackout_before_minutes": 60.0,
+  "blocked_entry_rows": 3,
+  "broker_order_allowed": false,
+  "clear_entry_rows": 143,
+  "core_coverage_complete": true,
+  "coverage": {
+    "counts_by_category": {
+      "BEA_GDP": 147,
+      "BEA_PERSONAL_INCOME_OUTLAYS": 131,
+      "BLS_CPI": 139,
+      "BLS_ECI": 45,
+      "BLS_EMPLOYMENT_SITUATION": 134,
+      "BLS_JOLTS": 131,
+      "BLS_PPI": 138,
+      "FOMC_PRESS_CONFERENCE": 71,
+      "FOMC_STATEMENT": 84
+    },
+    "counts_by_source": {
+      "BEA": 278,
+      "BLS": 587,
+      "FED": 155
+    },
+    "missing_required_categories": [],
+    "pass": true,
+    "rows": [
+      {
+        "actual_events": 54,
+        "minimum_events": 40,
+        "pass": true,
+        "source": "BLS",
+        "year": 2015
+      },
+      {
+        "actual_events": 52,
+        "minimum_events": 40,
+        "pass": true,
+        "source": "BLS",
+        "year": 2016
+      },
+      {
+        "actual_events": 54,
+        "minimum_events": 40,
+        "pass": true,
+        "source": "BLS",
+        "year": 2017
+      },
+      {
+        "actual_events": 54,
+        "minimum_events": 40,
+        "pass": true,
+        "source": "BLS",
+        "year": 2019
+      },
+      {
+        "actual_events": 55,
+        "minimum_events": 40,
+        "pass": true,
+        "source": "BLS",
+        "year": 2020
+      },
+      {
+        "actual_events": 54,
+        "minimum_events": 40,
+        "pass": true,
+        "source": "BLS",
+        "year": 2021
+      },
+      {
+        "actual_events": 54,
+        "minimum_events": 40,
+        "pass": true,
+        "source": "BLS",
+        "year": 2022
+      },
+      {
+        "actual_events": 54,
+        "minimum_events": 40,
+        "pass": true,
+        "source": "BLS",
+        "year": 2023
+      },
+      {
+        "actual_events": 56,
+        "minimum_events": 40,
+        "pass": true,
+        "source": "BLS",
+        "year": 2024
+      },
+      {
+        "actual_events": 47,
+        "minimum_events": 40,
+        "pass": true,
+        "source": "BLS",
+        "year": 2025
+      },
+      {
+        "actual_events": 53,
+        "minimum_events": 15,
+        "pass": true,
+        "source": "BLS",
+        "year": 2026
+      },
+      {
+        "actual_events": 12,
+        "minimum_events": 7,
+        "pass": true,
+        "source": "FED",
+        "year": 2015
+      },
+      {
+        "actual_events": 12,
+        "minimum_events": 7,
+        "pass": true,
+        "source": "FED",
+        "year": 2016
+      },
+      {
+        "actual_events": 12,
+        "minimum_events": 7,
+        "pass": true,
+        "source": "FED",
+        "year": 2017
+      },
+      {
+        "actual_events": 16,
+        "minimum_events": 7,
+        "pass": true,
+        "source": "FED",
+        "year": 2019
+      },
+      {
+        "actual_events": 14,
+        "minimum_events": 7,
+        "pass": true,
+        "source": "FED",
+        "year": 2020
+      },
+      {
+        "actual_events": 16,
+        "minimum_events": 7,
+        "pass": true,
+        "source": "FED",
+        "year": 2021
+      },
+      {
+        "actual_events": 16,
+        "minimum_events": 7,
+        "pass": true,
+        "source": "FED",
+        "year": 2022
+      },
+      {
+        "actual_events": 16,
+        "minimum_events": 7,
+        "pass": true,
+        "source": "FED",
+        "year": 2023
+      },
+      {
+        "actual_events": 16,
+        "minimum_events": 7,
+        "pass": true,
+        "source": "FED",
+        "year": 2024
+      },
+      {
+        "actual_events": 17,
+        "minimum_events": 7,
+        "pass": true,
+        "source": "FED",
+        "year": 2025
+      },
+      {
+        "actual_events": 8,
+        "minimum_events": 2,
+        "pass": true,
+        "source": "FED",
+        "year": 2026
+      },
+      {
+        "actual_events": 25,
+        "minimum_events": 18,
+        "pass": true,
+        "source": "BEA",
+        "year": 2015
+      },
+      {
+        "actual_events": 27,
+        "minimum_events": 18,
+        "pass": true,
+        "source": "BEA",
+        "year": 2016
+      },
+      {
+        "actual_events": 28,
+        "minimum_events": 18,
+        "pass": true,
+        "source": "BEA",
+        "year": 2017
+      },
+      {
+        "actual_events": 22,
+        "minimum_events": 18,
+        "pass": true,
+        "source": "BEA",
+        "year": 2019
+      },
+      {
+        "actual_events": 26,
+        "minimum_events": 18,
+        "pass": true,
+        "source": "BEA",
+        "year": 2020
+      },
+      {
+        "actual_events": 28,
+        "minimum_events": 18,
+        "pass": true,
+        "source": "BEA",
+        "year": 2021
+      },
+      {
+        "actual_events": 25,
+        "minimum_events": 18,
+        "pass": true,
+        "source": "BEA",
+        "year": 2022
+      },
+      {
+        "actual_events": 25,
+        "minimum_events": 18,
+        "pass": true,
+        "source": "BEA",
+        "year": 2023
+      },
+      {
+        "actual_events": 25,
+        "minimum_events": 18,
+        "pass": true,
+        "source": "BEA",
+        "year": 2024
+      },
+      {
+        "actual_events": 21,
+        "minimum_events": 18,
+        "pass": true,
+        "source": "BEA",
+        "year": 2025
+      },
+      {
+        "actual_events": 26,
+        "minimum_events": 6,
+        "pass": true,
+        "source": "BEA",
+        "year": 2026
+      }
+    ]
+  },
+  "decision": "PASS_EXISTING_PIPELINE_HISTORICAL_EVENT_CONTEXT_CORE_BLACKOUT",
+  "demo_order_allowed": false,
+  "evaluated_entry_rows": 146,
+  "event_counts_by_category": {
+    "BEA_GDP": 147,
+    "BEA_PERSONAL_INCOME_OUTLAYS": 131,
+    "BLS_CPI": 139,
+    "BLS_ECI": 45,
+    "BLS_EMPLOYMENT_SITUATION": 134,
+    "BLS_JOLTS": 131,
+    "BLS_PPI": 138,
+    "FOMC_PRESS_CONFERENCE": 71,
+    "FOMC_STATEMENT": 84
+  },
+  "event_counts_by_source": {
+    "BEA": 278,
+    "BLS": 587,
+    "FED": 155
+  },
+  "event_surprise_layer_complete": false,
+  "generated_utc": "2026-07-24T10:10:46.230049Z",
+  "live_order_allowed": false,
+  "maximum_entry_utc": "2026-06-18T19:00:00Z",
+  "minimum_entry_utc": "2015-01-13T15:00:00Z",
+  "network_access_attempted": false,
+  "official_event_count": 1020,
+  "outputs": {
+    "entry_context_csv": "/Users/vahid/Desktop/xauusd-trader/reports/xauusd_historical_event_context/historical_entry_event_context.csv",
+    "events_csv": "/Users/vahid/Desktop/xauusd-trader/reports/xauusd_historical_event_context/official_core_events.csv",
+    "source_audit": "/Users/vahid/Desktop/xauusd-trader/reports/xauusd_historical_event_context/official_pipeline_source_audit.json",
+    "sqlite": "/Users/vahid/Desktop/xauusd-trader/data/local/historical_event_context/xauusd_historical_event_context.sqlite",
+    "summary": "/Users/vahid/Desktop/xauusd-trader/reports/xauusd_historical_event_context/historical_event_context_summary.json"
+  },
+  "pass": true,
+  "pipeline_audit": [
+    {
+      "network_access_attempted": false,
+      "official_events_csv": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/features/stage115_official_core_event_timestamps.csv",
+      "official_events_csv_sha256": "601f587e0128d4322bc3ea5071545e53adf035b5e08fdbafa72cf16a550ec560",
+      "pipeline_summary": "/Users/vahid/Desktop/xauusd-trader/reports/xauusd_fundamental_unify_normalize_pipeline/xauusd_fundamental_unify_normalize_pipeline_summary.json",
+      "pipeline_summary_exists": true,
+      "pipeline_summary_sha256": "fb9c763fa28ce62800f1c1827c737785631742068828b20a6f1a7507c737e01e",
+      "source_mode": "EXISTING_STAGE113_116_PIPELINE_ONLY",
+      "stage115_summary": "/Users/vahid/Desktop/xauusd-trader/reports/stage115_feature_grade_macro_fundamental_builder/stage115_feature_grade_macro_fundamental_builder_summary.json",
+      "stage115_summary_exists": true,
+      "stage115_summary_sha256": "ca2e4af731462ae219469af86aecd71e943063b9ffdd05d2f609f7c8fcf2832c"
+    }
+  ],
+  "program": "XAUUSD_HISTORICAL_EVENT_CONTEXT_V1_2_EXISTING_PIPELINE_BRIDGE",
+  "required_years": [
+    2015,
+    2016,
+    2017,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025,
+    2026
+  ],
+  "scope": "SCHEDULED_USD_CORE_BLACKOUT_ONLY_NOT_EVENT_SURPRISE",
+  "source_execution_ledger": "/Users/vahid/Desktop/xauusd-trader/reports/commercial_closure_sprint/commercial_closure_execution_ledger.csv",
+  "source_execution_ledger_sha256": "7d2bb519a280e09136afc7779d953206bde556cb6a2671a051d079fb121c2b5b",
+  "source_mode": "EXISTING_STAGE113_116_PIPELINE_ONLY",
+  "source_official_events_csv": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/features/stage115_official_core_event_timestamps.csv",
+  "source_official_events_csv_sha256": "601f587e0128d4322bc3ea5071545e53adf035b5e08fdbafa72cf16a550ec560",
+  "universe_version": "USD_OFFICIAL_CORE_SCHEDULED_BLACKOUT_STAGE113_116_V1"
+}

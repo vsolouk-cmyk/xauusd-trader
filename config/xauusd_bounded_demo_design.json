@@ -1,0 +1,40 @@
+{
+  "program": "XAUUSD_BOUNDED_DEMO_DESIGN",
+  "mode": "DESIGN_AND_PREFLIGHT_ONLY_NO_BROKER",
+  "historical_replay_summary": "reports/xauusd_controlled_paper_replay/historical_asof_replay_summary.json",
+  "historical_event_context_summary": "reports/xauusd_historical_event_context/historical_event_context_summary.json",
+  "controlled_paper_summary": "reports/xauusd_controlled_paper/controlled_paper_summary.json",
+  "controlled_paper_preflight": "reports/xauusd_controlled_paper/controlled_paper_preflight.json",
+  "controlled_paper_config": "config/xauusd_controlled_paper.json",
+  "commercial_risk_contract_candidates": [
+    "reports/commercial_closure_sprint/commercial_closure_risk_contract.json",
+    "reports/commercial_closure/commercial_closure_risk_contract.json"
+  ],
+  "official_event_csv": "data/fundamental_event_inbox/features/stage115_official_core_event_timestamps.csv",
+  "aligned_db": "data/local/stage177c_amarkets_alignment/xauusd_amarkets_alignment.sqlite",
+  "aligned_h1_table": "amarkets_h1_direct_utc",
+  "report_dir": "reports/xauusd_bounded_demo_design",
+  "intent_schema": "schemas/xauusd_demo_intent.schema.json",
+  "expected_programs": {
+    "replay": "XAUUSD_CONTROLLED_PAPER_HISTORICAL_ASOF_REPLAY_V7_OFFICIAL_EVENT_CONTEXT_CLOSURE",
+    "event_context": "XAUUSD_HISTORICAL_EVENT_CONTEXT_V1_2_EXISTING_PIPELINE_BRIDGE",
+    "controlled_paper": "XAUUSD_CONTROLLED_PAPER_V1_5_BIDIRECTIONAL_PROBABILITY_TAILS_DIRECTION_PARITY"
+  },
+  "expected_decisions": {
+    "replay": "PASS_FULL_HISTORICAL_EVENT_AWARE_REPLAY_DEMO_DESIGN_ALLOWED_NO_FORWARD_WAIT",
+    "event_context": "PASS_EXISTING_PIPELINE_HISTORICAL_EVENT_CONTEXT_CORE_BLACKOUT",
+    "controlled_paper_preflight": "PASS_CONTROLLED_PAPER_PREFLIGHT"
+  },
+  "demo_design": {
+    "initial_exposure_fraction_of_validated_ceiling": 0.25,
+    "qualification_max_calendar_days": 30,
+    "qualification_max_resolved_positions": 10,
+    "qualification_purpose": "EXECUTION_PLUMBING_AND_GUARD_VALIDATION_NOT_MODEL_RESELECTION",
+    "require_event_calendar_through_exit_horizon": true,
+    "maximum_event_pipeline_age_hours_open_market": 48.0
+  },
+  "commercial_summary_candidates": [
+    "reports/commercial_closure_sprint/commercial_closure_summary.json",
+    "reports/commercial_closure/commercial_closure_summary.json"
+  ]
+}

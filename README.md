@@ -1,40 +1,28 @@
-# Stage116C FRED Core Release-History Repair
+# XAUUSD Bounded Demo Risk Source Provenance Repair
 
-This repair fixes the exact historical event-coverage failure where Stage115
-contained only four BLS and four BEA events from 2026 while the FED calendar
-was complete.
+This overlay repairs the bounded-demo operational preflight failure caused by
+requiring `observed_entry_spread_guard_bps` from the real commercial risk
+contract, where that field does not exist.
 
-## Root cause
+The spread guard remains mandatory and is tied to its actual source:
 
-The event bridge used the global `fred/releases/dates` endpoint as the
-historical source. A current-year-only cache could be marked as complete after
-pagination and then reused. Pagination did not solve the scope problem.
+- `commercial_closure_summary.observed_spread_p95_bps`
+- Replay V7 `locked_contract.observed_entry_spread_guard_bps`
+- controlled-paper `risk_contract.observed_entry_spread_guard_bps`
 
-## Corrected source contract
+All three values must match exactly within numerical tolerance. The commercial
+risk contract continues to govern sizing, concurrent-position, daily-cap,
+weekly-pause, and hard-drawdown limits.
 
-The downloader now queries the official `fred/release/dates` endpoint
-separately for the seven locked core release IDs:
+## Run
 
-- 10 — Consumer Price Index
-- 11 — Employment Cost Index
-- 46 — Producer Price Index
-- 50 — Employment Situation
-- 192 — Job Openings and Labor Turnover Survey
-- 53 — Gross Domestic Product
-- 54 — Personal Income and Outlays
+```bash
+python3 app/xauusd_bounded_demo_design.py design --root .
+python3 app/xauusd_bounded_demo_design.py preflight --root .
+```
 
-The output is written to:
+Expected preflight decision:
 
-`~/Downloads/xauusd_fundamental_event_inbox/events/fred/fred_core_release_dates_2009_present.json`
+`PASS_BOUNDED_DEMO_OPERATIONAL_PREFLIGHT_NO_ORDER_PATH`
 
-The runtime remains within the existing Stage113–116 pipeline. No parallel
-downloader and no manual event dataset are introduced.
-
-## Important behavior
-
-- `--event-core-only` downloads the per-release core bundle, BLS/BEA data, and
-  FOMC pages.
-- Existing current-year-only core caches are invalidated automatically.
-- Streaming progress remains enabled.
-- Stage115 records `FRED_CORE_RELEASE_DATES_API` provenance.
-- Event-context coverage and demo/live guards are not weakened.
+No order path is enabled by this package.

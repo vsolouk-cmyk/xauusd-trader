@@ -1,0 +1,27 @@
+name: XAUUSD Bounded Demo Design QA
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'app/xauusd_bounded_demo_design.py'
+      - 'config/xauusd_bounded_demo_design.json'
+      - 'config/xauusd_controlled_paper.json'
+      - 'schemas/xauusd_demo_intent.schema.json'
+      - 'tests/test_xauusd_bounded_demo_design.py'
+      - '.github/workflows/xauusd_bounded_demo_qa.yml'
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Compile
+        run: |
+          python -m py_compile app/xauusd_bounded_demo_design.py tests/test_xauusd_bounded_demo_design.py
+      - name: Tests
+        run: |
+          python -m unittest -v tests.test_xauusd_bounded_demo_design

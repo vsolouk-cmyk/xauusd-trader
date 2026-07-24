@@ -1,0 +1,333 @@
+{
+  "aligned_db": "/Users/vahid/Desktop/xauusd-trader/data/local/stage177c_amarkets_alignment/xauusd_amarkets_alignment.sqlite",
+  "broker_api_present": false,
+  "broker_order_allowed": false,
+  "candidate": "logistic__direction_24h",
+  "counts": {
+    "blocked_signals": 0,
+    "pending_positions": 0,
+    "resolved_positions": 0,
+    "signals": 3
+  },
+  "decision": "CONTROLLED_PAPER_ACTIVE_PAPER_LOG_ONLY_NO_BROKER",
+  "demo_order_allowed": false,
+  "direction_policy": "BIDIRECTIONAL_PROBABILITY_TAILS",
+  "entry_semantics": "open of aligned AMarkets H1 row i+1",
+  "exit_semantics": "close of aligned AMarkets H1 row i+24",
+  "generated_utc": "2026-07-23T10:52:00.417425Z",
+  "historical_replay_decision": "PASS_CORE_HISTORICAL_ASOF_REPLAY_FORWARD_DIRECTION_POLICY_PARITY_CLOSED_EVENT_COVERAGE_INCOMPLETE",
+  "historical_replay_forward_direction_parity": true,
+  "historical_replay_summary": "/Users/vahid/Desktop/xauusd-trader/reports/xauusd_controlled_paper_replay/historical_asof_replay_summary.json",
+  "live_order_allowed": false,
+  "lower_probability_threshold": 0.4,
+  "missing_coverage_audit": {
+    "classification_counts": {
+      "ENTRY_M5_BUCKET_INCOMPLETE": 2,
+      "EXIT_M5_BUCKET_INCOMPLETE": 1,
+      "H1_SIGNAL_ROW_UNAVAILABLE": 19
+    },
+    "count_checks": {
+      "evaluated": true,
+      "missing": true,
+      "signals": true
+    },
+    "counts": {
+      "execution_evaluated": 146,
+      "missing": 22,
+      "signals": 168
+    },
+    "current_period_defects": 0,
+    "decision": "PASS_BOUNDED_MISSING_COVERAGE_NOT_CURRENT_SYSTEMATIC_DEFECT",
+    "generated_utc": "2026-07-23T10:51:59.913340Z",
+    "operational_floor_utc": "2015-01-02T07:00:00Z",
+    "pass": true,
+    "program": "XAUUSD_CONTROLLED_PAPER_V1_5_BIDIRECTIONAL_PROBABILITY_TAILS_DIRECTION_PARITY",
+    "rows_csv": "/Users/vahid/Desktop/xauusd-trader/reports/xauusd_controlled_paper/missing_coverage_audit.csv",
+    "source": {
+      "classification_counts": {
+        "CONFLICT": 0,
+        "EVALUATED": 146,
+        "MISSING": 22
+      },
+      "inventory": [
+        {
+          "headers": [
+            "timestamp",
+            "dt",
+            "source_period",
+            "fold",
+            "direction",
+            "probability_up",
+            "resolution_hours",
+            "research_gross_bps",
+            "horizon_semantics",
+            "entry_bucket_timestamp",
+            "exit_bucket_timestamp",
+            "entry_bucket_utc",
+            "exit_bucket_utc",
+            "status",
+            "m5_gross_bps",
+            "gross_transfer_difference_bps",
+            "entry_open",
+            "exit_close",
+            "observed_spread_bps",
+            "normal_execution_cost_bps",
+            "severe_execution_cost_bps",
+            "normal_net_bps",
+            "severe_net_bps",
+            "stress_8bps_net_bps",
+            "stress_10bps_net_bps"
+          ],
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/commercial_closure_sprint/commercial_closure_execution_ledger.csv",
+          "rows": 168,
+          "status_counts": {
+            "EVALUATED": 146,
+            "MISSING_COMPLETE_M5_BUCKET": 3,
+            "SIGNAL_H1_TIMESTAMP_MISSING": 19
+          }
+        },
+        {
+          "headers": [
+            "scenario",
+            "trades",
+            "mean_bps",
+            "median_bps",
+            "win_rate",
+            "profit_factor",
+            "max_drawdown_bps",
+            "total_bps"
+          ],
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/commercial_closure_sprint/commercial_closure_cost_stress.csv",
+          "rows": 4
+        },
+        {
+          "headers": [
+            "period",
+            "trades",
+            "mean_bps",
+            "median_bps",
+            "win_rate",
+            "profit_factor",
+            "max_drawdown_bps",
+            "total_bps",
+            "severe_mean_bps",
+            "mean_observed_spread_bps"
+          ],
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/commercial_closure_sprint/commercial_closure_period_metrics.csv",
+          "rows": 4
+        },
+        {
+          "headers": [
+            "timestamp",
+            "dt",
+            "source_period",
+            "fold",
+            "direction",
+            "probability_up",
+            "resolution_hours",
+            "status",
+            "research_gross_bps",
+            "m5_gross_bps",
+            "gross_transfer_difference_bps",
+            "entry_open",
+            "exit_close",
+            "observed_spread_bps",
+            "normal_execution_cost_bps",
+            "severe_execution_cost_bps",
+            "normal_net_bps",
+            "severe_net_bps",
+            "stress_8bps_net_bps",
+            "stress_10bps_net_bps"
+          ],
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/commercial_closure_sprint_invalid_clock_horizon_20260722/commercial_closure_execution_ledger.csv",
+          "rows": 168,
+          "status_counts": {
+            "EVALUATED": 109,
+            "MISSING_COMPLETE_M5_BUCKET": 59
+          }
+        },
+        {
+          "headers": [
+            "scenario",
+            "trades",
+            "mean_bps",
+            "median_bps",
+            "win_rate",
+            "profit_factor",
+            "max_drawdown_bps",
+            "total_bps"
+          ],
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/commercial_closure_sprint_invalid_clock_horizon_20260722/commercial_closure_cost_stress.csv",
+          "rows": 4
+        },
+        {
+          "headers": [
+            "period",
+            "trades",
+            "mean_bps",
+            "median_bps",
+            "win_rate",
+            "profit_factor",
+            "max_drawdown_bps",
+            "total_bps",
+            "severe_mean_bps",
+            "mean_observed_spread_bps"
+          ],
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/commercial_closure_sprint_invalid_clock_horizon_20260722/commercial_closure_period_metrics.csv",
+          "rows": 4
+        }
+      ],
+      "mode": "single_execution_ledger_status_and_fields",
+      "signal_source": "/Users/vahid/Desktop/xauusd-trader/reports/commercial_closure_sprint/commercial_closure_execution_ledger.csv"
+    },
+    "unclassified": 0
+  },
+  "model": "logistic",
+  "operational_freshness": {
+    "ages_minutes": {
+      "aligned_h1": 51.99862628333334,
+      "spread_source": 11.998626283333333,
+      "stage180_summary": 6.15702335
+    },
+    "checks": {
+      "effective_age": {
+        "aligned_h1": true,
+        "spread_source": true,
+        "stage180_summary": true
+      },
+      "future_clock": {
+        "aligned_h1": true,
+        "spread_source": true,
+        "stage180_summary": true
+      },
+      "open_market_age": {
+        "aligned_h1": true,
+        "spread_source": true,
+        "stage180_summary": true
+      }
+    },
+    "decision": "PASS_OPERATIONAL_FRESHNESS_OPEN_MARKET",
+    "limits_minutes": {
+      "aligned_h1": 180.0,
+      "spread_source": 90.0,
+      "stage180_summary": 180.0
+    },
+    "market_expected_open": true,
+    "maximum_future_clock_skew_minutes": 15.0,
+    "now_utc": "2026-07-23T10:51:59.917577Z",
+    "pass": true,
+    "required": true,
+    "timestamps_utc": {
+      "aligned_h1": "2026-07-23T10:00:00Z",
+      "spread_source": "2026-07-23T10:40:00Z",
+      "stage180_summary": "2026-07-23T10:45:50.496176Z"
+    }
+  },
+  "outputs": {
+    "blocked_signals_csv": "/Users/vahid/Desktop/xauusd-trader/reports/xauusd_controlled_paper/blocked_signals.csv",
+    "ledger": "/Users/vahid/Desktop/xauusd-trader/data/controlled_paper/xauusd_controlled_paper.sqlite",
+    "pending_positions_csv": "/Users/vahid/Desktop/xauusd-trader/reports/xauusd_controlled_paper/pending_positions.csv",
+    "resolved_positions_csv": "/Users/vahid/Desktop/xauusd-trader/reports/xauusd_controlled_paper/resolved_positions.csv",
+    "risk_state_json": "/Users/vahid/Desktop/xauusd-trader/reports/xauusd_controlled_paper/risk_state.json",
+    "signals_csv": "/Users/vahid/Desktop/xauusd-trader/reports/xauusd_controlled_paper/signals.csv"
+  },
+  "paper_log_only": true,
+  "position_side_counts": {
+    "LONG": 0,
+    "SHORT": 0
+  },
+  "program": "XAUUSD_CONTROLLED_PAPER_V1_5_BIDIRECTIONAL_PROBABILITY_TAILS_DIRECTION_PARITY",
+  "risk_contract": {
+    "daily_new_positions_cap": 1,
+    "hard_drawdown_kill_switch_equity_pct": 8.0,
+    "maximum_concurrent_positions": 1,
+    "maximum_notional_to_equity": 0.1570396406876166,
+    "normal_execution_cost_floor_bps": 3.0,
+    "normal_slippage_bps": 0.5,
+    "observed_entry_spread_guard_bps": 3.0764778059487488,
+    "severe_execution_cost_floor_bps": 4.5,
+    "severe_slippage_bps": 2.0,
+    "severe_spread_multiplier": 1.5,
+    "stress_10_spread_addon_bps": 6.0,
+    "stress_8_spread_addon_bps": 4.0,
+    "weekly_loss_pause_equity_pct": 2.0
+  },
+  "risk_state": {
+    "current_iso_week": "2026-W30",
+    "drawdown_pct": 0.0,
+    "equity": 1.0,
+    "hard_kill_latched": false,
+    "metadata_json": "{\"current_iso_week\": \"2026-W30\", \"drawdown_pct\": 0.0, \"equity\": 1.0, \"hard_kill_latched\": false, \"peak_equity\": 1.0, \"resolved_positions\": 0, \"weekly_loss_pct\": 0.0, \"weekly_pause_active\": false}",
+    "peak_equity": 1.0,
+    "resolved_positions": 0,
+    "singleton": 1,
+    "updated_utc": "2026-07-23T10:52:00.408739Z",
+    "weekly_loss_pct": 0.0,
+    "weekly_pause_active": false
+  },
+  "run_result": {
+    "freshness": {
+      "ages_minutes": {
+        "aligned_h1": 51.99862628333334,
+        "spread_source": 11.998626283333333,
+        "stage180_summary": 6.15702335
+      },
+      "checks": {
+        "effective_age": {
+          "aligned_h1": true,
+          "spread_source": true,
+          "stage180_summary": true
+        },
+        "future_clock": {
+          "aligned_h1": true,
+          "spread_source": true,
+          "stage180_summary": true
+        },
+        "open_market_age": {
+          "aligned_h1": true,
+          "spread_source": true,
+          "stage180_summary": true
+        }
+      },
+      "decision": "PASS_OPERATIONAL_FRESHNESS_OPEN_MARKET",
+      "limits_minutes": {
+        "aligned_h1": 180.0,
+        "spread_source": 90.0,
+        "stage180_summary": 180.0
+      },
+      "market_expected_open": true,
+      "maximum_future_clock_skew_minutes": 15.0,
+      "now_utc": "2026-07-23T10:51:59.917577Z",
+      "pass": true,
+      "required": true,
+      "timestamps_utc": {
+        "aligned_h1": "2026-07-23T10:00:00Z",
+        "spread_source": "2026-07-23T10:40:00Z",
+        "stage180_summary": "2026-07-23T10:45:50.496176Z"
+      }
+    },
+    "h1_rows": 67488,
+    "ingest": {
+      "lower_threshold": 0.4,
+      "new_signal": false,
+      "probability_up": 0.5218557036466595,
+      "signal_key": "1784797200000",
+      "status": "NO_SIGNAL_NEUTRAL_BAND",
+      "upper_threshold": 0.6
+    },
+    "latest_h1_utc": "2026-07-23T10:00:00Z"
+  },
+  "side_source": "PROBABILITY_TAILS_ONLY",
+  "spread_source": {
+    "dst_calendar": "EU",
+    "dst_shift_minutes": -180,
+    "kind": "AMARKETS_M5_RAW_CSV_SPREAD",
+    "pass": true,
+    "path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+    "standard_shift_minutes": -120
+  },
+  "stage180_decision": "STAGE180_FROZEN_MODEL_SHADOW_ACTIVE_NO_ORDER",
+  "stage180_summary": "/Users/vahid/Desktop/xauusd-trader/reports/stage180_frozen_model_shadow/stage180_summary.json",
+  "target": "direction_24h",
+  "threshold": 0.6
+}

@@ -1,0 +1,389 @@
+{
+  "broker_order_allowed": false,
+  "checks": {
+    "commercial_counts": true,
+    "commercial_only_coverage_failed": true,
+    "commercial_reference_parity": true,
+    "contract_candidate": true,
+    "contract_hash": true,
+    "contract_horizon": true,
+    "contract_model": true,
+    "contract_selection_no_holdout": true,
+    "contract_target": true,
+    "contract_threshold": true,
+    "h1_table": {
+      "cadence_seconds": 3600.0,
+      "close_col": "close",
+      "high_col": "high",
+      "low_col": "low",
+      "open_col": "open",
+      "spread_col": null,
+      "table": "amarkets_h1_direct_utc",
+      "timestamp_col": "timestamp",
+      "timestamp_storage": "milliseconds",
+      "where_params": [],
+      "where_sql": ""
+    },
+    "historical_replay_bidirectional_counts": true,
+    "historical_replay_commercial_metric_parity": true,
+    "historical_replay_commercial_summary_hash": true,
+    "historical_replay_forward_direction_parity": true,
+    "historical_replay_ledger_hash": true,
+    "historical_replay_no_forward_wait": true,
+    "historical_replay_pass": true,
+    "historical_replay_program": true,
+    "historical_replay_source_proven_cost": true,
+    "m5_spread_present_in_aligned_db": false,
+    "m5_table": {
+      "cadence_seconds": 300.0,
+      "close_col": "close",
+      "high_col": "high",
+      "low_col": "low",
+      "open_col": "open",
+      "spread_col": null,
+      "table": "amarkets_m5_utc",
+      "timestamp_col": "timestamp",
+      "timestamp_storage": "milliseconds",
+      "where_params": [],
+      "where_sql": ""
+    },
+    "market_schema_introspection": [
+      {
+        "cadence_seconds": 3600.0,
+        "columns": [
+          "timestamp",
+          "timestamp_naive_ms",
+          "shift_minutes",
+          "open",
+          "high",
+          "low",
+          "close",
+          "volume"
+        ],
+        "spread_col": null,
+        "table": "amarkets_h1_direct_utc",
+        "timeframe_value": null,
+        "timestamp_col": "timestamp",
+        "timestamp_storage": "milliseconds"
+      },
+      {
+        "cadence_seconds": 3600.0,
+        "columns": [
+          "timestamp",
+          "open",
+          "high",
+          "low",
+          "close",
+          "volume",
+          "m5_bar_count"
+        ],
+        "spread_col": null,
+        "table": "amarkets_h1_from_m5_utc",
+        "timeframe_value": null,
+        "timestamp_col": "timestamp",
+        "timestamp_storage": "milliseconds"
+      },
+      {
+        "cadence_seconds": 300.0,
+        "columns": [
+          "timestamp",
+          "timestamp_naive_ms",
+          "shift_minutes",
+          "open",
+          "high",
+          "low",
+          "close",
+          "volume"
+        ],
+        "spread_col": null,
+        "table": "amarkets_m5_utc",
+        "timeframe_value": null,
+        "timestamp_col": "timestamp",
+        "timestamp_storage": "milliseconds"
+      }
+    ],
+    "model_hash": true,
+    "operational_freshness": {
+      "ages_minutes": {
+        "aligned_h1": 45.874015650000004,
+        "spread_source": 5.8740156500000005,
+        "stage180_summary": 0.03241271666666667
+      },
+      "checks": {
+        "effective_age": {
+          "aligned_h1": true,
+          "spread_source": true,
+          "stage180_summary": true
+        },
+        "future_clock": {
+          "aligned_h1": true,
+          "spread_source": true,
+          "stage180_summary": true
+        },
+        "open_market_age": {
+          "aligned_h1": true,
+          "spread_source": true,
+          "stage180_summary": true
+        }
+      },
+      "decision": "PASS_OPERATIONAL_FRESHNESS_OPEN_MARKET",
+      "limits_minutes": {
+        "aligned_h1": 180.0,
+        "spread_source": 90.0,
+        "stage180_summary": 180.0
+      },
+      "market_expected_open": true,
+      "maximum_future_clock_skew_minutes": 15.0,
+      "now_utc": "2026-07-23T10:45:52.440939Z",
+      "pass": true,
+      "required": true,
+      "timestamps_utc": {
+        "aligned_h1": "2026-07-23T10:00:00Z",
+        "spread_source": "2026-07-23T10:40:00Z",
+        "stage180_summary": "2026-07-23T10:45:50.496176Z"
+      }
+    },
+    "risk_demo_live_forbidden": true,
+    "risk_paper_only": true,
+    "spread_source": {
+      "checks": {
+        "cadence_is_m5": true,
+        "close_parity": true,
+        "latest_alignment": true,
+        "minimum_tail_overlap": true
+      },
+      "delimiter": "TAB",
+      "dst_calendar": "EU",
+      "dst_shift_minutes": -180,
+      "kind": "AMARKETS_M5_RAW_CSV_SPREAD",
+      "latest_aligned_m5_utc": "2026-07-23T10:40:00Z",
+      "latest_lag_minutes": 0.0,
+      "latest_source_utc": "2026-07-23T10:40:00Z",
+      "pass": true,
+      "path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+      "standard_shift_minutes": -120,
+      "tail_cadence_seconds": 300.0,
+      "tail_median_close_diff_bps": 0.0,
+      "tail_overlap_rows": 600,
+      "tail_valid_rows": 600
+    },
+    "spread_time_contract": {
+      "checks": {
+        "canonical_pass_decision": false,
+        "contract": true,
+        "dst_calendar": true,
+        "dst_shift_minutes": true,
+        "exact_stage177c_semantics": true,
+        "selection_no_holdout": true,
+        "shift_semantics": true,
+        "standard_shift_minutes": true
+      },
+      "contract": "EU_DST_GMT_OFFSET_PAIR",
+      "decision": "BLOCK_AMARKETS_TIME_CONTRACT_UNRESOLVED",
+      "dst_calendar": "EU",
+      "dst_shift_minutes": -180,
+      "evidence_route": "EXACT_STAGE177C_SEMANTICS",
+      "pass": true,
+      "path": "/Users/vahid/Desktop/xauusd-trader/reports/stage177c_amarkets_dst_contract/stage177c_time_contract.json",
+      "selection_used_holdout": false,
+      "shift_semantics": "timestamp_utc = timestamp_naive + shift_minutes",
+      "stage": "177C",
+      "standard_shift_minutes": -120
+    },
+    "stage180_decision": true,
+    "stage180_execution_forbidden": true,
+    "stage180_shadow_allowed": true
+  },
+  "decision": "PASS_CONTROLLED_PAPER_PREFLIGHT",
+  "demo_order_allowed": false,
+  "generated_utc": "2026-07-23T10:45:52.441055Z",
+  "hashes": {
+    "aligned_db": "3a9701e7a8d0f1c473e35555715c24e9a01ef67c7f34e24deaad34e505562a7d",
+    "commercial_execution_ledger": "7d2bb519a280e09136afc7779d953206bde556cb6a2671a051d079fb121c2b5b",
+    "commercial_summary": "878c01d0495a951b4bf709ede70bafaeb86a2b7e3231fd6c1de5fc685c5be99f",
+    "frozen_contract": "0eb100dd0248bd525e09f9158aeb94b1634b605a35ee37256592bb17b81e7cdd",
+    "frozen_model": "cd0046e2f1e6414d56689070086dc942adcb2e253acd4bcd2cafc7695fb50786",
+    "historical_replay_summary": "4b0f23fc212c523d69d5644abc4ebeb2ca4ad3639823c6060aeb9e717ae65906",
+    "risk_contract": "93781ebbfdb9e74760ab331131f776ff3a926aa8ace511cd75c503a6c1cc1d50",
+    "spread_source": "e9dcfde8ae38a000ab0220055c18a4948183f6d70e0b772db05267580ff5699a",
+    "spread_time_contract": "635ed1f9cd9ec62fecdff61e3e9660657194d972e4f4f889731e97d1432ea362",
+    "stage180_summary": "61d1ba9ae42f7bc0552b9a0c12114898df6f539b68d19b8223b52c3fe2b50037"
+  },
+  "live_order_allowed": false,
+  "missing_coverage_audit": {
+    "classification_counts": {
+      "ENTRY_M5_BUCKET_INCOMPLETE": 2,
+      "EXIT_M5_BUCKET_INCOMPLETE": 1,
+      "H1_SIGNAL_ROW_UNAVAILABLE": 19
+    },
+    "count_checks": {
+      "evaluated": true,
+      "missing": true,
+      "signals": true
+    },
+    "counts": {
+      "execution_evaluated": 146,
+      "missing": 22,
+      "signals": 168
+    },
+    "current_period_defects": 0,
+    "decision": "PASS_BOUNDED_MISSING_COVERAGE_NOT_CURRENT_SYSTEMATIC_DEFECT",
+    "generated_utc": "2026-07-23T10:45:52.437799Z",
+    "operational_floor_utc": "2015-01-02T07:00:00Z",
+    "pass": true,
+    "program": "XAUUSD_CONTROLLED_PAPER_V1_5_BIDIRECTIONAL_PROBABILITY_TAILS_DIRECTION_PARITY",
+    "rows_csv": "/Users/vahid/Desktop/xauusd-trader/reports/xauusd_controlled_paper/missing_coverage_audit.csv",
+    "source": {
+      "classification_counts": {
+        "CONFLICT": 0,
+        "EVALUATED": 146,
+        "MISSING": 22
+      },
+      "inventory": [
+        {
+          "headers": [
+            "timestamp",
+            "dt",
+            "source_period",
+            "fold",
+            "direction",
+            "probability_up",
+            "resolution_hours",
+            "research_gross_bps",
+            "horizon_semantics",
+            "entry_bucket_timestamp",
+            "exit_bucket_timestamp",
+            "entry_bucket_utc",
+            "exit_bucket_utc",
+            "status",
+            "m5_gross_bps",
+            "gross_transfer_difference_bps",
+            "entry_open",
+            "exit_close",
+            "observed_spread_bps",
+            "normal_execution_cost_bps",
+            "severe_execution_cost_bps",
+            "normal_net_bps",
+            "severe_net_bps",
+            "stress_8bps_net_bps",
+            "stress_10bps_net_bps"
+          ],
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/commercial_closure_sprint/commercial_closure_execution_ledger.csv",
+          "rows": 168,
+          "status_counts": {
+            "EVALUATED": 146,
+            "MISSING_COMPLETE_M5_BUCKET": 3,
+            "SIGNAL_H1_TIMESTAMP_MISSING": 19
+          }
+        },
+        {
+          "headers": [
+            "scenario",
+            "trades",
+            "mean_bps",
+            "median_bps",
+            "win_rate",
+            "profit_factor",
+            "max_drawdown_bps",
+            "total_bps"
+          ],
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/commercial_closure_sprint/commercial_closure_cost_stress.csv",
+          "rows": 4
+        },
+        {
+          "headers": [
+            "period",
+            "trades",
+            "mean_bps",
+            "median_bps",
+            "win_rate",
+            "profit_factor",
+            "max_drawdown_bps",
+            "total_bps",
+            "severe_mean_bps",
+            "mean_observed_spread_bps"
+          ],
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/commercial_closure_sprint/commercial_closure_period_metrics.csv",
+          "rows": 4
+        },
+        {
+          "headers": [
+            "timestamp",
+            "dt",
+            "source_period",
+            "fold",
+            "direction",
+            "probability_up",
+            "resolution_hours",
+            "status",
+            "research_gross_bps",
+            "m5_gross_bps",
+            "gross_transfer_difference_bps",
+            "entry_open",
+            "exit_close",
+            "observed_spread_bps",
+            "normal_execution_cost_bps",
+            "severe_execution_cost_bps",
+            "normal_net_bps",
+            "severe_net_bps",
+            "stress_8bps_net_bps",
+            "stress_10bps_net_bps"
+          ],
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/commercial_closure_sprint_invalid_clock_horizon_20260722/commercial_closure_execution_ledger.csv",
+          "rows": 168,
+          "status_counts": {
+            "EVALUATED": 109,
+            "MISSING_COMPLETE_M5_BUCKET": 59
+          }
+        },
+        {
+          "headers": [
+            "scenario",
+            "trades",
+            "mean_bps",
+            "median_bps",
+            "win_rate",
+            "profit_factor",
+            "max_drawdown_bps",
+            "total_bps"
+          ],
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/commercial_closure_sprint_invalid_clock_horizon_20260722/commercial_closure_cost_stress.csv",
+          "rows": 4
+        },
+        {
+          "headers": [
+            "period",
+            "trades",
+            "mean_bps",
+            "median_bps",
+            "win_rate",
+            "profit_factor",
+            "max_drawdown_bps",
+            "total_bps",
+            "severe_mean_bps",
+            "mean_observed_spread_bps"
+          ],
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/commercial_closure_sprint_invalid_clock_horizon_20260722/commercial_closure_period_metrics.csv",
+          "rows": 4
+        }
+      ],
+      "mode": "single_execution_ledger_status_and_fields",
+      "signal_source": "/Users/vahid/Desktop/xauusd-trader/reports/commercial_closure_sprint/commercial_closure_execution_ledger.csv"
+    },
+    "unclassified": 0
+  },
+  "pass": true,
+  "paths": {
+    "aligned_db": "/Users/vahid/Desktop/xauusd-trader/data/local/stage177c_amarkets_alignment/xauusd_amarkets_alignment.sqlite",
+    "commercial_execution_ledger": "/Users/vahid/Desktop/xauusd-trader/reports/commercial_closure_sprint/commercial_closure_execution_ledger.csv",
+    "commercial_summary": "/Users/vahid/Desktop/xauusd-trader/reports/commercial_closure_sprint/commercial_closure_summary.json",
+    "frozen_contract": "/Users/vahid/Desktop/xauusd-trader/data/local/stage178_commercial_edge_decision_sprint/stage178_selected_model_contract.json",
+    "frozen_model": "/Users/vahid/Desktop/xauusd-trader/data/local/stage178_commercial_edge_decision_sprint/stage178_selected_model.pkl",
+    "historical_replay_summary": "/Users/vahid/Desktop/xauusd-trader/reports/xauusd_controlled_paper_replay/historical_asof_replay_summary.json",
+    "risk_contract": "/Users/vahid/Desktop/xauusd-trader/reports/commercial_closure_sprint/commercial_closure_risk_contract.json",
+    "spread_source": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+    "spread_time_contract": "/Users/vahid/Desktop/xauusd-trader/reports/stage177c_amarkets_dst_contract/stage177c_time_contract.json",
+    "stage180_summary": "/Users/vahid/Desktop/xauusd-trader/reports/stage180_frozen_model_shadow/stage180_summary.json"
+  },
+  "program": "XAUUSD_CONTROLLED_PAPER_V1_5_BIDIRECTIONAL_PROBABILITY_TAILS_DIRECTION_PARITY"
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "xauusd-demo-arming-permit-v1",
+  "title": "XAUUSD bounded demo arming permit",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "authorized",
+    "allowed_demo_login",
+    "magic_number",
+    "expires_epoch",
+    "bounded_preflight_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "XAUUSD_DEMO_ARMING_PERMIT_V1"},
+    "authorized": {"const": true},
+    "allowed_demo_login": {"type": "integer", "minimum": 1},
+    "magic_number": {"const": 1782401},
+    "expires_epoch": {"type": "integer", "minimum": 1},
+    "bounded_preflight_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

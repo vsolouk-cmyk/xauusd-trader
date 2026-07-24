@@ -1,0 +1,31 @@
+{
+  "program": "XAUUSD_MT5_BOUNDED_DEMO_BRIDGE",
+  "mode": "FILE_BASED_DEMO_ONLY_DISABLED_BY_DEFAULT",
+  "bounded_demo_preflight": "reports/xauusd_bounded_demo_design/bounded_demo_preflight.json",
+  "controlled_paper_summary": "reports/xauusd_controlled_paper/controlled_paper_summary.json",
+  "controlled_paper_preflight": "reports/xauusd_controlled_paper/controlled_paper_preflight.json",
+  "controlled_paper_ledger": "data/controlled_paper/xauusd_controlled_paper.sqlite",
+  "aligned_db": "data/local/stage177c_amarkets_alignment/xauusd_amarkets_alignment.sqlite",
+  "aligned_h1_table": "amarkets_h1_direct_utc",
+  "official_event_csv": "data/fundamental_event_inbox/features/stage115_official_core_event_timestamps.csv",
+  "candidate_schema": "schemas/xauusd_demo_candidate.schema.json",
+  "ea_source": "mt5/XAUUSD_BoundedDemoBridge.mq5",
+  "report_dir": "reports/xauusd_mt5_demo_bridge",
+  "outbox_dir": "reports/xauusd_mt5_demo_bridge/outbox",
+  "mt5_files_dir": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "mt5_experts_dir": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Experts/Advisors/XAUUSD",
+  "mt5_bridge_subdir": "XAUUSD_DEMO_BRIDGE",
+  "expected_symbol": "XAUUSD",
+  "magic_number": 1782401,
+  "arming": {
+    "enabled": false,
+    "allowed_demo_login": 0,
+    "require_demo_account": true,
+    "live_account_fallback_allowed": false
+  },
+  "candidate": {
+    "maximum_lead_seconds": 3900,
+    "entry_grace_seconds": 60,
+    "maximum_candidate_age_seconds": 300
+  }
+}

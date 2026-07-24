@@ -1,57 +1,54 @@
 {
-  "package": "XAUUSD_BOUNDED_DEMO_RISK_SOURCE_PROVENANCE_REPAIR_NO_ORDER",
-  "program": "XAUUSD_BOUNDED_DEMO_DESIGN_V1_1_RISK_SOURCE_PROVENANCE_REPAIR_NO_ORDER",
-  "file_count": 16,
   "files": [
     {
-      "path": ".github/workflows/xauusd_bounded_demo_qa.yml",
-      "sha256": "33c49e1a1a66fe853f4e8d6e0b1601f3051e1f380e3d7cfc604638711b41a661",
-      "size_bytes": 793
+      "path": ".github/workflows/xauusd_mt5_demo_bridge_qa.yml",
+      "sha256": "3af67518aa0c82adfeb2d947c0d9f7a00eeee3bc0b1ec097886c75e3964e46e3",
+      "size_bytes": 842
     },
     {
       "path": "QA_REPORT.md",
-      "sha256": "4820ad2d4f6bca0138f34e0b5ada8602c0d7dabdde9513be5f5b74adf4d85377",
-      "size_bytes": 1650
+      "sha256": "f79d83346b1c165c9b0fbd00f6689c06e20b5669a612faa62a52177d516577b9",
+      "size_bytes": 930
     },
     {
       "path": "README.md",
-      "sha256": "a0a0eb1773065c6858c133a4c4829c87011bc7a65287e62fbfcb08d55d2f999b",
-      "size_bytes": 967
+      "sha256": "709846cb7700f8ab1c5b22c23513f2d05c942639bf42314a251678d7281c313f",
+      "size_bytes": 1814
     },
     {
-      "path": "app/xauusd_bounded_demo_design.py",
-      "sha256": "535dd74a47b8ffade26591cf06f09f58a390addc6cf14906545c0e3e8350412e",
-      "size_bytes": 26596
+      "path": "app/xauusd_mt5_demo_bridge.py",
+      "sha256": "a041a31a6d0f960233654e0a5f44f0518429e36f2e004ee6e131df4c56c7cdb8",
+      "size_bytes": 35637
     },
     {
-      "path": "config/xauusd_bounded_demo_design.json",
-      "sha256": "9122e406d5f3b1f08d4ba0a23aeab5a72746e21cf1158dfb0485b24bca57be3b",
-      "size_bytes": 2306
+      "path": "config/xauusd_mt5_demo_bridge.json",
+      "sha256": "9d0ea3c928f126bd2983594ef42b320ea5960d6fd66101849d19abd935fc0d61",
+      "size_bytes": 1631
     },
     {
-      "path": "config/xauusd_controlled_paper.json",
-      "sha256": "7c49b13275e075289b9b939e53433abaf012eee8419223428b8515cc1a865f8c",
-      "size_bytes": 3750
+      "path": "docs/XAUUSD_MT5_BOUNDED_DEMO_BRIDGE_RUNBOOK.md",
+      "sha256": "4d5f288aaa102d0708ddc55f88101d6df46e8e290c2546b6229eeebf46f820a8",
+      "size_bytes": 1286
     },
     {
-      "path": "docs/XAUUSD_BOUNDED_DEMO_DESIGN_RUNBOOK.md",
-      "sha256": "7582b83c6022c803715af4e534efca2870ad8f87025080c6f1b5438dfa279991",
-      "size_bytes": 1692
+      "path": "mt5/XAUUSD_BoundedDemoBridge.mq5",
+      "sha256": "d3a36ee62eb8e9f1672e632a273f606d54e70a140ee6cb085fecbf206ac1bebe",
+      "size_bytes": 35528
     },
     {
-      "path": "docs/XAUUSD_BOUNDED_DEMO_RISK_SOURCE_PROVENANCE_REPAIR.md",
-      "sha256": "69ee5d305827f16097875e9dec1a294716a94c52aae5cd239898315ede726ba7",
-      "size_bytes": 875
+      "path": "mt5/XAUUSD_BoundedDemoBridge_DISABLED_INPUTS.txt",
+      "sha256": "6a68a53f64d482dc09efb9cd0f8e7bccc7bcb9eb24361c10f47e6278ee2a9c4e",
+      "size_bytes": 691
     },
     {
-      "path": "docs/XAUUSD_MT5_DEMO_BRIDGE_CONTRACT.md",
-      "sha256": "09abcb1ed78af739ed6b18ae0d883cfead3be131e312460b67b6d218974afbd4",
-      "size_bytes": 731
+      "path": "schemas/xauusd_demo_arming_permit.schema.json",
+      "sha256": "252ed2cc71a265229f0e8bf7ca30773e207c14c904a35d48f6a8c11838204b77",
+      "size_bytes": 725
     },
     {
-      "path": "schemas/xauusd_demo_intent.schema.json",
-      "sha256": "5ca7efce4cfc706b651938cdd44fb20ae11f4e5d9cd2bee57b5c05299e667bea",
-      "size_bytes": 1081
+      "path": "schemas/xauusd_demo_candidate.schema.json",
+      "sha256": "2a4dc8f203f3703e6e76253e317740e5a4b3f74dcc64bd19b5626732aab3c1ee",
+      "size_bytes": 2765
     },
     {
       "path": "tests/__init__.py",
@@ -59,29 +56,17 @@
       "size_bytes": 0
     },
     {
-      "path": "tests/fixtures/controlled_paper_preflight_v1_5.json",
-      "sha256": "973bcf8f11270c612bbd48540c2a8c534351cf06f29cae76de589dd3e905ac47",
-      "size_bytes": 13660
+      "path": "tests/fixtures/bounded_demo_preflight_pass.json",
+      "sha256": "1df32e4777fd0c27001a77369d1305c100f30bffe570432add530f82e1d5c726",
+      "size_bytes": 8227
     },
     {
-      "path": "tests/fixtures/controlled_paper_summary_v1_5.json",
-      "sha256": "c1c4785fd635be616057d6672707b7b17e4d15763e9ee9f27daf35591a803c49",
-      "size_bytes": 11412
-    },
-    {
-      "path": "tests/fixtures/historical_asof_replay_summary_v7.json",
-      "sha256": "85d6ae9446a86e8bb9f9d78f89e2a88b17fc455d2ea5b6cadc854ef36408f72d",
-      "size_bytes": 28929
-    },
-    {
-      "path": "tests/fixtures/historical_event_context_summary_v1_2.json",
-      "sha256": "88742b92eca33e8159f318df35b0b2986035ca49aeb485ae51040cbec9409bae",
-      "size_bytes": 8857
-    },
-    {
-      "path": "tests/test_xauusd_bounded_demo_design.py",
-      "sha256": "e3d94f677cc122b2f440239e73937a0e360ee3081c1f9a491773b184442dd3af",
-      "size_bytes": 12687
+      "path": "tests/test_xauusd_mt5_demo_bridge.py",
+      "sha256": "5db51a4b4e31bb9b4510b717b0f1009915e9690a037045a8b1764cf61414e58f",
+      "size_bytes": 17369
     }
-  ]
+  ],
+  "package": "XAUUSD_MT5_DEMO_BRIDGE_VOLUME_DIAGNOSTIC_LOGGING_REPAIR",
+  "safety_mode": "DISABLED_NO_ORDER",
+  "version": "1.1"
 }

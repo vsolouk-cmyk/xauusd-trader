@@ -1,0 +1,28 @@
+name: XAUUSD MT5 Demo Bridge QA
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'app/xauusd_mt5_demo_bridge.py'
+      - 'config/xauusd_mt5_demo_bridge.json'
+      - 'mt5/XAUUSD_BoundedDemoBridge.mq5'
+      - 'schemas/xauusd_demo_candidate.schema.json'
+      - 'schemas/xauusd_demo_arming_permit.schema.json'
+      - 'tests/test_xauusd_mt5_demo_bridge.py'
+      - '.github/workflows/xauusd_mt5_demo_bridge_qa.yml'
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Compile Python
+        run: |
+          python -m py_compile app/xauusd_mt5_demo_bridge.py tests/test_xauusd_mt5_demo_bridge.py
+      - name: Run bridge tests
+        run: |
+          python -m unittest -v tests.test_xauusd_mt5_demo_bridge

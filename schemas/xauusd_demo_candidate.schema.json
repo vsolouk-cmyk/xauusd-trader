@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "xauusd-demo-candidate-v1",
+  "title": "XAUUSD bounded demo candidate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "intent_id",
+    "created_utc",
+    "created_epoch",
+    "expires_utc",
+    "expires_epoch",
+    "symbol",
+    "side",
+    "probability_up",
+    "signal_utc",
+    "signal_epoch",
+    "target_entry_utc",
+    "target_entry_epoch",
+    "target_exit_utc",
+    "target_exit_epoch",
+    "notional_to_equity",
+    "event_guard_pass",
+    "event_guard_reason",
+    "spread_guard_bps",
+    "bounded_preflight_sha256",
+    "magic_number",
+    "execution_mode",
+    "requires_mt5_runtime_authorization",
+    "python_order_authorized",
+    "entry_semantics",
+    "exit_semantics",
+    "exit_after_h1_bars"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "XAUUSD_DEMO_CANDIDATE_V1"
+    },
+    "intent_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]+$"
+    },
+    "created_utc": {
+      "type": "string"
+    },
+    "created_epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "expires_utc": {
+      "type": "string"
+    },
+    "expires_epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "symbol": {
+      "const": "XAUUSD"
+    },
+    "side": {
+      "enum": [
+        "LONG",
+        "SHORT"
+      ]
+    },
+    "probability_up": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "signal_utc": {
+      "type": "string"
+    },
+    "signal_epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "target_entry_utc": {
+      "type": "string"
+    },
+    "target_entry_epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "target_exit_utc": {
+      "type": "string"
+    },
+    "target_exit_epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "notional_to_equity": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "event_guard_pass": {
+      "const": true
+    },
+    "event_guard_reason": {
+      "const": "EVENT_CONTEXT_PRESENT_NO_BLOCK"
+    },
+    "spread_guard_bps": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "bounded_preflight_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "magic_number": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "execution_mode": {
+      "const": "DEMO_ONLY"
+    },
+    "requires_mt5_runtime_authorization": {
+      "const": true
+    },
+    "python_order_authorized": {
+      "const": false
+    },
+    "entry_semantics": {
+      "const": "OPEN_OF_ALIGNED_H1_ROW_I_PLUS_1"
+    },
+    "exit_semantics": {
+      "const": "CLOSE_OF_ALIGNED_H1_ROW_I_PLUS_24"
+    },
+    "exit_after_h1_bars": {
+      "const": 24
+    }
+  }
+}

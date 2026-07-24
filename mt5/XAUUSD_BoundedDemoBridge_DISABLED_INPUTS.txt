@@ -1,0 +1,23 @@
+Attach to an XAUUSD H1 chart with these inputs for the first runtime preflight:
+
+InpArmed=false
+InpAllowedDemoLogin=0
+InpExpectedSymbol=XAUUSD
+InpMagicNumber=1782401
+InpBridgeFolder=XAUUSD_DEMO_BRIDGE
+InpArmingPermitFile=arming_permit.txt
+InpPollSeconds=1
+InpMaximumSlippagePoints=50
+InpNotionalToEquity=0.03925991017190415
+InpValidatedMaximumNotionalRatio=0.1570396406876166
+InpSpreadGuardBps=3.0764778059487488
+InpDailyNewPositionsCap=1
+InpWeeklyLossPausePct=2.0
+InpHardDrawdownKillPct=8.0
+InpMaximumResolvedPositions=10
+InpMaximumCalendarDays=30
+
+Do not set InpArmed=true in this step. No arming_permit.txt is included in this package.
+
+InpDiagnosticLogSeconds=30
+InpShowChartStatus=true

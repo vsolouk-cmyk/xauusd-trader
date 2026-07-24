@@ -31,6 +31,7 @@ import zipfile
 from collections import defaultdict
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
+from zoneinfo import ZoneInfo
 
 STAGE = "Stage115_FEATURE_GRADE_MACRO_FUNDAMENTAL_BUILDER"
 STATUS = "STAGE115_COMPLETE_FEATURE_GRADE_DATASET_READY_NO_PROMOTION"
@@ -767,6 +768,165 @@ def parse_xlsx_raw_rows(path: Path, family: str, feature_dir: Path) -> Tuple[Lis
     return rows, {f"{family}_feature_candidate_rows": len(rows), f"{family}_feature_candidates": str(output)}
 
 
+OFFICIAL_EVENT_TIME_POLICY_VERSION = "USD_CORE_RELEASE_TIME_POLICY_V1"
+ET = ZoneInfo("America/New_York")
+
+
+def canonical_et_timestamp(date_iso: str, hour: int, minute: int) -> Optional[str]:
+    parsed = parse_date(date_iso)
+    if not parsed:
+        return None
+    try:
+        d = dt.date.fromisoformat(parsed)
+        local = dt.datetime(d.year, d.month, d.day, hour, minute, tzinfo=ET)
+        return local.astimezone(dt.timezone.utc).isoformat().replace("+00:00", "Z")
+    except Exception:
+        return None
+
+
+def classify_official_release_name(name: str) -> Optional[Dict[str, Any]]:
+    cleaned = re.sub(r"\s+", " ", str(name or "")).strip()
+    lower = cleaned.lower()
+    if lower.startswith("employment situation"):
+        return {"source": "BLS", "category": "BLS_EMPLOYMENT_SITUATION", "hour": 8, "minute": 30}
+    if lower.startswith("consumer price index"):
+        return {"source": "BLS", "category": "BLS_CPI", "hour": 8, "minute": 30}
+    if lower.startswith("producer price index"):
+        return {"source": "BLS", "category": "BLS_PPI", "hour": 8, "minute": 30}
+    if lower.startswith("job openings and labor turnover") or lower.startswith("job openings and labor turnover survey"):
+        return {"source": "BLS", "category": "BLS_JOLTS", "hour": 10, "minute": 0}
+    if lower.startswith("employment cost index"):
+        return {"source": "BLS", "category": "BLS_ECI", "hour": 8, "minute": 30}
+    if lower.startswith("personal income and outlays"):
+        return {"source": "BEA", "category": "BEA_PERSONAL_INCOME_OUTLAYS", "hour": 8, "minute": 30}
+    if lower.startswith("gross domestic product"):
+        excluded = (
+            " by state", " by industry", " by county", " by metropolitan",
+            " puerto rico", " guam", " american samoa", " territories",
+        )
+        if any(token in lower for token in excluded):
+            return None
+        return {"source": "BEA", "category": "BEA_GDP", "hour": 8, "minute": 30}
+    return None
+
+
+def build_official_core_event_timestamps(normalized_dir: Path, feature_dir: Path) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+    """Build timestamped BLS/BEA/FOMC events from the existing normalized pipeline.
+
+    Dates come from the official FRED release-dates API or locally downloaded Fed
+    calendar pages. Times are deterministic source-family policies in US Eastern
+    time and are explicitly labeled as policy-derived, not scraped exact timestamps.
+    """
+    rows: List[Dict[str, Any]] = []
+    fred_path = normalized_dir / "fred_release_calendar_normalized.csv"
+    if fred_path.exists():
+        for row in read_csv_dicts(fred_path):
+            date = parse_date(row.get("date") or row.get("release_date"))
+            name = str(row.get("release_name") or row.get("name") or "").strip()
+            policy = classify_official_release_name(name)
+            if not date or not policy:
+                continue
+            event_time = canonical_et_timestamp(date, int(policy["hour"]), int(policy["minute"]))
+            if not event_time:
+                continue
+            source_file = str(row.get("source_file") or fred_path)
+            is_core_release_endpoint = "fred_core_release_dates" in source_file
+            rows.append({
+                "event_time_utc": event_time,
+                "source": policy["source"],
+                "category": policy["category"],
+                "title": name,
+                "source_url": (
+                    "https://api.stlouisfed.org/fred/release/dates"
+                    if is_core_release_endpoint
+                    else "https://api.stlouisfed.org/fred/releases/dates"
+                ),
+                "source_file": source_file,
+                "date_source": (
+                    "FRED_CORE_RELEASE_DATES_API"
+                    if is_core_release_endpoint
+                    else "FRED_RELEASE_DATES_API"
+                ),
+                "time_source": OFFICIAL_EVENT_TIME_POLICY_VERSION,
+                "blackout_before_minutes": 60.0,
+                "blackout_after_minutes": 60.0,
+                "release_id": row.get("release_id") or "",
+            })
+
+    fomc_path = normalized_dir / "fomc_calendar_extracted.csv"
+    if fomc_path.exists():
+        for row in read_csv_dicts(fomc_path):
+            if str(row.get("has_statement") or "").strip().lower() not in {"1", "true", "yes"}:
+                continue
+            date = parse_date(row.get("event_date") or row.get("event_date_text"))
+            if not date:
+                continue
+            statement_time = canonical_et_timestamp(date, 14, 0)
+            if statement_time:
+                rows.append({
+                    "event_time_utc": statement_time,
+                    "source": "FED",
+                    "category": "FOMC_STATEMENT",
+                    "title": f"FOMC Statement — {date}",
+                    "source_url": "https://www.federalreserve.gov/monetarypolicy/fomc.htm",
+                    "source_file": row.get("source_file") or str(fomc_path),
+                    "date_source": "FED_LOCAL_CALENDAR_PAGE",
+                    "time_source": OFFICIAL_EVENT_TIME_POLICY_VERSION,
+                    "blackout_before_minutes": 60.0,
+                    "blackout_after_minutes": 60.0,
+                    "release_id": "",
+                })
+            if str(row.get("has_press_conference") or "").strip().lower() in {"1", "true", "yes"}:
+                press_time = canonical_et_timestamp(date, 14, 30)
+                if press_time:
+                    rows.append({
+                        "event_time_utc": press_time,
+                        "source": "FED",
+                        "category": "FOMC_PRESS_CONFERENCE",
+                        "title": f"FOMC Press Conference — {date}",
+                        "source_url": "https://www.federalreserve.gov/monetarypolicy/fomc.htm",
+                        "source_file": row.get("source_file") or str(fomc_path),
+                        "date_source": "FED_LOCAL_CALENDAR_PAGE",
+                        "time_source": OFFICIAL_EVENT_TIME_POLICY_VERSION,
+                        "blackout_before_minutes": 60.0,
+                        "blackout_after_minutes": 60.0,
+                        "release_id": "",
+                    })
+
+    unique: Dict[Tuple[str, str, str], Dict[str, Any]] = {}
+    for row in rows:
+        unique[(str(row["event_time_utc"]), str(row["source"]), str(row["category"]))] = row
+    rows = [unique[key] for key in sorted(unique)]
+    output = feature_dir / "stage115_official_core_event_timestamps.csv"
+    write_csv(output, rows)
+    policy_path = feature_dir / "stage115_official_core_event_timestamp_policy.json"
+    write_json(policy_path, {
+        "policy_version": OFFICIAL_EVENT_TIME_POLICY_VERSION,
+        "date_sources": ["FRED_CORE_RELEASE_DATES_API", "FRED_RELEASE_DATES_API", "FED_LOCAL_CALENDAR_PAGE"],
+        "timezone": "America/New_York",
+        "times": {
+            "BLS_EMPLOYMENT_SITUATION": "08:30 ET",
+            "BLS_CPI": "08:30 ET",
+            "BLS_PPI": "08:30 ET",
+            "BLS_JOLTS": "10:00 ET",
+            "BLS_ECI": "08:30 ET",
+            "BEA_GDP": "08:30 ET",
+            "BEA_PERSONAL_INCOME_OUTLAYS": "08:30 ET",
+            "FOMC_STATEMENT": "14:00 ET",
+            "FOMC_PRESS_CONFERENCE": "14:30 ET",
+        },
+        "scope": "scheduled_blackout_only_not_event_surprise",
+    })
+    return rows, {
+        "official_core_event_timestamp_rows": len(rows),
+        "official_core_event_timestamps": str(output),
+        "official_core_event_timestamp_policy": str(policy_path),
+        "official_core_event_counts_by_source": dict(
+            sorted((source, sum(1 for row in rows if row["source"] == source)) for source in {row["source"] for row in rows})
+        ),
+    }
+
+
 def build_unified_event_calendar(feature_dir: Path, event_groups: Sequence[Sequence[Dict[str, Any]]]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
     flat: List[Dict[str, Any]] = []
     for group in event_groups:
@@ -865,6 +1025,7 @@ def run(root: Path, normalized_dir: Optional[Path] = None, classification_csv: O
     wgc_etf_rows, wgc_etf_meta = parse_xlsx_raw_rows(normalized_dir / "wgc_gold_etf_xlsx_rows.csv", "wgc_gold_etf", feature_dir)
     wgc_cb_rows, wgc_cb_meta = parse_xlsx_raw_rows(normalized_dir / "wgc_central_bank_gold_xlsx_rows.csv", "wgc_central_bank_gold", feature_dir)
     spdr_rows, spdr_meta = parse_xlsx_raw_rows(normalized_dir / "spdr_gld_xlsx_rows.csv", "spdr_gld", feature_dir)
+    official_core_events, official_core_meta = build_official_core_event_timestamps(normalized_dir, feature_dir)
     unified_events, unified_event_meta = build_unified_event_calendar(feature_dir, [fred_events, fomc_events, treasury_events, bea_events, census_events])
 
     summary: Dict[str, Any] = {
@@ -889,9 +1050,11 @@ def run(root: Path, normalized_dir: Optional[Path] = None, classification_csv: O
         **wgc_etf_meta,
         **wgc_cb_meta,
         **spdr_meta,
+        **official_core_meta,
         **unified_event_meta,
         "wgc_spdr_feature_status": "FEATURE_CANDIDATE_NEEDS_SOURCE_SPECIFIC_VALIDATION",
         "bls_bea_census_lag_status": "OBSERVATION_OR_SHELL_DATES_NOT_FULLY_RELEASE_LAG_SAFE",
+        "official_core_event_timestamp_status": "DATE_SOURCE_OFFICIAL_TIME_SOURCE_EXPLICIT_POLICY",
         "next": [
             "Review DXY source output; if Stooq is invalid, keep DTWEXBGS fallback and replace DXY downloader later.",
             "Use COT weekly features plus daily macro panel for segmented discovery.",

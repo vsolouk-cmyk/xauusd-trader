@@ -46,7 +46,7 @@ python3 app/xauusd_controlled_paper.py run --root .
 
 ## Required historical evidence
 
-The preflight requires the V6 replay summary at:
+The preflight accepts V6 during transition and uses the V7 replay summary after event-context closure at:
 
 ```text
 reports/xauusd_controlled_paper_replay/historical_asof_replay_summary.json

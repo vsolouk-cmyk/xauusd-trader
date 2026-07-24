@@ -1,68 +1,51 @@
 {
-  "package": "XAUUSD_CONTROLLED_PAPER_BIDIRECTIONAL_DIRECTION_PARITY_CLOSURE",
-  "controlled_paper_program": "XAUUSD_CONTROLLED_PAPER_V1_5_BIDIRECTIONAL_PROBABILITY_TAILS_DIRECTION_PARITY",
-  "historical_replay_program": "XAUUSD_CONTROLLED_PAPER_HISTORICAL_ASOF_REPLAY_V6_FORWARD_DIRECTION_POLICY_PARITY_CLOSURE",
+  "package": "XAUUSD_STAGE116C_FRED_CORE_RELEASE_HISTORY_REPAIR",
+  "program": "XAUUSD_STAGE116C_FRED_CORE_RELEASE_HISTORY_REPAIR_V1",
   "files": [
     {
-      "path": ".github/workflows/xauusd_controlled_paper_qa.yml",
-      "size_bytes": 801,
-      "sha256": "9b865f0862e1168795d878d02a732fd134c7afa9cd59dfe76b0b8492ad54fa82"
-    },
-    {
       "path": "QA_REPORT.md",
-      "size_bytes": 2250,
-      "sha256": "45a8d5647f8f75689e734173092575653617835524a901f85e4b76fb6ac72c9c"
+      "sha256": "7d86c63c7b365435bec13308371e7c15693236833c0c1164f14f6eb2e522caec",
+      "size_bytes": 1022
     },
     {
       "path": "README.md",
-      "size_bytes": 1860,
-      "sha256": "0cce4c027cb3c21fa35a63b0825ef70f3a8d4bf8c0b0920a39ceb9f2aaff3364"
+      "sha256": "b5f74e019c73a85e0c6fec9322346a29197d7af96c70822ef730bd3bdb0ca782",
+      "size_bytes": 1455
     },
     {
-      "path": "app/xauusd_controlled_paper.py",
-      "size_bytes": 116341,
-      "sha256": "ad2d623dd7f3457b060e868da3b42f7f0f756fe7a38aced9cdba94a860b67faf"
+      "path": "app/stage115_feature_grade_macro_fundamental_builder.py",
+      "sha256": "35c2f1c7b2276f30272285a6e98f18d669a3d55966a852d1876f190705fa2686",
+      "size_bytes": 49171
     },
     {
-      "path": "app/xauusd_controlled_paper_historical_replay.py",
-      "size_bytes": 55815,
-      "sha256": "e9f07403f1a8ea2143c769c9900e8b031edd0ed4bc3b934738af0b32a9734809"
+      "path": "docs/XAUUSD_STAGE116C_FRED_CORE_RELEASE_HISTORY_RUNBOOK.md",
+      "sha256": "8ccfa64b009ea265ecb2369bc875de1755275c55fa9caf995ece332eff73f16b",
+      "size_bytes": 695
     },
     {
-      "path": "config/xauusd_controlled_paper.json",
-      "size_bytes": 3659,
-      "sha256": "737ab8c6a0b43f937e743e5f8aea6dd39d1e8b3e3d48889194c1a9af34ced0ea"
+      "path": "scripts/download_xauusd_official_data_batch.py",
+      "sha256": "522e3fca217840c3aedf607d8c5ac47da63931c1f83983f0dfc042811c4af537",
+      "size_bytes": 45191
     },
     {
-      "path": "config/xauusd_controlled_paper_replay.json",
-      "size_bytes": 629,
-      "sha256": "ca75625bf305d908d38c1b62372b4cb0575919f8e6b4180990cae59835faae16"
+      "path": "scripts/run_xauusd_fundamental_unify_normalize_pipeline.py",
+      "sha256": "d9884ee1a972c4521bbb56aebf81d1d3fcbe675c2c71bbde78cb606a34607a64",
+      "size_bytes": 10489
     },
     {
-      "path": "docs/XAUUSD_CONTROLLED_PAPER_HISTORICAL_REPLAY_RUNBOOK.md",
-      "size_bytes": 1253,
-      "sha256": "0012f32f5d14e0ee89e2566b4a668381819083acda6914aabe1c7f9727a6f545"
+      "path": "tests/test_stage116c_event_context_bridge_cli.py",
+      "sha256": "414fb3fa716eeb06b95a79c035d6b5896444e3964127ea8bf777bf0c22eea7da",
+      "size_bytes": 1535
     },
     {
-      "path": "docs/XAUUSD_CONTROLLED_PAPER_RUNBOOK.md",
-      "size_bytes": 1673,
-      "sha256": "a3dd8562311f2d437c06efe60497ce52eb906c9cd1694219349b42e673ce6337"
+      "path": "tests/test_stage116c_fred_core_release_history.py",
+      "sha256": "15f96229a15d457c2c7ec40e2f7d95743b91399ae68de9e219b9cb2e198f8765",
+      "size_bytes": 12801
     },
     {
-      "path": "tests/__init__.py",
-      "size_bytes": 0,
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    {
-      "path": "tests/test_xauusd_controlled_paper.py",
-      "size_bytes": 35050,
-      "sha256": "f868c5718549729848bf8494d58f8a1c30a12f71f444d8d2f0a1d9703fb22e7b"
-    },
-    {
-      "path": "tests/test_xauusd_controlled_paper_historical_replay.py",
-      "size_bytes": 21460,
-      "sha256": "ea1b24cbd85abee3a2b3aeb425a297a56a1299f3aefbadcabc81ea6adfd3efb1"
+      "path": "tests/test_stage116c_progress_and_fred_pagination.py",
+      "sha256": "e892af8a9ec93a3f66fa123a0b0f6622f707f47b049fcede66aad3e4d2e43abc",
+      "size_bytes": 5014
     }
-  ],
-  "file_count": 12
+  ]
 }

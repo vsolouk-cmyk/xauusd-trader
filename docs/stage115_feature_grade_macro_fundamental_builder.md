@@ -95,3 +95,14 @@ WGC/SPDR outputs are treated as feature candidates until a source-specific valid
 ## Hotfix note: CSV shell payload field size
 
 Stage114B BEA/Census shell outputs may store large JSON payload fragments inside a single CSV field. Python's csv module has a conservative default field limit, often 131072 bytes. Stage115 now raises the CSV field-size limit at startup so these shell-normalized files can be read without blocking the macro/FRED/COT feature build.
+
+## Existing-pipeline event timestamp bridge
+
+The builder now also emits:
+
+```text
+data/fundamental_event_inbox/features/stage115_official_core_event_timestamps.csv
+data/fundamental_event_inbox/features/stage115_official_core_event_timestamp_policy.json
+```
+
+BLS/BEA release dates come from the existing FRED release-date download. FOMC decision dates come from the existing Fed files in the inbox. Release times are explicit ET policy mappings and are converted with `zoneinfo`.

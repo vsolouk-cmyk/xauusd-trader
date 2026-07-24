@@ -67,3 +67,7 @@ spdr_gld_xlsx_rows.csv
 This stage fixes classification and macro/event shell normalization. It is not a discovery stage. If `remaining_unknown_count` is still high and contains important data files, stop and patch classifier again. If unknown files are only README/PDF/diagnostics, continue to Stage115.
 
 Stage115 should build feature-grade COT/WGC parsers before restarting thesis discovery.
+
+## FOMC decision-day normalization extension
+
+Local FOMC current/historical HTML files downloaded by Stage116C are parsed into decision-day rows with statement and press-conference flags. Stage114B still performs no network calls.

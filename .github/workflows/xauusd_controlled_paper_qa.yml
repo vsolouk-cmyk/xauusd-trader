@@ -19,10 +19,17 @@ jobs:
           python -m py_compile \
             app/xauusd_controlled_paper.py \
             app/xauusd_controlled_paper_historical_replay.py \
+            app/xauusd_historical_event_context.py \
+            app/stage114b_classification_and_macro_event_hotfix.py \
+            app/stage115_feature_grade_macro_fundamental_builder.py \
+            scripts/download_xauusd_official_data_batch.py \
+            scripts/run_xauusd_fundamental_unify_normalize_pipeline.py \
             tests/test_xauusd_controlled_paper.py \
-            tests/test_xauusd_controlled_paper_historical_replay.py
+            tests/test_xauusd_controlled_paper_historical_replay.py \
+            tests/test_xauusd_historical_event_context.py
       - name: Tests
         run: |
           python -m unittest -v \
             tests.test_xauusd_controlled_paper \
-            tests.test_xauusd_controlled_paper_historical_replay
+            tests.test_xauusd_controlled_paper_historical_replay \
+            tests.test_xauusd_historical_event_context

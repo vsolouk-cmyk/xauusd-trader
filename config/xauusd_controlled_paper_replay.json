@@ -1,15 +1,28 @@
 {
-  "execution_ledger": null,
-  "commercial_summary": null,
   "aligned_db": "data/local/stage177c_amarkets_alignment/xauusd_amarkets_alignment.sqlite",
-  "report_dir": "reports/xauusd_controlled_paper_replay",
-  "replay_ledger": "data/controlled_paper_replay/xauusd_historical_asof_replay.sqlite",
+  "commercial_metric_tolerance": 1e-05,
+  "commercial_summary": null,
+  "demo_design_gate": {
+    "maximum_drawdown_pct": 8.0,
+    "minimum_normal_mean_bps": 0.0,
+    "minimum_profit_factor": 1.0,
+    "minimum_strict_resolved_fraction_of_core": 0.5
+  },
+  "execution_ledger": null,
   "gross_parity_tolerance_bps": 0.25,
-  "price_parity_tolerance_bps": 0.10,
-  "net_parity_tolerance_bps": 0.01,
-  "commercial_metric_tolerance": 0.00001,
   "historical_event_guard": {
+    "macro_db_candidates": [
+      "data/local/historical_event_context/xauusd_historical_event_context.sqlite"
+    ],
+    "macro_table_candidates": [
+      "macro_context_h1"
+    ],
     "prefer_macro_context_db": true,
-    "reason": "A sparse event-list CSV cannot prove no-event coverage for every historical entry hour."
-  }
+    "reason": "A dedicated 146-row official-source context proves both blocked and clear entry hours.",
+    "summary_path": "reports/xauusd_historical_event_context/historical_event_context_summary.json"
+  },
+  "net_parity_tolerance_bps": 0.01,
+  "price_parity_tolerance_bps": 0.1,
+  "replay_ledger": "data/controlled_paper_replay/xauusd_historical_asof_replay.sqlite",
+  "report_dir": "reports/xauusd_controlled_paper_replay"
 }

@@ -1,43 +1,40 @@
-# XAUUSD Bidirectional Controlled-Paper Direction-Parity Closure
+# Stage116C FRED Core Release-History Repair
 
-This overlay closes the direction-policy mismatch identified by the source-proven historical replay.
+This repair fixes the exact historical event-coverage failure where Stage115
+contained only four BLS and four BEA events from 2026 while the FED calendar
+was complete.
 
-## Locked execution-side contract
+## Root cause
 
-- LONG when `probability_up >= 0.60`.
-- SHORT when `probability_up <= 0.40`.
-- Neutral band `(0.40, 0.60)` creates no position.
-- Stage180 `direction` is retained as metadata only and is never used to derive execution side.
-- A legacy Stage180 `NO_SIGNAL` status is acceptable for a low-tail SHORT because Stage180 was originally long-only.
+The event bridge used the global `fred/releases/dates` endpoint as the
+historical source. A current-year-only cache could be marked as complete after
+pagination and then reused. Pagination did not solve the scope problem.
 
-## Exact paper lifecycle
+## Corrected source contract
 
-- Signal row: aligned H1 row `i`.
-- Entry: open of aligned H1 row `i+1`.
-- Exit: close of aligned H1 row `i+24`.
-- Entry admissibility spread guard: observable entry spread for both sides; no future leakage.
-- Commercial execution cost:
-  - LONG uses entry spread.
-  - SHORT uses the final M5 spread of the exit H1 bucket, matching the source generator.
-- Normal cost: `max(3.0, observed_spread + 0.5)` bps.
-- Severe cost: `max(4.5, observed_spread * 1.5 + 2.0)` bps.
-- Stress 8: `max(8.0, observed_spread + 4.0)` bps.
-- Stress 10: `max(10.0, observed_spread + 6.0)` bps.
+The downloader now queries the official `fred/release/dates` endpoint
+separately for the seven locked core release IDs:
 
-## Safety boundary
+- 10 — Consumer Price Index
+- 11 — Employment Cost Index
+- 46 — Producer Price Index
+- 50 — Employment Situation
+- 192 — Job Openings and Labor Turnover Survey
+- 53 — Gross Domestic Product
+- 54 — Personal Income and Outlays
 
-- Paper ledger only.
-- No broker API.
-- No demo or live order path.
-- Existing V1.4 SQLite ledger is migrated in place; it is not reset.
-- Bidirectional preflight is blocked until the V6 historical replay proves source hashes, 55/91 direction scope, commercial metric parity, source-proven stress cost, and zero forward-wait dependency.
+The output is written to:
 
-## Required execution order
+`~/Downloads/xauusd_fundamental_event_inbox/events/fred/fred_core_release_dates_2009_present.json`
 
-1. Install this overlay.
-2. Run the combined tests.
-3. Run V6 historical replay.
-4. Confirm direction parity is closed.
-5. Refresh Stage180 and run controlled-paper preflight/run.
+The runtime remains within the existing Stage113–116 pipeline. No parallel
+downloader and no manual event dataset are introduced.
 
-Historical event context remains incomplete. This does not require waiting for a future signal, but it remains a bounded pre-demo data requirement.
+## Important behavior
+
+- `--event-core-only` downloads the per-release core bundle, BLS/BEA data, and
+  FOMC pages.
+- Existing current-year-only core caches are invalidated automatically.
+- Streaming progress remains enabled.
+- Stage115 records `FRED_CORE_RELEASE_DATES_API` provenance.
+- Event-context coverage and demo/live guards are not weakened.

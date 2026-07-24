@@ -1,0 +1,14 @@
+{
+  "program": "XAUUSD_HISTORICAL_EVENT_CONTEXT",
+  "source_mode": "EXISTING_STAGE113_116_PIPELINE_ONLY",
+  "allow_direct_network_fetch": false,
+  "blackout_after_minutes": 60.0,
+  "blackout_before_minutes": 60.0,
+  "execution_ledger": "reports/commercial_closure_sprint/commercial_closure_execution_ledger.csv",
+  "official_events_csv": "data/fundamental_event_inbox/features/stage115_official_core_event_timestamps.csv",
+  "pipeline_summary": "reports/xauusd_fundamental_unify_normalize_pipeline/xauusd_fundamental_unify_normalize_pipeline_summary.json",
+  "stage115_summary": "reports/stage115_feature_grade_macro_fundamental_builder/stage115_feature_grade_macro_fundamental_builder_summary.json",
+  "replay_config": "config/xauusd_controlled_paper_replay.json",
+  "report_dir": "reports/xauusd_historical_event_context",
+  "sqlite_path": "data/local/historical_event_context/xauusd_historical_event_context.sqlite"
+}

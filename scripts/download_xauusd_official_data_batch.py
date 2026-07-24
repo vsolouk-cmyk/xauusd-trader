@@ -21,10 +21,11 @@ import subprocess
 import sys
 import time
 import zipfile
+from urllib.parse import urlencode
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
-STAGE = "XAUUSD_OFFICIAL_DATA_DOWNLOAD_BATCH_STAGE116C_ENVFILE_CENSUS_PATCH"
+STAGE = "XAUUSD_OFFICIAL_DATA_DOWNLOAD_BATCH_STAGE116C_EXISTING_PIPELINE_EVENT_HISTORY_EXTENSION"
 DEFAULT_INBOX = Path.home() / "Downloads" / "xauusd_fundamental_event_inbox"
 DEFAULT_FROM_YEAR = 2009
 DEFAULT_TO_YEAR = 2026
@@ -32,6 +33,18 @@ FRED_SERIES = [
     "DFII10", "VIXCLS", "DTWEXBGS", "DGS10", "DGS2", "T10YIE", "T5YIE", "DFF", "WALCL", "BAMLH0A0HYM2",
 ]
 BLS_SERIES = ["CUSR0000SA0", "CUSR0000SA0L1E", "CES0000000001", "LNS14000000", "LNS11300000", "CES0500000003"]
+# Core scheduled releases used by the bounded historical blackout replay.
+# IDs are official FRED release identifiers.
+FRED_CORE_RELEASES: Dict[int, Dict[str, str]] = {
+    10: {"release_name": "Consumer Price Index", "source": "BLS", "category": "BLS_CPI"},
+    11: {"release_name": "Employment Cost Index", "source": "BLS", "category": "BLS_ECI"},
+    46: {"release_name": "Producer Price Index", "source": "BLS", "category": "BLS_PPI"},
+    50: {"release_name": "Employment Situation", "source": "BLS", "category": "BLS_EMPLOYMENT_SITUATION"},
+    192: {"release_name": "Job Openings and Labor Turnover Survey", "source": "BLS", "category": "BLS_JOLTS"},
+    53: {"release_name": "Gross Domestic Product", "source": "BEA", "category": "BEA_GDP"},
+    54: {"release_name": "Personal Income and Outlays", "source": "BEA", "category": "BEA_PERSONAL_INCOME_OUTLAYS"},
+}
+FRED_CORE_RELEASE_IDS = tuple(FRED_CORE_RELEASES)
 UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/149 Safari/537.36"
 API_ENV_KEYS = ["FRED_API_KEY", "BLS_API_KEY", "BEA_API_KEY", "CENSUS_API_KEY"]
 
@@ -118,6 +131,40 @@ def content_issue(path: Path) -> Optional[str]:
             return "HTML_OR_BLOCKED"
     if suffix == ".zip" and path.exists() and not zipfile.is_zipfile(path):
         return "NOT_A_VALID_ZIP"
+    if path.name in {"fred_releases_dates_2009_present.json", "fred_release_dates_2009_2026.json"}:
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            rows = payload.get("release_dates") if isinstance(payload, dict) else None
+            declared = int(payload.get("count", 0)) if isinstance(payload, dict) else 0
+            if not isinstance(rows, list) or not rows:
+                return "FRED_RELEASE_DATES_EMPTY_OR_INVALID"
+            if declared > len(rows):
+                return "FRED_RELEASE_DATES_TRUNCATED"
+            if not payload.get("pagination_complete", False):
+                return "FRED_RELEASE_DATES_NOT_CANONICAL_PAGINATED"
+        except Exception:
+            return "FRED_RELEASE_DATES_INVALID_JSON"
+    if path.name == "fred_core_release_dates_2009_present.json":
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            rows = payload.get("release_dates") if isinstance(payload, dict) else None
+            ids = {int(x) for x in payload.get("release_ids", [])} if isinstance(payload, dict) else set()
+            if payload.get("collection_mode") != "CORE_RELEASE_ID_ENDPOINTS":
+                return "FRED_CORE_RELEASE_DATES_WRONG_COLLECTION_MODE"
+            if ids != set(FRED_CORE_RELEASE_IDS):
+                return "FRED_CORE_RELEASE_DATES_RELEASE_ID_COVERAGE"
+            if not isinstance(rows, list) or not rows:
+                return "FRED_CORE_RELEASE_DATES_EMPTY_OR_INVALID"
+            observed = {int(row.get("release_id")) for row in rows if isinstance(row, dict) and row.get("release_id") is not None}
+            if observed != set(FRED_CORE_RELEASE_IDS):
+                return "FRED_CORE_RELEASE_DATES_MISSING_RELEASE_ROWS"
+            dates = [str(row.get("date") or "") for row in rows if isinstance(row, dict)]
+            if not any(date.startswith("2015-") for date in dates):
+                return "FRED_CORE_RELEASE_DATES_NO_2015_HISTORY"
+            if not payload.get("collection_complete", False):
+                return "FRED_CORE_RELEASE_DATES_NOT_COMPLETE"
+        except Exception:
+            return "FRED_CORE_RELEASE_DATES_INVALID_JSON"
     if path.name == "stooq_dx_f_dxy_daily.csv":
         try:
             lines = [x for x in path.read_text(errors="ignore").splitlines() if x.strip()]
@@ -228,9 +275,261 @@ def curl_download(
     }
 
 
+def download_fred_release_dates_paginated(
+    out: Path,
+    *,
+    api_key: str,
+    realtime_start: str = "2009-01-01",
+    realtime_end: str = "9999-12-31",
+    page_size: int = 1000,
+    dry_run: bool = False,
+    force_refresh: bool = False,
+    refresh_stale_hours: Optional[float] = None,
+) -> Dict[str, object]:
+    """Download the complete FRED releases/dates collection with pagination."""
+    ensure_dir(out.parent)
+    if not dry_run:
+        skipped = existing_valid_skip_result(out, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours)
+        if skipped is not None:
+            skipped["kind"] = "fred_release_dates_paginated"
+            return skipped
+    if dry_run:
+        return {"kind": "fred_release_dates_paginated", "output": str(out), "status": "DRY_RUN", "size_bytes": 0, "elapsed_sec": 0.0, "page_size": page_size}
+    started = time.time()
+    all_rows: List[Dict[str, object]] = []
+    seen: set[Tuple[str, str, str]] = set()
+    offset = 0
+    declared_count: Optional[int] = None
+    page_no = 0
+    tmp = out.with_suffix(out.suffix + ".page.tmp")
+    try:
+        while True:
+            page_no += 1
+            params = {
+                "api_key": api_key,
+                "file_type": "json",
+                "realtime_start": realtime_start,
+                "realtime_end": realtime_end,
+                "include_release_dates_with_no_data": "true",
+                "limit": str(page_size),
+                "offset": str(offset),
+                "sort_order": "asc",
+            }
+            url = "https://api.stlouisfed.org/fred/releases/dates?" + urlencode(params)
+            cp = subprocess.run(["curl", "-fsSL", "--retry", "3", "--retry-delay", "3", url, "-o", str(tmp)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            if cp.returncode != 0:
+                raise RuntimeError(f"FRED page offset={offset} curl exit={cp.returncode}: {scrub(cp.stderr[-500:])}")
+            payload = json.loads(tmp.read_text(encoding="utf-8"))
+            rows = payload.get("release_dates")
+            if not isinstance(rows, list):
+                raise RuntimeError(f"FRED page offset={offset} missing release_dates list")
+            if declared_count is None:
+                declared_count = int(payload.get("count", len(rows)))
+            added = 0
+            for item in rows:
+                if not isinstance(item, dict):
+                    continue
+                key = (str(item.get("release_id") or item.get("id") or ""), str(item.get("date") or item.get("release_date") or ""), str(item.get("release_name") or item.get("name") or ""))
+                if key in seen:
+                    continue
+                seen.add(key)
+                all_rows.append(item)
+                added += 1
+            console(f"        FRED release-calendar page {page_no}: offset={offset} received={len(rows)} added={added} total={len(all_rows)}/{declared_count}", quiet=False)
+            offset += len(rows)
+            if not rows or len(rows) < page_size or offset >= int(declared_count):
+                break
+            if page_no > 200:
+                raise RuntimeError("FRED pagination exceeded 200 pages")
+        if declared_count is None or len(all_rows) < declared_count:
+            raise RuntimeError(f"FRED pagination incomplete: collected={len(all_rows)} declared_count={declared_count}")
+        canonical = {"realtime_start": realtime_start, "realtime_end": realtime_end, "order_by": "release_id", "sort_order": "asc", "count": len(all_rows), "offset": 0, "limit": len(all_rows), "pagination_complete": True, "pages_downloaded": page_no, "release_dates": all_rows}
+        out.write_text(json.dumps(canonical, ensure_ascii=False), encoding="utf-8")
+        issue = content_issue(out)
+        if issue is not None:
+            raise RuntimeError(f"canonical FRED output validation failed: {issue}")
+        return {"kind": "fred_release_dates_paginated", "output": str(out), "status": "OK", "size_bytes": out.stat().st_size, "elapsed_sec": round(time.time() - started, 2), "pages_downloaded": page_no, "release_dates": len(all_rows), "declared_count": declared_count}
+    finally:
+        if tmp.exists():
+            tmp.unlink()
+
+
+
+def download_fred_core_release_dates(
+    out: Path,
+    *,
+    api_key: str,
+    from_year: int = 2009,
+    to_year: int = DEFAULT_TO_YEAR,
+    page_size: int = 10000,
+    dry_run: bool = False,
+    force_refresh: bool = False,
+    refresh_stale_hours: Optional[float] = None,
+) -> Dict[str, object]:
+    """Download complete release-date histories for the seven locked core releases.
+
+    The global ``fred/releases/dates`` endpoint is intentionally not used here:
+    its real-time window can leave a current-year-only cache that looks paginated.
+    ``fred/release/dates`` is queried once per official release id and returns the
+    complete release history for that release.
+    """
+    ensure_dir(out.parent)
+    if not dry_run:
+        skipped = existing_valid_skip_result(
+            out,
+            force_refresh=force_refresh,
+            refresh_stale_hours=refresh_stale_hours,
+        )
+        if skipped is not None:
+            skipped["kind"] = "fred_core_release_dates"
+            return skipped
+    if dry_run:
+        return {
+            "kind": "fred_core_release_dates",
+            "output": str(out),
+            "status": "DRY_RUN",
+            "size_bytes": 0,
+            "elapsed_sec": 0.0,
+            "release_ids": list(FRED_CORE_RELEASE_IDS),
+        }
+
+    started = time.time()
+    all_rows: List[Dict[str, object]] = []
+    release_audit: List[Dict[str, object]] = []
+    tmp = out.with_suffix(out.suffix + ".release.tmp")
+    try:
+        for release_index, release_id in enumerate(FRED_CORE_RELEASE_IDS, start=1):
+            spec = FRED_CORE_RELEASES[release_id]
+            offset = 0
+            page_no = 0
+            declared_count: Optional[int] = None
+            release_rows: List[Dict[str, object]] = []
+            while True:
+                page_no += 1
+                params = {
+                    "api_key": api_key,
+                    "file_type": "json",
+                    "release_id": str(release_id),
+                    "realtime_start": "1776-07-04",
+                    "realtime_end": "9999-12-31",
+                    "include_release_dates_with_no_data": "true",
+                    "limit": str(page_size),
+                    "offset": str(offset),
+                    "sort_order": "asc",
+                }
+                url = "https://api.stlouisfed.org/fred/release/dates?" + urlencode(params)
+                cp = subprocess.run(
+                    ["curl", "-fsSL", "--retry", "3", "--retry-delay", "3", url, "-o", str(tmp)],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                )
+                if cp.returncode != 0:
+                    raise RuntimeError(
+                        f"FRED core release_id={release_id} offset={offset} "
+                        f"curl exit={cp.returncode}: {scrub(cp.stderr[-500:])}"
+                    )
+                payload = json.loads(tmp.read_text(encoding="utf-8"))
+                rows = payload.get("release_dates")
+                if not isinstance(rows, list):
+                    raise RuntimeError(
+                        f"FRED core release_id={release_id} offset={offset} missing release_dates list"
+                    )
+                if declared_count is None:
+                    declared_count = int(payload.get("count", len(rows)))
+                for item in rows:
+                    if not isinstance(item, dict):
+                        continue
+                    date = str(item.get("date") or item.get("release_date") or "")
+                    if not date:
+                        continue
+                    try:
+                        year = int(date[:4])
+                    except Exception:
+                        continue
+                    if year < from_year or year > to_year:
+                        continue
+                    release_rows.append({
+                        "release_id": release_id,
+                        "release_name": spec["release_name"],
+                        "source": spec["source"],
+                        "category": spec["category"],
+                        "date": date,
+                    })
+                console(
+                    f"        FRED core {release_index}/{len(FRED_CORE_RELEASE_IDS)} "
+                    f"release_id={release_id} {spec['release_name']}: "
+                    f"page={page_no} offset={offset} received={len(rows)} "
+                    f"kept={len(release_rows)} declared={declared_count}",
+                    quiet=False,
+                )
+                offset += len(rows)
+                if not rows or len(rows) < page_size or offset >= int(declared_count):
+                    break
+                if page_no > 20:
+                    raise RuntimeError(f"FRED core release_id={release_id} pagination exceeded 20 pages")
+            if declared_count is None or offset < declared_count:
+                raise RuntimeError(
+                    f"FRED core release_id={release_id} pagination incomplete: "
+                    f"received={offset} declared_count={declared_count}"
+                )
+            if not release_rows:
+                raise RuntimeError(
+                    f"FRED core release_id={release_id} has no dates in {from_year}-{to_year}"
+                )
+            all_rows.extend(release_rows)
+            release_audit.append({
+                "release_id": release_id,
+                "release_name": spec["release_name"],
+                "source": spec["source"],
+                "category": spec["category"],
+                "api_declared_count": declared_count,
+                "kept_count": len(release_rows),
+                "first_date": min(str(row["date"]) for row in release_rows),
+                "last_date": max(str(row["date"]) for row in release_rows),
+                "pages_downloaded": page_no,
+            })
+
+        unique = {
+            (int(row["release_id"]), str(row["date"])): row
+            for row in all_rows
+        }
+        merged = [unique[key] for key in sorted(unique, key=lambda x: (x[1], x[0]))]
+        canonical = {
+            "collection_mode": "CORE_RELEASE_ID_ENDPOINTS",
+            "endpoint": "https://api.stlouisfed.org/fred/release/dates",
+            "from_year": from_year,
+            "to_year": to_year,
+            "release_ids": list(FRED_CORE_RELEASE_IDS),
+            "release_specs": FRED_CORE_RELEASES,
+            "collection_complete": True,
+            "count": len(merged),
+            "release_audit": release_audit,
+            "release_dates": merged,
+        }
+        out.write_text(json.dumps(canonical, ensure_ascii=False), encoding="utf-8")
+        issue = content_issue(out)
+        if issue is not None:
+            raise RuntimeError(f"canonical FRED core output validation failed: {issue}")
+        return {
+            "kind": "fred_core_release_dates",
+            "output": str(out),
+            "status": "OK",
+            "size_bytes": out.stat().st_size,
+            "elapsed_sec": round(time.time() - started, 2),
+            "release_ids": list(FRED_CORE_RELEASE_IDS),
+            "release_dates": len(merged),
+            "release_audit": release_audit,
+        }
+    finally:
+        if tmp.exists():
+            tmp.unlink()
+
 def post_bls(
     out: Path,
     *,
+    start_year: int = DEFAULT_FROM_YEAR,
+    end_year: int = DEFAULT_TO_YEAR,
     dry_run: bool = False,
     force_refresh: bool = False,
     refresh_stale_hours: Optional[float] = None,
@@ -240,9 +539,13 @@ def post_bls(
         skipped = existing_valid_skip_result(out, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours)
         if skipped is not None:
             return skipped
-    payload: Dict[str, object] = {"seriesid": BLS_SERIES, "startyear": "2017", "endyear": "2026"}
+    payload: Dict[str, object] = {
+        "seriesid": BLS_SERIES,
+        "startyear": str(max(int(start_year), int(end_year) - 9)),
+        "endyear": str(end_year),
+    }
     if env_present("BLS_API_KEY"):
-        payload["startyear"] = str(DEFAULT_FROM_YEAR)
+        payload["startyear"] = str(start_year)
         payload["registrationkey"] = os.environ["BLS_API_KEY"]
     body = json.dumps(payload)
     safe_payload = json.loads(scrub(body))
@@ -333,6 +636,7 @@ def build_sections(
     dry_run: bool,
     force_refresh: bool,
     refresh_stale_hours: Optional[float],
+    event_core_only: bool = False,
 ) -> List[Tuple[str, Sequence[Tuple[str, callable]]]]:
     sections: List[Tuple[str, Sequence[Tuple[str, callable]]]] = []
 
@@ -348,11 +652,35 @@ def build_sections(
 
     if env_present("FRED_API_KEY"):
         key = os.environ["FRED_API_KEY"]
-        fred_tasks = [("fred_releases_dates_2009_present.json", lambda key=key: curl_download(
-            f"https://api.stlouisfed.org/fred/releases/dates?api_key={key}&file_type=json&realtime_start=2009-01-01&realtime_end=9999-12-31&include_release_dates_with_no_data=true",
-            inbox / "events" / "fred" / "fred_releases_dates_2009_present.json", dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours))]
+        fred_tasks = [
+            (
+                "fred_core_release_dates_2009_present.json",
+                lambda key=key: download_fred_core_release_dates(
+                    inbox / "events" / "fred" / "fred_core_release_dates_2009_present.json",
+                    api_key=key,
+                    from_year=min(years),
+                    to_year=max(years),
+                    dry_run=dry_run,
+                    force_refresh=force_refresh,
+                    refresh_stale_hours=refresh_stale_hours,
+                ),
+            )
+        ]
+        if not event_core_only:
+            fred_tasks.append((
+                "fred_releases_dates_2009_present.json",
+                lambda key=key: download_fred_release_dates_paginated(
+                    inbox / "events" / "fred" / "fred_releases_dates_2009_present.json",
+                    api_key=key,
+                    realtime_start="2009-01-01",
+                    realtime_end="9999-12-31",
+                    dry_run=dry_run,
+                    force_refresh=force_refresh,
+                    refresh_stale_hours=refresh_stale_hours,
+                ),
+            ))
     else:
-        fred_tasks = [("missing_FRED_API_KEY", lambda: {"output": "events/fred/fred_releases_dates_2009_present.json", "status": "SKIPPED_MISSING_FRED_API_KEY", "size_bytes": 0, "elapsed_sec": 0.0})]
+        fred_tasks = [("missing_FRED_API_KEY", lambda: {"output": "events/fred/fred_core_release_dates_2009_present.json", "status": "SKIPPED_MISSING_FRED_API_KEY", "size_bytes": 0, "elapsed_sec": 0.0})]
     sections.append(("Official economic-events backbone: FRED release dates", fred_tasks))
 
     sections.append((
@@ -366,7 +694,17 @@ def build_sections(
             [(f"fut_disagg_xls_{y}.zip", lambda y=y: curl_download(f"https://www.cftc.gov/files/dea/history/fut_disagg_xls_{y}.zip", inbox / "cot" / "cftc" / f"fut_disagg_xls_{y}.zip", dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours)) for y in years],
         ))
 
-    sections.append(("BLS CPI / labor / payroll JSON", [("bls_core_macro.json", lambda: post_bls(inbox / "events" / "bls" / "bls_core_macro_2017_2026.json", dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours))]))
+    sections.append((
+        "BLS CPI / labor / payroll JSON",
+        [(
+            f"bls_core_macro_{min(years)}_{max(years)}.json",
+            lambda: post_bls(
+                inbox / "events" / "bls" / f"bls_core_macro_{min(years)}_{max(years)}.json",
+                start_year=min(years), end_year=max(years), dry_run=dry_run,
+                force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours,
+            ),
+        )],
+    ))
 
     if env_present("BEA_API_KEY"):
         key = os.environ["BEA_API_KEY"]
@@ -401,7 +739,29 @@ def build_sections(
         census_data_tasks = [("missing_CENSUS_API_KEY", lambda: {"output": "events/census/census_*_YYYY.json", "status": "SKIPPED_MISSING_CENSUS_API_KEY", "size_bytes": 0, "elapsed_sec": 0.0})]
     sections.append(("Census EITS yearly datasets", census_data_tasks))
 
-    sections.append(("Official economic-events backbone: FOMC calendar snapshot", [("fomc_calendars_2021_2027.html", lambda: curl_download("https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm", inbox / "events" / "fomc" / "fomc_calendars_2021_2027.html", dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours))]))
+    fomc_tasks: List[Tuple[str, callable]] = [
+        (
+            "fomc_calendars_current.html",
+            lambda: curl_download(
+                "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+                inbox / "events" / "fomc" / "fomc_calendars_current.html",
+                user_agent=True, dry_run=dry_run, force_refresh=force_refresh,
+                refresh_stale_hours=refresh_stale_hours,
+            ),
+        )
+    ]
+    for year in years:
+        if year <= 2020:
+            fomc_tasks.append((
+                f"fomc_historical_{year}.html",
+                lambda year=year: curl_download(
+                    f"https://www.federalreserve.gov/monetarypolicy/fomchistorical{year}.htm",
+                    inbox / "events" / "fomc" / f"fomc_historical_{year}.html",
+                    user_agent=True, dry_run=dry_run, force_refresh=force_refresh,
+                    refresh_stale_hours=refresh_stale_hours,
+                ),
+            ))
+    sections.append(("Official economic-events backbone: FOMC current + historical pages", fomc_tasks))
 
     sections.append((
         "Official economic-events backbone: Treasury auctions",
@@ -428,6 +788,14 @@ def build_sections(
     gold_price_text = "Manual: https://www.gold.org/goldhub/data/gold-prices -> Downloads -> Download xlsx Gold price averages in a range of currencies since 1978\n"
     sections.append(("WGC gold price averages manual marker", [("README_MANUAL_GOLD_PRICE_DOWNLOAD.txt", lambda: marker_result(inbox / "gold_price" / "wgc" / "README_MANUAL_GOLD_PRICE_DOWNLOAD.txt", gold_price_text, dry_run=dry_run, force_refresh=force_refresh, refresh_stale_hours=refresh_stale_hours))]))
 
+    if event_core_only:
+        allowed = {
+            "Official economic-events backbone: FRED release dates",
+            "BLS CPI / labor / payroll JSON",
+            "BEA GDP / PCE / personal income JSON",
+            "Official economic-events backbone: FOMC current + historical pages",
+        }
+        sections = [section for section in sections if section[0] in allowed]
     return sections
 
 
@@ -438,6 +806,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     ap.add_argument("--force-refresh", action="store_true", help="Download again even when a valid output file already exists")
     ap.add_argument("--refresh-stale-hours", type=float, default=None, help="Refresh valid existing files older than this many hours; omit to keep valid files")
     ap.add_argument("--include-cot-xls", action="store_true")
+    ap.add_argument("--event-core-only", action="store_true", help="Download only FRED release dates, BLS, BEA and FOMC inputs needed by historical event context")
     ap.add_argument("--skip-wgc-direct", action="store_true", help="Skip WGC direct attempts if browser/manual download is preferred")
     ap.add_argument("--from-year", type=int, default=DEFAULT_FROM_YEAR)
     ap.add_argument("--to-year", type=int, default=DEFAULT_TO_YEAR)
@@ -483,6 +852,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         dry_run=args.dry_run,
         force_refresh=args.force_refresh,
         refresh_stale_hours=args.refresh_stale_hours,
+        event_core_only=args.event_core_only,
     )
     all_results: List[Dict[str, object]] = []
     total_sections = len(sections)
@@ -517,6 +887,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         "warning_or_fail_count": warning_count,
         "api_key_presence": {k: env_present(k) for k in API_ENV_KEYS},
         "env_files_loaded": env_files_loaded,
+        "event_core_only": args.event_core_only,
         "economic_events_policy": "Use official event backbone: FRED release dates, FOMC calendar, Treasury auctions, and BLS/BEA/Census actual macro datasets. Do not depend on old commercial economic-calendar feeds.",
         "results": all_results,
         "log_jsonl": str(log_jsonl),

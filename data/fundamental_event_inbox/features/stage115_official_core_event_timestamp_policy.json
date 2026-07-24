@@ -1,0 +1,21 @@
+{
+  "policy_version": "USD_CORE_RELEASE_TIME_POLICY_V1",
+  "date_sources": [
+    "FRED_CORE_RELEASE_DATES_API",
+    "FRED_RELEASE_DATES_API",
+    "FED_LOCAL_CALENDAR_PAGE"
+  ],
+  "timezone": "America/New_York",
+  "times": {
+    "BLS_EMPLOYMENT_SITUATION": "08:30 ET",
+    "BLS_CPI": "08:30 ET",
+    "BLS_PPI": "08:30 ET",
+    "BLS_JOLTS": "10:00 ET",
+    "BLS_ECI": "08:30 ET",
+    "BEA_GDP": "08:30 ET",
+    "BEA_PERSONAL_INCOME_OUTLAYS": "08:30 ET",
+    "FOMC_STATEMENT": "14:00 ET",
+    "FOMC_PRESS_CONFERENCE": "14:30 ET"
+  },
+  "scope": "scheduled_blackout_only_not_event_surprise"
+}

@@ -7,7 +7,8 @@ Pipeline:
 3) Stage114 normalizer
 4) Stage114B classification hotfix
 5) Stage115 feature-grade builder
-6) Stage116 source-specific validator
+6) optional existing-pipeline historical event-context bridge and strict replay
+7) Stage116 source-specific validator
 
 No order / MT5 / EA / broker action is performed.
 """
@@ -19,10 +20,11 @@ import json
 import subprocess
 import sys
 import time
+from collections import deque
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence
 
-STAGE = "XAUUSD_FUNDAMENTAL_UNIFY_NORMALIZE_PIPELINE_STAGE116C_ENVFILE_CENSUS_PATCH"
+STAGE = "XAUUSD_FUNDAMENTAL_UNIFY_NORMALIZE_PIPELINE_STAGE116C_EVENT_CONTEXT_BRIDGE"
 
 
 def utc_now() -> str:
@@ -47,28 +49,45 @@ def write_jsonl(path: Path, row: Dict[str, object]) -> None:
 
 
 def run_cmd(cmd: List[str], cwd: Path, *, step_no: int, total_steps: int, name: str, log_jsonl: Path, quiet: bool, continue_on_error: bool = False) -> Dict[str, object]:
+    """Run a step while streaming child stdout/stderr in real time."""
     started = time.time()
     console(f"[{step_no:02d}/{total_steps:02d} START] {name} | {utc_now()}", quiet=quiet)
     console(f"    cmd: {' '.join(cmd)}", quiet=quiet)
     write_jsonl(log_jsonl, {"event": "step_start", "step_no": step_no, "total_steps": total_steps, "name": name, "cmd": cmd, "utc": utc_now()})
-    cp = subprocess.run(cmd, cwd=str(cwd), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    process = subprocess.Popen(
+        cmd,
+        cwd=str(cwd),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        bufsize=1,
+    )
+    tail_lines: deque[str] = deque(maxlen=240)
+    assert process.stdout is not None
+    for raw_line in process.stdout:
+        line = raw_line.rstrip("\n")
+        tail_lines.append(raw_line)
+        if not quiet:
+            print(line, flush=True)
+        write_jsonl(log_jsonl, {"event": "step_output", "step_no": step_no, "name": name, "line": line[-4000:], "utc": utc_now()})
+    process.stdout.close()
+    returncode = process.wait()
     elapsed = round(time.time() - started, 2)
+    combined_tail = "".join(tail_lines)[-12000:]
     result = {
         "name": name,
         "cmd": " ".join(cmd),
-        "returncode": cp.returncode,
-        "status": "OK" if cp.returncode == 0 else "FAILED",
+        "returncode": returncode,
+        "status": "OK" if returncode == 0 else "FAILED",
         "elapsed_sec": elapsed,
-        "stdout_tail": cp.stdout[-3000:],
-        "stderr_tail": cp.stderr[-3000:],
+        "stdout_tail": combined_tail,
+        "stderr_tail": "",
+        "output_mode": "STREAMED_STDOUT_STDERR_MERGED",
     }
     write_jsonl(log_jsonl, {"event": "step_done", "step_no": step_no, "name": name, **result, "utc": utc_now()})
     console(f"[{step_no:02d}/{total_steps:02d} DONE ] {name} | status={result['status']} | elapsed={elapsed}s", quiet=quiet)
-    if cp.returncode != 0:
-        if cp.stderr:
-            console(f"    stderr_tail:\n{cp.stderr[-1200:]}", quiet=quiet)
-        if not continue_on_error:
-            raise RuntimeError(json.dumps(result, ensure_ascii=False, indent=2))
+    if returncode != 0 and not continue_on_error:
+        raise RuntimeError(json.dumps(result, ensure_ascii=False, indent=2))
     return result
 
 
@@ -80,8 +99,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     ap.add_argument("--force-refresh", action="store_true", help="Pass through to downloader: refresh all existing outputs")
     ap.add_argument("--refresh-stale-hours", type=float, default=None, help="Pass through to downloader: refresh valid files older than N hours")
     ap.add_argument("--include-cot-xls", action="store_true")
+    ap.add_argument("--event-core-only", action="store_true", help="Pass event-core-only mode to the existing Stage116C downloader")
     ap.add_argument("--skip-wgc-direct", action="store_true")
     ap.add_argument("--env-file", action="append", default=[], help="Pass local API-key env file(s) to the download runner")
+    ap.add_argument("--build-historical-event-context", action="store_true", help="Build 146-entry event context from Stage115 timestamped events")
+    ap.add_argument("--run-replay", action="store_true", help="With --build-historical-event-context, run strict historical replay")
     ap.add_argument("--continue-on-error", action="store_true")
     ap.add_argument("--quiet", action="store_true")
     args = ap.parse_args(argv)
@@ -100,6 +122,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         download_cmd = [sys.executable, "scripts/download_xauusd_official_data_batch.py", "--inbox", str(inbox)]
         if args.include_cot_xls:
             download_cmd.append("--include-cot-xls")
+        if args.event_core_only:
+            download_cmd.append("--event-core-only")
         if args.force_refresh:
             download_cmd.append("--force-refresh")
         if args.refresh_stale_hours is not None:
@@ -122,6 +146,15 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             require_file(root, cmd[1])
         commands.append((name, cmd))
 
+    if args.build_historical_event_context:
+        require_file(root, "app/xauusd_historical_event_context.py")
+        event_cmd = [sys.executable, "app/xauusd_historical_event_context.py", "--root", str(root)]
+        if args.run_replay:
+            event_cmd.append("--run-replay")
+        commands.append(("Historical event-context bridge and strict replay" if args.run_replay else "Historical event-context bridge", event_cmd))
+    elif args.run_replay:
+        raise ValueError("--run-replay requires --build-historical-event-context")
+
     console(f"{STAGE} | started={utc_now()} | root={root} | inbox={inbox}", quiet=args.quiet)
     console(f"Log: {log_jsonl}", quiet=args.quiet)
     started = time.time()
@@ -137,6 +170,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         "root": str(root),
         "inbox": str(inbox),
         "download_first": args.download_first,
+        "event_core_only": args.event_core_only,
+        "build_historical_event_context": args.build_historical_event_context,
+        "run_replay": args.run_replay,
         "force_refresh": args.force_refresh,
         "refresh_stale_hours": args.refresh_stale_hours,
         "status": status,
@@ -151,6 +187,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             "reports/stage114b_classification_and_macro_event_hotfix/stage114b_classification_and_macro_event_hotfix_summary.json",
             "reports/stage115_feature_grade_macro_fundamental_builder/stage115_feature_grade_macro_fundamental_builder_summary.json",
             "reports/stage116_source_specific_wgc_spdr_dxy_validator/stage116_source_specific_wgc_spdr_dxy_validator_summary.json",
+            "reports/xauusd_historical_event_context/historical_event_context_summary.json",
+            "reports/xauusd_controlled_paper_replay/historical_asof_replay_summary.json",
         ],
     }
     summary_path.write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")

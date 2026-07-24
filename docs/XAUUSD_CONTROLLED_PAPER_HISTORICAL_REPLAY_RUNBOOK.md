@@ -1,4 +1,4 @@
-# XAUUSD Historical-As-Of Replay V6 Runbook
+# XAUUSD Historical-As-Of Replay V7 Runbook
 
 ## Purpose
 
@@ -31,7 +31,7 @@ python3 app/xauusd_controlled_paper_historical_replay.py --root .
 ## Expected result after this overlay
 
 ```text
-program = XAUUSD_CONTROLLED_PAPER_HISTORICAL_ASOF_REPLAY_V6_FORWARD_DIRECTION_POLICY_PARITY_CLOSURE
+program = XAUUSD_CONTROLLED_PAPER_HISTORICAL_ASOF_REPLAY_V7_OFFICIAL_EVENT_CONTEXT_CLOSURE
 current_forward_policy_parity.pass = true
 forward_wait_required_for_replay = false
 ```
@@ -39,7 +39,7 @@ forward_wait_required_for_replay = false
 With currently absent historical event context, the expected decision is:
 
 ```text
-PASS_CORE_HISTORICAL_ASOF_REPLAY_FORWARD_DIRECTION_POLICY_PARITY_CLOSED_EVENT_COVERAGE_INCOMPLETE
+PASS_FULL_HISTORICAL_EVENT_AWARE_REPLAY_DEMO_DESIGN_ALLOWED_NO_FORWARD_WAIT
 ```
 
 This permits continued controlled paper logging but does not authorize demo/live design. Historical event context remains the bounded pre-demo gap.

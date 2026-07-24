@@ -379,6 +379,22 @@ class ControlledPaperTests(unittest.TestCase):
             self.assertLessEqual(row["entry_spread_bps"], 3.0764778059487488)
             conn.close()
 
+
+    def test_v7_event_context_replay_is_accepted_by_controlled_paper_preflight(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            Fixture(root, signal=False)
+            replay_path = root / "reports/xauusd_controlled_paper_replay/historical_asof_replay_summary.json"
+            replay = json.loads(replay_path.read_text(encoding="utf-8"))
+            replay["program"] = "XAUUSD_CONTROLLED_PAPER_HISTORICAL_ASOF_REPLAY_V7_OFFICIAL_EVENT_CONTEXT_CLOSURE"
+            replay["decision"] = "PASS_FULL_HISTORICAL_EVENT_AWARE_REPLAY_DEMO_DESIGN_ALLOWED_NO_FORWARD_WAIT"
+            replay["historical_event_context"] = {"contract_pass": True}
+            replay["event_evidence"] = {"coverage_complete": True}
+            write_json(replay_path, replay)
+            code, payload = MOD.execute(root, None, "preflight")
+            self.assertEqual(code, 0, payload)
+            self.assertTrue(payload["checks"]["historical_replay_event_context_contract"])
+
     def test_no_signal_is_logged_without_position(self) -> None:
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)

@@ -21,6 +21,7 @@ import argparse
 import csv
 import datetime as dt
 import hashlib
+import html
 import json
 import re
 import sys
@@ -484,22 +485,134 @@ def normalize_generic_csv(files: Sequence[Path], family: str) -> List[Dict[str, 
     return out
 
 
+def _month_number(name: str) -> Optional[int]:
+    lookup = {
+        "jan": 1, "january": 1, "feb": 2, "february": 2,
+        "mar": 3, "march": 3, "apr": 4, "april": 4, "may": 5,
+        "jun": 6, "june": 6, "jul": 7, "july": 7, "aug": 8, "august": 8,
+        "sep": 9, "sept": 9, "september": 9, "oct": 10, "october": 10,
+        "nov": 11, "november": 11, "dec": 12, "december": 12,
+    }
+    return lookup.get(str(name).strip().lower().rstrip("."))
+
+
+def _html_text(payload: str) -> str:
+    cleaned = re.sub(r"<script\b[^>]*>.*?</script>", " ", payload, flags=re.I | re.S)
+    cleaned = re.sub(r"<style\b[^>]*>.*?</style>", " ", cleaned, flags=re.I | re.S)
+    cleaned = re.sub(r"<[^>]+>", " ", cleaned)
+    return re.sub(r"\s+", " ", html.unescape(cleaned)).strip()
+
+
+def _fomc_row(
+    *, path: Path, month_name: str, start_day: str, end_day: Optional[str], year_text: str,
+    section: str, raw_text: str,
+) -> Optional[Dict[str, Any]]:
+    month = _month_number(month_name)
+    if month is None:
+        return None
+    year = int(year_text)
+    decision_day = int(end_day or start_day)
+    try:
+        decision_date = dt.date(year, month, decision_day).isoformat()
+    except Exception:
+        return None
+    has_statement = "statement" in section.lower()
+    if not has_statement:
+        return None
+    has_press = "press conference" in section.lower()
+    return {
+        "event_date": decision_date,
+        "event_date_text": raw_text,
+        "meeting_start_day": int(start_day),
+        "meeting_decision_day": decision_day,
+        "source_family": "fomc",
+        "source_file": str(path),
+        "event_type": "FOMC_MEETING_DECISION_DAY",
+        "has_statement": 1,
+        "has_press_conference": 1 if has_press else 0,
+        "parser_version": "FOMC_LOCAL_HTML_DECISION_DAY_V1",
+    }
+
+
 def normalize_fomc(files: Sequence[Path]) -> List[Dict[str, Any]]:
+    """Normalize locally downloaded FOMC pages into decision-day rows.
+
+    Download ownership remains in Stage116C. This parser does no network access.
+    It supports both historical pages ("January 27-28 Meeting - 2015") and the
+    current multi-year calendar page ("2026 FOMC Meetings" sections).
+    """
     out: List[Dict[str, Any]] = []
-    date_re = re.compile(r"(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\.?\s+\d{1,2}(?:-\d{1,2})?,\s+\d{4}", re.I)
+    historical_re = re.compile(
+        r"([A-Za-z]+)\s+(\d{1,2})(?:\s*[-–]\s*(\d{1,2}))?\s+Meeting\s*[-–]\s*(20\d{2})",
+        re.I,
+    )
+    year_heading_re = re.compile(r"\b(20\d{2})\s+FOMC\s+Meetings\b", re.I)
+    date_re = re.compile(r"\b([A-Za-z]+)\s+(\d{1,2})(?:\s*[-–]\s*(\d{1,2}))?\b")
     for path in files:
         try:
-            text = path.read_text(encoding="utf-8", errors="ignore")[:3_000_000]
-            matches = sorted(set(m.group(0) for m in date_re.finditer(text)))
-            if matches:
-                for m in matches:
-                    out.append({"event_date_text": m, "source_family": "fomc", "source_file": str(path), "event_type": "fomc_calendar_text_match"})
-            else:
-                out.append({"event_date_text": "", "source_family": "fomc", "source_file": str(path), "event_type": "fomc_source_snapshot_no_date_parse"})
-        except Exception as exc:
-            out.append({"event_date_text": "", "source_family": "fomc", "source_file": str(path), "event_type": "error", "error": str(exc)})
-    return out
+            raw = path.read_text(encoding="utf-8", errors="ignore")[:8_000_000]
+            text = _html_text(raw)
+            found: List[Dict[str, Any]] = []
+            matches = list(historical_re.finditer(text))
+            for idx, match in enumerate(matches):
+                section_end = matches[idx + 1].start() if idx + 1 < len(matches) else min(len(text), match.end() + 3000)
+                section = text[match.end():section_end]
+                row = _fomc_row(
+                    path=path,
+                    month_name=match.group(1),
+                    start_day=match.group(2),
+                    end_day=match.group(3),
+                    year_text=match.group(4),
+                    section=section,
+                    raw_text=match.group(0),
+                )
+                if row:
+                    found.append(row)
 
+            if not found:
+                headings = list(year_heading_re.finditer(text))
+                for idx, heading in enumerate(headings):
+                    year_text = heading.group(1)
+                    section_end = headings[idx + 1].start() if idx + 1 < len(headings) else len(text)
+                    year_section = text[heading.end():section_end]
+                    date_matches = list(date_re.finditer(year_section))
+                    for didx, match in enumerate(date_matches):
+                        local_end = date_matches[didx + 1].start() if didx + 1 < len(date_matches) else min(len(year_section), match.end() + 2500)
+                        meeting_section = year_section[match.end():local_end]
+                        if "statement" not in meeting_section.lower():
+                            continue
+                        row = _fomc_row(
+                            path=path,
+                            month_name=match.group(1),
+                            start_day=match.group(2),
+                            end_day=match.group(3),
+                            year_text=year_text,
+                            section=meeting_section,
+                            raw_text=f"{match.group(0)} {year_text}",
+                        )
+                        if row:
+                            found.append(row)
+
+            if found:
+                unique: Dict[Tuple[str, str], Dict[str, Any]] = {}
+                for row in found:
+                    unique[(str(row["event_date"]), str(row["event_type"]))] = row
+                out.extend(unique[key] for key in sorted(unique))
+            else:
+                out.append({
+                    "event_date": "", "event_date_text": "", "meeting_start_day": "",
+                    "meeting_decision_day": "", "source_family": "fomc", "source_file": str(path),
+                    "event_type": "fomc_source_snapshot_no_decision_parse", "has_statement": 0,
+                    "has_press_conference": 0, "parser_version": "FOMC_LOCAL_HTML_DECISION_DAY_V1",
+                })
+        except Exception as exc:
+            out.append({
+                "event_date": "", "event_date_text": "", "meeting_start_day": "",
+                "meeting_decision_day": "", "source_family": "fomc", "source_file": str(path),
+                "event_type": "error", "has_statement": 0, "has_press_conference": 0,
+                "parser_version": "FOMC_LOCAL_HTML_DECISION_DAY_V1", "error": str(exc),
+            })
+    return out
 
 def normalize_cot_zip(files: Sequence[Path]) -> List[Dict[str, Any]]:
     out: List[Dict[str, Any]] = []

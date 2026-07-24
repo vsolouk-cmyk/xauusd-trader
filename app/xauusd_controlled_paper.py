@@ -1100,9 +1100,18 @@ def validate_preflight(root: Path, config: dict[str, Any]) -> PreflightContext:
     replay_forward = historical_replay_summary.get("current_forward_policy_parity", {})
     replay_stress = replay_validation.get("stress_cost_contract", {})
     replay_counts = replay_validation.get("evaluated_side_counts", {})
-    checks["historical_replay_program"] = (
-        historical_replay_summary.get("program")
-        == "XAUUSD_CONTROLLED_PAPER_HISTORICAL_ASOF_REPLAY_V6_FORWARD_DIRECTION_POLICY_PARITY_CLOSURE"
+    replay_program = historical_replay_summary.get("program")
+    checks["historical_replay_program"] = replay_program in {
+        "XAUUSD_CONTROLLED_PAPER_HISTORICAL_ASOF_REPLAY_V6_FORWARD_DIRECTION_POLICY_PARITY_CLOSURE",
+        "XAUUSD_CONTROLLED_PAPER_HISTORICAL_ASOF_REPLAY_V7_OFFICIAL_EVENT_CONTEXT_CLOSURE",
+    }
+    checks["historical_replay_event_context_contract"] = (
+        True
+        if replay_program != "XAUUSD_CONTROLLED_PAPER_HISTORICAL_ASOF_REPLAY_V7_OFFICIAL_EVENT_CONTEXT_CLOSURE"
+        else bool(
+            historical_replay_summary.get("historical_event_context", {}).get("contract_pass")
+            and historical_replay_summary.get("event_evidence", {}).get("coverage_complete")
+        )
     )
     checks["historical_replay_pass"] = historical_replay_summary.get("pass") is True
     checks["historical_replay_no_forward_wait"] = (
@@ -1131,8 +1140,8 @@ def validate_preflight(root: Path, config: dict[str, Any]) -> PreflightContext:
         == sha256_file(commercial_summary_path)
     )
     replay_check_names = (
-        "historical_replay_program", "historical_replay_pass",
-        "historical_replay_no_forward_wait",
+        "historical_replay_program", "historical_replay_event_context_contract",
+        "historical_replay_pass", "historical_replay_no_forward_wait",
         "historical_replay_commercial_metric_parity",
         "historical_replay_source_proven_cost",
         "historical_replay_bidirectional_counts",

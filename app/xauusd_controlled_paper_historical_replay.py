@@ -30,7 +30,7 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 UTC = timezone.utc
-PROGRAM_VERSION = "XAUUSD_CONTROLLED_PAPER_HISTORICAL_ASOF_REPLAY_V6_FORWARD_DIRECTION_POLICY_PARITY_CLOSURE"
+PROGRAM_VERSION = "XAUUSD_CONTROLLED_PAPER_HISTORICAL_ASOF_REPLAY_V7_OFFICIAL_EVENT_CONTEXT_CLOSURE"
 LOCKED = {
     "upper_probability_threshold": 0.60,
     "lower_probability_threshold": 0.40,
@@ -1108,8 +1108,49 @@ def run(root: Path, config_path: Path) -> dict[str, Any]:
         runtime_config = runtime.load_config(root, root / "config/xauusd_controlled_paper.json")
         forward_policy = current_forward_policy_diagnostic(signals, runtime_config)
         historical_event_config = copy.deepcopy(runtime_config)
-        if bool(config.get("historical_event_guard", {}).get("prefer_macro_context_db", True)):
-            historical_event_config.setdefault("event_guard", {})["csv_candidates"] = []
+        historical_guard_cfg = dict(config.get("historical_event_guard", {}))
+        if bool(historical_guard_cfg.get("prefer_macro_context_db", True)):
+            event_guard_cfg = historical_event_config.setdefault("event_guard", {})
+            event_guard_cfg["csv_candidates"] = []
+            event_guard_cfg["macro_db_candidates"] = list(
+                historical_guard_cfg.get(
+                    "macro_db_candidates",
+                    ["data/local/historical_event_context/xauusd_historical_event_context.sqlite"],
+                )
+            )
+            event_guard_cfg["macro_table_candidates"] = list(
+                historical_guard_cfg.get("macro_table_candidates", ["macro_context_h1"])
+            )
+
+        event_context_summary_path = resolve_configured_path(
+            root,
+            str(
+                historical_guard_cfg.get(
+                    "summary_path",
+                    "reports/xauusd_historical_event_context/historical_event_context_summary.json",
+                )
+            ),
+        )
+        if event_context_summary_path.is_file():
+            event_context_summary = read_json(event_context_summary_path)
+        else:
+            event_context_summary = {
+                "pass": False,
+                "core_coverage_complete": False,
+                "decision": "HISTORICAL_EVENT_CONTEXT_SUMMARY_MISSING",
+            }
+        event_context_checks = {
+            "program": str(event_context_summary.get("program") or "").startswith(
+                "XAUUSD_HISTORICAL_EVENT_CONTEXT_V1_"
+            ),
+            "pass": event_context_summary.get("pass") is True,
+            "core_coverage_complete": event_context_summary.get("core_coverage_complete") is True,
+            "evaluated_entry_rows": int(event_context_summary.get("evaluated_entry_rows", -1)) == len(signals),
+            "execution_ledger_hash": event_context_summary.get("source_execution_ledger_sha256")
+            == sha256_file(ledger_path),
+            "scope_not_surprise": event_context_summary.get("event_surprise_layer_complete") is False,
+        }
+        event_context_contract_pass = all(event_context_checks.values())
 
         core = TrackState("COMMERCIAL_REFERENCE_CORE_REPLAY", "REPORT_ONLY")
         strict = TrackState("COMMERCIAL_REFERENCE_STRICT_EVENT_REPLAY", "STRICT")
@@ -1149,7 +1190,27 @@ def run(root: Path, config_path: Path) -> dict[str, Any]:
         "EVENT_CONTEXT_ROW_MISSING_FAIL_CLOSED",
     }
     missing_event_count = sum(event_reasons[reason] for reason in event_missing_reasons)
-    event_coverage_complete = missing_event_count == 0
+    event_coverage_complete = missing_event_count == 0 and event_context_contract_pass
+    strict_resolved_fraction = (
+        strict_summary["resolved_positions"] / core_summary["resolved_positions"]
+        if core_summary["resolved_positions"] else 0.0
+    )
+    demo_gate_cfg = dict(config.get("demo_design_gate", {}))
+    strict_gate_checks = {
+        "event_context_contract": event_context_contract_pass,
+        "event_coverage_complete": event_coverage_complete,
+        "strict_has_positions": strict_summary["resolved_positions"] > 0,
+        "strict_resolved_fraction": strict_resolved_fraction
+        >= float(demo_gate_cfg.get("minimum_strict_resolved_fraction_of_core", 0.50)),
+        "strict_normal_mean_positive": strict_summary["normal_mean_bps"] is not None
+        and float(strict_summary["normal_mean_bps"]) > float(demo_gate_cfg.get("minimum_normal_mean_bps", 0.0)),
+        "strict_profit_factor": strict_summary["normal_profit_factor"] is not None
+        and float(strict_summary["normal_profit_factor"]) > float(demo_gate_cfg.get("minimum_profit_factor", 1.0)),
+        "strict_drawdown": float(strict_summary["max_drawdown_pct"])
+        < float(demo_gate_cfg.get("maximum_drawdown_pct", LOCKED["hard_drawdown_kill_switch_equity_pct"])),
+        "strict_hard_kill": not strict_summary["hard_kill_latched"],
+    }
+    demo_design_allowed = all(strict_gate_checks.values())
 
     stress_contract = validation["stress_cost_contract"]
     if core_summary["hard_kill_latched"]:
@@ -1161,8 +1222,11 @@ def run(root: Path, config_path: Path) -> dict[str, Any]:
     elif not forward_policy["pass"]:
         decision = "PASS_HISTORICAL_COMMERCIAL_REPLAY_BLOCK_FORWARD_POLICY_PARITY"
         passed = True
-    elif event_coverage_complete and not strict_summary["hard_kill_latched"]:
-        decision = "PASS_FULL_HISTORICAL_ASOF_REPLAY_FORWARD_DIRECTION_POLICY_PARITY_CLOSED_NO_FORWARD_WAIT"
+    elif event_coverage_complete and demo_design_allowed:
+        decision = "PASS_FULL_HISTORICAL_EVENT_AWARE_REPLAY_DEMO_DESIGN_ALLOWED_NO_FORWARD_WAIT"
+        passed = True
+    elif event_coverage_complete:
+        decision = "PASS_HISTORICAL_EVENT_CONTEXT_BLOCK_DEMO_DESIGN_STRICT_REPLAY_RISK_OR_EDGE"
         passed = True
     else:
         decision = "PASS_CORE_HISTORICAL_ASOF_REPLAY_FORWARD_DIRECTION_POLICY_PARITY_CLOSED_EVENT_COVERAGE_INCOMPLETE"
@@ -1191,6 +1255,22 @@ def run(root: Path, config_path: Path) -> dict[str, Any]:
             passed and stress_contract["commercial_execution_parity_pass"]
             and forward_policy["pass"] and not core_summary["hard_kill_latched"]
         ),
+        "demo_design_allowed": demo_design_allowed,
+        "demo_design_gate": {
+            "pass": demo_design_allowed,
+            "checks": strict_gate_checks,
+            "strict_resolved_fraction_of_core": strict_resolved_fraction,
+            "configured_thresholds": {
+                "minimum_strict_resolved_fraction_of_core": float(
+                    demo_gate_cfg.get("minimum_strict_resolved_fraction_of_core", 0.50)
+                ),
+                "minimum_normal_mean_bps": float(demo_gate_cfg.get("minimum_normal_mean_bps", 0.0)),
+                "minimum_profit_factor": float(demo_gate_cfg.get("minimum_profit_factor", 1.0)),
+                "maximum_drawdown_pct": float(
+                    demo_gate_cfg.get("maximum_drawdown_pct", LOCKED["hard_drawdown_kill_switch_equity_pct"])
+                ),
+            },
+        },
         "forward_wait_required_for_replay": False,
         "source_execution_ledger": str(ledger_path),
         "source_execution_ledger_sha256": sha256_file(ledger_path),
@@ -1208,13 +1288,22 @@ def run(root: Path, config_path: Path) -> dict[str, Any]:
             "commercial_reference_metric_parity": reference_parity,
         },
         "current_forward_policy_parity": forward_policy,
+        "historical_event_context": {
+            "summary_path": str(event_context_summary_path),
+            "summary_sha256": sha256_file(event_context_summary_path)
+            if event_context_summary_path.is_file() else None,
+            "contract_pass": event_context_contract_pass,
+            "checks": event_context_checks,
+            "summary": event_context_summary,
+        },
         "event_evidence": {
             "coverage_complete": event_coverage_complete,
             "missing_context_count": missing_event_count,
             "reason_counts": dict(event_reasons),
             "examples": event_details,
             "interpretation": (
-                "Event coverage is a bounded historical-data requirement, not a forward-wait requirement."
+                "This is scheduled USD core blackout coverage only. It is a bounded historical-data requirement, "
+                "not a forward-wait requirement and not an event-surprise feature layer."
             ),
         },
         "commercial_reference_core_replay": core_summary,
@@ -1229,7 +1318,11 @@ def run(root: Path, config_path: Path) -> dict[str, Any]:
                 else (
                     "COMPLETE_BOUNDED_HISTORICAL_EVENT_CONTEXT_BEFORE_DEMO_DESIGN"
                     if not event_coverage_complete
-                    else "HISTORICAL_REPLAY_COMPLETE_NO_FORWARD_WAIT"
+                    else (
+                        "PREPARE_BOUNDED_DEMO_DESIGN"
+                        if demo_design_allowed
+                        else "REVIEW_STRICT_EVENT_REPLAY_RISK_OR_EDGE_BEFORE_DEMO_DESIGN"
+                    )
                 )
             )
         ),
@@ -1265,10 +1358,13 @@ Decision: `{decision}`
 - Commercial-reference core final normalized equity: `{core_summary['final_equity']:.8f}`
 - Commercial-reference core maximum drawdown: `{core_summary['max_drawdown_pct']:.6f}%`
 - Event coverage complete: `{event_coverage_complete}`
+- Historical event-context contract: `{event_context_contract_pass}`
+- Strict resolved fraction of core: `{strict_resolved_fraction:.6f}`
+- Demo design allowed: `{demo_design_allowed}`
 
 ## Boundary
 
-The historical replay no longer waits for a future signal. It proves the saved commercial ledger as a bidirectional probability-tail formulation; the generic direction column is metadata, not execution side. The forward logger now closes bidirectional probability-tail policy parity when its runtime config matches the frozen formulation. Historical event-context coverage remains a bounded pre-demo data requirement and never requires waiting for a future trading signal.
+The historical replay no longer waits for a future signal. It proves the saved commercial ledger as a bidirectional probability-tail formulation; the generic direction column is metadata, not execution side. The forward logger closes bidirectional probability-tail policy parity when its runtime config matches the frozen formulation. The event layer here closes scheduled USD core blackout context only; it does not create actual-versus-forecast surprise features. Demo and live orders remain forbidden.
 """
     atomic_write(report_dir / "historical_asof_replay_decision.md", decision_md)
     persist_sqlite(sqlite_path, source_rows, all_replay_rows, summary)

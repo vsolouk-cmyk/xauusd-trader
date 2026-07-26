@@ -1,0 +1,19 @@
+{
+  "program": "XAUUSD_MT5_DEMO_LOGIN_BOUND_REVIEW_DRY_CYCLE",
+  "runtime_preflight": "reports/xauusd_mt5_demo_bridge/mt5_demo_bridge_runtime_preflight.json",
+  "bounded_demo_preflight": "reports/xauusd_bounded_demo_design/bounded_demo_preflight.json",
+  "bridge_config": "config/xauusd_mt5_demo_bridge.json",
+  "bridge_app": "app/xauusd_mt5_demo_bridge.py",
+  "report_dir": "reports/xauusd_mt5_demo_bridge",
+  "mt5_files_dir": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "mt5_bridge_subdir": "XAUUSD_DEMO_BRIDGE",
+  "allowed_demo_login": 7907958,
+  "expected_symbol": "XAUUSD",
+  "magic_number": 1782401,
+  "maximum_runtime_preflight_age_hours": 72,
+  "permit_preview_valid_hours": 24,
+  "accepted_runtime_decisions": [
+    "PASS_MT5_DEMO_BRIDGE_RUNTIME_PREFLIGHT_DISABLED_NO_ORDER",
+    "PASS_MT5_DEMO_BRIDGE_RUNTIME_DISABLED_READY_FOR_LOGIN_BOUND_ARMING"
+  ]
+}

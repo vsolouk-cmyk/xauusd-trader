@@ -1,26 +1,37 @@
-# QA Report
+# QA Report — XAUUSD MT5 Login-Bound Review & Dry Cycle
 
-Package: XAUUSD MT5 Demo Bridge Volume Diagnostic & Logging Repair
+## Scope
 
-## Verified
+- Accept the actual V1.1 success decision label without weakening any readiness checks.
+- Bind review to AMarkets DEMO login `7907958`.
+- Keep `InpArmed=false`.
+- Create no active `arming_permit.txt`.
+- Create no active `demo_candidate.txt` in MT5 Files.
+- Permit only an in-repo dry preview.
 
-- Python compile: PASS
-- Unit tests: 12/12 PASS
-- Exact minimum-volume regression (`0.816606473471` ratio): PASS
-- Runtime installation / arming readiness separation: PASS
-- Volume-only blocker remains order-forbidden: PASS
-- Required-equity multipliers (`5.200002...`, `20.800008...`): PASS
-- Experts log token and periodic diagnostic path: PASS
-- Chart status path: PASS
-- Runtime file log path: PASS
-- Heartbeat detailed volume fields: PASS
-- Default arming false: PASS
-- Demo-only account guard retained: PASS
-- Login-bound permit guard retained: PASS
-- No Python broker API: PASS
-- No live fallback: PASS
-- MQL5 brace / parenthesis balance: PASS
+## Executed checks
 
-## Limitation
+- Python compile: PASS.
+- Existing MT5 bridge regression tests: 12/12 PASS.
+- Login-bound review/dry-cycle tests: 11/11 PASS.
+- Combined tests: 23/23 PASS.
+- Actual uploaded runtime-preflight integration: PASS.
+- Current generic decision acceptance: PASS.
+- Wrong-login rejection: PASS.
+- Arming-readiness false rejection: PASS.
+- Active permit rejection: PASS.
+- Active candidate quarantine: PASS.
+- Non-executable permit preview: PASS.
+- Dry cycle no-signal path: PASS.
+- Eligible candidate preview-only path: PASS.
+- Event-blackout dry rejection: PASS.
+- Weekend stale server-clock tolerance: PASS.
+- Python broker API scan: PASS.
+- Active MT5 permit/candidate write scan: PASS.
 
-MetaEditor is not available in the build environment. Real MQL5 compilation must be performed in the user's MetaEditor and must produce `0 errors` before re-attachment.
+## Not claimed
+
+- No active arming permit was created.
+- No order path was enabled.
+- No live market candidate was required for this QA.
+- No MetaEditor recompilation is required because the EA source is unchanged.

@@ -1,0 +1,26 @@
+name: XAUUSD MT5 Login-Bound Dry Review QA
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'app/xauusd_mt5_demo_login_bound_review.py'
+      - 'app/xauusd_mt5_demo_bridge.py'
+      - 'config/xauusd_mt5_demo_login_bound_review.json'
+      - 'tests/test_xauusd_mt5_demo_login_bound_review.py'
+      - '.github/workflows/xauusd_mt5_login_bound_dry_review_qa.yml'
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile
+        run: |
+          python -m py_compile app/xauusd_mt5_demo_login_bound_review.py app/xauusd_mt5_demo_bridge.py
+      - name: Test
+        run: |
+          python -m unittest -v tests.test_xauusd_mt5_demo_login_bound_review

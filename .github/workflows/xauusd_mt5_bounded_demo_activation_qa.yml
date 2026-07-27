@@ -1,0 +1,41 @@
+name: XAUUSD MT5 Bounded Demo Activation QA
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "app/xauusd_mt5_demo_explicit_arming.py"
+      - "app/xauusd_mt5_demo_operational_cycle.py"
+      - "mt5/AMarkets_Recent_Bar_Exporter_EA.mq5"
+      - "config/xauusd_mt5_demo_activation.json"
+      - "launchd/com.xauusd.mt5-bounded-demo-operational-cycle.plist"
+      - "tests/test_xauusd_mt5_demo_activation.py"
+      - ".github/workflows/xauusd_mt5_bounded_demo_activation_qa.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Compile Python
+        run: python -m py_compile app/xauusd_mt5_demo_explicit_arming.py app/xauusd_mt5_demo_operational_cycle.py
+      - name: Unit and failure-path tests
+        run: python -m unittest -v tests/test_xauusd_mt5_demo_activation.py
+      - name: Validate plist and static MQL safety
+        run: |
+          python - <<'PY'
+          import plistlib
+          from pathlib import Path
+          plistlib.loads(Path('launchd/com.xauusd.mt5-bounded-demo-operational-cycle.plist').read_bytes())
+          text=Path('mt5/AMarkets_Recent_Bar_Exporter_EA.mq5').read_text()
+          for token in ('OrderSend','CTrade','WebRequest','trade.Buy','trade.Sell'):
+              assert token not in text, token
+          assert text.count('{') == text.count('}')
+          PY

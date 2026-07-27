@@ -1,12 +1,16 @@
-# QA report
+# QA Report
 
-- Root cause reproduced conceptually: pandas datetime resolution can be microseconds on newer Python/pandas builds; the previous code assumed nanoseconds.
-- Timestamp conversion now explicitly uses `datetime64[ms]`.
-- Python compile: PASS.
-- Unit tests: 9/9 PASS.
-- Exact tail-beyond-legacy-cutoff regression: PASS.
-- Truncated-tail rejection: PASS.
-- True off-grid rejection: PASS.
-- Explicit epoch-millisecond regression: PASS.
-- 100,000-row MT5-format smoke test: PASS.
-- Real 1,087,089-row user CSV was not available inside this execution environment, so full local end-to-end refresh remains to be run in the user's repo.
+- Clean extraction: PASS
+- Manifest verification: PASS
+- Python compile: PASS
+- Unit/failure-path tests: 12/12 PASS
+- Synthetic end-to-end disabled heartbeat -> recent merge -> alignment refresh -> fresh dry cycle -> permit: PASS
+- Stale recent exporter fail-closed test: PASS
+- Invalid OHLC non-mutation test: PASS
+- Wrong-login verify fail-closed test: PASS
+- Static scan: no Python broker library/order API introduced: PASS
+- Existing operational armed-cycle path retained: PASS
+
+Not executable in the build environment:
+- Real MetaEditor MQL5 compile (no MQL file changed in this patch)
+- Live connection to the user's AMarkets demo terminal

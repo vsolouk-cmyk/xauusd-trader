@@ -1,81 +1,41 @@
 {
-  "package": "XAUUSD_MT5_FRESH_SOURCE_DRY_CYCLE_STALE_LEDGER_REPAIR_NO_ORDER",
-  "version": "1.1",
+  "package": "XAUUSD_MT5_DEMO_PREARM_REFRESH_ORCHESTRATION_FIX",
+  "version": "1.0.1",
   "files": [
     {
-      "path": ".github/workflows/xauusd_mt5_login_bound_dry_review_qa.yml",
-      "sha256": "28d45ff88e4f603249cf50fae1ea3d2625846dea848910b0c4e1069c4d0b2bbf",
-      "size_bytes": 1044
-    },
-    {
       "path": "QA_REPORT.md",
-      "sha256": "19d2aa57550f6423fb584f8d9f309e54ead1b0fbd77c9da5b60f956e9e7d6b1b",
-      "size_bytes": 2560
+      "sha256": "32667a9e508936c254a4568d60fb88b40eba90b7d7d6b0d85229e33d0e13c7cc",
+      "bytes": 659
     },
     {
       "path": "README.md",
-      "sha256": "9a686be3eb0aa940bcc4b3006e4b239b280fa4d308af65516cbce0c2595f8ee1",
-      "size_bytes": 852
+      "sha256": "13ae36e3f92e10147dcc39ceb6efe05ef6f32c543e63568c104a85f333ec8f61",
+      "bytes": 924
     },
     {
-      "path": "app/xauusd_mt5_demo_bridge.py",
-      "sha256": "a041a31a6d0f960233654e0a5f44f0518429e36f2e004ee6e131df4c56c7cdb8",
-      "size_bytes": 35637
+      "path": "app/xauusd_mt5_demo_explicit_arming.py",
+      "sha256": "a792ad391f6b1ac386560196b0a41a117cc120274775d31ee557e266cbfe8ccf",
+      "bytes": 19810
     },
     {
-      "path": "app/xauusd_mt5_demo_login_bound_review.py",
-      "sha256": "ea02afbe189577e0d13a8bee4e4a4eb7f7a866a72818eeab1d782e2c1a048ca8",
-      "size_bytes": 30830
+      "path": "app/xauusd_mt5_demo_operational_cycle.py",
+      "sha256": "f6823d0e090fc22990efe3eecebbdfceab6c199cd35bfadeb8a9525d01a53db2",
+      "bytes": 29558
     },
     {
-      "path": "config/xauusd_mt5_demo_bridge.json",
-      "sha256": "9d0ea3c928f126bd2983594ef42b320ea5960d6fd66101849d19abd935fc0d61",
-      "size_bytes": 1631
+      "path": "config/xauusd_mt5_demo_activation.json",
+      "sha256": "f1b8fd9a66afb1ce091c0a6c9c2bffb63ae91c14f5a5025be53e2495548a7a60",
+      "bytes": 2188
     },
     {
-      "path": "config/xauusd_mt5_demo_login_bound_review.json",
-      "sha256": "6667f97a4e48a1b1658195be15eb4fa64d949a3921e2de60f59656d7a87af43a",
-      "size_bytes": 1258
+      "path": "mt5/AMarkets_Recent_Bar_Exporter_EA.mq5",
+      "sha256": "eb706abd9a717cab73bf9d794864ccf3053b71b0f08ee2acb31d5999253994a4",
+      "bytes": 10323
     },
     {
-      "path": "docs/XAUUSD_MT5_LOGIN_BOUND_DRY_REVIEW_RUNBOOK.md",
-      "sha256": "88f94c75ecce1ced53642164ece341a0e72a24db14ae231bb6b9a79c1d95818c",
-      "size_bytes": 1674
-    },
-    {
-      "path": "mt5/XAUUSD_BoundedDemoBridge.mq5",
-      "sha256": "d3a36ee62eb8e9f1672e632a273f606d54e70a140ee6cb085fecbf206ac1bebe",
-      "size_bytes": 35528
-    },
-    {
-      "path": "schemas/xauusd_demo_candidate.schema.json",
-      "sha256": "2a4dc8f203f3703e6e76253e317740e5a4b3f74dcc64bd19b5626732aab3c1ee",
-      "size_bytes": 2765
-    },
-    {
-      "path": "tests/__init__.py",
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "size_bytes": 0
-    },
-    {
-      "path": "tests/fixtures/bounded_demo_preflight_pass.json",
-      "sha256": "1df32e4777fd0c27001a77369d1305c100f30bffe570432add530f82e1d5c726",
-      "size_bytes": 8227
-    },
-    {
-      "path": "tests/fixtures/runtime_preflight_ready.json",
-      "sha256": "eebcc141535dc92f6e80e9f1e218fe00a78371ff183c0941398ac63180553cc5",
-      "size_bytes": 3670
-    },
-    {
-      "path": "tests/test_xauusd_mt5_demo_bridge.py",
-      "sha256": "5db51a4b4e31bb9b4510b717b0f1009915e9690a037045a8b1764cf61414e58f",
-      "size_bytes": 17369
-    },
-    {
-      "path": "tests/test_xauusd_mt5_demo_login_bound_review.py",
-      "sha256": "a108aa7cf5b5a023abe8119c0a9cb2c81eb97381c03fe5bf078e6da257509072",
-      "size_bytes": 18077
+      "path": "tests/test_xauusd_mt5_demo_activation.py",
+      "sha256": "80533bb18920a89987fd6beefe8def46e0dddcee153886b209916f08b8c9d3ea",
+      "bytes": 19974
     }
   ]
 }

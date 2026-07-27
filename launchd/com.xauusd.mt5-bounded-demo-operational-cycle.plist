@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.xauusd.mt5-bounded-demo-operational-cycle</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Library/Frameworks/Python.framework/Versions/3.14/bin/python3</string>
+    <string>/Users/vahid/Desktop/xauusd-trader/app/xauusd_mt5_demo_operational_cycle.py</string>
+    <string>run</string>
+    <string>--root</string>
+    <string>/Users/vahid/Desktop/xauusd-trader</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>/Users/vahid/Desktop/xauusd-trader</string>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>StartInterval</key>
+  <integer>300</integer>
+  <key>ProcessType</key>
+  <string>Background</string>
+  <key>Nice</key>
+  <integer>5</integer>
+  <key>StandardOutPath</key>
+  <string>/Users/vahid/Desktop/xauusd-trader/reports/xauusd_mt5_demo_activation/launchd.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/vahid/Desktop/xauusd-trader/reports/xauusd_mt5_demo_activation/launchd.err.log</string>
+</dict>
+</plist>

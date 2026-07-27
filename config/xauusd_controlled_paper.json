@@ -80,7 +80,7 @@
   },
   "maximum_stage180_summary_age_minutes_open_market": 180.0,
   "maximum_aligned_h1_age_minutes_open_market": 180.0,
-  "maximum_spread_source_age_minutes_open_market": 90.0,
+  "maximum_spread_source_age_minutes_open_market": 90,
   "maximum_future_clock_skew_minutes": 15.0,
   "freshness_guard": {
     "required": true,

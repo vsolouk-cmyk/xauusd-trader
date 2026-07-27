@@ -28,7 +28,8 @@ class ReviewTests(unittest.TestCase):
         for rel in (
             "app", "config", "reports/xauusd_mt5_demo_bridge",
             "reports/xauusd_bounded_demo_design", "reports/xauusd_controlled_paper",
-            "data/controlled_paper", "data/local/stage177c_amarkets_alignment",
+            "reports/stage180_frozen_model_shadow", "data/controlled_paper",
+            "data/local/stage177c_amarkets_alignment",
             "data/fundamental_event_inbox/features", "mt5_files/XAUUSD_DEMO_BRIDGE",
         ):
             (self.root / rel).mkdir(parents=True, exist_ok=True)
@@ -50,7 +51,7 @@ class ReviewTests(unittest.TestCase):
         (self.root / "config/xauusd_mt5_demo_login_bound_review.json").write_text(json.dumps(cfg))
         self.config = cfg
         self.bridge_config = bridge_cfg
-        self._write_controlled()
+        self._write_controlled(self._now())
         self._write_ledger(waiting=False)
         self._write_h1()
         self._write_events([])
@@ -64,15 +65,32 @@ class ReviewTests(unittest.TestCase):
     def _runtime_path(self) -> Path:
         return self.root / "reports/xauusd_mt5_demo_bridge/mt5_demo_bridge_runtime_preflight.json"
 
-    def _write_controlled(self) -> None:
+    def _write_controlled(self, at: datetime) -> None:
+        at = at.astimezone(UTC)
+        latest_h1 = at.replace(minute=0, second=0, microsecond=0)
+        freshness = {
+            "decision": "PASS_OPERATIONAL_FRESHNESS_OPEN_MARKET",
+            "pass": True,
+            "required": True,
+            "market_expected_open": True,
+            "now_utc": review.iso_utc(at),
+            "timestamps_utc": {
+                "aligned_h1": review.iso_utc(latest_h1),
+                "spread_source": review.iso_utc(at - timedelta(minutes=5)),
+                "stage180_summary": review.iso_utc(at - timedelta(minutes=1)),
+            },
+        }
         summary = {
             "program": "XAUUSD_CONTROLLED_PAPER_V1_5_BIDIRECTIONAL_PROBABILITY_TAILS_DIRECTION_PARITY",
+            "generated_utc": review.iso_utc(at),
             "direction_policy": "BIDIRECTIONAL_PROBABILITY_TAILS",
             "paper_log_only": True,
             "broker_order_allowed": False,
             "demo_order_allowed": False,
             "live_order_allowed": False,
             "risk_state": {"hard_kill_latched": False, "weekly_pause_active": False},
+            "operational_freshness": freshness,
+            "run_result": {"latest_h1_utc": review.iso_utc(latest_h1), "freshness": freshness},
         }
         preflight = {
             "program": summary["program"],
@@ -119,6 +137,43 @@ class ReviewTests(unittest.TestCase):
             writer = csv.DictWriter(handle, fieldnames=fields)
             writer.writeheader(); writer.writerows(rows)
 
+    def _write_fake_refresh_runners(self, ambiguous: bool = False) -> None:
+        stage_script = self.root / "app/stage180_frozen_model_shadow_fake.py"
+        stage_script.write_text('''#!/usr/bin/env python3
+# STAGE180_FROZEN_MODEL_SHADOW / PASS_STAGE180_FROZEN_ALIGNMENT_REFRESH / stage180_summary.json
+import json
+from datetime import datetime, timezone
+from pathlib import Path
+now=datetime.now(timezone.utc)
+root=Path.cwd()
+out=root/"reports/stage180_frozen_model_shadow/stage180_summary.json"
+out.parent.mkdir(parents=True,exist_ok=True)
+payload={"generated_utc":now.isoformat(),"decision":"STAGE180_FROZEN_MODEL_SHADOW_ACTIVE_NO_ORDER","aligned_last_complete_bar_utc":now.replace(minute=0,second=0,microsecond=0).isoformat(),"shadow_observation_allowed":True,"broker_order_allowed":False,"demo_order_allowed":False,"live_order_allowed":False,"paper_order_allowed":False,"execution_allowed":False}
+out.write_text(json.dumps(payload))
+(root/"reports/order.log").open("a").write("stage180\\n")
+''')
+        if ambiguous:
+            (self.root / "app/stage180_duplicate_fake.py").write_text(stage_script.read_text())
+        controlled = self.root / "app/xauusd_controlled_paper.py"
+        controlled.write_text('''#!/usr/bin/env python3
+import json,sys
+from datetime import datetime, timezone, timedelta
+from pathlib import Path
+root=Path(sys.argv[sys.argv.index("--root")+1]).resolve() if "--root" in sys.argv else Path.cwd()
+command=sys.argv[1] if len(sys.argv)>1 else "run"
+program="XAUUSD_CONTROLLED_PAPER_V1_5_BIDIRECTIONAL_PROBABILITY_TAILS_DIRECTION_PARITY"
+report=root/"reports/xauusd_controlled_paper"; report.mkdir(parents=True,exist_ok=True)
+now=datetime.now(timezone.utc); h1=now.replace(minute=0,second=0,microsecond=0)
+if command=="preflight":
+    (report/"controlled_paper_preflight.json").write_text(json.dumps({"program":program,"decision":"PASS_CONTROLLED_PAPER_PREFLIGHT","pass":True}))
+    (root/"reports/order.log").open("a").write("controlled-preflight\\n")
+else:
+    fresh={"decision":"PASS_OPERATIONAL_FRESHNESS_OPEN_MARKET","pass":True,"required":True,"market_expected_open":True,"timestamps_utc":{"aligned_h1":h1.isoformat(),"spread_source":(now-timedelta(minutes=5)).isoformat(),"stage180_summary":(now-timedelta(minutes=1)).isoformat()}}
+    payload={"program":program,"generated_utc":now.isoformat(),"direction_policy":"BIDIRECTIONAL_PROBABILITY_TAILS","paper_log_only":True,"broker_order_allowed":False,"demo_order_allowed":False,"live_order_allowed":False,"risk_state":{"hard_kill_latched":False,"weekly_pause_active":False},"operational_freshness":fresh,"run_result":{"latest_h1_utc":h1.isoformat(),"freshness":fresh}}
+    (report/"controlled_paper_summary.json").write_text(json.dumps(payload))
+    (root/"reports/order.log").open("a").write("controlled-run\\n")
+''')
+
     def test_review_accepts_current_generic_success_decision(self) -> None:
         result = review.build_review(self.root, self.config, self._now())
         self.assertTrue(result["pass"])
@@ -163,20 +218,29 @@ class ReviewTests(unittest.TestCase):
         self.assertIn("authorized=false", text)
         self.assertNotEqual(path.name, "arming_permit.txt")
 
-    def test_dry_cycle_no_signal_passes_without_active_writes(self) -> None:
+    def test_dry_cycle_no_signal_passes_with_fresh_source(self) -> None:
         result = review.dry_cycle(self.root, self.config, self._now())
         self.assertTrue(result["pass"])
+        self.assertEqual(result["decision"], "PASS_LOGIN_BOUND_DRY_CANDIDATE_CYCLE_FRESH_SOURCE_NO_ORDER")
         self.assertEqual(result["dry_cycle"]["status"], "NO_ELIGIBLE_CONTROLLED_PAPER_WAITING_SIGNAL")
+        self.assertEqual(result["required_next_action"], "READY_FOR_EXPLICIT_DEMO_ARMING_REVIEW_NO_FORWARD_SIGNAL_WAIT")
         self.assertFalse((self.root / "mt5_files/XAUUSD_DEMO_BRIDGE/arming_permit.txt").exists())
         self.assertFalse((self.root / "mt5_files/XAUUSD_DEMO_BRIDGE/demo_candidate.txt").exists())
 
+    def test_dry_cycle_rejects_exact_stale_july23_source_on_july27(self) -> None:
+        self._write_controlled(datetime(2026, 7, 23, 10, 52, tzinfo=UTC))
+        with self.assertRaisesRegex(review.ReviewError, "controlled-paper freshness"):
+            review.dry_cycle(self.root, self.config, datetime(2026, 7, 27, 19, 5, tzinfo=UTC))
+
     def test_dry_cycle_builds_preview_only_for_eligible_signal(self) -> None:
         signal_dt = datetime(2026, 1, 1, 10, 0, tzinfo=UTC)
+        current = datetime(2026, 1, 1, 10, 59, 30, tzinfo=UTC)
         self._write_ledger(waiting=True, signal_dt=signal_dt)
+        self._write_controlled(current)
         runtime = json.loads(self._runtime_path().read_text())
         runtime["generated_utc"] = "2026-01-01T10:30:00Z"
         self._runtime_path().write_text(json.dumps(runtime))
-        result = review.dry_cycle(self.root, self.config, datetime(2026, 1, 1, 10, 59, 30, tzinfo=UTC))
+        result = review.dry_cycle(self.root, self.config, current)
         self.assertTrue(result["pass"])
         self.assertTrue(result["dry_cycle"]["candidate_previewed"])
         self.assertEqual(result["dry_cycle"]["preview"]["execution_mode"], "DRY_PREVIEW_ONLY")
@@ -185,7 +249,9 @@ class ReviewTests(unittest.TestCase):
 
     def test_dry_cycle_event_blackout_blocks_preview(self) -> None:
         signal_dt = datetime(2026, 1, 1, 10, 0, tzinfo=UTC)
+        current = datetime(2026, 1, 1, 10, 59, 30, tzinfo=UTC)
         self._write_ledger(waiting=True, signal_dt=signal_dt)
+        self._write_controlled(current)
         runtime = json.loads(self._runtime_path().read_text())
         runtime["generated_utc"] = "2026-01-01T10:30:00Z"
         self._runtime_path().write_text(json.dumps(runtime))
@@ -194,9 +260,38 @@ class ReviewTests(unittest.TestCase):
             "source": "BLS", "category": "BLS_CPI", "title": "CPI",
             "blackout_before_minutes": "60", "blackout_after_minutes": "60",
         }])
-        result = review.dry_cycle(self.root, self.config, datetime(2026, 1, 1, 10, 59, 30, tzinfo=UTC))
+        result = review.dry_cycle(self.root, self.config, current)
         self.assertEqual(result["dry_cycle"]["status"], "EVENT_BLACKOUT_BLOCKED")
         self.assertFalse((self.root / "mt5_files/XAUUSD_DEMO_BRIDGE/demo_candidate.txt").exists())
+
+    def test_stage180_discovery_rejects_missing_runner(self) -> None:
+        with self.assertRaisesRegex(review.ReviewError, "runner discovery failed"):
+            review.discover_stage180_script(self.root, self.config)
+
+    def test_stage180_discovery_rejects_ambiguous_runner(self) -> None:
+        self._write_fake_refresh_runners(ambiguous=True)
+        with self.assertRaisesRegex(review.ReviewError, "ambiguous"):
+            review.discover_stage180_script(self.root, self.config)
+
+    def test_fresh_dry_cycle_runs_stage180_then_controlled_and_no_wait_gate(self) -> None:
+        self._write_fake_refresh_runners()
+        result = review.fresh_dry_cycle(self.root, self.config)
+        self.assertTrue(result["pass"])
+        self.assertEqual(result["decision"], "PASS_LOGIN_BOUND_FRESH_DRY_CANDIDATE_CYCLE_NO_ORDER")
+        self.assertTrue(result["stage180_freshness"]["checks"]["aligned_h1_fresh"])
+        self.assertTrue(result["controlled_source_freshness"]["checks"]["generated_after_refresh_start"])
+        self.assertEqual(result["dry_cycle"]["status"], "NO_ELIGIBLE_CONTROLLED_PAPER_WAITING_SIGNAL")
+        self.assertEqual(result["required_next_action"], "READY_FOR_EXPLICIT_DEMO_ARMING_REVIEW_NO_FORWARD_SIGNAL_WAIT")
+        self.assertEqual((self.root / "reports/order.log").read_text().splitlines(), ["stage180", "controlled-preflight", "controlled-run"])
+        self.assertFalse((self.root / "mt5_files/XAUUSD_DEMO_BRIDGE/arming_permit.txt").exists())
+        self.assertFalse((self.root / "mt5_files/XAUUSD_DEMO_BRIDGE/demo_candidate.txt").exists())
+
+    def test_fresh_dry_cycle_blocks_active_permit_before_refresh(self) -> None:
+        self._write_fake_refresh_runners()
+        (self.root / "mt5_files/XAUUSD_DEMO_BRIDGE/arming_permit.txt").write_text("authorized=true\n")
+        with self.assertRaisesRegex(review.ReviewError, "active arming permit"):
+            review.fresh_dry_cycle(self.root, self.config)
+        self.assertFalse((self.root / "reports/order.log").exists())
 
     def test_weekend_stale_server_time_does_not_control_freshness(self) -> None:
         payload = json.loads(self._runtime_path().read_text())
@@ -212,6 +307,7 @@ class ReviewTests(unittest.TestCase):
         self.assertNotIn('write_text(active_paths(config)["arming_permit"]', text)
         self.assertIn("authorized=false", text)
         self.assertIn("active_candidate_written", text)
+        self.assertIn("fresh-dry-cycle", text)
 
 
 if __name__ == "__main__":

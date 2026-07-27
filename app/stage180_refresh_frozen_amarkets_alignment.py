@@ -199,6 +199,166 @@ def overlap_diagnostics(
     }
 
 
+
+
+def load_mt5_history_csv(path: Path, expected_interval_ms: int) -> pd.DataFrame:
+    """Load a complete MT5 tab-delimited history export without legacy row caps.
+
+    Stage180 operational refresh must consume every valid row present in the
+    canonical export.  This loader intentionally does not reuse the older
+    Stage177B research loader because that path may apply bounded-history
+    behaviour suitable for cross-feed audits but unsafe for routine append
+    freshness.
+    """
+    if not path.exists():
+        raise FileNotFoundError(path)
+    if path.stat().st_size <= 0:
+        raise RuntimeError(f"AMarkets export is empty: {path}")
+
+    frame = pd.read_csv(
+        path,
+        sep="\t",
+        dtype=str,
+        keep_default_na=False,
+        na_filter=False,
+    )
+    required = {"<DATE>", "<TIME>", "<OPEN>", "<HIGH>", "<LOW>", "<CLOSE>"}
+    missing = sorted(required - set(frame.columns))
+    if missing:
+        raise RuntimeError(f"AMarkets MT5 export missing columns {missing}: {path}")
+
+    timestamps = pd.to_datetime(
+        frame["<DATE>"].str.strip() + " " + frame["<TIME>"].str.strip(),
+        format="%Y.%m.%d %H:%M",
+        errors="coerce",
+    )
+    numeric_map = {
+        "<OPEN>": "open",
+        "<HIGH>": "high",
+        "<LOW>": "low",
+        "<CLOSE>": "close",
+    }
+    output = pd.DataFrame(index=frame.index)
+    # Pandas datetime resolution is version-dependent (commonly ns, but us in
+    # newer builds used with Python 3.14). Convert explicitly to datetime64[ms]
+    # before extracting integers so the result is always epoch milliseconds.
+    timestamp_is_valid = timestamps.notna().to_numpy(dtype=bool, copy=False)
+    timestamp_ms_values = timestamps.to_numpy(dtype="datetime64[ms]").astype(
+        "int64", copy=False
+    )
+    output["timestamp_naive_ms"] = timestamp_ms_values
+    output.loc[~timestamp_is_valid, "timestamp_naive_ms"] = np.nan
+    for source, target in numeric_map.items():
+        output[target] = pd.to_numeric(frame[source], errors="coerce")
+    volume_source = "<TICKVOL>" if "<TICKVOL>" in frame.columns else "<VOL>"
+    output["volume"] = (
+        pd.to_numeric(frame[volume_source], errors="coerce")
+        if volume_source in frame.columns
+        else 0.0
+    )
+
+    raw_rows = len(output)
+    output = output.dropna(
+        subset=["timestamp_naive_ms", "open", "high", "low", "close"]
+    ).copy()
+    output["timestamp_naive_ms"] = output["timestamp_naive_ms"].astype("int64")
+    output["volume"] = pd.to_numeric(output["volume"], errors="coerce").fillna(0.0)
+    output = output.sort_values("timestamp_naive_ms")
+    duplicate_rows = int(output.duplicated("timestamp_naive_ms", keep="last").sum())
+    output = output.drop_duplicates("timestamp_naive_ms", keep="last").reset_index(drop=True)
+
+    if output.empty:
+        raise RuntimeError(f"No valid AMarkets rows loaded from {path}")
+    invariant = (
+        (output["high"] >= output[["open", "close", "low"]].max(axis=1))
+        & (output["low"] <= output[["open", "close", "high"]].min(axis=1))
+        & (output["volume"] >= 0.0)
+    )
+    if not bool(invariant.all()):
+        bad = int((~invariant).sum())
+        raise RuntimeError(f"AMarkets MT5 export OHLC/volume invariant failed: {bad} rows")
+
+    # Validate each bar directly against the expected epoch-aligned grid.
+    # Avoid pandas Series.diff/modulo here: pandas/Python combinations can
+    # promote the intermediate values and produce false remainders on large
+    # millisecond timestamps. Integer numpy remainder is deterministic.
+    interval_ms = int(expected_interval_ms)
+    if interval_ms <= 0:
+        raise RuntimeError(f"Invalid expected MT5 interval: {interval_ms}")
+    timestamp_values = output["timestamp_naive_ms"].to_numpy(dtype="int64", copy=False)
+    grid_remainders = np.remainder(timestamp_values, interval_ms)
+    invalid_grid_count = int(np.count_nonzero(grid_remainders))
+    if invalid_grid_count:
+        raise RuntimeError(
+            "AMarkets MT5 export timestamp grid mismatch: "
+            f"{invalid_grid_count} rows"
+        )
+
+    first_ms = int(output["timestamp_naive_ms"].iloc[0])
+    last_ms = int(output["timestamp_naive_ms"].iloc[-1])
+    output.attrs["loader_diagnostics"] = {
+        "loader": "STAGE180_COMPLETE_MT5_EXPORT_LOADER_V1",
+        "source": str(path),
+        "raw_rows": int(raw_rows),
+        "valid_rows": int(len(output)),
+        "dropped_invalid_rows": int(raw_rows - len(output) - duplicate_rows),
+        "duplicate_timestamps_removed": duplicate_rows,
+        "first_timestamp_naive": pd.to_datetime(first_ms, unit="ms").isoformat(),
+        "last_timestamp_naive": pd.to_datetime(last_ms, unit="ms").isoformat(),
+    }
+    return output
+
+
+def assert_source_tail_loaded(path: Path, loaded: pd.DataFrame) -> dict[str, Any]:
+    """Fail closed if the loaded dataframe does not reach the export's final row."""
+    tail = pd.read_csv(path, sep="\t", dtype=str, keep_default_na=False, nrows=0)
+    if "<DATE>" not in tail.columns or "<TIME>" not in tail.columns:
+        raise RuntimeError(f"Cannot verify AMarkets export tail schema: {path}")
+    # Read only the final non-empty data line to avoid a second full-file load.
+    last_line = ""
+    with path.open("rb") as handle:
+        handle.seek(0, 2)
+        position = handle.tell()
+        buffer = bytearray()
+        while position > 0 and len(buffer) < 65536:
+            position -= 1
+            handle.seek(position)
+            char = handle.read(1)
+            if char == b"\n" and buffer:
+                candidate = bytes(reversed(buffer)).decode("utf-8", errors="replace").strip()
+                if candidate:
+                    last_line = candidate
+                    break
+                buffer.clear()
+            else:
+                buffer.extend(char)
+        if not last_line and buffer:
+            last_line = bytes(reversed(buffer)).decode("utf-8", errors="replace").strip()
+    fields = last_line.split("\t")
+    columns = list(tail.columns)
+    if len(fields) != len(columns):
+        raise RuntimeError(f"Cannot parse final AMarkets export row: {path}")
+    row = dict(zip(columns, fields))
+    source_last = pd.to_datetime(
+        f"{row['<DATE>']} {row['<TIME>']}",
+        format="%Y.%m.%d %H:%M",
+        errors="raise",
+    )
+    source_last_ms = int(source_last.value // 1_000_000)
+    loaded_last_ms = int(loaded["timestamp_naive_ms"].max())
+    if loaded_last_ms != source_last_ms:
+        raise RuntimeError(
+            "AMarkets loader truncated source tail: "
+            f"loaded={pd.to_datetime(loaded_last_ms, unit='ms')} "
+            f"source={source_last}"
+        )
+    return {
+        "source_last_naive": source_last.isoformat(),
+        "loaded_last_naive": pd.to_datetime(loaded_last_ms, unit="ms").isoformat(),
+        "pass": True,
+    }
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -252,10 +412,16 @@ def main() -> int:
     if h1_path is not None and not h1_path.exists():
         raise FileNotFoundError(h1_path)
 
-    raw_m5 = stage177c.normalize_ohlc(m5_path, stage177c.M5_MS)
+    raw_m5 = load_mt5_history_csv(m5_path, stage177c.M5_MS)
+    raw_m5_tail = assert_source_tail_loaded(m5_path, raw_m5)
     raw_h1 = (
-        stage177c.normalize_ohlc(h1_path, stage177c.H1_MS)
+        load_mt5_history_csv(h1_path, stage177c.H1_MS)
         if h1_path is not None
+        else None
+    )
+    raw_h1_tail = (
+        assert_source_tail_loaded(h1_path, raw_h1)
+        if h1_path is not None and raw_h1 is not None
         else None
     )
 
@@ -364,6 +530,12 @@ def main() -> int:
             if raw_h1 is not None
             else None
         ),
+        "raw_m5_loader": raw_m5.attrs.get("loader_diagnostics", {}),
+        "raw_h1_loader": (
+            raw_h1.attrs.get("loader_diagnostics", {}) if raw_h1 is not None else None
+        ),
+        "raw_m5_tail_verification": raw_m5_tail,
+        "raw_h1_tail_verification": raw_h1_tail,
         "operational_history_floor_utc": pd.to_datetime(
             operational_floor, unit="ms", utc=True
         ).isoformat(),

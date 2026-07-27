@@ -1,0 +1,24 @@
+{
+  "files": [
+    {
+      "path": "QA_REPORT.md",
+      "size": 640,
+      "sha256": "cb91900826a4a376eab8f67f3380a4666d1f4ef7a803c0faf0f681105ab5d0b5"
+    },
+    {
+      "path": "README.md",
+      "size": 350,
+      "sha256": "32954df86f4da47c9a70ed82de2fc3438edb1057efe1d3839fe9578544ee86fe"
+    },
+    {
+      "path": "app/stage180_refresh_frozen_amarkets_alignment.py",
+      "size": 20887,
+      "sha256": "81622f7d4a6da285ef5eb6c97b2afe4f6ffaf3180ec396716a4000cf9cd28d14"
+    },
+    {
+      "path": "tests/test_stage180_frozen_alignment_refresh.py",
+      "size": 6943,
+      "sha256": "d4c5fffd4f791fdb295e5256e84dde6c262c4e888d9ddf8e837162322c9611cb"
+    }
+  ]
+}

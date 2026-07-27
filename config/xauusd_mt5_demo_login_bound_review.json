@@ -1,5 +1,5 @@
 {
-  "program": "XAUUSD_MT5_DEMO_LOGIN_BOUND_REVIEW_DRY_CYCLE",
+  "program": "XAUUSD_MT5_DEMO_LOGIN_BOUND_FRESH_DRY_CYCLE",
   "runtime_preflight": "reports/xauusd_mt5_demo_bridge/mt5_demo_bridge_runtime_preflight.json",
   "bounded_demo_preflight": "reports/xauusd_bounded_demo_design/bounded_demo_preflight.json",
   "bridge_config": "config/xauusd_mt5_demo_bridge.json",
@@ -15,5 +15,12 @@
   "accepted_runtime_decisions": [
     "PASS_MT5_DEMO_BRIDGE_RUNTIME_PREFLIGHT_DISABLED_NO_ORDER",
     "PASS_MT5_DEMO_BRIDGE_RUNTIME_DISABLED_READY_FOR_LOGIN_BOUND_ARMING"
-  ]
+  ],
+  "controlled_paper_app": "app/xauusd_controlled_paper.py",
+  "stage180_summary": "reports/stage180_frozen_model_shadow/stage180_summary.json",
+  "stage180_script_globs": [
+    "app/stage180*.py"
+  ],
+  "maximum_controlled_summary_age_minutes_open_market": 180,
+  "maximum_aligned_h1_age_minutes_open_market": 180
 }

@@ -1,19 +1,21 @@
 {
+  "package": "XAUUSD_MT5_FRESH_SOURCE_DRY_CYCLE_STALE_LEDGER_REPAIR_NO_ORDER",
+  "version": "1.1",
   "files": [
     {
       "path": ".github/workflows/xauusd_mt5_login_bound_dry_review_qa.yml",
-      "sha256": "0d52e420a6a966c65822222c8c1ce3a12c265a39ee0462bfb9d0f689c2a5f8ac",
-      "size_bytes": 787
+      "sha256": "28d45ff88e4f603249cf50fae1ea3d2625846dea848910b0c4e1069c4d0b2bbf",
+      "size_bytes": 1044
     },
     {
       "path": "QA_REPORT.md",
-      "sha256": "a2fc86c83c02b12031a081a7f2d766c0e11f4119a8a0f9ae588f2c4ec19e6606",
-      "size_bytes": 1281
+      "sha256": "19d2aa57550f6423fb584f8d9f309e54ead1b0fbd77c9da5b60f956e9e7d6b1b",
+      "size_bytes": 2560
     },
     {
       "path": "README.md",
-      "sha256": "2a060bfa186707b39a804cd7f5d003021cccbd2bc9ef8b9d659cfdd1de42a5ad",
-      "size_bytes": 724
+      "sha256": "9a686be3eb0aa940bcc4b3006e4b239b280fa4d308af65516cbce0c2595f8ee1",
+      "size_bytes": 852
     },
     {
       "path": "app/xauusd_mt5_demo_bridge.py",
@@ -22,8 +24,8 @@
     },
     {
       "path": "app/xauusd_mt5_demo_login_bound_review.py",
-      "sha256": "22f5daf29ff62174c857d3c02352fd95332b99a235aa6ae2cd5d8320d55aba22",
-      "size_bytes": 20740
+      "sha256": "ea02afbe189577e0d13a8bee4e4a4eb7f7a866a72818eeab1d782e2c1a048ca8",
+      "size_bytes": 30830
     },
     {
       "path": "config/xauusd_mt5_demo_bridge.json",
@@ -32,13 +34,13 @@
     },
     {
       "path": "config/xauusd_mt5_demo_login_bound_review.json",
-      "sha256": "a842d8f38240c9a6c4cd974f035bff2bc05f7f85c6ec1d9d25f32e2a6c3743a1",
-      "size_bytes": 944
+      "sha256": "6667f97a4e48a1b1658195be15eb4fa64d949a3921e2de60f59656d7a87af43a",
+      "size_bytes": 1258
     },
     {
       "path": "docs/XAUUSD_MT5_LOGIN_BOUND_DRY_REVIEW_RUNBOOK.md",
-      "sha256": "514d9be78623ff8948a78defb94ef04f4b03d5666cf3aa7e132268f867764172",
-      "size_bytes": 567
+      "sha256": "88f94c75ecce1ced53642164ece341a0e72a24db14ae231bb6b9a79c1d95818c",
+      "size_bytes": 1674
     },
     {
       "path": "mt5/XAUUSD_BoundedDemoBridge.mq5",
@@ -72,10 +74,8 @@
     },
     {
       "path": "tests/test_xauusd_mt5_demo_login_bound_review.py",
-      "sha256": "65c84c473b9d4ec56f7e98bcfb48c1d8d586293271d59cca99bc33aa23a23521",
-      "size_bytes": 11640
+      "sha256": "a108aa7cf5b5a023abe8119c0a9cb2c81eb97381c03fe5bf078e6da257509072",
+      "size_bytes": 18077
     }
-  ],
-  "package": "XAUUSD_MT5_LOGIN_BOUND_REVIEW_DRY_CYCLE_NO_ORDER",
-  "version": "1.0"
+  ]
 }

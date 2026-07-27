@@ -13,13 +13,14 @@ import importlib.util
 import json
 import math
 import shutil
+import subprocess
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 UTC = timezone.utc
-PROGRAM = "XAUUSD_MT5_DEMO_LOGIN_BOUND_REVIEW_DRY_CYCLE_V1_NO_ORDER"
+PROGRAM = "XAUUSD_MT5_DEMO_LOGIN_BOUND_FRESH_DRY_CYCLE_V1_1_NO_ORDER"
 RUNTIME_PROGRAM = "XAUUSD_MT5_BOUNDED_DEMO_BRIDGE_V1_1_VOLUME_DIAGNOSTIC_LOGGING"
 BOUNDED_PROGRAM = "XAUUSD_BOUNDED_DEMO_DESIGN_V1_1_RISK_SOURCE_PROVENANCE_REPAIR_NO_ORDER"
 BOUNDED_DECISION = "PASS_BOUNDED_DEMO_OPERATIONAL_PREFLIGHT_NO_ORDER_PATH"
@@ -324,7 +325,162 @@ def build_preview_payload(bridge: Any, root: Path, bridge_config: Mapping[str, A
     }
 
 
-def dry_cycle(root: Path, config: Mapping[str, Any], now: datetime | None = None) -> dict[str, Any]:
+
+
+def controlled_freshness_payload(controlled: Mapping[str, Any]) -> Mapping[str, Any]:
+    value = controlled.get("operational_freshness")
+    if isinstance(value, Mapping):
+        return value
+    run_result = controlled.get("run_result") or {}
+    value = run_result.get("freshness")
+    return value if isinstance(value, Mapping) else {}
+
+
+def validate_controlled_freshness(
+    root: Path,
+    bridge_config: Mapping[str, Any],
+    config: Mapping[str, Any],
+    now: datetime,
+    not_before: datetime | None = None,
+) -> dict[str, Any]:
+    summary_path = resolve(root, str(bridge_config["controlled_paper_summary"]))
+    require(summary_path.is_file(), f"controlled-paper summary missing: {summary_path}")
+    controlled = load_json(summary_path)
+    generated = parse_time(controlled.get("generated_utc"))
+    freshness = controlled_freshness_payload(controlled)
+    run_result = controlled.get("run_result") or {}
+    latest_h1_text = run_result.get("latest_h1_utc") or (freshness.get("timestamps_utc") or {}).get("aligned_h1")
+    latest_h1 = parse_time(latest_h1_text)
+    summary_age = (now - generated).total_seconds() / 60.0
+    h1_age = (now - latest_h1).total_seconds() / 60.0
+    max_summary_age = float(config.get("maximum_controlled_summary_age_minutes_open_market", 180))
+    max_h1_age = float(config.get("maximum_aligned_h1_age_minutes_open_market", 180))
+    checks = {
+        "program": controlled.get("program") == "XAUUSD_CONTROLLED_PAPER_V1_5_BIDIRECTIONAL_PROBABILITY_TAILS_DIRECTION_PARITY",
+        "orders_forbidden": all(controlled.get(key) is False for key in ("broker_order_allowed", "demo_order_allowed", "live_order_allowed")),
+        "paper_log_only": controlled.get("paper_log_only") is True,
+        "freshness_pass": freshness.get("pass") is True,
+        "freshness_decision": freshness.get("decision") == "PASS_OPERATIONAL_FRESHNESS_OPEN_MARKET",
+        "market_expected_open": freshness.get("market_expected_open") is True,
+        "summary_age": -1.0 <= summary_age <= max_summary_age,
+        "aligned_h1_age": -15.0 <= h1_age <= max_h1_age,
+        "generated_after_refresh_start": not_before is None or generated >= not_before - timedelta(seconds=30),
+    }
+    failed = sorted(name for name, passed in checks.items() if not passed)
+    require(not failed, f"controlled-paper freshness failed checks: {failed}")
+    return {
+        "path": str(summary_path),
+        "sha256": sha256_file(summary_path),
+        "generated_utc": iso_utc(generated),
+        "latest_h1_utc": iso_utc(latest_h1),
+        "summary_age_minutes": summary_age,
+        "aligned_h1_age_minutes": h1_age,
+        "checks": checks,
+    }
+
+
+def stage180_candidates(root: Path, config: Mapping[str, Any]) -> list[Path]:
+    found: dict[str, Path] = {}
+    explicit = str(config.get("stage180_script") or "").strip()
+    if explicit:
+        path = resolve(root, explicit).resolve()
+        if path.is_file():
+            found[str(path)] = path
+    for pattern in config.get("stage180_script_globs", ["app/stage180*.py"]):
+        for path in root.glob(str(pattern)):
+            if path.is_file() and "__pycache__" not in path.parts:
+                found[str(path.resolve())] = path.resolve()
+    return sorted(found.values(), key=lambda p: str(p))
+
+
+def discover_stage180_script(root: Path, config: Mapping[str, Any]) -> Path:
+    candidates = stage180_candidates(root, config)
+    scored: list[tuple[int, Path]] = []
+    for path in candidates:
+        try:
+            text = path.read_text(encoding="utf-8", errors="replace")
+        except Exception:
+            continue
+        score = 0
+        if "STAGE180_FROZEN_MODEL_SHADOW" in text:
+            score += 2
+        if "PASS_STAGE180_FROZEN_ALIGNMENT_REFRESH" in text:
+            score += 2
+        if "stage180_summary.json" in text:
+            score += 1
+        if score >= 3:
+            scored.append((score, path))
+    require(scored, "Stage180 runner discovery failed: no matching app/stage180*.py")
+    best_score = max(score for score, _ in scored)
+    best = [path for score, path in scored if score == best_score]
+    require(len(best) == 1, f"Stage180 runner discovery ambiguous: {[str(path) for path in best]}")
+    return best[0]
+
+
+def stream_command(name: str, command: Sequence[str], root: Path, tail_limit: int = 24000) -> dict[str, Any]:
+    print(f"[START] {name}: {' '.join(command)}", flush=True)
+    started = utc_now()
+    process = subprocess.Popen(
+        list(command), cwd=str(root), stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        text=True, bufsize=1,
+    )
+    chunks: list[str] = []
+    assert process.stdout is not None
+    try:
+        for line in process.stdout:
+            print(line, end="", flush=True)
+            chunks.append(line)
+            joined = "".join(chunks)
+            if len(joined) > tail_limit:
+                chunks = [joined[-tail_limit:]]
+    finally:
+        process.stdout.close()
+    returncode = process.wait()
+    elapsed = (utc_now() - started).total_seconds()
+    result = {
+        "name": name,
+        "command": list(command),
+        "returncode": returncode,
+        "elapsed_seconds": elapsed,
+        "stdout_tail": "".join(chunks)[-tail_limit:],
+    }
+    require(returncode == 0, f"external step failed: {json.dumps(result, ensure_ascii=False)}")
+    print(f"[DONE ] {name} elapsed={elapsed:.2f}s", flush=True)
+    return result
+
+
+def validate_stage180_freshness(root: Path, config: Mapping[str, Any], now: datetime, not_before: datetime) -> dict[str, Any]:
+    path = resolve(root, str(config.get("stage180_summary", "reports/stage180_frozen_model_shadow/stage180_summary.json")))
+    require(path.is_file(), f"Stage180 summary missing: {path}")
+    payload = load_json(path)
+    generated = parse_time(payload.get("generated_utc"))
+    latest_h1 = parse_time(payload.get("aligned_last_complete_bar_utc"))
+    age_minutes = (now - latest_h1).total_seconds() / 60.0
+    checks = {
+        "decision": payload.get("decision") == "STAGE180_FROZEN_MODEL_SHADOW_ACTIVE_NO_ORDER",
+        "generated_after_refresh_start": generated >= not_before - timedelta(seconds=30),
+        "aligned_h1_fresh": -15.0 <= age_minutes <= float(config.get("maximum_aligned_h1_age_minutes_open_market", 180)),
+        "orders_forbidden": all(payload.get(key) is False for key in ("broker_order_allowed", "demo_order_allowed", "live_order_allowed", "paper_order_allowed", "execution_allowed")),
+        "shadow_allowed": payload.get("shadow_observation_allowed") is True,
+    }
+    failed = sorted(name for name, passed in checks.items() if not passed)
+    require(not failed, f"Stage180 freshness failed checks: {failed}")
+    return {
+        "path": str(path),
+        "sha256": sha256_file(path),
+        "generated_utc": iso_utc(generated),
+        "latest_h1_utc": iso_utc(latest_h1),
+        "aligned_h1_age_minutes": age_minutes,
+        "checks": checks,
+    }
+
+
+def dry_cycle(
+    root: Path,
+    config: Mapping[str, Any],
+    now: datetime | None = None,
+    controlled_not_before: datetime | None = None,
+) -> dict[str, Any]:
     current = (now or utc_now()).astimezone(UTC)
     review = build_review(root, config, current)
     bridge = load_bridge(root, config)
@@ -338,6 +494,7 @@ def dry_cycle(root: Path, config: Mapping[str, Any], now: datetime | None = None
         require(path.is_file(), f"{label} missing: {path}")
     controlled = load_json(controlled_summary_path)
     controlled_preflight = load_json(controlled_preflight_path)
+    controlled_freshness = validate_controlled_freshness(root, bridge_config, config, current, controlled_not_before)
     require(controlled.get("program") == bridge.CONTROLLED_PROGRAM, "controlled-paper program mismatch")
     require(controlled.get("direction_policy") == "BIDIRECTIONAL_PROBABILITY_TAILS", "controlled-paper direction mismatch")
     require(controlled.get("paper_log_only") is True, "controlled-paper must remain paper-only")
@@ -361,7 +518,7 @@ def dry_cycle(root: Path, config: Mapping[str, Any], now: datetime | None = None
     result = {
         "program": PROGRAM,
         "generated_utc": iso_utc(current),
-        "decision": "PASS_LOGIN_BOUND_DRY_CANDIDATE_CYCLE_NO_ORDER",
+        "decision": "PASS_LOGIN_BOUND_DRY_CANDIDATE_CYCLE_FRESH_SOURCE_NO_ORDER",
         "pass": True,
         "allowed_demo_login": int(config["allowed_demo_login"]),
         "bridge_armed": False,
@@ -371,24 +528,74 @@ def dry_cycle(root: Path, config: Mapping[str, Any], now: datetime | None = None
         "demo_order_allowed": False,
         "live_order_allowed": False,
         "review_decision": review["decision"],
+        "controlled_source_freshness": controlled_freshness,
         "dry_cycle": preview_result,
         "outputs": {
             "review": str(report_dir / "mt5_demo_login_bound_arming_review.json"),
             "candidate_preview": str(preview_path),
         },
         "required_next_action": (
-            "WAIT_FOR_MARKET_OPEN_THEN_RUN_ONE_MORE_UNARMED_DRY_CYCLE"
-            if preview_result.get("status") in {"NO_ELIGIBLE_CONTROLLED_PAPER_WAITING_SIGNAL", "WAIT_FOR_TARGET_ENTRY_WINDOW"}
-            else "REVIEW_DRY_CYCLE_RESULT_BEFORE_ANY_ACTIVE_PERMIT_OR_ARMING"
+            "READY_FOR_EXPLICIT_DEMO_ARMING_REVIEW_NO_FORWARD_SIGNAL_WAIT"
+            if preview_result.get("status") == "NO_ELIGIBLE_CONTROLLED_PAPER_WAITING_SIGNAL"
+            else "REVIEW_FRESH_DRY_CYCLE_RESULT_BEFORE_ANY_ACTIVE_PERMIT_OR_ARMING"
         ),
     }
     write_json(report_dir / "mt5_demo_login_bound_dry_cycle_summary.json", result)
     return result
 
 
+def fresh_dry_cycle(root: Path, config: Mapping[str, Any]) -> dict[str, Any]:
+    started = utc_now()
+    active = active_paths(config)
+    require(not active["arming_permit"].is_file(), "fresh dry cycle blocked by active arming permit")
+    require(not active["candidate"].is_file(), "fresh dry cycle blocked by active candidate")
+    stage180_script = discover_stage180_script(root, config)
+    controlled_app = resolve(root, str(config.get("controlled_paper_app", "app/xauusd_controlled_paper.py")))
+    require(controlled_app.is_file(), f"controlled-paper app missing: {controlled_app}")
+    steps = [
+        stream_command("Stage180 frozen-model refresh", [sys.executable, str(stage180_script)], root),
+    ]
+    stage180_evidence = validate_stage180_freshness(root, config, utc_now(), started)
+    steps.append(stream_command("Controlled-paper preflight", [sys.executable, str(controlled_app), "preflight", "--root", str(root)], root))
+    steps.append(stream_command("Controlled-paper fresh run", [sys.executable, str(controlled_app), "run", "--root", str(root)], root))
+    bridge_config = load_json(resolve(root, str(config["bridge_config"])))
+    controlled_evidence = validate_controlled_freshness(root, bridge_config, config, utc_now(), started)
+    dry = dry_cycle(root, config, utc_now(), controlled_not_before=started)
+    report_dir = resolve(root, str(config["report_dir"]))
+    result = {
+        "program": PROGRAM,
+        "generated_utc": iso_utc(),
+        "decision": "PASS_LOGIN_BOUND_FRESH_DRY_CANDIDATE_CYCLE_NO_ORDER",
+        "pass": True,
+        "allowed_demo_login": int(config["allowed_demo_login"]),
+        "bridge_armed": False,
+        "active_arming_permit_created": False,
+        "active_candidate_written": False,
+        "broker_order_allowed": False,
+        "demo_order_allowed": False,
+        "live_order_allowed": False,
+        "stage180_script": str(stage180_script),
+        "refresh_steps": steps,
+        "stage180_freshness": stage180_evidence,
+        "controlled_source_freshness": controlled_evidence,
+        "dry_cycle": dry["dry_cycle"],
+        "dry_cycle_decision": dry["decision"],
+        "required_next_action": dry["required_next_action"],
+        "outputs": {
+            "fresh_summary": str(report_dir / "mt5_demo_login_bound_fresh_dry_cycle_summary.json"),
+            "dry_summary": str(report_dir / "mt5_demo_login_bound_dry_cycle_summary.json"),
+            "candidate_preview": str(report_dir / "mt5_demo_dry_candidate_preview.json"),
+        },
+    }
+    require(not active["arming_permit"].is_file(), "fresh dry cycle created active permit")
+    require(not active["candidate"].is_file(), "fresh dry cycle created active candidate")
+    write_json(report_dir / "mt5_demo_login_bound_fresh_dry_cycle_summary.json", result)
+    return result
+
+
 def parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("command", choices=("review", "dry-cycle"), nargs="?", default="review")
+    p.add_argument("command", choices=("review", "dry-cycle", "fresh-dry-cycle"), nargs="?", default="review")
     p.add_argument("--root", default=".")
     p.add_argument("--config", default="config/xauusd_mt5_demo_login_bound_review.json")
     return p
@@ -400,7 +607,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     report_dir = root / "reports/xauusd_mt5_demo_bridge"
     try:
         config = load_json(resolve(root, args.config))
-        result = build_review(root, config) if args.command == "review" else dry_cycle(root, config)
+        result = build_review(root, config) if args.command == "review" else (fresh_dry_cycle(root, config) if args.command == "fresh-dry-cycle" else dry_cycle(root, config))
         print(json.dumps(result, indent=2, ensure_ascii=False, sort_keys=True))
         failure = report_dir / "mt5_demo_login_bound_review_failure.json"
         if failure.exists():

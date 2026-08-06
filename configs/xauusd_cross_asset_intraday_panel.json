@@ -1,0 +1,16 @@
+{
+  "program": "XAUUSD_CROSS_ASSET_INTRADAY_PANEL_V1",
+  "history_start_server_time": "2016-01-01T00:00:00",
+  "symbols": ["XAUUSD", "XAGUSD", "EURUSD", "USDJPY", "S&P500", "WTI", "BRENT", "DXY"],
+  "timeframes": ["M15", "H1"],
+  "reference_start_utc": "2016-01-01T00:00:00Z",
+  "reference_end_utc": "2025-01-01T00:00:00Z",
+  "diagnostic_policy_2025_plus": "SEEN_DIAGNOSTIC_NOT_PRISTINE_HOLDOUT",
+  "required_symbols": ["XAUUSD", "XAGUSD", "EURUSD", "USDJPY"],
+  "required_reference_coverage": 0.9,
+  "required_daily_real_yield_coverage": 0.9,
+  "minimum_reference_rows": 30000,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false
+}

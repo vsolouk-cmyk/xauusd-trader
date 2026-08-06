@@ -1,0 +1,34 @@
+===== RUNTIME =====
+Python 3.14.2
+pandas=3.0.3
+numpy=2.4.0
+===== COMPILE =====
+===== TESTS =====
+test_collect_creates_manifested_zip (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_collect_creates_manifested_zip) ... ok
+test_dst_conversion_standard (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_dst_conversion_standard) ... ok
+test_dst_conversion_summer (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_dst_conversion_summer) ... ok
+test_exact_log_return_requires_exact_gap (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_exact_log_return_requires_exact_gap) ... ok
+test_features_use_completed_bar_availability (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_features_use_completed_bar_availability) ... ok
+test_macro_loader_required_columns (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_macro_loader_required_columns) ... ok
+test_preflight_requires_macro_panel (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_preflight_requires_macro_panel) ... ok
+test_read_export_rejects_schema (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_read_export_rejects_schema) ... ok
+test_safe_symbol_filename (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_safe_symbol_filename) ... ok
+test_static_no_execution_tokens (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_static_no_execution_tokens) ... ok
+test_synthetic_build_writes_causal_outputs (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_synthetic_build_writes_causal_outputs) ... /Users/vahid/Desktop/xauusd-trader/app/xauusd_cross_asset_intraday_panel.py:312: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  features["decision_date_utc"] = features["decision_time_utc"].dt.strftime("%Y-%m-%d")
+/Users/vahid/Desktop/xauusd-trader/app/xauusd_cross_asset_intraday_panel.py:319: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  features["usd_fx_composite_h1"] = (
+/Users/vahid/Desktop/xauusd-trader/app/xauusd_cross_asset_intraday_panel.py:323: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  features["gold_silver_relative_h1"] = (
+/Users/vahid/Desktop/xauusd-trader/app/xauusd_cross_asset_intraday_panel.py:327: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  features["risk_energy_composite_h1"] = (
+/Users/vahid/Desktop/xauusd-trader/app/xauusd_cross_asset_intraday_panel.py:343: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  frame["sample_role"] = np.where(
+ok
+test_targets_exact_horizon (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_targets_exact_horizon) ... ok
+test_targets_gap_fail_closed (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_targets_gap_fail_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 1.517s
+
+OK

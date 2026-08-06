@@ -1,0 +1,14 @@
+XAUUSD_DEMO_PROBE_ACCOUNTING_REPAIR_V1_2
+
+Executed in build staging:
+- Python compileall for delivered app/tests: PASS
+- Qualification probe unit tests: 11/11 PASS
+- Activation/operational-cycle tests: 13/13 PASS using a test-only exporter dependency shim; shim is not packaged
+- Program contract tie-out across four Python operators and MQL EA: PASS
+- MQL delimiter/static safety check: PASS
+- New negative test rejects terminal journal rows with exit requested_price=0: PASS
+- No WebRequest or live fallback token introduced: PASS
+
+Not executed in build environment:
+- Native MetaEditor/MQL5 compiler. User must compile in MetaEditor and confirm 0 errors.
+- Full bridge suite requiring retained repo config/schema/fixture files not present in the bounded input package. Run after installation in the full repo.

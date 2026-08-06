@@ -205,7 +205,7 @@ class ArmingTests(unittest.TestCase):
         arming.arm(self.root, self.config)
         heartbeat = self.bridge_dir / "bridge_heartbeat.txt"
         heartbeat.write_text("\n".join([
-            "program=XAUUSD_BOUNDED_DEMO_BRIDGE_EA_V1_1_VOLUME_DIAGNOSTIC_LOGGING",
+            "program=XAUUSD_BOUNDED_DEMO_BRIDGE_EA_V1_3_PROBE_ACCOUNTING_REPAIR",
             "status=ARMED_RUNTIME_GUARDS_REQUIRED",
             "armed=true",
             "account_trade_mode=DEMO",
@@ -245,7 +245,7 @@ class OperationalCycleTests(unittest.TestCase):
             encoding="utf-8",
         )
         self.bridge.joinpath("bridge_heartbeat.txt").write_text("\n".join([
-            "program=XAUUSD_BOUNDED_DEMO_BRIDGE_EA_V1_1_VOLUME_DIAGNOSTIC_LOGGING",
+            "program=XAUUSD_BOUNDED_DEMO_BRIDGE_EA_V1_3_PROBE_ACCOUNTING_REPAIR",
             "status=ARMED_RUNTIME_GUARDS_REQUIRED",
             "armed=true",
             "account_trade_mode=DEMO",
@@ -355,6 +355,20 @@ class OperationalCycleTests(unittest.TestCase):
         self.assertEqual(run_capture.call_count, 4)
 
     @mock.patch.object(cycle, "run_capture")
+    def test_operational_cycle_skips_while_probe_is_active(self, run_capture):
+        self.bridge.joinpath("qualification_probe_permit.txt").write_text(
+            "schema_version=XAUUSD_DEMO_QUALIFICATION_PROBE_PERMIT_V1\n",
+            encoding="utf-8",
+        )
+        heartbeat = self.bridge / "bridge_heartbeat.txt"
+        heartbeat.write_text(heartbeat.read_text(encoding="utf-8") + "qualification_probe_supported=true\n", encoding="utf-8")
+        result = cycle.run_cycle(self.root, self.config)
+        self.assertTrue(result["pass"])
+        self.assertEqual(result["decision"], "PASS_QUALIFICATION_PROBE_ACTIVE_SKIP_OPERATIONAL_CYCLE")
+        self.assertFalse(result["live_order_allowed"])
+        run_capture.assert_not_called()
+
+    @mock.patch.object(cycle, "run_capture")
     def test_cycle_skips_heavy_work_when_h1_export_is_unchanged(self, run_capture):
         state = self.root / "reports/xauusd_mt5_demo_activation/operational_cycle_state.json"
         state.parent.mkdir(parents=True, exist_ok=True)
@@ -370,7 +384,7 @@ class OperationalCycleTests(unittest.TestCase):
     def test_prepare_arm_refresh_merges_recent_data_before_fresh_dry_cycle(self, run_capture):
         self.bridge.joinpath("arming_permit.txt").unlink()
         self.bridge.joinpath("bridge_heartbeat.txt").write_text("\n".join([
-            "program=XAUUSD_BOUNDED_DEMO_BRIDGE_EA_V1_1_VOLUME_DIAGNOSTIC_LOGGING",
+            "program=XAUUSD_BOUNDED_DEMO_BRIDGE_EA_V1_3_PROBE_ACCOUNTING_REPAIR",
             "status=DISABLED_DEFAULT_NO_ORDER",
             "armed=false",
             "account_trade_mode=DEMO",

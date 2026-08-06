@@ -1,0 +1,181 @@
+{
+  "program": "XAUUSD_LONG_ONLY_VOL_EXPANSION_ATTRIBUTION_V1_REFERENCE_ONLY",
+  "generated_utc": "2026-08-06T05:52:11.958247Z",
+  "decision": "PASS_LONG_ONLY_ATTRIBUTION_PREFLIGHT_REFERENCE_ONLY",
+  "pass": true,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false,
+  "selection_used_2025_plus": false,
+  "reference_start_utc": "2015-01-02T07:00:00+00:00",
+  "reference_end_utc": "2025-01-01T00:00:00+00:00",
+  "paths": {
+    "amarkets_db": "/Users/vahid/Desktop/xauusd-trader/data/local/stage177c_amarkets_alignment/xauusd_amarkets_alignment.sqlite",
+    "dukascopy_db": "/Users/vahid/Desktop/xauusd-trader/data/local/stage177b_extended_history/xauusd_extended_history.sqlite",
+    "event_db": "/Users/vahid/Desktop/xauusd-trader/data/local/historical_event_context/xauusd_historical_event_context.sqlite"
+  },
+  "checks": {
+    "amarkets_db": true,
+    "dukascopy_db": true,
+    "event_db": true
+  }
+}
+{
+  "program": "XAUUSD_LONG_ONLY_VOL_EXPANSION_ATTRIBUTION_V1_REFERENCE_ONLY",
+  "generated_utc": "2026-08-06T05:53:21.094222Z",
+  "decision": "REJECT_LONG_ONLY_ATTRIBUTION_AND_PIVOT_MACRO_DATA",
+  "pass": false,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false,
+  "selection_used_2025_plus": false,
+  "reference_start_utc": "2015-01-02T07:00:00+00:00",
+  "reference_end_utc": "2025-01-01T00:00:00+00:00",
+  "candidate_contract": {
+    "family": "volatility_expansion",
+    "side": "LONG_ONLY",
+    "horizon_hours": 48,
+    "range_atr_multiple": 1.8,
+    "trend_window": 240,
+    "entry": "NEXT_EXACT_H1_OPEN",
+    "exit": "EXACT_48H_CLOSE",
+    "severe_cost_bps": 4.5
+  },
+  "feed_rows": {
+    "AMARKETS": 57359,
+    "DUKASCOPY": 59087
+  },
+  "official_event_rows": 812,
+  "feed_leg_metrics": [
+    {
+      "feed": "AMARKETS",
+      "leg": "LONG",
+      "trades": 397,
+      "mean_severe_net_bps": 5.136780433760456,
+      "median_severe_net_bps": -0.09508813687713769,
+      "profit_factor_severe": 1.117677433659085,
+      "bootstrap_p10_mean_bps": -2.720381714670904,
+      "bootstrap_probability_mean_le_zero": 0.19275,
+      "remove_largest_winner_mean_bps": 4.140339105504778,
+      "remove_largest_winner_profit_factor": 1.0946112493978322,
+      "strict_replay_cagr": 0.0031357450901736694,
+      "final_equity": 1.0317973130892732,
+      "first_trade_utc": "2015-01-19T17:00:00+00:00",
+      "last_trade_utc": "2024-12-11T06:00:00+00:00"
+    },
+    {
+      "feed": "AMARKETS",
+      "leg": "SHORT",
+      "trades": 358,
+      "mean_severe_net_bps": -9.293222537215556,
+      "median_severe_net_bps": -9.982946706242275,
+      "profit_factor_severe": 0.8116568740012259,
+      "bootstrap_p10_mean_bps": -17.630710792711156,
+      "bootstrap_probability_mean_le_zero": 0.92925,
+      "remove_largest_winner_mean_bps": -10.22160144986579,
+      "remove_largest_winner_profit_factor": 0.7934203343549958,
+      "strict_replay_cagr": -0.005268336204984125,
+      "final_equity": 0.9485580746920746,
+      "first_trade_utc": "2015-02-03T13:00:00+00:00",
+      "last_trade_utc": "2024-12-24T15:00:00+00:00"
+    },
+    {
+      "feed": "DUKASCOPY",
+      "leg": "LONG",
+      "trades": 409,
+      "mean_severe_net_bps": 4.293573862534752,
+      "median_severe_net_bps": 0.05908614277467095,
+      "profit_factor_severe": 1.097627824332294,
+      "bootstrap_p10_mean_bps": -3.221841391583388,
+      "bootstrap_probability_mean_le_zero": 0.2345,
+      "remove_largest_winner_mean_bps": 3.3241840671334293,
+      "remove_largest_winner_profit_factor": 1.0754009106745395,
+      "strict_replay_cagr": 0.0026875528192238374,
+      "final_equity": 1.0271974913357265,
+      "first_trade_utc": "2015-01-19T17:00:00+00:00",
+      "last_trade_utc": "2024-12-11T06:00:00+00:00"
+    },
+    {
+      "feed": "DUKASCOPY",
+      "leg": "SHORT",
+      "trades": 377,
+      "mean_severe_net_bps": -10.497238215448045,
+      "median_severe_net_bps": -10.558221204341407,
+      "profit_factor_severe": 0.7881836717876484,
+      "bootstrap_p10_mean_bps": -18.494153589261025,
+      "bootstrap_probability_mean_le_zero": 0.9655,
+      "remove_largest_winner_mean_bps": -11.423599853379422,
+      "remove_largest_winner_profit_factor": 0.7701027059886516,
+      "strict_replay_cagr": -0.006255652905564513,
+      "final_equity": 0.939186971708764,
+      "first_trade_utc": "2015-02-02T15:00:00+00:00",
+      "last_trade_utc": "2024-12-24T15:00:00+00:00"
+    }
+  ],
+  "paired_control_metrics": {
+    "AMARKETS": {
+      "pairs": 372,
+      "mean_paired_excess_bps": 9.037795207496723,
+      "median_paired_excess_bps": 7.570032859566254,
+      "bootstrap_p10_paired_excess_bps": -2.268069626390049,
+      "bootstrap_probability_paired_excess_le_zero": 0.1495
+    },
+    "DUKASCOPY": {
+      "pairs": 382,
+      "mean_paired_excess_bps": 14.175128836538542,
+      "median_paired_excess_bps": 11.636017567042689,
+      "bootstrap_p10_paired_excess_bps": 2.648799632041199,
+      "bootstrap_probability_paired_excess_le_zero": 0.0535
+    }
+  },
+  "crossfeed": {
+    "amarkets_signals": 397,
+    "dukascopy_signals": 409,
+    "intersection": 355,
+    "union": 451,
+    "signal_jaccard": 0.7871396895787139,
+    "matched_trade_returns": 355,
+    "return_correlation": 0.9999135368468067,
+    "median_absolute_return_difference_bps": 0.3222422007753636,
+    "p95_absolute_return_difference_bps": 1.6343790183454012
+  },
+  "gates": {
+    "AMARKETS": {
+      "minimum_trades": true,
+      "mean_positive": true,
+      "profit_factor": false,
+      "bootstrap_p10_positive": false,
+      "positive_without_largest": true,
+      "positive_fold_share": false,
+      "paired_control_count": true,
+      "paired_excess_p10_positive": false
+    },
+    "DUKASCOPY": {
+      "minimum_trades": true,
+      "mean_positive": true,
+      "profit_factor": false,
+      "bootstrap_p10_positive": false,
+      "positive_without_largest": true,
+      "positive_fold_share": false,
+      "paired_control_count": true,
+      "paired_excess_p10_positive": true
+    },
+    "CROSSFEED": {
+      "signal_jaccard": false,
+      "return_correlation": true
+    }
+  },
+  "required_next_action": "CLOSE_PRICE_ONLY_H1_PATH_AND_INVENTORY_MACRO_DATA"
+}
+{
+  "program": "XAUUSD_LONG_ONLY_VOL_EXPANSION_ATTRIBUTION_V1_REFERENCE_ONLY",
+  "generated_utc": "2026-08-06T05:54:29.289009Z",
+  "decision": "PASS_LONG_ONLY_ATTRIBUTION_RESULTS_PACK_CREATED",
+  "pass": true,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false,
+  "output_zip": "/Users/vahid/Downloads/XAUUSD_LONG_ONLY_ATTRIBUTION_RESULTS.zip",
+  "sha256": "b134250a7649056fde00029f4b5e16d9a014ad93559068caeb6b37e272149a74",
+  "files": 9
+}

@@ -1,41 +1,35 @@
 {
-  "package": "XAUUSD_MT5_DEMO_PREARM_REFRESH_ORCHESTRATION_FIX",
-  "version": "1.0.1",
+  "program": "XAUUSD_LONG_ONLY_VOL_EXPANSION_ATTRIBUTION_V1_REFERENCE_ONLY",
   "files": [
     {
-      "path": "QA_REPORT.md",
-      "sha256": "32667a9e508936c254a4568d60fb88b40eba90b7d7d6b0d85229e33d0e13c7cc",
-      "bytes": 659
+      "path": "app/xauusd_long_only_attribution.py",
+      "sha256": "cff184fbd9278fdb9f0befd7d3e1a3691664fee3ad5425a7cee50432fdec9d2d",
+      "size": 27460
     },
     {
-      "path": "README.md",
-      "sha256": "13ae36e3f92e10147dcc39ceb6efe05ef6f32c543e63568c104a85f333ec8f61",
-      "bytes": 924
+      "path": "configs/xauusd_long_only_attribution_v1.json",
+      "sha256": "c428cffe40eb03b58344e270b21a8289ce8d7725995fa746c1c7afdba72508bb",
+      "size": 1380
     },
     {
-      "path": "app/xauusd_mt5_demo_explicit_arming.py",
-      "sha256": "a792ad391f6b1ac386560196b0a41a117cc120274775d31ee557e266cbfe8ccf",
-      "bytes": 19810
+      "path": "docs/XAUUSD_LONG_ONLY_ATTRIBUTION_V1.md",
+      "sha256": "3021d918d4943f215f550e0b3fe69393a3bda7947ce8ef80da91240a4d202e53",
+      "size": 566
     },
     {
-      "path": "app/xauusd_mt5_demo_operational_cycle.py",
-      "sha256": "f6823d0e090fc22990efe3eecebbdfceab6c199cd35bfadeb8a9525d01a53db2",
-      "bytes": 29558
+      "path": "docs/XAUUSD_SUCCESSOR_SCAN_CLOSURE_20260806.md",
+      "sha256": "dff4e2fccb4cff6e44da816043fafcce23f834ffc85470ba1a83e4a0c939ee7e",
+      "size": 2138
     },
     {
-      "path": "config/xauusd_mt5_demo_activation.json",
-      "sha256": "f1b8fd9a66afb1ce091c0a6c9c2bffb63ae91c14f5a5025be53e2495548a7a60",
-      "bytes": 2188
+      "path": "requirements/xauusd_long_only_attribution.txt",
+      "sha256": "9a5eb9cbfb8dfa1c0d51f8a564c55b31bd25105292c40bad149ee965a0bffa48",
+      "size": 24
     },
     {
-      "path": "mt5/AMarkets_Recent_Bar_Exporter_EA.mq5",
-      "sha256": "eb706abd9a717cab73bf9d794864ccf3053b71b0f08ee2acb31d5999253994a4",
-      "bytes": 10323
-    },
-    {
-      "path": "tests/test_xauusd_mt5_demo_activation.py",
-      "sha256": "80533bb18920a89987fd6beefe8def46e0dddcee153886b209916f08b8c9d3ea",
-      "bytes": 19974
+      "path": "tests/test_xauusd_long_only_attribution.py",
+      "sha256": "7f3335139e949876d966392a216e48a1fd95f62107243d0ca10b004ec43fb8d9",
+      "size": 7316
     }
   ]
 }

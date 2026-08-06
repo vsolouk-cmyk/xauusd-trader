@@ -158,3 +158,2443 @@ Traceback (most recent call last):
   File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
     raise ValueError(f"not enough bars for MTF features: {len(bars)}")
 ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 553, in <module>
+    raise SystemExit(main())
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 529, in main
+    run(
+  File "/Users/vahid/Desktop/xauusd-trader/app/stage154_active_shortlist_rule_router.py", line 281, in run
+    raise ValueError(f"not enough bars for MTF features: {len(bars)}")
+ValueError: not enough bars for MTF features: 0

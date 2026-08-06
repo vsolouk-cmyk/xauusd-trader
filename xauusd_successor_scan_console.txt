@@ -1,0 +1,215 @@
+{
+  "program": "XAUUSD_SUCCESSOR_PARALLEL_SCAN_V1_2_DYNAMIC_FEATURE_CONTRACT_REPAIR",
+  "generated_utc": "2026-08-05T14:42:43.735820Z",
+  "decision": "PASS_SUCCESSOR_SCAN_PREFLIGHT_NO_HOLDOUT_ACCESS",
+  "pass": true,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false,
+  "time_contract": {
+    "path": "/Users/vahid/Desktop/xauusd-trader/reports/stage177c_amarkets_dst_contract/stage177c_time_contract.json",
+    "checks": {
+      "contract": true,
+      "standard_shift_minutes": true,
+      "dst_shift_minutes": true,
+      "dst_calendar": true,
+      "selection_used_holdout_false": true
+    },
+    "pass": true,
+    "contract": {
+      "contract": "EU_DST_GMT_OFFSET_PAIR",
+      "decision": "BLOCK_AMARKETS_TIME_CONTRACT_UNRESOLVED",
+      "dst_calendar": "EU",
+      "dst_shift_minutes": -180,
+      "holdout_start_utc": "2025-01-01T00:00:00Z",
+      "selection_boundary_utc": "2025-01-01T00:00:00Z",
+      "selection_used_holdout": false,
+      "shift_semantics": "timestamp_utc = timestamp_naive + shift_minutes",
+      "source_amarkets_h1": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_1h.csv",
+      "source_amarkets_m5": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+      "source_reference_db": "/Users/vahid/Desktop/xauusd-trader/data/local/stage177b_extended_history/xauusd_extended_history.sqlite",
+      "stage": "177C",
+      "standard_shift_minutes": -120
+    }
+  },
+  "alignment": {
+    "path": "/Users/vahid/Desktop/xauusd-trader/data/local/stage177c_amarkets_alignment/xauusd_amarkets_alignment.sqlite",
+    "size": 73322496,
+    "sha256": "c38491993ec5b76325d61f941cbdff7cda7147c83c97f43b80e97221385669f5",
+    "rows": 66682,
+    "first_utc": "2015-01-02T07:00:00+00:00",
+    "last_utc": "2026-08-05T13:00:00+00:00"
+  },
+  "candidate_count": 19,
+  "candidate_feature_plan": {
+    "return_lags": [
+      1,
+      3,
+      6,
+      12,
+      24,
+      48,
+      72,
+      120,
+      240
+    ],
+    "rolling_windows": [
+      12,
+      24,
+      72,
+      120,
+      240
+    ]
+  },
+  "candidate_feature_contract_config_valid": true
+}
+{
+  "program": "XAUUSD_SUCCESSOR_PARALLEL_SCAN_V1_2_DYNAMIC_FEATURE_CONTRACT_REPAIR",
+  "generated_utc": "2026-08-05T14:44:12.004860Z",
+  "decision": "NO_REFERENCE_SURVIVOR_REJECT_SUCCESSOR_SET",
+  "pass": false,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false,
+  "selection_used_holdout": false,
+  "reference_start_utc": "2015-01-02T07:00:00+00:00",
+  "holdout_start_utc": "2025-01-01T00:00:00+00:00",
+  "data_end_utc": "2026-08-05T14:00:00+00:00",
+  "time_contract": {
+    "path": "/Users/vahid/Desktop/xauusd-trader/reports/stage177c_amarkets_dst_contract/stage177c_time_contract.json",
+    "checks": {
+      "contract": true,
+      "standard_shift_minutes": true,
+      "dst_shift_minutes": true,
+      "dst_calendar": true,
+      "selection_used_holdout_false": true
+    },
+    "pass": true,
+    "contract": {
+      "contract": "EU_DST_GMT_OFFSET_PAIR",
+      "decision": "BLOCK_AMARKETS_TIME_CONTRACT_UNRESOLVED",
+      "dst_calendar": "EU",
+      "dst_shift_minutes": -180,
+      "holdout_start_utc": "2025-01-01T00:00:00Z",
+      "selection_boundary_utc": "2025-01-01T00:00:00Z",
+      "selection_used_holdout": false,
+      "shift_semantics": "timestamp_utc = timestamp_naive + shift_minutes",
+      "source_amarkets_h1": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_1h.csv",
+      "source_amarkets_m5": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_5m.csv",
+      "source_reference_db": "/Users/vahid/Desktop/xauusd-trader/data/local/stage177b_extended_history/xauusd_extended_history.sqlite",
+      "stage": "177C",
+      "standard_shift_minutes": -120
+    }
+  },
+  "data_quality": {
+    "rows": 66682,
+    "first_utc": "2015-01-02T07:00:00+00:00",
+    "last_utc": "2026-08-05T13:00:00+00:00",
+    "official_event_rows": 1020,
+    "feature_contract": {
+      "candidate_count": 19,
+      "required_columns": [
+        "atr_120_pct",
+        "atr_14",
+        "atr_14_pct",
+        "body_pct",
+        "close",
+        "event_blackout",
+        "high",
+        "low",
+        "open",
+        "prior_high_12",
+        "prior_high_24",
+        "prior_high_72",
+        "prior_low_12",
+        "prior_low_24",
+        "prior_low_72",
+        "prior_range_pos_120",
+        "prior_range_pos_72",
+        "recent_event_3h",
+        "recent_event_6h",
+        "ret_120h",
+        "ret_12h",
+        "ret_24h",
+        "ret_6h",
+        "ret_72h",
+        "signal_dow",
+        "signal_hour_utc",
+        "sma_gap_120",
+        "sma_gap_240",
+        "zclose_120",
+        "zclose_72"
+      ],
+      "feature_plan": {
+        "return_lags": [
+          1,
+          3,
+          6,
+          12,
+          24,
+          48,
+          72,
+          120,
+          240
+        ],
+        "rolling_windows": [
+          12,
+          24,
+          72,
+          120,
+          240
+        ]
+      },
+      "pass": true
+    }
+  },
+  "commercial_contract": {
+    "normal_cost_bps": 3.0,
+    "severe_cost_bps": 4.5,
+    "maximum_notional_to_equity": 0.1570396406876166,
+    "maximum_single_year_profit_share_applies_to": "FULL_REFERENCE_PLUS_HOLDOUT_REPLAY",
+    "minimum_strict_replay_cagr_applies_to": "FULL_REFERENCE_PLUS_HOLDOUT_REPLAY"
+  },
+  "candidate_count": 19,
+  "reference_pass_count": 0,
+  "shortlist": [
+    {
+      "key": "range_breakout_48h_72",
+      "family": "range_breakout",
+      "reference_pass": false,
+      "holdout_pass": false,
+      "full_history_pass": false,
+      "final_pass": false
+    },
+    {
+      "key": "volatility_expansion_48h",
+      "family": "volatility_expansion",
+      "reference_pass": false,
+      "holdout_pass": false,
+      "full_history_pass": false,
+      "final_pass": false
+    },
+    {
+      "key": "trend_pullback_24h",
+      "family": "trend_pullback",
+      "reference_pass": false,
+      "holdout_pass": false,
+      "full_history_pass": false,
+      "final_pass": false
+    }
+  ],
+  "holdout_access_lock": "/Users/vahid/Desktop/xauusd-trader/reports/xauusd_successor_parallel_scan/successor_holdout_access_lock.json",
+  "required_next_action": "CHANGE_FORMULATION_FAMILY_OR_DATA_AND_DO_NOT_TUNE_ON_2025_PLUS"
+}
+{
+  "program": "XAUUSD_SUCCESSOR_PARALLEL_SCAN_V1_2_DYNAMIC_FEATURE_CONTRACT_REPAIR",
+  "generated_utc": "2026-08-05T14:45:01.204489Z",
+  "decision": "PASS_SUCCESSOR_SCAN_RESULTS_PACK_CREATED",
+  "pass": true,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false,
+  "output_zip": "/Users/vahid/Downloads/XAUUSD_SUCCESSOR_PARALLEL_SCAN_RESULTS.zip",
+  "sha256": "1b2c406d4553bf7e63f9af8aa095f20d6a0e12f6514681382d29a0024a455f98",
+  "files": 10
+}

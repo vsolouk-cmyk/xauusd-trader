@@ -1,6 +1,6 @@
 #property strict
-#property version   "1.10"
-#property description "XAUUSD bounded demo bridge. Disabled by default. Demo accounts only."
+#property version   "1.20"
+#property description "XAUUSD bounded demo bridge with one-time qualification probe. Disabled by default. Demo only."
 
 #include <Trade/Trade.mqh>
 
@@ -10,6 +10,10 @@ input string InpExpectedSymbol                = "XAUUSD";
 input ulong  InpMagicNumber                   = 1782401;
 input string InpBridgeFolder                  = "XAUUSD_DEMO_BRIDGE";
 input string InpArmingPermitFile               = "arming_permit.txt";
+input string InpQualificationProbePermitFile    = "qualification_probe_permit.txt";
+input string InpQualificationProbeLockdownFile  = "qualification_probe_lockdown.txt";
+input int    InpProbeMinimumExitSeconds          = 60;
+input int    InpProbeMaximumExitSeconds          = 300;
 input int    InpPollSeconds                    = 1;
 input int    InpMaximumSlippagePoints          = 50;
 input double InpNotionalToEquity               = 0.03925991017190415;
@@ -23,7 +27,9 @@ input int    InpMaximumCalendarDays            = 30;
 input int    InpDiagnosticLogSeconds           = 30;
 input bool   InpShowChartStatus                = true;
 
-const string EA_PROGRAM = "XAUUSD_BOUNDED_DEMO_BRIDGE_EA_V1_1_VOLUME_DIAGNOSTIC_LOGGING";
+const string EA_PROGRAM = "XAUUSD_BOUNDED_DEMO_BRIDGE_EA_V1_3_PROBE_ACCOUNTING_REPAIR";
+const string QUALIFICATION_PROBE_CLASS = "QUALIFICATION_PROBE_NOT_ALPHA";
+const string QUALIFICATION_PROBE_PERMIT_SCHEMA = "XAUUSD_DEMO_QUALIFICATION_PROBE_PERMIT_V1";
 const string CANDIDATE_SCHEMA = "XAUUSD_DEMO_CANDIDATE_V1";
 
 CTrade g_trade;
@@ -33,6 +39,7 @@ string g_last_runtime_status="";
 struct Candidate
 {
    string schema_version;
+   string candidate_class;
    string intent_id;
    long   created_epoch;
    long   expires_epoch;
@@ -45,6 +52,7 @@ struct Candidate
    string entry_semantics;
    string exit_semantics;
    int    exit_after_h1_bars;
+   int    probe_exit_after_seconds;
    double notional_to_equity;
    bool   event_guard_pass;
    string event_guard_reason;
@@ -81,6 +89,21 @@ string RuntimeLogPath()
 string ArmingPermitPath()
 {
    return JoinPath(InpBridgeFolder,InpArmingPermitFile);
+}
+
+string QualificationProbePermitPath()
+{
+   return JoinPath(InpBridgeFolder,InpQualificationProbePermitFile);
+}
+
+string QualificationProbeLockdownPath()
+{
+   return JoinPath(InpBridgeFolder,InpQualificationProbeLockdownFile);
+}
+
+string QualificationProbeJournalPath()
+{
+   return JoinPath(InpBridgeFolder,"qualification_probe_journal.tsv");
 }
 
 string ActiveStatePath()
@@ -288,8 +311,8 @@ void WriteHeartbeat(const string status)
 
    string keys[];
    string values[];
-   ArrayResize(keys,35);
-   ArrayResize(values,35);
+   ArrayResize(keys,40);
+   ArrayResize(values,40);
    keys[0]="program"; values[0]=EA_PROGRAM;
    keys[1]="generated_server_time"; values[1]=TimeToString(TimeCurrent(),TIME_DATE|TIME_SECONDS);
    keys[2]="status"; values[2]=status;
@@ -325,10 +348,14 @@ void WriteHeartbeat(const string status)
    keys[32]="allowed_demo_login"; values[32]=IntegerToString(InpAllowedDemoLogin);
    keys[33]="arming_permit_present"; values[33]=FileIsExist(ArmingPermitPath()) ? "true" : "false";
    keys[34]="runtime_log_file"; values[34]=RuntimeLogPath();
+   keys[35]="qualification_probe_supported"; values[35]="true";
+   keys[36]="qualification_probe_permit_present"; values[36]=FileIsExist(QualificationProbePermitPath()) ? "true" : "false";
+   keys[37]="qualification_probe_lockdown_present"; values[37]=FileIsExist(QualificationProbeLockdownPath()) ? "true" : "false";
+   keys[38]="qualification_probe_journal_file"; values[38]=QualificationProbeJournalPath();
+   keys[39]="qualification_probe_class"; values[39]=QUALIFICATION_PROBE_CLASS;
    if(!WriteKeyValueFile(HeartbeatPath(),keys,values))
       Print(EA_PROGRAM," heartbeat write failed error=",GetLastError());
 }
-
 
 bool ParseBool(const string value)
 {
@@ -355,6 +382,7 @@ bool LoadCandidate(Candidate &candidate,string &error)
       string key=StringSubstr(line,0,pos);
       string value=StringSubstr(line,pos+1);
       if(key=="schema_version") candidate.schema_version=value;
+      else if(key=="candidate_class") candidate.candidate_class=value;
       else if(key=="intent_id") candidate.intent_id=value;
       else if(key=="created_epoch") candidate.created_epoch=(long)StringToInteger(value);
       else if(key=="expires_epoch") candidate.expires_epoch=(long)StringToInteger(value);
@@ -367,6 +395,7 @@ bool LoadCandidate(Candidate &candidate,string &error)
       else if(key=="entry_semantics") candidate.entry_semantics=value;
       else if(key=="exit_semantics") candidate.exit_semantics=value;
       else if(key=="exit_after_h1_bars") candidate.exit_after_h1_bars=(int)StringToInteger(value);
+      else if(key=="probe_exit_after_seconds") candidate.probe_exit_after_seconds=(int)StringToInteger(value);
       else if(key=="notional_to_equity") candidate.notional_to_equity=StringToDouble(value);
       else if(key=="event_guard_pass") candidate.event_guard_pass=ParseBool(value);
       else if(key=="event_guard_reason") candidate.event_guard_reason=value;
@@ -379,17 +408,27 @@ bool LoadCandidate(Candidate &candidate,string &error)
    }
    FileClose(handle);
 
+   bool is_probe=(candidate.candidate_class==QUALIFICATION_PROBE_CLASS);
+   bool is_normal=(StringLen(candidate.candidate_class)==0 || candidate.candidate_class=="ALPHA_CANDIDATE");
    if(candidate.schema_version!=CANDIDATE_SCHEMA)
       error="CANDIDATE_SCHEMA_MISMATCH";
+   else if(!is_probe && !is_normal)
+      error="CANDIDATE_CLASS_INVALID";
    else if(StringLen(candidate.intent_id)<1)
       error="CANDIDATE_INTENT_ID_MISSING";
    else if(candidate.symbol!=InpExpectedSymbol || _Symbol!=InpExpectedSymbol)
       error="SYMBOL_MISMATCH";
    else if(candidate.side!="LONG" && candidate.side!="SHORT")
       error="SIDE_INVALID";
-   else if(candidate.entry_semantics!="OPEN_OF_ALIGNED_H1_ROW_I_PLUS_1")
+   else if(is_probe && candidate.entry_semantics!="QUALIFICATION_PROBE_IMMEDIATE_MARKET")
+      error="PROBE_ENTRY_SEMANTICS_MISMATCH";
+   else if(is_probe && (candidate.exit_semantics!="QUALIFICATION_PROBE_SECONDS" || candidate.exit_after_h1_bars!=0))
+      error="PROBE_EXIT_SEMANTICS_MISMATCH";
+   else if(is_probe && (candidate.probe_exit_after_seconds<InpProbeMinimumExitSeconds || candidate.probe_exit_after_seconds>InpProbeMaximumExitSeconds))
+      error="PROBE_EXIT_SECONDS_OUT_OF_BOUNDS";
+   else if(!is_probe && candidate.entry_semantics!="OPEN_OF_ALIGNED_H1_ROW_I_PLUS_1")
       error="ENTRY_SEMANTICS_MISMATCH";
-   else if(candidate.exit_semantics!="CLOSE_OF_ALIGNED_H1_ROW_I_PLUS_24" || candidate.exit_after_h1_bars!=24)
+   else if(!is_probe && (candidate.exit_semantics!="CLOSE_OF_ALIGNED_H1_ROW_I_PLUS_24" || candidate.exit_after_h1_bars!=24))
       error="EXIT_SEMANTICS_MISMATCH";
    else if(candidate.execution_mode!="DEMO_ONLY")
       error="EXECUTION_MODE_NOT_DEMO_ONLY";
@@ -397,7 +436,9 @@ bool LoadCandidate(Candidate &candidate,string &error)
       error="RUNTIME_AUTHORIZATION_NOT_REQUIRED";
    else if(candidate.python_order_authorized)
       error="PYTHON_ORDER_AUTHORIZATION_MUST_BE_FALSE";
-   else if(!candidate.event_guard_pass || candidate.event_guard_reason!="EVENT_CONTEXT_PRESENT_NO_BLOCK")
+   else if(is_probe && (!candidate.event_guard_pass || candidate.event_guard_reason!="QUALIFICATION_PROBE_OFFICIAL_EVENT_GUARD_PASSED"))
+      error="PROBE_EVENT_GUARD_NOT_PASSED";
+   else if(!is_probe && (!candidate.event_guard_pass || candidate.event_guard_reason!="EVENT_CONTEXT_PRESENT_NO_BLOCK"))
       error="EVENT_GUARD_NOT_PASSED";
    else if(candidate.magic_number!=InpMagicNumber)
       error="MAGIC_NUMBER_MISMATCH";
@@ -449,6 +490,174 @@ bool LoadArmingPermit(const Candidate &candidate,string &reason)
    else if(now_utc<=0 || expires_epoch<now_utc) reason="ARMING_PERMIT_EXPIRED";
    else return true;
    return false;
+}
+
+bool IsQualificationProbe(const Candidate &candidate)
+{
+   return candidate.candidate_class==QUALIFICATION_PROBE_CLASS;
+}
+
+bool LoadQualificationProbePermit(const Candidate &candidate,double &maximum_volume,string &reason)
+{
+   maximum_volume=0.0;
+   int handle=FileOpen(QualificationProbePermitPath(),FILE_READ|FILE_TXT|FILE_ANSI);
+   if(handle==INVALID_HANDLE)
+   {
+      reason="QUALIFICATION_PROBE_PERMIT_MISSING";
+      return false;
+   }
+   string schema="";
+   bool authorized=false;
+   string candidate_class="";
+   string intent_id="";
+   long allowed_login=0;
+   ulong magic=0;
+   string symbol="";
+   long expires_epoch=0;
+   string bounded_hash="";
+   int exit_seconds=0;
+   while(!FileIsEnding(handle))
+   {
+      string line=FileReadString(handle);
+      int split=StringFind(line,"=");
+      if(split<=0)
+         continue;
+      string key=StringSubstr(line,0,split);
+      string value=StringSubstr(line,split+1);
+      if(key=="schema_version") schema=value;
+      else if(key=="authorized") authorized=ParseBool(value);
+      else if(key=="candidate_class") candidate_class=value;
+      else if(key=="intent_id") intent_id=value;
+      else if(key=="allowed_demo_login") allowed_login=(long)StringToInteger(value);
+      else if(key=="magic_number") magic=(ulong)StringToInteger(value);
+      else if(key=="symbol") symbol=value;
+      else if(key=="expires_epoch") expires_epoch=(long)StringToInteger(value);
+      else if(key=="bounded_preflight_sha256") bounded_hash=value;
+      else if(key=="probe_exit_after_seconds") exit_seconds=(int)StringToInteger(value);
+      else if(key=="maximum_volume") maximum_volume=StringToDouble(value);
+   }
+   FileClose(handle);
+   datetime now_utc=TimeGMT();
+   if(schema!=QUALIFICATION_PROBE_PERMIT_SCHEMA) reason="QUALIFICATION_PROBE_PERMIT_SCHEMA_MISMATCH";
+   else if(!authorized) reason="QUALIFICATION_PROBE_PERMIT_NOT_AUTHORIZED";
+   else if(candidate_class!=QUALIFICATION_PROBE_CLASS) reason="QUALIFICATION_PROBE_CLASS_MISMATCH";
+   else if(intent_id!=candidate.intent_id) reason="QUALIFICATION_PROBE_INTENT_MISMATCH";
+   else if(allowed_login<=0 || allowed_login!=InpAllowedDemoLogin || allowed_login!=AccountInfoInteger(ACCOUNT_LOGIN)) reason="QUALIFICATION_PROBE_LOGIN_MISMATCH";
+   else if(magic!=InpMagicNumber || magic!=candidate.magic_number) reason="QUALIFICATION_PROBE_MAGIC_MISMATCH";
+   else if(symbol!=InpExpectedSymbol || symbol!=candidate.symbol) reason="QUALIFICATION_PROBE_SYMBOL_MISMATCH";
+   else if(bounded_hash!=candidate.bounded_preflight_sha256) reason="QUALIFICATION_PROBE_PREFLIGHT_HASH_MISMATCH";
+   else if(exit_seconds!=candidate.probe_exit_after_seconds) reason="QUALIFICATION_PROBE_EXIT_MISMATCH";
+   else if(maximum_volume<=0.0) reason="QUALIFICATION_PROBE_MAXIMUM_VOLUME_INVALID";
+   else if(now_utc<=0 || expires_epoch<now_utc) reason="QUALIFICATION_PROBE_PERMIT_EXPIRED";
+   else return true;
+   return false;
+}
+
+bool AppendQualificationProbeJournal(const string event_name,const string intent_id,const string reason,const ulong order_ticket,const ulong deal_ticket,const ulong position_ticket,const double requested_price,const double fill_price,const double volume,const double spread_bps,const double slippage_bps,const double profit,const double commission,const double swap,const double fee)
+{
+   bool exists=FileIsExist(QualificationProbeJournalPath());
+   int handle=FileOpen(QualificationProbeJournalPath(),FILE_READ|FILE_WRITE|FILE_TXT|FILE_ANSI|FILE_SHARE_READ);
+   if(handle==INVALID_HANDLE)
+      handle=FileOpen(QualificationProbeJournalPath(),FILE_WRITE|FILE_TXT|FILE_ANSI|FILE_SHARE_READ);
+   if(handle==INVALID_HANDLE)
+      return false;
+   FileSeek(handle,0,SEEK_END);
+   if(!exists)
+      FileWriteString(handle,"server_time\tevent\tintent_id\treason\taccount_trade_mode\taccount_login\tsymbol\tmagic_number\torder_ticket\tdeal_ticket\tposition_ticket\trequested_price\tfill_price\tvolume\tspread_bps\tslippage_bps\tprofit\tcommission\tswap\tfee\tretcode\tretcode_description\n");
+   string line=TimeToString(TimeCurrent(),TIME_DATE|TIME_SECONDS)+"\t"+event_name+"\t"+intent_id+"\t"+reason+"\t"+TradeModeName()+"\t"+IntegerToString((long)AccountInfoInteger(ACCOUNT_LOGIN))+"\t"+_Symbol+"\t"+IntegerToString((long)InpMagicNumber)+"\t"+IntegerToString((long)order_ticket)+"\t"+IntegerToString((long)deal_ticket)+"\t"+IntegerToString((long)position_ticket)+"\t"+DoubleToString(requested_price,_Digits)+"\t"+DoubleToString(fill_price,_Digits)+"\t"+DoubleToString(volume,8)+"\t"+DoubleToString(spread_bps,12)+"\t"+DoubleToString(slippage_bps,12)+"\t"+DoubleToString(profit,8)+"\t"+DoubleToString(commission,8)+"\t"+DoubleToString(swap,8)+"\t"+DoubleToString(fee,8)+"\t"+IntegerToString((long)g_trade.ResultRetcode())+"\t"+g_trade.ResultRetcodeDescription()+"\n";
+   FileWriteString(handle,line);
+   FileFlush(handle);
+   FileClose(handle);
+   return true;
+}
+
+bool ReadDealAccountingWithRetry(const ulong deal_ticket,const long history_start_epoch,double &deal_price,double &profit,double &commission,double &swap,double &fee)
+{
+   deal_price=0.0;
+   profit=0.0;
+   commission=0.0;
+   swap=0.0;
+   fee=0.0;
+   if(deal_ticket==0)
+      return false;
+   for(int attempt=0;attempt<10;attempt++)
+   {
+      ResetLastError();
+      datetime history_from=(datetime)MathMax(0,history_start_epoch-60);
+      datetime history_to=TimeCurrent()+60;
+      if(HistorySelect(history_from,history_to) && HistoryDealSelect(deal_ticket))
+      {
+         deal_price=HistoryDealGetDouble(deal_ticket,DEAL_PRICE);
+         profit=HistoryDealGetDouble(deal_ticket,DEAL_PROFIT);
+         commission=HistoryDealGetDouble(deal_ticket,DEAL_COMMISSION);
+         swap=HistoryDealGetDouble(deal_ticket,DEAL_SWAP);
+         fee=HistoryDealGetDouble(deal_ticket,DEAL_FEE);
+         return deal_price>0.0;
+      }
+      Sleep(100);
+   }
+   Print(EA_PROGRAM," terminal deal accounting unavailable deal=",deal_ticket," error=",GetLastError());
+   return false;
+}
+
+double ExitRequestedPrice(const ulong position_ticket,ENUM_POSITION_TYPE &position_type)
+{
+   position_type=POSITION_TYPE_BUY;
+   if(position_ticket==0 || !PositionSelectByTicket(position_ticket))
+      return 0.0;
+   position_type=(ENUM_POSITION_TYPE)PositionGetInteger(POSITION_TYPE);
+   if(position_type==POSITION_TYPE_BUY)
+      return SymbolInfoDouble(_Symbol,SYMBOL_BID);
+   return SymbolInfoDouble(_Symbol,SYMBOL_ASK);
+}
+
+double ExitAdverseSlippageBps(const ENUM_POSITION_TYPE position_type,const double requested_price,const double fill_price)
+{
+   if(requested_price<=0.0 || fill_price<=0.0)
+      return 0.0;
+   if(position_type==POSITION_TYPE_BUY)
+      return (requested_price-fill_price)/requested_price*10000.0;
+   return (fill_price-requested_price)/requested_price*10000.0;
+}
+
+bool WriteQualificationProbeLockdown(const string intent_id,const string status,const string reason)
+{
+   string keys[];
+   string values[];
+   ArrayResize(keys,7);
+   ArrayResize(values,7);
+   keys[0]="schema_version"; values[0]="XAUUSD_DEMO_QUALIFICATION_PROBE_LOCKDOWN_V1";
+   keys[1]="intent_id"; values[1]=intent_id;
+   keys[2]="status"; values[2]=status;
+   keys[3]="reason"; values[3]=reason;
+   keys[4]="server_time"; values[4]=TimeToString(TimeCurrent(),TIME_DATE|TIME_SECONDS);
+   keys[5]="account_login"; values[5]=IntegerToString((long)AccountInfoInteger(ACCOUNT_LOGIN));
+   keys[6]="live_order_allowed"; values[6]="false";
+   return WriteKeyValueFile(QualificationProbeLockdownPath(),keys,values);
+}
+
+void ConsumeQualificationProbePermit()
+{
+   if(FileIsExist(QualificationProbePermitPath()))
+      FileDelete(QualificationProbePermitPath());
+}
+
+void RecordDuplicateBlockedOnce(const string intent_id)
+{
+   string marker=JoinPath(ReceiptFolder(),SafeIntentId(intent_id)+"_DUPLICATE_BLOCKED.txt");
+   if(FileIsExist(marker))
+      return;
+   string keys[];
+   string values[];
+   ArrayResize(keys,5);
+   ArrayResize(values,5);
+   keys[0]="intent_id"; values[0]=intent_id;
+   keys[1]="event"; values[1]="DUPLICATE_BLOCKED";
+   keys[2]="reason"; values[2]="RECEIPT_EXISTS_IDEMPOTENCY_GUARD";
+   keys[3]="server_time"; values[3]=TimeToString(TimeCurrent(),TIME_DATE|TIME_SECONDS);
+   keys[4]="live_order_allowed"; values[4]="false";
+   WriteKeyValueFile(marker,keys,values);
+   AppendQualificationProbeJournal("DUPLICATE_BLOCKED",intent_id,"RECEIPT_EXISTS_IDEMPOTENCY_GUARD",0,0,0,0.0,0.0,0.0,SpreadBps(),0.0,0.0,0.0,0.0,0.0);
 }
 
 void WriteReceipt(const string intent_id,const string status,const string reason,const ulong order_ticket,const ulong deal_ticket,const double requested_price,const double fill_price,const double volume,const double spread_bps,const long exit_epoch)
@@ -699,22 +908,31 @@ bool ComputeTargetVolume(const Candidate &candidate,const double price,double &v
    return true;
 }
 
-bool SaveActiveState(const Candidate &candidate,const ulong position_ticket,const long entry_h1_server_epoch)
+bool SaveActiveState(const Candidate &candidate,const ulong position_ticket,const long entry_h1_server_epoch,const ulong order_ticket,const ulong deal_ticket,const double requested_price,const double fill_price,const double volume,const double entry_spread_bps)
 {
    string keys[];
    string values[];
-   ArrayResize(keys,6);
-   ArrayResize(values,6);
+   ArrayResize(keys,15);
+   ArrayResize(values,15);
    keys[0]="intent_id"; values[0]=candidate.intent_id;
    keys[1]="position_ticket"; values[1]=IntegerToString((long)position_ticket);
    keys[2]="target_exit_epoch"; values[2]=IntegerToString(candidate.target_exit_epoch);
    keys[3]="side"; values[3]=candidate.side;
    keys[4]="entry_h1_epoch"; values[4]=IntegerToString(entry_h1_server_epoch);
    keys[5]="exit_after_h1_bars"; values[5]=IntegerToString(candidate.exit_after_h1_bars);
+   keys[6]="candidate_class"; values[6]=candidate.candidate_class;
+   keys[7]="probe_exit_after_seconds"; values[7]=IntegerToString(candidate.probe_exit_after_seconds);
+   keys[8]="entry_server_epoch"; values[8]=IntegerToString((long)TimeCurrent());
+   keys[9]="entry_order_ticket"; values[9]=IntegerToString((long)order_ticket);
+   keys[10]="entry_deal_ticket"; values[10]=IntegerToString((long)deal_ticket);
+   keys[11]="requested_price"; values[11]=DoubleToString(requested_price,_Digits);
+   keys[12]="entry_fill_price"; values[12]=DoubleToString(fill_price,_Digits);
+   keys[13]="volume"; values[13]=DoubleToString(volume,8);
+   keys[14]="entry_spread_bps"; values[14]=DoubleToString(entry_spread_bps,12);
    return WriteKeyValueFile(ActiveStatePath(),keys,values);
 }
 
-bool LoadActiveState(string &intent_id,ulong &ticket,long &exit_epoch,long &entry_h1_epoch,int &exit_after_h1_bars)
+bool LoadActiveState(string &intent_id,ulong &ticket,long &exit_epoch,long &entry_h1_epoch,int &exit_after_h1_bars,string &candidate_class,int &probe_exit_after_seconds,long &entry_server_epoch,ulong &entry_order_ticket,ulong &entry_deal_ticket,double &requested_price,double &entry_fill_price,double &volume,double &entry_spread_bps)
 {
    int handle=FileOpen(ActiveStatePath(),FILE_READ|FILE_TXT|FILE_ANSI);
    if(handle==INVALID_HANDLE)
@@ -732,6 +950,15 @@ bool LoadActiveState(string &intent_id,ulong &ticket,long &exit_epoch,long &entr
       else if(key=="target_exit_epoch") exit_epoch=(long)StringToInteger(value);
       else if(key=="entry_h1_epoch") entry_h1_epoch=(long)StringToInteger(value);
       else if(key=="exit_after_h1_bars") exit_after_h1_bars=(int)StringToInteger(value);
+      else if(key=="candidate_class") candidate_class=value;
+      else if(key=="probe_exit_after_seconds") probe_exit_after_seconds=(int)StringToInteger(value);
+      else if(key=="entry_server_epoch") entry_server_epoch=(long)StringToInteger(value);
+      else if(key=="entry_order_ticket") entry_order_ticket=(ulong)StringToInteger(value);
+      else if(key=="entry_deal_ticket") entry_deal_ticket=(ulong)StringToInteger(value);
+      else if(key=="requested_price") requested_price=StringToDouble(value);
+      else if(key=="entry_fill_price") entry_fill_price=StringToDouble(value);
+      else if(key=="volume") volume=StringToDouble(value);
+      else if(key=="entry_spread_bps") entry_spread_bps=StringToDouble(value);
    }
    FileClose(handle);
    return StringLen(intent_id)>0;
@@ -744,27 +971,70 @@ void ProcessActivePosition()
    long exit_epoch=0;
    long entry_h1_epoch=0;
    int exit_after_h1_bars=24;
-   if(!LoadActiveState(intent_id,ticket,exit_epoch,entry_h1_epoch,exit_after_h1_bars))
+   string candidate_class="";
+   int probe_exit_after_seconds=0;
+   long entry_server_epoch=0;
+   ulong entry_order_ticket=0;
+   ulong entry_deal_ticket=0;
+   double requested_price=0.0;
+   double entry_fill_price=0.0;
+   double volume=0.0;
+   double entry_spread_bps=0.0;
+   if(!LoadActiveState(intent_id,ticket,exit_epoch,entry_h1_epoch,exit_after_h1_bars,candidate_class,probe_exit_after_seconds,entry_server_epoch,entry_order_ticket,entry_deal_ticket,requested_price,entry_fill_price,volume,entry_spread_bps))
       return;
 
+   bool is_probe=(candidate_class==QUALIFICATION_PROBE_CLASS);
    string risk_reason="";
    if(RiskPauseOrKill(risk_reason) && risk_reason=="HARD_DRAWDOWN_KILL")
    {
       if(CloseBridgePosition(risk_reason))
       {
-         WriteReceipt(intent_id,"EMERGENCY_FLAT",risk_reason,0,0,0.0,g_trade.ResultPrice(),0.0,SpreadBps(),exit_epoch);
+         ulong exit_deal=g_trade.ResultDeal();
+         WriteReceipt(intent_id,"EMERGENCY_FLAT",risk_reason,g_trade.ResultOrder(),exit_deal,0.0,g_trade.ResultPrice(),volume,SpreadBps(),exit_epoch);
+         if(is_probe)
+         {
+            AppendQualificationProbeJournal("EMERGENCY_FLAT",intent_id,risk_reason,g_trade.ResultOrder(),exit_deal,ticket,0.0,g_trade.ResultPrice(),volume,SpreadBps(),0.0,0.0,0.0,0.0,0.0);
+            WriteQualificationProbeLockdown(intent_id,"EMERGENCY_FLAT",risk_reason);
+         }
          FileDelete(ActiveStatePath());
       }
       return;
    }
 
-   int entry_shift=iBarShift(_Symbol,PERIOD_H1,(datetime)entry_h1_epoch,true);
-   bool bar_horizon_reached=(entry_shift>=exit_after_h1_bars);
-   if(bar_horizon_reached)
+   bool exit_reached=false;
+   string exit_reason="";
+   if(is_probe)
    {
-      if(CloseBridgePosition("TIME_EXIT_I_PLUS_24"))
+      exit_reached=(probe_exit_after_seconds>=InpProbeMinimumExitSeconds && TimeCurrent()>=entry_server_epoch+probe_exit_after_seconds);
+      exit_reason="QUALIFICATION_PROBE_TIME_EXIT";
+   }
+   else
+   {
+      int entry_shift=iBarShift(_Symbol,PERIOD_H1,(datetime)entry_h1_epoch,true);
+      exit_reached=(entry_shift>=exit_after_h1_bars);
+      exit_reason="TIME_EXIT_I_PLUS_24";
+   }
+   if(exit_reached)
+   {
+      ENUM_POSITION_TYPE position_type=POSITION_TYPE_BUY;
+      double requested_exit_price=ExitRequestedPrice(ticket,position_type);
+      if(CloseBridgePosition(exit_reason))
       {
-         WriteReceipt(intent_id,"RESOLVED","TIME_EXIT_I_PLUS_24",0,0,0.0,g_trade.ResultPrice(),0.0,SpreadBps(),exit_epoch);
+         ulong exit_deal=g_trade.ResultDeal();
+         double fill_price=g_trade.ResultPrice();
+         double history_fill_price=0.0;
+         double profit=0.0,commission=0.0,swap=0.0,fee=0.0;
+         bool accounting_ready=ReadDealAccountingWithRetry(exit_deal,entry_server_epoch,history_fill_price,profit,commission,swap,fee);
+         if(accounting_ready && history_fill_price>0.0)
+            fill_price=history_fill_price;
+         double exit_slippage_bps=ExitAdverseSlippageBps(position_type,requested_exit_price,fill_price);
+         WriteReceipt(intent_id,"RESOLVED",exit_reason,g_trade.ResultOrder(),exit_deal,requested_exit_price,fill_price,volume,SpreadBps(),exit_epoch);
+         if(is_probe)
+         {
+            RecordDuplicateBlockedOnce(intent_id);
+            AppendQualificationProbeJournal("RESOLVED",intent_id,exit_reason,g_trade.ResultOrder(),exit_deal,ticket,requested_exit_price,fill_price,volume,SpreadBps(),exit_slippage_bps,profit,commission,swap,fee);
+            WriteQualificationProbeLockdown(intent_id,"RESOLVED",exit_reason);
+         }
          FileDelete(ActiveStatePath());
       }
    }
@@ -774,6 +1044,12 @@ void RejectCandidate(const Candidate &candidate,const string reason,const double
 {
    if(StringLen(candidate.intent_id)>0 && !ReceiptExists(candidate.intent_id))
       WriteReceipt(candidate.intent_id,"REJECTED",reason,0,0,0.0,0.0,0.0,spread_bps,candidate.target_exit_epoch);
+   if(IsQualificationProbe(candidate))
+   {
+      ConsumeQualificationProbePermit();
+      AppendQualificationProbeJournal("REJECTED",candidate.intent_id,reason,0,0,0,0.0,0.0,0.0,spread_bps,0.0,0.0,0.0,0.0,0.0);
+      WriteQualificationProbeLockdown(candidate.intent_id,"REJECTED",reason);
+   }
    Print(EA_PROGRAM," candidate rejected intent=",candidate.intent_id," reason=",reason);
 }
 
@@ -788,8 +1064,18 @@ void ProcessCandidate()
          RejectCandidate(candidate,error,-1.0);
       return;
    }
+   bool is_probe=IsQualificationProbe(candidate);
    if(ReceiptExists(candidate.intent_id))
+   {
+      if(is_probe)
+         RecordDuplicateBlockedOnce(candidate.intent_id);
       return;
+   }
+   if(FileIsExist(QualificationProbeLockdownPath()))
+   {
+      RejectCandidate(candidate,"QUALIFICATION_PROBE_LOCKDOWN_ACTIVE",-1.0);
+      return;
+   }
    if(!InpArmed)
       return;
    if(AccountInfoInteger(ACCOUNT_TRADE_MODE)!=ACCOUNT_TRADE_MODE_DEMO)
@@ -804,6 +1090,12 @@ void ProcessCandidate()
    }
    string permit_reason="";
    if(!LoadArmingPermit(candidate,permit_reason))
+   {
+      RejectCandidate(candidate,permit_reason,-1.0);
+      return;
+   }
+   double probe_maximum_volume=0.0;
+   if(is_probe && !LoadQualificationProbePermit(candidate,probe_maximum_volume,permit_reason))
    {
       RejectCandidate(candidate,permit_reason,-1.0);
       return;
@@ -874,17 +1166,31 @@ void ProcessCandidate()
       RejectCandidate(candidate,volume_reason,spread_bps);
       return;
    }
+   if(is_probe && volume>probe_maximum_volume+1e-12)
+   {
+      RejectCandidate(candidate,"QUALIFICATION_PROBE_VOLUME_EXCEEDS_PERMIT",spread_bps);
+      return;
+   }
 
    g_trade.SetExpertMagicNumber(InpMagicNumber);
    g_trade.SetDeviationInPoints(InpMaximumSlippagePoints);
    g_trade.SetTypeFillingBySymbol(_Symbol);
-   string comment="XAUUSD_BD_"+StringSubstr(candidate.intent_id,0,18);
+   string comment=(is_probe ? "XAU_QP_" : "XAUUSD_BD_")+StringSubstr(candidate.intent_id,0,18);
+   if(is_probe)
+      AppendQualificationProbeJournal("ORDER_SUBMIT_ATTEMPT",candidate.intent_id,"RUNTIME_GUARDS_PASSED",0,0,0,requested_price,0.0,volume,spread_bps,0.0,0.0,0.0,0.0,0.0);
    bool ok=(candidate.side=="LONG")
       ? g_trade.Buy(volume,_Symbol,0.0,0.0,0.0,comment)
       : g_trade.Sell(volume,_Symbol,0.0,0.0,0.0,comment);
+   if(is_probe)
+      ConsumeQualificationProbePermit();
    if(!ok)
    {
       WriteReceipt(candidate.intent_id,"REJECTED","ORDER_SEND_FAILED",g_trade.ResultOrder(),g_trade.ResultDeal(),requested_price,g_trade.ResultPrice(),volume,spread_bps,candidate.target_exit_epoch);
+      if(is_probe)
+      {
+         AppendQualificationProbeJournal("REJECTED",candidate.intent_id,"ORDER_SEND_FAILED",g_trade.ResultOrder(),g_trade.ResultDeal(),0,requested_price,g_trade.ResultPrice(),volume,spread_bps,0.0,0.0,0.0,0.0,0.0);
+         WriteQualificationProbeLockdown(candidate.intent_id,"REJECTED","ORDER_SEND_FAILED");
+      }
       return;
    }
 
@@ -895,10 +1201,42 @@ void ProcessCandidate()
    {
       CloseBridgePosition("ENTRY_H1_SERVER_TIME_UNAVAILABLE");
       WriteReceipt(candidate.intent_id,"EMERGENCY_FLAT","ENTRY_H1_SERVER_TIME_UNAVAILABLE",g_trade.ResultOrder(),g_trade.ResultDeal(),requested_price,g_trade.ResultPrice(),volume,spread_bps,candidate.target_exit_epoch);
+      if(is_probe)
+      {
+         AppendQualificationProbeJournal("EMERGENCY_FLAT",candidate.intent_id,"ENTRY_H1_SERVER_TIME_UNAVAILABLE",g_trade.ResultOrder(),g_trade.ResultDeal(),position_ticket,requested_price,g_trade.ResultPrice(),volume,spread_bps,0.0,0.0,0.0,0.0,0.0);
+         WriteQualificationProbeLockdown(candidate.intent_id,"EMERGENCY_FLAT","ENTRY_H1_SERVER_TIME_UNAVAILABLE");
+      }
       return;
    }
-   SaveActiveState(candidate,position_ticket,entry_h1_server_epoch);
-   WriteReceipt(candidate.intent_id,"OPEN_FILLED","RUNTIME_GUARDS_PASSED",g_trade.ResultOrder(),g_trade.ResultDeal(),requested_price,g_trade.ResultPrice(),volume,spread_bps,candidate.target_exit_epoch);
+   double fill_price=g_trade.ResultPrice();
+   double slippage_bps=0.0;
+   if(requested_price>0.0)
+      slippage_bps=(candidate.side=="LONG" ? (fill_price-requested_price) : (requested_price-fill_price))/requested_price*10000.0;
+   if(!SaveActiveState(candidate,position_ticket,entry_h1_server_epoch,g_trade.ResultOrder(),g_trade.ResultDeal(),requested_price,fill_price,volume,spread_bps))
+   {
+      CloseBridgePosition("ACTIVE_STATE_WRITE_FAILED");
+      WriteReceipt(candidate.intent_id,"EMERGENCY_FLAT","ACTIVE_STATE_WRITE_FAILED",g_trade.ResultOrder(),g_trade.ResultDeal(),requested_price,fill_price,volume,spread_bps,candidate.target_exit_epoch);
+      if(is_probe)
+      {
+         AppendQualificationProbeJournal("EMERGENCY_FLAT",candidate.intent_id,"ACTIVE_STATE_WRITE_FAILED",g_trade.ResultOrder(),g_trade.ResultDeal(),position_ticket,requested_price,fill_price,volume,spread_bps,slippage_bps,0.0,0.0,0.0,0.0);
+         WriteQualificationProbeLockdown(candidate.intent_id,"EMERGENCY_FLAT","ACTIVE_STATE_WRITE_FAILED");
+      }
+      return;
+   }
+   WriteReceipt(candidate.intent_id,"OPEN_FILLED","RUNTIME_GUARDS_PASSED",g_trade.ResultOrder(),g_trade.ResultDeal(),requested_price,fill_price,volume,spread_bps,candidate.target_exit_epoch);
+   if(is_probe)
+   {
+      double entry_commission=0.0,entry_swap=0.0,entry_fee=0.0;
+      ulong entry_deal=g_trade.ResultDeal();
+      HistorySelect(TimeCurrent()-60,TimeCurrent());
+      if(entry_deal>0)
+      {
+         entry_commission=HistoryDealGetDouble(entry_deal,DEAL_COMMISSION);
+         entry_swap=HistoryDealGetDouble(entry_deal,DEAL_SWAP);
+         entry_fee=HistoryDealGetDouble(entry_deal,DEAL_FEE);
+      }
+      AppendQualificationProbeJournal("OPEN_FILLED",candidate.intent_id,"RUNTIME_GUARDS_PASSED",g_trade.ResultOrder(),entry_deal,position_ticket,requested_price,fill_price,volume,spread_bps,slippage_bps,0.0,entry_commission,entry_swap,entry_fee);
+   }
 }
 
 int OnInit()
@@ -940,8 +1278,12 @@ void OnTimer()
       LogRuntimeStatus(status,false);
       return;
    }
+   ProcessActivePosition();
+   if(InpArmed && FileIsExist(QualificationProbeLockdownPath()))
+      status="QUALIFICATION_PROBE_COMPLETE_MANUAL_DISARM_REQUIRED";
    WriteHeartbeat(status);
    LogRuntimeStatus(status,false);
-   ProcessActivePosition();
+   if(!InpArmed || status=="QUALIFICATION_PROBE_COMPLETE_MANUAL_DISARM_REQUIRED")
+      return;
    ProcessCandidate();
 }

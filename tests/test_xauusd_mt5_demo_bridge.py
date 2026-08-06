@@ -230,7 +230,7 @@ class BridgeTests(unittest.TestCase):
         folder.mkdir()
         (folder / "bridge_heartbeat.txt").write_text(
             "\n".join([
-                "program=XAUUSD_BOUNDED_DEMO_BRIDGE_EA_V1_1_VOLUME_DIAGNOSTIC_LOGGING",
+                "program=XAUUSD_BOUNDED_DEMO_BRIDGE_EA_V1_3_PROBE_ACCOUNTING_REPAIR",
                 "status=DISABLED_DEFAULT_NO_ORDER",
                 "armed=false",
                 "account_trade_mode=DEMO",
@@ -273,7 +273,7 @@ class BridgeTests(unittest.TestCase):
         folder.mkdir()
         (folder / "bridge_heartbeat.txt").write_text(
             "\n".join([
-                "program=XAUUSD_BOUNDED_DEMO_BRIDGE_EA_V1_1_VOLUME_DIAGNOSTIC_LOGGING",
+                "program=XAUUSD_BOUNDED_DEMO_BRIDGE_EA_V1_3_PROBE_ACCOUNTING_REPAIR",
                 "status=DISABLED_DEFAULT_NO_ORDER",
                 "armed=false",
                 "account_trade_mode=DEMO",
@@ -352,7 +352,7 @@ class BridgeTests(unittest.TestCase):
             "QUALIFICATION_BOUND_REACHED",
         ):
             self.assertIn(token, text)
-        self.assertIn("XAUUSD_BOUNDED_DEMO_BRIDGE_EA_V1_1_VOLUME_DIAGNOSTIC_LOGGING", text)
+        self.assertIn("XAUUSD_BOUNDED_DEMO_BRIDGE_EA_V1_3_PROBE_ACCOUNTING_REPAIR", text)
         self.assertNotIn("WebRequest(", text)
         self.assertIn("if(InpArmed)\n      InitializeRiskState();", text)
         self.assertIn("close blocked: account is not DEMO", text)

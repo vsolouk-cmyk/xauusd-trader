@@ -1,0 +1,178 @@
+{
+  "alignment_db": "data/local/stage177c_amarkets_alignment/xauusd_amarkets_alignment.sqlite",
+  "event_db": "data/local/historical_event_context/xauusd_historical_event_context.sqlite",
+  "time_contract": "reports/stage177c_amarkets_dst_contract/stage177c_time_contract.json",
+  "h1_table": "amarkets_h1_from_m5_utc",
+  "minimum_m5_bar_count": 12,
+  "reference_start": "2015-01-02T07:00:00Z",
+  "holdout_start": "2025-01-01T00:00:00Z",
+  "normal_cost_bps": 3.0,
+  "severe_cost_bps": 4.5,
+  "maximum_notional_to_equity": 0.1570396406876166,
+  "shortlist_size": 3,
+  "bootstrap": {
+    "block_length": 5,
+    "replications": 4000,
+    "random_state": 178001
+  },
+  "reference_folds": [
+    {"name": "REF_2015_2016", "start": "2015-01-02T07:00:00Z", "end": "2017-01-01T00:00:00Z"},
+    {"name": "REF_2017_2018", "start": "2017-01-01T00:00:00Z", "end": "2019-01-01T00:00:00Z"},
+    {"name": "REF_2019_2020", "start": "2019-01-01T00:00:00Z", "end": "2021-01-01T00:00:00Z"},
+    {"name": "REF_2021_2022", "start": "2021-01-01T00:00:00Z", "end": "2023-01-01T00:00:00Z"},
+    {"name": "REF_2023_2024", "start": "2023-01-01T00:00:00Z", "end": "2025-01-01T00:00:00Z"}
+  ],
+  "reference_gates": {
+    "minimum_trades": 40,
+    "minimum_severe_mean_bps": 0.0,
+    "minimum_profit_factor": 1.15,
+    "minimum_bootstrap_p10_bps": 0.0,
+    "minimum_positive_fold_share": 0.6,
+    "minimum_strict_replay_cagr": 0.02
+  },
+  "holdout_gates": {
+    "minimum_trades": 12,
+    "minimum_severe_mean_bps": 0.0,
+    "minimum_profit_factor": 1.30,
+    "minimum_bootstrap_p10_bps": 0.0
+  },
+  "full_history_gates": {
+    "maximum_single_year_profit_share": 0.40,
+    "minimum_strict_replay_cagr": 0.02
+  },
+  "candidates": [
+    {
+      "key": "trend_continuation_12h_fast",
+      "family": "trend_continuation",
+      "horizon_hours": 12,
+      "event_policy": "blackout",
+      "parameters": {"lookback_hours": 24, "trend_window": 120, "minimum_move": 0.0030}
+    },
+    {
+      "key": "trend_continuation_48h_medium",
+      "family": "trend_continuation",
+      "horizon_hours": 48,
+      "event_policy": "blackout",
+      "parameters": {"lookback_hours": 72, "trend_window": 240, "minimum_move": 0.0060}
+    },
+    {
+      "key": "trend_continuation_72h_slow",
+      "family": "trend_continuation",
+      "horizon_hours": 72,
+      "event_policy": "blackout",
+      "parameters": {"lookback_hours": 120, "trend_window": 240, "minimum_move": 0.0080}
+    },
+    {
+      "key": "trend_pullback_24h",
+      "family": "trend_pullback",
+      "horizon_hours": 24,
+      "event_policy": "blackout",
+      "parameters": {"trend_window": 240, "pullback_hours": 6, "maximum_pullback": 0.0040}
+    },
+    {
+      "key": "trend_pullback_48h",
+      "family": "trend_pullback",
+      "horizon_hours": 48,
+      "event_policy": "blackout",
+      "parameters": {"trend_window": 240, "pullback_hours": 12, "maximum_pullback": 0.0060}
+    },
+    {
+      "key": "range_breakout_12h_24",
+      "family": "range_breakout",
+      "horizon_hours": 12,
+      "event_policy": "blackout",
+      "parameters": {"range_window": 24, "buffer_atr": 0.05}
+    },
+    {
+      "key": "range_breakout_48h_72",
+      "family": "range_breakout",
+      "horizon_hours": 48,
+      "event_policy": "blackout",
+      "parameters": {"range_window": 72, "buffer_atr": 0.10}
+    },
+    {
+      "key": "volatility_expansion_12h",
+      "family": "volatility_expansion",
+      "horizon_hours": 12,
+      "event_policy": "blackout",
+      "parameters": {"range_atr_multiple": 1.60, "trend_window": 120}
+    },
+    {
+      "key": "volatility_expansion_48h",
+      "family": "volatility_expansion",
+      "horizon_hours": 48,
+      "event_policy": "blackout",
+      "parameters": {"range_atr_multiple": 1.80, "trend_window": 240}
+    },
+    {
+      "key": "low_vol_range_reversion_12h",
+      "family": "low_vol_range_reversion",
+      "horizon_hours": 12,
+      "event_policy": "blackout",
+      "parameters": {"range_window": 72, "edge_fraction": 0.10, "atr_ratio": 0.80}
+    },
+    {
+      "key": "low_vol_range_reversion_24h",
+      "family": "low_vol_range_reversion",
+      "horizon_hours": 24,
+      "event_policy": "blackout",
+      "parameters": {"range_window": 120, "edge_fraction": 0.08, "atr_ratio": 0.75}
+    },
+    {
+      "key": "zscore_reversion_12h",
+      "family": "zscore_reversion",
+      "horizon_hours": 12,
+      "event_policy": "blackout",
+      "parameters": {"window": 72, "z_threshold": 1.75}
+    },
+    {
+      "key": "zscore_reversion_24h",
+      "family": "zscore_reversion",
+      "horizon_hours": 24,
+      "event_policy": "blackout",
+      "parameters": {"window": 120, "z_threshold": 2.00}
+    },
+    {
+      "key": "failed_breakout_reversion_12h",
+      "family": "failed_breakout_reversion",
+      "horizon_hours": 12,
+      "event_policy": "blackout",
+      "parameters": {"range_window": 24}
+    },
+    {
+      "key": "post_event_momentum_12h",
+      "family": "post_event_momentum",
+      "horizon_hours": 12,
+      "event_policy": "require_recent",
+      "parameters": {"event_window_hours": 3, "minimum_atr_move": 0.60}
+    },
+    {
+      "key": "post_event_momentum_24h",
+      "family": "post_event_momentum",
+      "horizon_hours": 24,
+      "event_policy": "require_recent",
+      "parameters": {"event_window_hours": 6, "minimum_atr_move": 0.75}
+    },
+    {
+      "key": "post_event_breakout_24h",
+      "family": "post_event_breakout",
+      "horizon_hours": 24,
+      "event_policy": "require_recent",
+      "parameters": {"event_window_hours": 6, "range_window": 24}
+    },
+    {
+      "key": "london_window_breakout_12h",
+      "family": "session_breakout",
+      "horizon_hours": 12,
+      "event_policy": "blackout",
+      "parameters": {"start_hour_utc": 6, "end_hour_utc": 9, "range_window": 12}
+    },
+    {
+      "key": "new_york_window_breakout_12h",
+      "family": "session_breakout",
+      "horizon_hours": 12,
+      "event_policy": "blackout",
+      "parameters": {"start_hour_utc": 13, "end_hour_utc": 16, "range_window": 12}
+    }
+  ]
+}

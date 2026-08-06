@@ -1,0 +1,19 @@
+{
+  "bridge_armed": false,
+  "current_order_allowed": false,
+  "decision": "PASS_QUALIFICATION_PROBE_CLEANUP_DISABLED_NO_ORDER",
+  "generated_utc": "2026-08-05T13:27:48.245944Z",
+  "live_order_allowed": false,
+  "pass": true,
+  "program": "XAUUSD_MT5_DEMO_QUALIFICATION_PROBE_V1_1",
+  "removed": [
+    "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/XAUUSD_DEMO_BRIDGE/demo_candidate.txt",
+    "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/XAUUSD_DEMO_BRIDGE/qualification_probe_lockdown.txt"
+  ],
+  "required_next_action": "REVIEW_EVIDENCE_BEFORE_NORMAL_DEMO_QUALIFICATION_CONTINUES",
+  "retained_evidence": [
+    "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/XAUUSD_DEMO_BRIDGE/qualification_probe_journal.tsv",
+    "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/XAUUSD_DEMO_BRIDGE/receipts",
+    "/Users/vahid/Desktop/xauusd-trader/reports/xauusd_mt5_demo_qualification_probe"
+  ]
+}

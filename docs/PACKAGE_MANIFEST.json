@@ -1,0 +1,41 @@
+{
+  "package": "XAUUSD_MT5_DEMO_PREARM_REFRESH_ORCHESTRATION_FIX",
+  "version": "1.0.1",
+  "files": [
+    {
+      "path": "QA_REPORT.md",
+      "sha256": "32667a9e508936c254a4568d60fb88b40eba90b7d7d6b0d85229e33d0e13c7cc",
+      "bytes": 659
+    },
+    {
+      "path": "README.md",
+      "sha256": "13ae36e3f92e10147dcc39ceb6efe05ef6f32c543e63568c104a85f333ec8f61",
+      "bytes": 924
+    },
+    {
+      "path": "app/xauusd_mt5_demo_explicit_arming.py",
+      "sha256": "a792ad391f6b1ac386560196b0a41a117cc120274775d31ee557e266cbfe8ccf",
+      "bytes": 19810
+    },
+    {
+      "path": "app/xauusd_mt5_demo_operational_cycle.py",
+      "sha256": "f6823d0e090fc22990efe3eecebbdfceab6c199cd35bfadeb8a9525d01a53db2",
+      "bytes": 29558
+    },
+    {
+      "path": "config/xauusd_mt5_demo_activation.json",
+      "sha256": "f1b8fd9a66afb1ce091c0a6c9c2bffb63ae91c14f5a5025be53e2495548a7a60",
+      "bytes": 2188
+    },
+    {
+      "path": "mt5/AMarkets_Recent_Bar_Exporter_EA.mq5",
+      "sha256": "eb706abd9a717cab73bf9d794864ccf3053b71b0f08ee2acb31d5999253994a4",
+      "bytes": 10323
+    },
+    {
+      "path": "tests/test_xauusd_mt5_demo_activation.py",
+      "sha256": "80533bb18920a89987fd6beefe8def46e0dddcee153886b209916f08b8c9d3ea",
+      "bytes": 19974
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+===== RUNTIME =====
+Python 3.14.2
+pandas=3.0.3
+numpy=2.4.0
+===== COMPILE =====
+===== TESTS =====
+test_collect_results_packages_only_current_scan_outputs (tests.test_xauusd_successor_parallel_scan.SuccessorParallelScanTests.test_collect_results_packages_only_current_scan_outputs) ... ok
+test_datetime_to_epoch_ms_is_resolution_invariant (tests.test_xauusd_successor_parallel_scan.SuccessorParallelScanTests.test_datetime_to_epoch_ms_is_resolution_invariant) ... ok
+test_end_to_end_run_freezes_shortlist_before_holdout_and_locks_rerun (tests.test_xauusd_successor_parallel_scan.SuccessorParallelScanTests.test_end_to_end_run_freezes_shortlist_before_holdout_and_locks_rerun) ... ok
+test_event_features_are_causal_and_blackout_bounded (tests.test_xauusd_successor_parallel_scan.SuccessorParallelScanTests.test_event_features_are_causal_and_blackout_bounded) ... ok
+test_load_h1_rejects_incomplete_m5_bucket (tests.test_xauusd_successor_parallel_scan.SuccessorParallelScanTests.test_load_h1_rejects_incomplete_m5_bucket) ... ok
+test_non_overlapping_candidate_trades (tests.test_xauusd_successor_parallel_scan.SuccessorParallelScanTests.test_non_overlapping_candidate_trades) ... ok
+test_outcome_arrays_requires_exact_hourly_path (tests.test_xauusd_successor_parallel_scan.SuccessorParallelScanTests.test_outcome_arrays_requires_exact_hourly_path) ... ok
+test_positive_bootstrap (tests.test_xauusd_successor_parallel_scan.SuccessorParallelScanTests.test_positive_bootstrap) ... ok
+test_run_outputs_never_authorize_orders (tests.test_xauusd_successor_parallel_scan.SuccessorParallelScanTests.test_run_outputs_never_authorize_orders) ... ok
+test_shortlist_is_family_diverse (tests.test_xauusd_successor_parallel_scan.SuccessorParallelScanTests.test_shortlist_is_family_diverse) ... ok
+test_time_contract_accepts_locked_semantics_despite_legacy_decision_label (tests.test_xauusd_successor_parallel_scan.SuccessorParallelScanTests.test_time_contract_accepts_locked_semantics_despite_legacy_decision_label) ... ok
+test_time_contract_rejects_wrong_shift (tests.test_xauusd_successor_parallel_scan.SuccessorParallelScanTests.test_time_contract_rejects_wrong_shift) ... ok
+test_year_profit_concentration_uses_positive_pnl_not_trade_count (tests.test_xauusd_successor_parallel_scan.SuccessorParallelScanTests.test_year_profit_concentration_uses_positive_pnl_not_trade_count) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 1.234s
+
+OK

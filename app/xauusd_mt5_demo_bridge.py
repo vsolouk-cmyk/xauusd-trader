@@ -22,7 +22,7 @@ BOUNDED_DECISION = "PASS_BOUNDED_DEMO_OPERATIONAL_PREFLIGHT_NO_ORDER_PATH"
 CONTROLLED_PROGRAM = "XAUUSD_CONTROLLED_PAPER_V1_5_BIDIRECTIONAL_PROBABILITY_TAILS_DIRECTION_PARITY"
 CONTROLLED_PREFLIGHT_DECISION = "PASS_CONTROLLED_PAPER_PREFLIGHT"
 CANDIDATE_SCHEMA = "XAUUSD_DEMO_CANDIDATE_V1"
-EA_PROGRAM_VERSION = "XAUUSD_BOUNDED_DEMO_BRIDGE_EA_V1_1_VOLUME_DIAGNOSTIC_LOGGING"
+EA_PROGRAM_VERSION = "XAUUSD_BOUNDED_DEMO_BRIDGE_EA_V1_3_PROBE_ACCOUNTING_REPAIR"
 
 
 class BridgeError(RuntimeError):
@@ -158,6 +158,10 @@ def source_scan(path: Path) -> dict[str, bool]:
         "hard_kill_present": "HARD_DRAWDOWN_KILL" in text,
         "daily_cap_present": "DAILY_NEW_POSITION_CAP" in text,
         "qualification_bound_present": "QUALIFICATION_BOUND_REACHED" in text,
+        "qualification_probe_label": "QUALIFICATION_PROBE_NOT_ALPHA" in text,
+        "qualification_probe_permit": "XAUUSD_DEMO_QUALIFICATION_PROBE_PERMIT_V1" in text,
+        "qualification_probe_journal": "qualification_probe_journal.tsv" in text,
+        "qualification_probe_lockdown": "QUALIFICATION_PROBE_COMPLETE_MANUAL_DISARM_REQUIRED" in text,
         "no_webrequest": "WebRequest(" not in text,
     }
 

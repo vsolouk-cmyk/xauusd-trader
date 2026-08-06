@@ -1,0 +1,18 @@
+Python 3.14.2
+pandas=3.0.3
+numpy=2.4.0
+test_bounded_loader_never_reads_2025 (tests.test_xauusd_long_only_attribution.Tests.test_bounded_loader_never_reads_2025) ... ok
+test_collect (tests.test_xauusd_long_only_attribution.Tests.test_collect) ... ok
+test_control_matching (tests.test_xauusd_long_only_attribution.Tests.test_control_matching) ... ok
+test_crossfeed_agreement (tests.test_xauusd_long_only_attribution.Tests.test_crossfeed_agreement) ... ok
+test_exact_horizon_and_non_overlap (tests.test_xauusd_long_only_attribution.Tests.test_exact_horizon_and_non_overlap) ... ok
+test_features_create_expansion_signals (tests.test_xauusd_long_only_attribution.Tests.test_features_create_expansion_signals) ... ok
+test_no_order_authorization_strings (tests.test_xauusd_long_only_attribution.Tests.test_no_order_authorization_strings) ... ok
+test_preflight (tests.test_xauusd_long_only_attribution.Tests.test_preflight) ... ok
+test_run_end_to_end (tests.test_xauusd_long_only_attribution.Tests.test_run_end_to_end) ... ok
+test_to_ms_resolution_invariant (tests.test_xauusd_long_only_attribution.Tests.test_to_ms_resolution_invariant) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 34.840s
+
+OK

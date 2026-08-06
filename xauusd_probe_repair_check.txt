@@ -1,0 +1,53 @@
+===== COMPILE =====
+===== TESTS =====
+test_cleanup_requires_disabled_heartbeat_and_removes_activation_files (tests.test_xauusd_mt5_demo_qualification_probe.QualificationProbeTests.test_cleanup_requires_disabled_heartbeat_and_removes_activation_files) ... ok
+test_collect_without_complete_lifecycle_creates_no_zip (tests.test_xauusd_mt5_demo_qualification_probe.QualificationProbeTests.test_collect_without_complete_lifecycle_creates_no_zip) ... ok
+test_ea_source_contains_fail_closed_probe_contract (tests.test_xauusd_mt5_demo_qualification_probe.QualificationProbeTests.test_ea_source_contains_fail_closed_probe_contract) ... ok
+test_emit_writes_labelled_candidate_and_intent_bound_permit (tests.test_xauusd_mt5_demo_qualification_probe.QualificationProbeTests.test_emit_writes_labelled_candidate_and_intent_bound_permit) ... ok
+test_inspect_accepts_complete_single_lifecycle (tests.test_xauusd_mt5_demo_qualification_probe.QualificationProbeTests.test_inspect_accepts_complete_single_lifecycle) ... ok
+test_inspect_recovers_intent_from_outbox_when_summary_missing (tests.test_xauusd_mt5_demo_qualification_probe.QualificationProbeTests.test_inspect_recovers_intent_from_outbox_when_summary_missing) ... ok
+test_inspect_without_emit_returns_explicit_no_order_state (tests.test_xauusd_mt5_demo_qualification_probe.QualificationProbeTests.test_inspect_without_emit_returns_explicit_no_order_state) ... ok
+test_preflight_passes_inside_safe_window (tests.test_xauusd_mt5_demo_qualification_probe.QualificationProbeTests.test_preflight_passes_inside_safe_window) ... ok
+test_stale_heartbeat_fails_closed (tests.test_xauusd_mt5_demo_qualification_probe.QualificationProbeTests.test_stale_heartbeat_fails_closed) ... ok
+test_weekend_fails_closed (tests.test_xauusd_mt5_demo_qualification_probe.QualificationProbeTests.test_weekend_fails_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.080s
+
+OK
+===== INSPECT =====
+{
+  "candidate_class": "QUALIFICATION_PROBE_NOT_ALPHA",
+  "checks": {
+    "emit_intent_present": false
+  },
+  "current_order_allowed": false,
+  "decision": "QUALIFICATION_PROBE_NOT_EMITTED_NO_ORDER",
+  "emit_record_source": "none",
+  "events": [],
+  "failed_checks": [
+    "emit_intent_present"
+  ],
+  "generated_utc": "2026-07-31T22:57:04.156161Z",
+  "intent_id": null,
+  "live_order_allowed": false,
+  "pass": false,
+  "program": "XAUUSD_MT5_DEMO_QUALIFICATION_PROBE_V1_1",
+  "required_next_action": "RUN_PREFLIGHT_THEN_EMIT_INSIDE_SAFE_MARKET_WINDOW"
+}
+===== COLLECT CHECK =====
+{
+  "current_order_allowed": false,
+  "decision": "QUALIFICATION_PROBE_EVIDENCE_NOT_READY",
+  "failed_checks": [
+    "emit_intent_present"
+  ],
+  "generated_utc": "2026-07-31T22:57:04.450113Z",
+  "inspection_decision": "QUALIFICATION_PROBE_NOT_EMITTED_NO_ORDER",
+  "intent_id": null,
+  "live_order_allowed": false,
+  "output_created": false,
+  "pass": false,
+  "program": "XAUUSD_MT5_DEMO_QUALIFICATION_PROBE_V1_1",
+  "required_next_action": "RUN_PREFLIGHT_THEN_EMIT_INSIDE_SAFE_MARKET_WINDOW"
+}

@@ -1,0 +1,29 @@
+{
+  "amarkets_db": "data/local/stage177c_amarkets_alignment/xauusd_amarkets_alignment.sqlite",
+  "amarkets_table": "amarkets_h1_from_m5_utc",
+  "dukascopy_db": "data/local/stage177b_extended_history/xauusd_extended_history.sqlite",
+  "dukascopy_table": "dukascopy_h1_canonical",
+  "event_db": "data/local/historical_event_context/xauusd_historical_event_context.sqlite",
+  "minimum_m5_bar_count": 12,
+  "reference_start": "2015-01-02T07:00:00Z",
+  "reference_end": "2025-01-01T00:00:00Z",
+  "severe_cost_bps": 4.5,
+  "maximum_notional_to_equity": 0.1570396406876166,
+  "control_max_lookback_days": 120,
+  "bootstrap": {"block_length": 5, "replications": 4000, "random_state": 178101},
+  "folds": [
+    {"name":"REF_2015_2016","start":"2015-01-02T07:00:00Z","end":"2017-01-01T00:00:00Z"},
+    {"name":"REF_2017_2018","start":"2017-01-01T00:00:00Z","end":"2019-01-01T00:00:00Z"},
+    {"name":"REF_2019_2020","start":"2019-01-01T00:00:00Z","end":"2021-01-01T00:00:00Z"},
+    {"name":"REF_2021_2022","start":"2021-01-01T00:00:00Z","end":"2023-01-01T00:00:00Z"},
+    {"name":"REF_2023_2024","start":"2023-01-01T00:00:00Z","end":"2025-01-01T00:00:00Z"}
+  ],
+  "gates": {
+    "minimum_trades": 120,
+    "minimum_profit_factor": 1.15,
+    "minimum_positive_fold_share": 0.8,
+    "minimum_control_pairs": 80,
+    "minimum_signal_jaccard": 0.8,
+    "minimum_return_correlation": 0.95
+  }
+}

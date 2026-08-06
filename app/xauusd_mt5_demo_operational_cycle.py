@@ -322,6 +322,35 @@ def bridge_dir(config: Mapping[str, Any]) -> Path:
     return Path(str(config["mt5_files_dir"])).expanduser() / str(config["mt5_bridge_subdir"])
 
 
+def qualification_probe_state(config: Mapping[str, Any]) -> dict[str, Any]:
+    folder = bridge_dir(config)
+    permit = folder / "qualification_probe_permit.txt"
+    lockdown = folder / "qualification_probe_lockdown.txt"
+    active_state = folder / "active_position.txt"
+    candidate = folder / str(config.get("candidate_file", "demo_candidate.txt"))
+    active_payload = parse_kv(active_state) if active_state.is_file() else {}
+    candidate_payload = parse_kv(candidate) if candidate.is_file() else {}
+    probe_active = (
+        permit.is_file()
+        or lockdown.is_file()
+        or active_payload.get("candidate_class") == "QUALIFICATION_PROBE_NOT_ALPHA"
+        or candidate_payload.get("candidate_class") == "QUALIFICATION_PROBE_NOT_ALPHA"
+    )
+    return {
+        "active": probe_active,
+        "permit_present": permit.is_file(),
+        "lockdown_present": lockdown.is_file(),
+        "active_state_probe": active_payload.get("candidate_class") == "QUALIFICATION_PROBE_NOT_ALPHA",
+        "candidate_probe": candidate_payload.get("candidate_class") == "QUALIFICATION_PROBE_NOT_ALPHA",
+        "paths": {
+            "permit": str(permit),
+            "lockdown": str(lockdown),
+            "active_state": str(active_state),
+            "candidate": str(candidate),
+        },
+    }
+
+
 def validate_armed_heartbeat(config: Mapping[str, Any]) -> dict[str, Any]:
     folder = bridge_dir(config)
     heartbeat_path = folder / str(config.get("heartbeat_file", "bridge_heartbeat.txt"))
@@ -331,7 +360,7 @@ def validate_armed_heartbeat(config: Mapping[str, Any]) -> dict[str, Any]:
     age_minutes = (utc_now().timestamp() - heartbeat_path.stat().st_mtime) / 60.0
     checks = {
         "heartbeat_fresh": -1.0 <= age_minutes <= float(config.get("maximum_heartbeat_age_minutes", 5)),
-        "program": heartbeat.get("program") == "XAUUSD_BOUNDED_DEMO_BRIDGE_EA_V1_1_VOLUME_DIAGNOSTIC_LOGGING",
+        "program": heartbeat.get("program") == "XAUUSD_BOUNDED_DEMO_BRIDGE_EA_V1_3_PROBE_ACCOUNTING_REPAIR",
         "armed": heartbeat.get("armed") == "true",
         "status": heartbeat.get("status") == "ARMED_RUNTIME_GUARDS_REQUIRED",
         "demo": heartbeat.get("account_trade_mode") == "DEMO",
@@ -359,7 +388,7 @@ def validate_disabled_heartbeat(config: Mapping[str, Any]) -> dict[str, Any]:
     age_minutes = (utc_now().timestamp() - heartbeat_path.stat().st_mtime) / 60.0
     checks = {
         "heartbeat_fresh": -1.0 <= age_minutes <= float(config.get("maximum_heartbeat_age_minutes", 5)),
-        "program": heartbeat.get("program") == "XAUUSD_BOUNDED_DEMO_BRIDGE_EA_V1_1_VOLUME_DIAGNOSTIC_LOGGING",
+        "program": heartbeat.get("program") == "XAUUSD_BOUNDED_DEMO_BRIDGE_EA_V1_3_PROBE_ACCOUNTING_REPAIR",
         "disabled": heartbeat.get("armed") == "false",
         "status": heartbeat.get("status") == "DISABLED_DEFAULT_NO_ORDER",
         "demo": heartbeat.get("account_trade_mode") == "DEMO",
@@ -493,6 +522,37 @@ def prepare_arm_refresh(root: Path, config: Mapping[str, Any]) -> dict[str, Any]
 
 def run_cycle(root: Path, config: Mapping[str, Any]) -> dict[str, Any]:
     started = utc_now()
+    probe = qualification_probe_state(config)
+    if probe["active"]:
+        heartbeat_path = bridge_dir(config) / str(config.get("heartbeat_file", "bridge_heartbeat.txt"))
+        heartbeat = parse_kv(heartbeat_path)
+        checks = {
+            "demo": heartbeat.get("account_trade_mode") == "DEMO",
+            "login": int(heartbeat.get("account_login") or 0) == int(config["allowed_demo_login"]),
+            "symbol": heartbeat.get("symbol") == config["expected_symbol"],
+            "magic": int(heartbeat.get("magic_number") or 0) == int(config["magic_number"]),
+            "live_fallback_false": heartbeat.get("live_fallback_allowed") == "false",
+            "probe_supported": heartbeat.get("qualification_probe_supported") == "true",
+        }
+        failed = sorted(name for name, passed in checks.items() if not passed)
+        require(not failed, f"qualification probe skip validation failed: {failed}")
+        report_dir = resolve(root, str(config["report_dir"]))
+        result = {
+            "program": PROGRAM,
+            "generated_utc": iso_utc(),
+            "started_utc": iso_utc(started),
+            "decision": "PASS_QUALIFICATION_PROBE_ACTIVE_SKIP_OPERATIONAL_CYCLE",
+            "pass": True,
+            "allowed_demo_login": int(config["allowed_demo_login"]),
+            "bridge_armed": heartbeat.get("armed") == "true",
+            "current_order_allowed": False,
+            "live_order_allowed": False,
+            "probe": probe,
+            "heartbeat_checks": checks,
+            "required_next_action": "WAIT_FOR_PROBE_TERMINAL_RESULT_AND_MANUAL_DISARM",
+        }
+        write_json_atomic(report_dir / "operational_cycle_summary.json", result)
+        return result
     heartbeat = validate_armed_heartbeat(config)
     recent = validate_recent_export(config)
     report_dir = resolve(root, str(config["report_dir"]))

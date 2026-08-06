@@ -18,7 +18,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 import numpy as np
 import pandas as pd
 
-PROGRAM = "XAUUSD_MACRO_CAUSAL_PANEL_V1"
+PROGRAM = "XAUUSD_MACRO_CAUSAL_PANEL_V1_1_GOLD_ASOF_EXECUTION_REPAIR"
 FRED_CSV_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}"
 REPORT_DIR = Path("reports/xauusd_macro_causal_panel")
 CORE_SERIES = ("usd_broad", "real_yield_10y", "nominal_yield_10y", "breakeven_10y", "vix", "gvz")
@@ -178,15 +178,43 @@ def load_gold(root: Path) -> tuple[pd.DataFrame, Path]:
         required = {"date_utc", "open", "high", "low", "close"}
         if not required.issubset(df.columns):
             continue
-        out = df.copy()
-        out["decision_date_utc"] = to_utc(out["date_utc"]).dt.normalize()
-        for col in ["open", "high", "low", "close"]:
-            out[f"gold_{col}"] = numeric(out[col])
-        out = out.dropna(subset=["decision_date_utc", "gold_open", "gold_close"])
-        out = out.sort_values("decision_date_utc").drop_duplicates("decision_date_utc", keep="last")
-        out["decision_time_utc"] = out["decision_date_utc"]
-        return out[["decision_date_utc", "decision_time_utc", "gold_open", "gold_high", "gold_low", "gold_close"]], path
+        out = pd.DataFrame({
+            "gold_bar_date_utc": to_utc(df["date_utc"]).dt.normalize(),
+            "gold_bar_open": numeric(df["open"]),
+            "gold_bar_high": numeric(df["high"]),
+            "gold_bar_low": numeric(df["low"]),
+            "gold_bar_close": numeric(df["close"]),
+        })
+        out = out.dropna(subset=["gold_bar_date_utc", "gold_bar_open", "gold_bar_close"])
+        out = out.sort_values("gold_bar_date_utc").drop_duplicates("gold_bar_date_utc", keep="last")
+        return out.reset_index(drop=True), path
     raise PanelError("no valid canonical gold daily file")
+
+
+def build_decision_panel(gold_bars: pd.DataFrame) -> pd.DataFrame:
+    """Build an executable daily decision panel.
+
+    A row dated D is a decision made at D 00:00 UTC, using only the completed
+    gold bar from the previous trading row. Entry is the open of D and future
+    targets are kept in a separate file.
+    """
+    out = pd.DataFrame({
+        "decision_date_utc": gold_bars["gold_bar_date_utc"],
+        "decision_time_utc": gold_bars["gold_bar_date_utc"],
+        "gold_feature_observation_date_utc": gold_bars["gold_bar_date_utc"].shift(1),
+        "gold_feature_available_after_utc": gold_bars["gold_bar_date_utc"],
+        "gold_prev_open": gold_bars["gold_bar_open"].shift(1),
+        "gold_prev_high": gold_bars["gold_bar_high"].shift(1),
+        "gold_prev_low": gold_bars["gold_bar_low"].shift(1),
+        "gold_prev_close": gold_bars["gold_bar_close"].shift(1),
+    })
+    out = out.dropna(subset=[
+        "decision_date_utc",
+        "gold_feature_observation_date_utc",
+        "gold_prev_open",
+        "gold_prev_close",
+    ]).reset_index(drop=True)
+    return out
 
 
 def asof_merge(panel: pd.DataFrame, source: pd.DataFrame, available_col: str) -> pd.DataFrame:
@@ -312,15 +340,27 @@ def add_derived_features(panel: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
-def build_targets(gold: pd.DataFrame, horizons: list[int]) -> pd.DataFrame:
-    out = gold[["decision_date_utc", "decision_time_utc", "gold_open", "gold_close"]].copy()
+def build_targets(gold_bars: pd.DataFrame, horizons: list[int]) -> pd.DataFrame:
+    """Targets for a decision at the current trading-day open.
+
+    The signal uses the previous completed D1 bar. Entry is the current row's
+    open. A horizon h exits at the close h trading rows after the entry row.
+    """
+    out = pd.DataFrame({
+        "decision_date_utc": gold_bars["gold_bar_date_utc"],
+        "decision_time_utc": gold_bars["gold_bar_date_utc"],
+        "entry_date_utc": gold_bars["gold_bar_date_utc"],
+        "entry_open": gold_bars["gold_bar_open"],
+    })
     for h in horizons:
-        exit_close = gold["gold_close"].shift(-h)
+        exit_close = gold_bars["gold_bar_close"].shift(-h)
         out[f"exit_close_{h}td"] = exit_close
-        out[f"gross_return_{h}td_bps"] = (exit_close / gold["gold_open"] - 1.0) * 10000.0
-        out[f"target_exit_date_{h}td_utc"] = gold["decision_date_utc"].shift(-h)
+        out[f"gross_return_{h}td_bps"] = (exit_close / out["entry_open"] - 1.0) * 10000.0
+        out[f"target_exit_date_{h}td_utc"] = gold_bars["gold_bar_date_utc"].shift(-h)
     out["future_target_only"] = True
-    return out
+    # The first raw gold row has no previous completed bar and therefore no
+    # corresponding feature row. Keep target rows exactly aligned to features.
+    return out.iloc[1:].reset_index(drop=True)
 
 
 def source_meta(path: Path, root: Path) -> dict[str, Any]:
@@ -338,8 +378,12 @@ def select_sources(root: Path, cfg: dict[str, Any], allow_missing_gvz: bool) -> 
                 errors[name] = f"{type(exc).__name__}: {exc}"
             else:
                 raise
-    gold, gold_path = load_gold(root)
-    selected["gold"] = source_meta(gold_path, root) | {"rows": len(gold), "first_date": gold["decision_date_utc"].min().isoformat(), "last_date": gold["decision_date_utc"].max().isoformat()}
+    gold_bars, gold_path = load_gold(root)
+    selected["gold"] = source_meta(gold_path, root) | {
+        "rows": len(gold_bars),
+        "first_date": gold_bars["gold_bar_date_utc"].min().isoformat(),
+        "last_date": gold_bars["gold_bar_date_utc"].max().isoformat(),
+    }
     cftc, cftc_path = load_cftc(root)
     selected["cftc"] = source_meta(cftc_path, root) | {"rows": len(cftc)}
     events, events_path = load_events(root, cfg)
@@ -435,8 +479,8 @@ def build(root: Path, config_path: Path | None = None) -> dict[str, Any]:
     cfg = load_config(root, config_path)
     selection = select_sources(root, cfg, allow_missing_gvz=False)
     selected = selection["selected"]
-    gold, gold_path = load_gold(root)
-    panel = gold.copy()
+    gold_bars, gold_path = load_gold(root)
+    panel = build_decision_panel(gold_bars)
     lag = int(cfg["daily_availability_lag_days"])
     for name in CORE_SERIES:
         series = cfg["fred_series"][name]
@@ -454,10 +498,19 @@ def build(root: Path, config_path: Path | None = None) -> dict[str, Any]:
     events, events_path = load_events(root, cfg)
     panel = add_event_flags(panel, events, cfg)
     panel = add_derived_features(panel)
-    targets = build_targets(gold, list(map(int, cfg["target_horizons_trading_days"])))
+    targets = build_targets(gold_bars, list(map(int, cfg["target_horizons_trading_days"])))
+    if len(targets) != len(panel) or not targets["decision_date_utc"].equals(panel["decision_date_utc"]):
+        raise PanelError("feature/target decision-row alignment failed")
 
     # Hard causality checks.
     leakage: dict[str, int] = {}
+    leakage["gold"] = int((
+        panel["gold_feature_available_after_utc"].notna()
+        & (panel["gold_feature_available_after_utc"] > panel["decision_time_utc"])
+    ).sum())
+    gold_nonprior = int((
+        panel["gold_feature_observation_date_utc"] >= panel["decision_date_utc"]
+    ).sum())
     for name in CORE_SERIES:
         avail = f"{name}_available_after_utc"
         leakage[name] = int((panel[avail].notna() & (panel[avail] > panel["decision_time_utc"])).sum())
@@ -468,6 +521,8 @@ def build(root: Path, config_path: Path | None = None) -> dict[str, Any]:
         leakage["wgc"] = int((panel["wgc_available_after_utc"].notna() & (panel["wgc_available_after_utc"] > panel["decision_time_utc"])).sum())
     if any(leakage.values()):
         raise PanelError(f"causality leakage detected: {leakage}")
+    if gold_nonprior:
+        raise PanelError(f"gold feature bar is not strictly prior on {gold_nonprior} rows")
 
     start = pd.Timestamp(cfg["minimum_core_start"], tz="UTC")
     end = pd.Timestamp(cfg["minimum_core_end"], tz="UTC")
@@ -489,7 +544,11 @@ def build(root: Path, config_path: Path | None = None) -> dict[str, Any]:
         "program": PROGRAM,
         "generated_utc": now_utc(),
         "selected": selected,
-        "gold": source_meta(gold_path, root),
+        "gold": source_meta(gold_path, root) | {
+            "rows": len(gold_bars),
+            "first_date": gold_bars["gold_bar_date_utc"].min().isoformat(),
+            "last_date": gold_bars["gold_bar_date_utc"].max().isoformat(),
+        },
         "cftc": source_meta(cftc_path, root),
         "events": source_meta(events_path, root),
         "etf_optional": None if etf_path is None else source_meta(etf_path, root),
@@ -505,6 +564,9 @@ def build(root: Path, config_path: Path | None = None) -> dict[str, Any]:
         "last_date": panel["decision_date_utc"].max().isoformat(),
         "core_completeness_2012_2024": completeness,
         "causality_leakage_counts": leakage,
+        "gold_feature_nonprior_rows": gold_nonprior,
+        "feature_target_alignment_rows": len(panel),
+        "decision_semantics": "D 00:00 UTC decision using previous completed gold D1 bar; entry at D open; exit at close h trading rows later.",
         "event_rows": len(events),
         "optional_etf_present": etf is not None,
         "optional_wgc_present": wgc is not None,
@@ -516,7 +578,8 @@ def build(root: Path, config_path: Path | None = None) -> dict[str, Any]:
     contract = {
         "program": PROGRAM,
         "generated_utc": now_utc(),
-        "feature_availability": "Daily close series are usable from next UTC day; CFTC/ETF/WGC use explicit available_after timestamps; official events are blackout flags only.",
+        "feature_availability": "Decision at D 00:00 UTC uses the previous completed gold D1 bar; FRED daily closes are usable from next UTC day; CFTC/ETF/WGC use explicit available_after timestamps; official events are blackout flags only.",
+        "execution_semantics": "Enter at D open and exit at close h trading rows after entry; no same-day gold OHLC is present in features.",
         "reference_selection_window": [cfg["reference_start"], cfg["reference_end"]],
         "post_2025_role": "SEEN_DIAGNOSTIC_NOT_PRISTINE_HOLDOUT",
         "target_columns_are_future_only": True,
@@ -529,7 +592,7 @@ def build(root: Path, config_path: Path | None = None) -> dict[str, Any]:
     result = {
         "program": PROGRAM,
         "generated_utc": now_utc(),
-        "decision": "PASS_CAUSAL_MACRO_PANEL_READY_FOR_REFERENCE_THESIS_SCAN",
+        "decision": "PASS_CAUSAL_MACRO_PANEL_GOLD_ASOF_REPAIRED_READY_FOR_REFERENCE_THESIS_SCAN",
         "pass": True,
         "paper_order_allowed": False,
         "demo_order_allowed": False,
@@ -566,7 +629,7 @@ def collect(root: Path) -> dict[str, Any]:
     console = root / "xauusd_macro_panel_console.txt"
     if console.is_file():
         files.append(console)
-    output = Path.home() / "Downloads/XAUUSD_MACRO_CAUSAL_PANEL_RESULTS.zip"
+    output = Path.home() / "Downloads/XAUUSD_MACRO_CAUSAL_PANEL_V1_1_RESULTS.zip"
     output.parent.mkdir(parents=True, exist_ok=True)
     manifest = {"program": PROGRAM, "generated_utc": now_utc(), "files": []}
     with ZipFile(output, "w", ZIP_DEFLATED) as archive:

@@ -1,5 +1,12 @@
 {
-  "program": "XAUUSD_MACRO_CAUSAL_PANEL_V1",
-  "purpose": "Fetch only GVZCLS, canonicalize existing macro sources, build causal features and separate future targets.",
-  "execution_allowed": false
+  "program": "XAUUSD_MACRO_CAUSAL_PANEL_V1_1_GOLD_ASOF_EXECUTION_REPAIR",
+  "purpose": "Repair gold-side causal timing: use only previous completed D1 bar, enter at current trading-day open, and keep exact future targets separate.",
+  "execution_allowed": false,
+  "changes": [
+    "Remove same-day gold OHLC from feature panel",
+    "Add prior-bar gold observation and availability timestamps",
+    "Align entry to current trading-day open",
+    "Compute 5/20 trading-day exits from executable entry open",
+    "Audit gold causality and feature-target row identity"
+  ]
 }

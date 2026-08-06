@@ -1,0 +1,306 @@
+{
+  "program": "XAUUSD_MACRO_CAUSAL_PANEL_V1_1_GOLD_ASOF_EXECUTION_REPAIR",
+  "generated_utc": "2026-08-06T07:44:38.274187Z",
+  "decision": "PASS_MACRO_PANEL_PREFLIGHT_READY",
+  "pass": true,
+  "network_required": false,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false,
+  "selection": {
+    "selected": {
+      "usd_broad": {
+        "path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/fred_macro/DTWEXBGS.csv",
+        "sha256": "da58a46fa5aeabce8e905a72de684f068447cf98dea82f7b996396eadf321f7c",
+        "rows": 5139,
+        "first_date": "2006-01-02T00:00:00+00:00",
+        "last_date": "2026-07-02T00:00:00+00:00",
+        "size": 103233,
+        "alternatives": [
+          {
+            "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/da58a46fa5ae__DTWEXBGS.csv",
+            "sha256": "da58a46fa5aeabce8e905a72de684f068447cf98dea82f7b996396eadf321f7c",
+            "rows": 5139,
+            "first_date": "2006-01-02T00:00:00+00:00",
+            "last_date": "2026-07-02T00:00:00+00:00",
+            "size": 103233
+          },
+          {
+            "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/0e410a21a9ac__DTWEXBGS.csv",
+            "sha256": "0e410a21a9acd1e7c44bf31bd8bc9557f4a49eaf9603886513cb3469c9ee33bb",
+            "rows": 5135,
+            "first_date": "2006-01-02T00:00:00+00:00",
+            "last_date": "2026-06-26T00:00:00+00:00",
+            "size": 103153
+          },
+          {
+            "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/bc030d67dbcb__DTWEXBGS.csv",
+            "sha256": "bc030d67dbcb7d9a19bb11a0a2df00525207ab97fe0c9d6c19ab7a20704df51d",
+            "rows": 5130,
+            "first_date": "2006-01-02T00:00:00+00:00",
+            "last_date": "2026-06-18T00:00:00+00:00",
+            "size": 103041
+          }
+        ],
+        "rejected": []
+      },
+      "real_yield_10y": {
+        "path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/fred_macro/DFII10.csv",
+        "sha256": "d46f93278b3d407083eff94214e77b54749cf37ad86d337f4384213f87d8394d",
+        "rows": 5880,
+        "first_date": "2003-01-02T00:00:00+00:00",
+        "last_date": "2026-07-06T00:00:00+00:00",
+        "size": 98095,
+        "alternatives": [
+          {
+            "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/d46f93278b3d__DFII10.csv",
+            "sha256": "d46f93278b3d407083eff94214e77b54749cf37ad86d337f4384213f87d8394d",
+            "rows": 5880,
+            "first_date": "2003-01-02T00:00:00+00:00",
+            "last_date": "2026-07-06T00:00:00+00:00",
+            "size": 98095
+          },
+          {
+            "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/dd126dd80c82__DFII10.csv",
+            "sha256": "dd126dd80c827d5e57b60b0186c7d77c47e83ad51d55083080de96f31c3f0802",
+            "rows": 5875,
+            "first_date": "2003-01-02T00:00:00+00:00",
+            "last_date": "2026-06-26T00:00:00+00:00",
+            "size": 98003
+          },
+          {
+            "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/148364a82be6__DFII10.csv",
+            "sha256": "148364a82be6d3f69e79d4e9daf741da77a2c187028708dde3558bcb4e912105",
+            "rows": 5874,
+            "first_date": "2003-01-02T00:00:00+00:00",
+            "last_date": "2026-06-25T00:00:00+00:00",
+            "size": 97987
+          }
+        ],
+        "rejected": []
+      },
+      "nominal_yield_10y": {
+        "path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/fred_macro/DGS10.csv",
+        "sha256": "e5c3421f0d29e87ea31b43a021eadf417dd0a5fa616be0b6537843a939781dbd",
+        "rows": 16111,
+        "first_date": "1962-01-02T00:00:00+00:00",
+        "last_date": "2026-07-06T00:00:00+00:00",
+        "size": 267915,
+        "alternatives": [
+          {
+            "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/e5c3421f0d29__DGS10.csv",
+            "sha256": "e5c3421f0d29e87ea31b43a021eadf417dd0a5fa616be0b6537843a939781dbd",
+            "rows": 16111,
+            "first_date": "1962-01-02T00:00:00+00:00",
+            "last_date": "2026-07-06T00:00:00+00:00",
+            "size": 267915
+          },
+          {
+            "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/00adc073f35b__DGS10.csv",
+            "sha256": "00adc073f35b40a15e8370c346ecec9b488d2cf6e39eb0dc8e2c7bd19773cb25",
+            "rows": 16106,
+            "first_date": "1962-01-02T00:00:00+00:00",
+            "last_date": "2026-06-26T00:00:00+00:00",
+            "size": 267823
+          },
+          {
+            "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/bfb66e4c29fa__DGS10.csv",
+            "sha256": "bfb66e4c29fa9f9484e1ef539c287e76ddf4b1726a1c8127e756844b32969719",
+            "rows": 16105,
+            "first_date": "1962-01-02T00:00:00+00:00",
+            "last_date": "2026-06-25T00:00:00+00:00",
+            "size": 267807
+          }
+        ],
+        "rejected": []
+      },
+      "breakeven_10y": {
+        "path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/fred_macro/T10YIE.csv",
+        "sha256": "6810bd301381d45ecbe96cb69caa073b274cfe8cd714306e7b1b806ea83ac9d0",
+        "rows": 5881,
+        "first_date": "2003-01-02T00:00:00+00:00",
+        "last_date": "2026-07-07T00:00:00+00:00",
+        "size": 97156,
+        "alternatives": [
+          {
+            "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/6810bd301381__T10YIE.csv",
+            "sha256": "6810bd301381d45ecbe96cb69caa073b274cfe8cd714306e7b1b806ea83ac9d0",
+            "rows": 5881,
+            "first_date": "2003-01-02T00:00:00+00:00",
+            "last_date": "2026-07-07T00:00:00+00:00",
+            "size": 97156
+          },
+          {
+            "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/710a72303a9b__T10YIE.csv",
+            "sha256": "710a72303a9b03dc95c99bc818b35c9abab32ee8f4326252ddae4e2c5419a6f9",
+            "rows": 5876,
+            "first_date": "2003-01-02T00:00:00+00:00",
+            "last_date": "2026-06-29T00:00:00+00:00",
+            "size": 97064
+          },
+          {
+            "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/f569d7167141__T10YIE.csv",
+            "sha256": "f569d71671418e28380678793743622b9e1a3179543befbaf1f63793346c80c4",
+            "rows": 5875,
+            "first_date": "2003-01-02T00:00:00+00:00",
+            "last_date": "2026-06-26T00:00:00+00:00",
+            "size": 97048
+          }
+        ],
+        "rejected": []
+      },
+      "vix": {
+        "path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/fred_macro/VIXCLS.csv",
+        "sha256": "41241d2a4d6ce3465d58b176daf76125d9d220441b7dfdce33faa5dbaec348da",
+        "rows": 9224,
+        "first_date": "1990-01-02T00:00:00+00:00",
+        "last_date": "2026-07-07T00:00:00+00:00",
+        "size": 160388,
+        "alternatives": [
+          {
+            "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/41241d2a4d6c__VIXCLS.csv",
+            "sha256": "41241d2a4d6ce3465d58b176daf76125d9d220441b7dfdce33faa5dbaec348da",
+            "rows": 9224,
+            "first_date": "1990-01-02T00:00:00+00:00",
+            "last_date": "2026-07-07T00:00:00+00:00",
+            "size": 160388
+          },
+          {
+            "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/5dc029364625__VIXCLS.csv",
+            "sha256": "5dc02936462581602135a114c912366e4eb9e40725fdd8d9dfe466d02f32c35f",
+            "rows": 9217,
+            "first_date": "1990-01-02T00:00:00+00:00",
+            "last_date": "2026-06-26T00:00:00+00:00",
+            "size": 160269
+          },
+          {
+            "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/72b052e2d420__VIXCLS.csv",
+            "sha256": "72b052e2d420f3c75ab0db80039820f27ef8391227292236caebfb095da035c7",
+            "rows": 9216,
+            "first_date": "1990-01-02T00:00:00+00:00",
+            "last_date": "2026-06-25T00:00:00+00:00",
+            "size": 160252
+          }
+        ],
+        "rejected": []
+      },
+      "gvz": {
+        "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/3929a8333e5d__GVZCLS.csv",
+        "sha256": "3929a8333e5d696d415eb3a7dd62da5e457dbd507176164e1f987d872f5e2c69",
+        "rows": 4573,
+        "first_date": "2008-06-03T00:00:00+00:00",
+        "last_date": "2026-08-04T00:00:00+00:00",
+        "size": 79721,
+        "alternatives": [
+          {
+            "path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/fred_macro/GVZCLS.csv",
+            "sha256": "465d7e3fd8cb052fc0f06fe22d7e93cb684cff9244b4dfdce9877f719019f23c",
+            "rows": 1200,
+            "first_date": "2008-01-01T00:00:00+00:00",
+            "last_date": "2012-08-06T00:00:00+00:00",
+            "size": 16824
+          }
+        ],
+        "rejected": []
+      },
+      "gold": {
+        "path": "data/macro_regime/raw/broker_or_spot_gold_d1_ohlc_2011_present.csv",
+        "absolute_path": "/Users/vahid/Desktop/xauusd-trader/data/macro_regime/raw/broker_or_spot_gold_d1_ohlc_2011_present.csv",
+        "sha256": "f27109e3e493482ea33cf0a7f2dae1982cbe59ae5215a0ad0cbdafc83d3fcc23",
+        "size": 270616,
+        "rows": 4031,
+        "first_date": "2011-01-03T00:00:00+00:00",
+        "last_date": "2026-06-26T00:00:00+00:00"
+      },
+      "cftc": {
+        "path": "data/external_frontiers/cot_positioning_normalized.csv",
+        "absolute_path": "/Users/vahid/Desktop/xauusd-trader/data/external_frontiers/cot_positioning_normalized.csv",
+        "sha256": "bb15f2a97f60bb8b7b20a639c181974140ae4e3e51ef868a7d4fe6a23395fc74",
+        "size": 364944,
+        "rows": 808
+      },
+      "events": {
+        "path": "data/fundamental_event_inbox/features/stage115_official_core_event_timestamps.csv",
+        "absolute_path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/features/stage115_official_core_event_timestamps.csv",
+        "sha256": "601f587e0128d4322bc3ea5071545e53adf035b5e08fdbafa72cf16a550ec560",
+        "size": 482031,
+        "rows": 1649
+      },
+      "etf_optional": {
+        "path": "data/macro_regime/normalized/wgc_global_etf_holdings_monthly_stage173.csv",
+        "absolute_path": "/Users/vahid/Desktop/xauusd-trader/data/macro_regime/normalized/wgc_global_etf_holdings_monthly_stage173.csv",
+        "sha256": "d05cdff592e940dd0975f7ae1359aa8436f02b4edcd12617df4c030c9651d281",
+        "size": 102965,
+        "rows": 270
+      },
+      "wgc_optional": {
+        "path": "data/macro_regime/vintages/wgc_official_sector_quarterly_vintages.csv",
+        "absolute_path": "/Users/vahid/Desktop/xauusd-trader/data/macro_regime/vintages/wgc_official_sector_quarterly_vintages.csv",
+        "sha256": "bd334f7a8ab3f7b67029bdec3feacb79237c0c7724c850e41b54b7409d06871e",
+        "size": 11929,
+        "rows": 20
+      }
+    },
+    "errors": {}
+  },
+  "required_next_action": "BUILD_CAUSAL_PANEL"
+}
+{
+  "program": "XAUUSD_MACRO_CAUSAL_PANEL_V1_1_GOLD_ASOF_EXECUTION_REPAIR",
+  "generated_utc": "2026-08-06T07:45:20.726742Z",
+  "decision": "PASS_CAUSAL_MACRO_PANEL_GOLD_ASOF_REPAIRED_READY_FOR_REFERENCE_THESIS_SCAN",
+  "pass": true,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false,
+  "features_csv": "/Users/vahid/Desktop/xauusd-trader/reports/xauusd_macro_causal_panel/macro_causal_features.csv",
+  "targets_csv": "/Users/vahid/Desktop/xauusd-trader/reports/xauusd_macro_causal_panel/macro_causal_targets.csv",
+  "rows": 4030,
+  "quality": {
+    "program": "XAUUSD_MACRO_CAUSAL_PANEL_V1_1_GOLD_ASOF_EXECUTION_REPAIR",
+    "generated_utc": "2026-08-06T07:45:20.723688Z",
+    "rows": 4030,
+    "first_date": "2011-01-04T00:00:00+00:00",
+    "last_date": "2026-06-26T00:00:00+00:00",
+    "core_completeness_2012_2024": {
+      "usd_broad": 1.0,
+      "real_yield_10y": 1.0,
+      "nominal_yield_10y": 1.0,
+      "breakeven_10y": 1.0,
+      "vix": 1.0,
+      "gvz": 1.0
+    },
+    "causality_leakage_counts": {
+      "gold": 0,
+      "usd_broad": 0,
+      "real_yield_10y": 0,
+      "nominal_yield_10y": 0,
+      "breakeven_10y": 0,
+      "vix": 0,
+      "gvz": 0,
+      "cftc": 0,
+      "etf": 0,
+      "wgc": 0
+    },
+    "gold_feature_nonprior_rows": 0,
+    "feature_target_alignment_rows": 4030,
+    "decision_semantics": "D 00:00 UTC decision using previous completed gold D1 bar; entry at D open; exit at close h trading rows later.",
+    "event_rows": 1649,
+    "optional_etf_present": true,
+    "optional_wgc_present": true,
+    "reference_rows": 3643,
+    "diagnostic_2025_plus_rows": 387
+  },
+  "required_next_action": "RUN_FIXED_REFERENCE_ONLY_MACRO_THESIS_SCAN"
+}
+{
+  "program": "XAUUSD_MACRO_CAUSAL_PANEL_V1_1_GOLD_ASOF_EXECUTION_REPAIR",
+  "generated_utc": "2026-08-06T07:45:47.014251Z",
+  "decision": "PASS_MACRO_CAUSAL_PANEL_RESULTS_PACK_CREATED",
+  "pass": true,
+  "output": "/Users/vahid/Downloads/XAUUSD_MACRO_CAUSAL_PANEL_V1_1_RESULTS.zip",
+  "files": 8,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false
+}

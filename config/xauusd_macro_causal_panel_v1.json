@@ -1,5 +1,5 @@
 {
-  "program": "XAUUSD_MACRO_CAUSAL_PANEL_V1",
+  "program": "XAUUSD_MACRO_CAUSAL_PANEL_V1_1_GOLD_ASOF_EXECUTION_REPAIR",
   "reference_start": "2011-01-01",
   "reference_end": "2024-12-31",
   "diagnostic_start": "2025-01-01",
@@ -14,8 +14,11 @@
   "daily_availability_lag_days": 1,
   "minimum_core_start": "2012-01-01",
   "minimum_core_end": "2024-12-31",
-  "minimum_core_completeness": 0.90,
+  "minimum_core_completeness": 0.9,
   "event_blackout_before_minutes": 60,
   "event_blackout_after_minutes": 120,
-  "target_horizons_trading_days": [5, 20]
+  "target_horizons_trading_days": [
+    5,
+    20
+  ]
 }

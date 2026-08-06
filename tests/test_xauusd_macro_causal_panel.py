@@ -113,15 +113,62 @@ class MacroPanelTests(unittest.TestCase):
     def test_build_end_to_end(self):
         r=panel.build(self.root)
         self.assertTrue(r["pass"])
-        self.assertTrue((self.root/panel.REPORT_DIR/"macro_causal_features.csv").is_file())
+        feature_path = self.root/panel.REPORT_DIR/"macro_causal_features.csv"
+        target_path = self.root/panel.REPORT_DIR/"macro_causal_targets.csv"
+        self.assertTrue(feature_path.is_file())
+        self.assertTrue(target_path.is_file())
+        features = pd.read_csv(feature_path)
+        targets = pd.read_csv(target_path)
+        self.assertEqual(len(features), len(targets))
+        self.assertListEqual(features["decision_date_utc"].tolist(), targets["decision_date_utc"].tolist())
+        self.assertIn("gold_prev_close", features.columns)
+        self.assertNotIn("gold_close", features.columns)
+        self.assertIn("entry_open", targets.columns)
         q=json.loads((self.root/panel.REPORT_DIR/"macro_panel_quality.json").read_text())
         self.assertTrue(all(v==0 for v in q["causality_leakage_counts"].values()))
+        self.assertEqual(q["gold_feature_nonprior_rows"], 0)
 
     def test_targets_separate_future_only(self):
         gold,_=panel.load_gold(self.root)
         t=panel.build_targets(gold,[5])
         self.assertTrue(t["future_target_only"].all())
         self.assertIn("gross_return_5td_bps",t)
+        self.assertIn("entry_open", t.columns)
+        expected = (gold.loc[6, "gold_bar_close"] / gold.loc[1, "gold_bar_open"] - 1.0) * 10000.0
+        self.assertAlmostEqual(t.loc[0, "gross_return_5td_bps"], expected)
+        self.assertEqual(pd.Timestamp(t.loc[0, "target_exit_date_5td_utc"]), gold.loc[6, "gold_bar_date_utc"])
+
+    def test_decision_panel_uses_strictly_prior_gold_bar(self):
+        gold,_=panel.load_gold(self.root)
+        d=panel.build_decision_panel(gold)
+        self.assertTrue((d["gold_feature_observation_date_utc"] < d["decision_date_utc"]).all())
+        self.assertTrue((d["gold_feature_available_after_utc"] == d["decision_time_utc"]).all())
+        self.assertEqual(d.loc[0, "gold_prev_close"], gold.loc[0, "gold_bar_close"])
+        self.assertEqual(d.loc[0, "decision_date_utc"], gold.loc[1, "gold_bar_date_utc"])
+
+    def test_same_day_gold_ohlc_never_enters_features(self):
+        panel.build(self.root)
+        f=pd.read_csv(self.root/panel.REPORT_DIR/"macro_causal_features.csv")
+        forbidden={"gold_open","gold_high","gold_low","gold_close","entry_open"}
+        self.assertTrue(forbidden.isdisjoint(f.columns))
+        self.assertTrue({"gold_prev_open","gold_prev_high","gold_prev_low","gold_prev_close"}.issubset(f.columns))
+
+    def test_feature_target_alignment_and_execution_semantics(self):
+        panel.build(self.root)
+        f=pd.read_csv(self.root/panel.REPORT_DIR/"macro_causal_features.csv")
+        t=pd.read_csv(self.root/panel.REPORT_DIR/"macro_causal_targets.csv")
+        self.assertListEqual(f["decision_date_utc"].tolist(), t["entry_date_utc"].tolist())
+        raw=pd.read_csv(self.root/"data/macro_regime/raw/broker_or_spot_gold_d1_ohlc_2011_present.csv")
+        raw_dates=pd.to_datetime(raw["date_utc"],utc=True)
+        first_date=pd.Timestamp(t.loc[0,"entry_date_utc"])
+        raw_row=raw.loc[raw_dates==first_date].iloc[0]
+        self.assertAlmostEqual(float(t.loc[0,"entry_open"]), float(raw_row["open"]))
+
+    def test_contract_declares_gold_asof_execution_semantics(self):
+        panel.build(self.root)
+        c=json.loads((self.root/panel.REPORT_DIR/"macro_panel_contract.json").read_text())
+        self.assertIn("previous completed gold D1 bar", c["feature_availability"])
+        self.assertIn("Enter at D open", c["execution_semantics"])
 
     def test_collect_current_outputs(self):
         panel.build(self.root)

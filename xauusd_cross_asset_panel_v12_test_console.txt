@@ -1,0 +1,26 @@
+===== COMPILE =====
+===== TESTS =====
+test_collect_creates_compact_manifested_zip_without_large_csvs (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_collect_creates_compact_manifested_zip_without_large_csvs) ... ok
+test_dst_conversion_standard (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_dst_conversion_standard) ... ok
+test_dst_conversion_summer (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_dst_conversion_summer) ... ok
+test_exact_log_return_requires_exact_gap (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_exact_log_return_requires_exact_gap) ... ok
+test_export_program_v1_remains_accepted_after_python_repair (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_export_program_v1_remains_accepted_after_python_repair) ... ok
+test_features_use_completed_bar_availability (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_features_use_completed_bar_availability) ... ok
+test_macro_loader_required_columns (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_macro_loader_required_columns) ... ok
+test_mql_defaults_to_wti_dxy_repair_only (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_mql_defaults_to_wti_dxy_repair_only) ... ok
+test_mql_resolves_symbol_specific_history_start (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_mql_resolves_symbol_specific_history_start) ... ok
+test_preflight_requires_macro_panel (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_preflight_requires_macro_panel) ... ok
+test_read_export_rejects_schema (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_read_export_rejects_schema) ... ok
+test_safe_symbol_filename (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_safe_symbol_filename) ... ok
+test_session_eligibility_uses_xau_exact_gap_denominator (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_session_eligibility_uses_xau_exact_gap_denominator) ... ok
+test_static_no_execution_tokens (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_static_no_execution_tokens) ... ok
+test_synthetic_build_writes_causal_outputs (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_synthetic_build_writes_causal_outputs) ... /Users/vahid/Desktop/xauusd-trader/app/xauusd_cross_asset_intraday_panel.py:371: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  features["decision_date_utc"] = features["decision_time_utc"].dt.strftime("%Y-%m-%d")
+ok
+test_targets_exact_horizon (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_targets_exact_horizon) ... ok
+test_targets_gap_fail_closed (tests.test_xauusd_cross_asset_intraday_panel.CrossAssetPanelTests.test_targets_gap_fail_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 1.546s
+
+OK

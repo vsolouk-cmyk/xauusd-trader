@@ -1,0 +1,45 @@
+{
+  "program": "XAUUSD_CROSS_ASSET_FIXED_THESIS_SCAN_V1_2_PANDAS3_STREAMING_CSV_READER_REPAIR",
+  "generated_utc": "2026-08-06T18:26:27.978133Z",
+  "decision": "PASS_CROSS_ASSET_FIXED_SCAN_PREFLIGHT_REFERENCE_ONLY",
+  "pass": true,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false,
+  "panel_program": "XAUUSD_CROSS_ASSET_INTRADAY_PANEL_V1_2_SESSION_ELIGIBILITY_CONTRACT_REPAIR",
+  "panel_rows": 61823,
+  "candidate_count": 12,
+  "reference_start_utc": "2016-01-01T00:00:00Z",
+  "reference_end_utc": "2025-01-01T00:00:00Z",
+  "diagnostic_policy": "NOT_EVALUATED_UNLESS_REFERENCE_SURVIVOR",
+  "static_execution_violations": [],
+  "required_next_action": "RUN_FIXED_REFERENCE_SCAN_ONCE"
+}
+{
+  "program": "XAUUSD_CROSS_ASSET_FIXED_THESIS_SCAN_V1_2_PANDAS3_STREAMING_CSV_READER_REPAIR",
+  "generated_utc": "2026-08-06T18:27:24.703610Z",
+  "decision": "NO_REFERENCE_SURVIVOR_REJECT_FIXED_CROSS_ASSET_SET",
+  "pass": false,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false,
+  "panel_rows_loaded": 61823,
+  "reference_rows": 52393,
+  "candidate_count": 12,
+  "reference_pass_count": 0,
+  "reference_survivor_ids": [],
+  "diagnostic_evaluated": false,
+  "diagnostic_policy": "SEEN_DIAGNOSTIC_KILL_ONLY_NOT_SELECTION",
+  "diagnostic_kill_pass_ids": [],
+  "required_next_action": "REJECT_FIXED_SET_AND_REASSESS_INTRADAY_INFORMATION_CONTENT"
+}
+{
+  "program": "XAUUSD_CROSS_ASSET_FIXED_THESIS_SCAN_V1_2_PANDAS3_STREAMING_CSV_READER_REPAIR",
+  "generated_utc": "2026-08-06T18:27:53.195154Z",
+  "decision": "PASS_CROSS_ASSET_FIXED_SCAN_RESULTS_PACK_CREATED",
+  "pass": true,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false,
+  "output": "/Users/vahid/Downloads/XAUUSD_CROSS_ASSET_FIXED_SCAN_RESULTS.zip"
+}

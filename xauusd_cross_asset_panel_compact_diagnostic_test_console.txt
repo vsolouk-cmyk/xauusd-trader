@@ -3,15 +3,15 @@
 test_end_to_end_compact_pack (tests.test_compact_diagnostic.CompactDiagnosticTests.test_end_to_end_compact_pack) ... ok
 
 ----------------------------------------------------------------------
-Ran 1 test in 0.042s
+Ran 1 test in 0.100s
 
 OK
 {
   "program": "XAUUSD_CROSS_ASSET_PANEL_COMPACT_DIAGNOSTIC_V1",
   "decision": "PASS_COMPACT_DIAGNOSTIC_PACK_CREATED",
-  "output": "/var/folders/70/sq2znrwd6hgfzkl6rx0s86c40000gn/T/tmpdzlhurrl/diag.zip",
-  "size_bytes": 7581,
-  "sha256": "a1cd24a3c3b5e23b490f41d09736bbc5d87d8ce9e01b8a5af302efd872cc600d",
+  "output": "/var/folders/70/sq2znrwd6hgfzkl6rx0s86c40000gn/T/tmp5dvqvj7w/diag.zip",
+  "size_bytes": 7585,
+  "sha256": "e4c86b3e65c32688b914755a69fe2b704df0046a96adacd142e1e8fa51080ab1",
   "paper_order_allowed": false,
   "demo_order_allowed": false,
   "live_order_allowed": false

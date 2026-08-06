@@ -1,0 +1,361 @@
+{
+  "program": "XAUUSD_CROSS_ASSET_FIXED_THESIS_SCAN_V1_2_PANDAS3_STREAMING_CSV_READER_REPAIR",
+  "reference_start_utc": "2016-01-01T00:00:00Z",
+  "reference_end_utc": "2025-01-01T00:00:00Z",
+  "diagnostic_start_utc": "2025-01-01T00:00:00Z",
+  "diagnostic_end_utc": "2027-01-01T00:00:00Z",
+  "normal_cost_bps": 3.0,
+  "severe_cost_bps": 6.0,
+  "locked_notional_to_equity": 0.1570396406876166,
+  "allowed_hours_utc": [
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+  ],
+  "allowed_weekdays": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "rolling_z_window_rows": 1440,
+  "rolling_z_min_periods": 480,
+  "bootstrap_reps": 2000,
+  "bootstrap_block_trades": 10,
+  "bootstrap_seed": 1782401,
+  "maximum_reference_survivors_for_diagnostic": 3,
+  "reference_folds": [
+    {
+      "name": "2016_2018",
+      "start_utc": "2016-01-01T00:00:00Z",
+      "end_utc": "2019-01-01T00:00:00Z"
+    },
+    {
+      "name": "2019_2021",
+      "start_utc": "2019-01-01T00:00:00Z",
+      "end_utc": "2022-01-01T00:00:00Z"
+    },
+    {
+      "name": "2022_2024",
+      "start_utc": "2022-01-01T00:00:00Z",
+      "end_utc": "2025-01-01T00:00:00Z"
+    }
+  ],
+  "reference_gates": {
+    "minimum_panel_rows": 30000,
+    "minimum_trades": 80,
+    "minimum_mean_severe_bps": 0.0,
+    "minimum_profit_factor": 1.2,
+    "minimum_bootstrap_p10_bps": 0.0,
+    "minimum_positive_folds": 2,
+    "minimum_worst_fold_mean_bps": -5.0,
+    "maximum_positive_year_profit_share": 0.45,
+    "minimum_locked_risk_cagr": 0.02
+  },
+  "diagnostic_kill_gates": {
+    "minimum_trades": 20,
+    "minimum_profit_factor": 1.0
+  },
+  "rolling_z_features": {
+    "z_xau_h1_ret4": "xauusd_h1_ret_4",
+    "z_xag_h1_ret4": "xagusd_h1_ret_4",
+    "z_usd_fx_h1": "usd_fx_composite_h1",
+    "z_gold_silver_relative_h1": "gold_silver_relative_h1",
+    "z_spx_h1_ret4": "sandp500_h1_ret_4",
+    "z_risk_energy_h1": "risk_energy_composite_h1",
+    "z_dxy_h1_ret4": "dxy_h1_ret_4"
+  },
+  "candidates": [
+    {
+      "candidate_id": "usd_silver_consensus_long_4h",
+      "family": "USD_PRECIOUS_CONSENSUS",
+      "side": "LONG",
+      "horizon_hours": 4,
+      "conditions": [
+        {
+          "column": "z_usd_fx_h1",
+          "op": "<=",
+          "value": -0.75
+        },
+        {
+          "column": "z_xag_h1_ret4",
+          "op": ">=",
+          "value": 0.75
+        },
+        {
+          "column": "z_gold_silver_relative_h1",
+          "op": "<=",
+          "value": -0.25
+        }
+      ]
+    },
+    {
+      "candidate_id": "usd_silver_consensus_short_4h",
+      "family": "USD_PRECIOUS_CONSENSUS",
+      "side": "SHORT",
+      "horizon_hours": 4,
+      "conditions": [
+        {
+          "column": "z_usd_fx_h1",
+          "op": ">=",
+          "value": 0.75
+        },
+        {
+          "column": "z_xag_h1_ret4",
+          "op": "<=",
+          "value": -0.75
+        },
+        {
+          "column": "z_gold_silver_relative_h1",
+          "op": ">=",
+          "value": 0.25
+        }
+      ]
+    },
+    {
+      "candidate_id": "silver_lead_catchup_long_4h",
+      "family": "PRECIOUS_RELATIVE_VALUE",
+      "side": "LONG",
+      "horizon_hours": 4,
+      "conditions": [
+        {
+          "column": "z_gold_silver_relative_h1",
+          "op": "<=",
+          "value": -1.25
+        },
+        {
+          "column": "z_xag_h1_ret4",
+          "op": ">=",
+          "value": 0.25
+        },
+        {
+          "column": "z_xau_h1_ret4",
+          "op": "<=",
+          "value": 0.5
+        }
+      ]
+    },
+    {
+      "candidate_id": "silver_lag_breakdown_short_4h",
+      "family": "PRECIOUS_RELATIVE_VALUE",
+      "side": "SHORT",
+      "horizon_hours": 4,
+      "conditions": [
+        {
+          "column": "z_gold_silver_relative_h1",
+          "op": ">=",
+          "value": 1.25
+        },
+        {
+          "column": "z_xag_h1_ret4",
+          "op": "<=",
+          "value": -0.25
+        },
+        {
+          "column": "z_xau_h1_ret4",
+          "op": ">=",
+          "value": -0.5
+        }
+      ]
+    },
+    {
+      "candidate_id": "yield_usd_relief_long_12h",
+      "family": "RATES_USD_ALIGNMENT",
+      "side": "LONG",
+      "horizon_hours": 12,
+      "conditions": [
+        {
+          "column": "real_yield_10y_chg_5d",
+          "op": "<",
+          "value": 0.0
+        },
+        {
+          "column": "usd_broad_chg_5d",
+          "op": "<",
+          "value": 0.0
+        },
+        {
+          "column": "z_usd_fx_h1",
+          "op": "<=",
+          "value": -0.5
+        }
+      ]
+    },
+    {
+      "candidate_id": "yield_usd_pressure_short_12h",
+      "family": "RATES_USD_ALIGNMENT",
+      "side": "SHORT",
+      "horizon_hours": 12,
+      "conditions": [
+        {
+          "column": "real_yield_10y_chg_5d",
+          "op": ">",
+          "value": 0.0
+        },
+        {
+          "column": "usd_broad_chg_5d",
+          "op": ">",
+          "value": 0.0
+        },
+        {
+          "column": "z_usd_fx_h1",
+          "op": ">=",
+          "value": 0.5
+        }
+      ]
+    },
+    {
+      "candidate_id": "riskoff_rates_relief_long_12h",
+      "family": "RISK_RATES_DIVERGENCE",
+      "side": "LONG",
+      "horizon_hours": 12,
+      "conditions": [
+        {
+          "column": "z_spx_h1_ret4",
+          "op": "<=",
+          "value": -0.75
+        },
+        {
+          "column": "real_yield_10y_chg_5d",
+          "op": "<",
+          "value": 0.0
+        },
+        {
+          "column": "z_xag_h1_ret4",
+          "op": ">=",
+          "value": 0.0
+        }
+      ]
+    },
+    {
+      "candidate_id": "riskon_rates_pressure_short_12h",
+      "family": "RISK_RATES_DIVERGENCE",
+      "side": "SHORT",
+      "horizon_hours": 12,
+      "conditions": [
+        {
+          "column": "z_spx_h1_ret4",
+          "op": ">=",
+          "value": 0.75
+        },
+        {
+          "column": "real_yield_10y_chg_5d",
+          "op": ">",
+          "value": 0.0
+        },
+        {
+          "column": "z_xag_h1_ret4",
+          "op": "<=",
+          "value": 0.0
+        }
+      ]
+    },
+    {
+      "candidate_id": "energy_inflation_long_12h",
+      "family": "ENERGY_INFLATION_IMPULSE",
+      "side": "LONG",
+      "horizon_hours": 12,
+      "conditions": [
+        {
+          "column": "z_risk_energy_h1",
+          "op": ">=",
+          "value": 0.75
+        },
+        {
+          "column": "breakeven_10y_chg_5d",
+          "op": ">",
+          "value": 0.0
+        },
+        {
+          "column": "real_yield_10y_chg_5d",
+          "op": "<=",
+          "value": 0.0
+        }
+      ]
+    },
+    {
+      "candidate_id": "energy_disinflation_short_12h",
+      "family": "ENERGY_INFLATION_IMPULSE",
+      "side": "SHORT",
+      "horizon_hours": 12,
+      "conditions": [
+        {
+          "column": "z_risk_energy_h1",
+          "op": "<=",
+          "value": -0.75
+        },
+        {
+          "column": "breakeven_10y_chg_5d",
+          "op": "<",
+          "value": 0.0
+        },
+        {
+          "column": "real_yield_10y_chg_5d",
+          "op": ">=",
+          "value": 0.0
+        }
+      ]
+    },
+    {
+      "candidate_id": "dxy_silver_shock_long_4h",
+      "family": "DXY_PRECIOUS_SHOCK",
+      "side": "LONG",
+      "horizon_hours": 4,
+      "conditions": [
+        {
+          "column": "dxy_h1_ret4_available",
+          "op": "==",
+          "value": 1.0
+        },
+        {
+          "column": "z_dxy_h1_ret4",
+          "op": "<=",
+          "value": -1.0
+        },
+        {
+          "column": "z_xag_h1_ret4",
+          "op": ">=",
+          "value": 0.5
+        }
+      ]
+    },
+    {
+      "candidate_id": "dxy_silver_shock_short_4h",
+      "family": "DXY_PRECIOUS_SHOCK",
+      "side": "SHORT",
+      "horizon_hours": 4,
+      "conditions": [
+        {
+          "column": "dxy_h1_ret4_available",
+          "op": "==",
+          "value": 1.0
+        },
+        {
+          "column": "z_dxy_h1_ret4",
+          "op": ">=",
+          "value": 1.0
+        },
+        {
+          "column": "z_xag_h1_ret4",
+          "op": "<=",
+          "value": -0.5
+        }
+      ]
+    }
+  ],
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false
+}

@@ -2,8 +2,8 @@
   "program": "XAUUSD_CROSS_ASSET_PANEL_COMPACT_DIAGNOSTIC_V1",
   "decision": "PASS_COMPACT_DIAGNOSTIC_PACK_CREATED",
   "output": "/Users/vahid/Downloads/XAUUSD_CROSS_ASSET_PANEL_COMPACT_DIAGNOSTIC.zip",
-  "size_bytes": 3258281,
-  "sha256": "7fd0965eab3b1b6ac7fffd9bfcce7f5e3fbce1304dbae1a98d79db4892ad4b25",
+  "size_bytes": 3258283,
+  "sha256": "cba0ae1e5042502856969c9361b28eaea8f14bdc81ee10a93b306eff3cfc44e4",
   "paper_order_allowed": false,
   "demo_order_allowed": false,
   "live_order_allowed": false

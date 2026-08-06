@@ -17,7 +17,8 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-PROGRAM = "XAUUSD_CROSS_ASSET_INTRADAY_PANEL_V1"
+PROGRAM = "XAUUSD_CROSS_ASSET_INTRADAY_PANEL_V1_2_SESSION_ELIGIBILITY_CONTRACT_REPAIR"
+EXPORT_PROGRAMS = {"XAUUSD_CROSS_ASSET_INTRADAY_PANEL_V1", PROGRAM}
 REPORT_REL = Path("reports/xauusd_cross_asset_intraday_panel")
 MT5_EXPORT_REL = Path("XAUUSD_CROSS_ASSET_HISTORY")
 REQUIRED_SYMBOLS = ["XAUUSD", "XAGUSD", "EURUSD", "USDJPY"]
@@ -96,7 +97,7 @@ def read_export(path: Path, symbol: str, timeframe: str) -> pd.DataFrame:
     missing = sorted(required - set(frame.columns))
     if missing:
         raise PanelError(f"export schema missing {missing}: {path}")
-    frame = frame[frame["program"].astype(str) == PROGRAM].copy()
+    frame = frame[frame["program"].astype(str).isin(EXPORT_PROGRAMS)].copy()
     frame = frame[frame["symbol"].astype(str) == symbol].copy()
     frame = frame[frame["timeframe"].astype(str).str.upper() == timeframe].copy()
     if frame.empty:
@@ -196,6 +197,64 @@ def make_targets(xau_h1: pd.DataFrame) -> pd.DataFrame:
         rows.append(row)
     return pd.DataFrame(rows)
 
+
+
+def evaluate_session_eligibility(
+    features: pd.DataFrame,
+    targets: pd.DataFrame,
+    ref_mask: pd.Series,
+) -> dict[str, Any]:
+    def ret4(symbol: str) -> str:
+        return f"{safe_symbol_name(symbol)}_h1_ret_4"
+
+    reference_rows = int(ref_mask.sum())
+    unconditional_coverage = {
+        symbol: float(features.loc[ref_mask, ret4(symbol)].notna().mean()) if reference_rows else 0.0
+        for symbol in ALL_SYMBOLS
+    }
+    xau_anchor = ref_mask & features[ret4("XAUUSD")].notna()
+    xau_anchor_rows = int(xau_anchor.sum())
+    xau_anchor_share = float(xau_anchor_rows / reference_rows) if reference_rows else 0.0
+
+    peer_symbols = [s for s in REQUIRED_SYMBOLS if s != "XAUUSD"]
+    peer_coverage = {
+        symbol: float(features.loc[xau_anchor, ret4(symbol)].notna().mean()) if xau_anchor_rows else 0.0
+        for symbol in peer_symbols
+    }
+    core_columns = [ret4(s) for s in REQUIRED_SYMBOLS]
+    core_history_ready = ref_mask & features[core_columns].notna().all(axis=1)
+    core_history_rows = int(core_history_ready.sum())
+    core_share_reference = float(core_history_rows / reference_rows) if reference_rows else 0.0
+    core_share_anchor = float(core_history_rows / xau_anchor_rows) if xau_anchor_rows else 0.0
+
+    target4 = targets["forward_return_4h_bps"].notna()
+    target4_on_core = float(target4[core_history_ready].mean()) if core_history_rows else 0.0
+    trade_ready = core_history_ready & target4
+    trade_ready_rows = int(trade_ready.sum())
+    trade_ready_share = float(trade_ready_rows / reference_rows) if reference_rows else 0.0
+
+    target_horizon_coverage = {
+        f"{h}h": float(targets.loc[ref_mask, f"forward_return_{h}h_bps"].notna().mean())
+        if reference_rows else 0.0
+        for h in H1_HORIZONS
+    }
+    return {
+        "reference_rows": reference_rows,
+        "unconditional_coverage": unconditional_coverage,
+        "xau_anchor_mask": xau_anchor,
+        "xau_anchor_rows": xau_anchor_rows,
+        "xau_anchor_share": xau_anchor_share,
+        "peer_coverage": peer_coverage,
+        "core_history_mask": core_history_ready,
+        "core_history_rows": core_history_rows,
+        "core_history_share_of_reference": core_share_reference,
+        "core_history_share_of_xau_anchor": core_share_anchor,
+        "target_4h_coverage_on_core": target4_on_core,
+        "trade_ready_mask": trade_ready,
+        "trade_ready_rows": trade_ready_rows,
+        "trade_ready_share_of_reference": trade_ready_share,
+        "target_horizon_coverage": target_horizon_coverage,
+    }
 
 def load_macro_features(root: Path) -> pd.DataFrame:
     candidates = [
@@ -312,10 +371,13 @@ def build(root: Path, export_dir: Path | None = None, report_dir: Path | None = 
     features["decision_date_utc"] = features["decision_time_utc"].dt.strftime("%Y-%m-%d")
     macro = load_macro_features(root)
     features = features.merge(macro, on="decision_date_utc", how="left", validate="many_to_one")
+    # Defragment after repeated merges before adding derived columns.
+    features = features.copy()
 
     # Derived cross-asset signals, all from completed prior bars.
     def col(sym: str, tf: str, suffix: str) -> str:
         return f"{safe_symbol_name(sym)}_{tf.lower()}_{suffix}"
+
     features["usd_fx_composite_h1"] = (
         -features[col("EURUSD", "H1", "ret_4")]
         + features[col("USDJPY", "H1", "ret_4")]
@@ -324,11 +386,20 @@ def build(root: Path, export_dir: Path | None = None, report_dir: Path | None = 
         features[col("XAUUSD", "H1", "ret_4")]
         - features[col("XAGUSD", "H1", "ret_4")]
     )
-    features["risk_energy_composite_h1"] = (
-        features[col("S&P500", "H1", "ret_4")]
-        + features[col("WTI", "H1", "ret_4")]
-        + features[col("BRENT", "H1", "ret_4")]
-    ) / 3.0
+    risk_energy_columns = [
+        col("S&P500", "H1", "ret_4"),
+        col("WTI", "H1", "ret_4"),
+        col("BRENT", "H1", "ret_4"),
+    ]
+    risk_energy_count = features[risk_energy_columns].notna().sum(axis=1)
+    features["risk_energy_component_count_h1"] = risk_energy_count.astype("int64")
+    features["risk_energy_composite_h1"] = features[risk_energy_columns].mean(axis=1, skipna=True)
+    features.loc[risk_energy_count < 2, "risk_energy_composite_h1"] = np.nan
+
+    for symbol in OPTIONAL_SYMBOLS:
+        features[f"{safe_symbol_name(symbol)}_h1_ret4_available"] = (
+            features[col(symbol, "H1", "ret_4")].notna().astype("int8")
+        )
 
     targets = make_targets(xau_h1)
     targets["decision_time_utc"] = pd.to_datetime(targets["decision_time_utc"], utc=True)
@@ -337,6 +408,12 @@ def build(root: Path, export_dir: Path | None = None, report_dir: Path | None = 
     common = features[["decision_time_utc"]].merge(targets[["decision_time_utc"]], on="decision_time_utc")
     features = common.merge(features, on="decision_time_utc", how="left")
     targets = common.merge(targets, on="decision_time_utc", how="left")
+
+    # Safe eligibility uses only completed historical features. Future target availability
+    # is reported separately and never written into the feature matrix.
+    core_history_columns = [col(s, "H1", "ret_4") for s in REQUIRED_SYMBOLS]
+    features["core_h1_4h_history_ready"] = features[core_history_columns].notna().all(axis=1).astype("int8")
+    targets["target_4h_available"] = targets["forward_return_4h_bps"].notna().astype("int8")
 
     for frame in (features, targets):
         frame["decision_time_utc"] = pd.to_datetime(frame["decision_time_utc"], utc=True).astype(str)
@@ -349,10 +426,22 @@ def build(root: Path, export_dir: Path | None = None, report_dir: Path | None = 
     ref_mask = pd.to_datetime(features["decision_time_utc"], utc=True).between(
         pd.Timestamp("2016-01-01", tz="UTC"), pd.Timestamp("2025-01-01", tz="UTC"), inclusive="left"
     )
-    coverage: dict[str, float] = {}
-    for symbol in REQUIRED_SYMBOLS + OPTIONAL_SYMBOLS:
-        c = col(symbol, "H1", "ret_4")
-        coverage[symbol] = float(features.loc[ref_mask, c].notna().mean()) if ref_mask.any() else 0.0
+    reference_rows = int(ref_mask.sum())
+
+    eligibility = evaluate_session_eligibility(features, targets, ref_mask)
+    unconditional_coverage = eligibility["unconditional_coverage"]
+    xau_anchor_rows = eligibility["xau_anchor_rows"]
+    xau_anchor_share = eligibility["xau_anchor_share"]
+    peer_coverage_on_xau_anchor = eligibility["peer_coverage"]
+    core_history_ready = eligibility["core_history_mask"]
+    core_history_rows = eligibility["core_history_rows"]
+    core_history_share_of_reference = eligibility["core_history_share_of_reference"]
+    core_history_share_of_xau_anchor = eligibility["core_history_share_of_xau_anchor"]
+    target_4h_coverage_on_core = eligibility["target_4h_coverage_on_core"]
+    trade_ready_4h = eligibility["trade_ready_mask"]
+    trade_ready_4h_rows = eligibility["trade_ready_rows"]
+    trade_ready_4h_share_of_reference = eligibility["trade_ready_share_of_reference"]
+    target_horizon_coverage = eligibility["target_horizon_coverage"]
 
     availability_columns = [c for c in features.columns if c.endswith("_available_time_utc")]
     leakage_counts: dict[str, int] = {}
@@ -361,17 +450,33 @@ def build(root: Path, export_dir: Path | None = None, report_dir: Path | None = 
         available = pd.to_datetime(features[c], utc=True, errors="coerce")
         leakage_counts[c] = int((available > decisions).fillna(False).sum())
 
-    target_columns_in_features = [c for c in features.columns if c.startswith("forward_return_") or c.startswith("exit_") or c == "entry_open"]
-    required_coverage_pass = all(coverage[s] >= 0.90 for s in REQUIRED_SYMBOLS)
-    rate_coverage = float(features.loc[ref_mask, "real_yield_10y"].notna().mean()) if ref_mask.any() else 0.0
-    reference_rows = int(ref_mask.sum())
-    decision = "PASS_CROSS_ASSET_INTRADAY_CAUSAL_PANEL_READY_FOR_FIXED_SCAN"
-    passed = (
-        required_coverage_pass and rate_coverage >= 0.90 and reference_rows >= 30000
-        and sum(leakage_counts.values()) == 0 and not target_columns_in_features
+    target_columns_in_features = [
+        c for c in features.columns
+        if c.startswith("forward_return_") or c.startswith("exit_") or c == "entry_open"
+    ]
+    rate_coverage = float(features.loc[trade_ready_4h, "real_yield_10y"].notna().mean()) if trade_ready_4h_rows else 0.0
+    feature_target_time_match = bool(features["decision_time_utc"].equals(targets["decision_time_utc"]))
+
+    gates = {
+        "reference_rows_at_least_30000": reference_rows >= 30000,
+        "xau_exact_4h_history_share_at_least_0_70": xau_anchor_share >= 0.70,
+        "peer_core_coverage_on_xau_anchor_at_least_0_97": (
+            min(peer_coverage_on_xau_anchor.values(), default=0.0) >= 0.97
+        ),
+        "core_history_rows_at_least_30000": core_history_rows >= 30000,
+        "core_history_share_of_xau_anchor_at_least_0_97": core_history_share_of_xau_anchor >= 0.97,
+        "target_4h_coverage_on_core_at_least_0_90": target_4h_coverage_on_core >= 0.90,
+        "trade_ready_4h_rows_at_least_30000": trade_ready_4h_rows >= 30000,
+        "daily_real_yield_coverage_at_least_0_90": rate_coverage >= 0.90,
+        "availability_leakage_zero": sum(leakage_counts.values()) == 0,
+        "target_columns_absent_from_features": not target_columns_in_features,
+        "feature_target_time_match": feature_target_time_match,
+    }
+    passed = all(gates.values())
+    decision = (
+        "PASS_CROSS_ASSET_INTRADAY_CAUSAL_PANEL_READY_FOR_FIXED_SCAN"
+        if passed else "CROSS_ASSET_INTRADAY_PANEL_FAIL_CLOSED"
     )
-    if not passed:
-        decision = "CROSS_ASSET_INTRADAY_PANEL_FAIL_CLOSED"
 
     features_path = report_dir / "cross_asset_intraday_features.csv"
     targets_path = report_dir / "cross_asset_intraday_targets.csv"
@@ -380,26 +485,105 @@ def build(root: Path, export_dir: Path | None = None, report_dir: Path | None = 
     targets.to_csv(targets_path, index=False)
     pd.DataFrame(source_rows).to_csv(sources_path, index=False)
 
+    def coverage_table(frame: pd.DataFrame) -> pd.DataFrame:
+        rows: list[dict[str, Any]] = []
+        for name in frame.columns:
+            nonempty = int(frame[name].notna().sum())
+            rows.append({
+                "column": name,
+                "nonempty_rows": nonempty,
+                "missing_rows": int(len(frame) - nonempty),
+                "coverage": float(nonempty / len(frame)) if len(frame) else 0.0,
+                "reference_coverage": float(frame.loc[ref_mask, name].notna().mean()) if reference_rows else 0.0,
+            })
+        return pd.DataFrame(rows)
+
+    feature_coverage = coverage_table(features)
+    target_coverage = coverage_table(targets)
+    feature_coverage.to_csv(report_dir / "cross_asset_feature_column_coverage.csv", index=False)
+    target_coverage.to_csv(report_dir / "cross_asset_target_column_coverage.csv", index=False)
+
+    feature_policy = feature_coverage[["column", "reference_coverage"]].copy()
+    feature_policy["fixed_scan_policy"] = np.select(
+        [
+            feature_policy["column"].isin(core_history_columns + [
+                "usd_fx_composite_h1", "gold_silver_relative_h1",
+                "risk_energy_composite_h1", "core_h1_4h_history_ready",
+            ]),
+            feature_policy["reference_coverage"] < 0.05,
+            feature_policy["reference_coverage"] < 0.50,
+        ],
+        ["CORE_OR_DERIVED", "EXCLUDE_NEAR_EMPTY", "SPARSE_OPTIONAL_WITH_INDICATOR"],
+        default="AVAILABLE_WITH_MISSINGNESS_CONTROL",
+    )
+    feature_policy.to_csv(report_dir / "cross_asset_feature_policy.csv", index=False)
+
+    def sample_rows(frame: pd.DataFrame) -> pd.DataFrame:
+        if frame.empty:
+            return frame
+        indices = sorted(set(
+            list(range(min(5, len(frame))))
+            + list(range(max(0, len(frame) - 5), len(frame)))
+            + [int(i) for i in np.linspace(0, len(frame) - 1, num=min(20, len(frame)))]
+        ))
+        return frame.iloc[indices].copy()
+
+    sample_rows(features).to_csv(report_dir / "cross_asset_feature_samples.csv", index=False)
+    sample_rows(targets).to_csv(report_dir / "cross_asset_target_samples.csv", index=False)
+
+    large_file_manifest = {
+        "program": PROGRAM,
+        "generated_utc": utc_now(),
+        "files": [
+            {"path": features_path.name, "size": features_path.stat().st_size, "sha256": sha256_file(features_path), "rows": int(len(features)), "columns": int(len(features.columns))},
+            {"path": targets_path.name, "size": targets_path.stat().st_size, "sha256": sha256_file(targets_path), "rows": int(len(targets)), "columns": int(len(targets.columns))},
+        ],
+        "included_in_results_zip": False,
+        "reason": "large local model inputs retained in repo report directory; compact evidence only is uploaded",
+    }
+    (report_dir / "cross_asset_large_file_manifest.json").write_text(
+        json.dumps(large_file_manifest, indent=2), encoding="utf-8"
+    )
+
     quality = {
         "program": PROGRAM,
         "generated_utc": utc_now(),
         "reference_rows_2016_2024": reference_rows,
         "diagnostic_rows_2025_plus": int((~ref_mask).sum()),
-        "required_symbol_h1_ret4_coverage": coverage,
-        "daily_real_yield_coverage": rate_coverage,
+        "unconditional_symbol_h1_ret4_coverage": unconditional_coverage,
+        "session_eligibility": {
+            "xau_exact_4h_history_rows": xau_anchor_rows,
+            "xau_exact_4h_history_share_of_reference": xau_anchor_share,
+            "peer_coverage_on_xau_anchor": peer_coverage_on_xau_anchor,
+            "core_history_ready_rows": core_history_rows,
+            "core_history_share_of_reference": core_history_share_of_reference,
+            "core_history_share_of_xau_anchor": core_history_share_of_xau_anchor,
+            "target_4h_coverage_on_core_history": target_4h_coverage_on_core,
+            "trade_ready_4h_rows": trade_ready_4h_rows,
+            "trade_ready_4h_share_of_reference": trade_ready_4h_share_of_reference,
+        },
+        "target_horizon_coverage": target_horizon_coverage,
+        "daily_real_yield_coverage_on_trade_ready_4h": rate_coverage,
         "availability_leakage_counts": leakage_counts,
         "target_columns_in_features": target_columns_in_features,
         "feature_rows": int(len(features)),
         "target_rows": int(len(targets)),
-        "feature_target_time_match": bool(features["decision_time_utc"].equals(targets["decision_time_utc"])),
+        "feature_target_time_match": feature_target_time_match,
+        "gates": gates,
     }
     (report_dir / "cross_asset_panel_quality.json").write_text(json.dumps(quality, indent=2), encoding="utf-8")
 
     contract = {
         "program": PROGRAM,
+        "accepted_export_programs": sorted(EXPORT_PROGRAMS),
         "generated_utc": utc_now(),
         "decision_time": "XAUUSD H1 bar open UTC",
         "intraday_feature_contract": "only completed H1/M15 bars with availability <= decision_time",
+        "exact_gap_contract": {
+            "meaning": "ret_4 requires four uninterrupted wall-clock hours; daily maintenance breaks intentionally create missing values",
+            "quality_denominator": "eligible XAU exact-4h rows, not all XAU H1 anchor rows",
+            "missingness_policy": "retain explicit availability flags; do not forward-fill exact returns",
+        },
         "amarkets_time_contract": {
             "standard_shift_minutes": -120,
             "dst_shift_minutes": -180,
@@ -434,9 +618,13 @@ def build(root: Path, export_dir: Path | None = None, report_dir: Path | None = 
         "target_rows": int(len(targets)),
         "reference_rows_2016_2024": reference_rows,
         "diagnostic_rows_2025_plus": int((~ref_mask).sum()),
-        "required_symbol_coverage": {s: coverage[s] for s in REQUIRED_SYMBOLS},
-        "optional_symbol_coverage": {s: coverage[s] for s in OPTIONAL_SYMBOLS},
-        "daily_real_yield_coverage": rate_coverage,
+        "xau_exact_4h_history_share_of_reference": xau_anchor_share,
+        "core_history_ready_rows": core_history_rows,
+        "trade_ready_4h_rows": trade_ready_4h_rows,
+        "peer_coverage_on_xau_anchor": peer_coverage_on_xau_anchor,
+        "optional_symbol_unconditional_coverage": {s: unconditional_coverage[s] for s in OPTIONAL_SYMBOLS},
+        "daily_real_yield_coverage_on_trade_ready_4h": rate_coverage,
+        "failed_gates": [name for name, ok in gates.items() if not ok],
         "required_next_action": "FIXED_CROSS_ASSET_INTRADAY_THESIS_SCAN" if passed else "REPAIR_PANEL_CONTRACT",
     }
     (report_dir / "cross_asset_panel_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
@@ -448,11 +636,19 @@ def build(root: Path, export_dir: Path | None = None, report_dir: Path | None = 
         "",
         f"Feature rows: {len(features)}",
         f"Reference rows 2016-2024: {reference_rows}",
+        f"XAU exact-4h eligible share: {xau_anchor_share:.4%}",
+        f"Core history-ready rows: {core_history_rows}",
+        f"Trade-ready 4h rows: {trade_ready_4h_rows}",
         f"Diagnostic rows 2025+: {int((~ref_mask).sum())}",
         "",
+        "Quality is session-eligible: daily maintenance gaps are missing by contract, not data loss.",
+        "Large feature and target CSVs remain local and are excluded from the compact evidence ZIP.",
         "No paper, demo, or live orders are authorized.",
     ]
     (report_dir / "cross_asset_panel_decision.md").write_text("\n".join(md) + "\n", encoding="utf-8")
+    failure_path = report_dir / "cross_asset_panel_failure.json"
+    if passed and failure_path.exists():
+        failure_path.unlink()
     return summary
 
 
@@ -461,20 +657,26 @@ def collect(root: Path, report_dir: Path | None = None, output: Path | None = No
     summary_path = report_dir / "cross_asset_panel_summary.json"
     if not summary_path.is_file():
         raise PanelError(f"panel summary missing: {summary_path}")
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    if not summary.get("pass"):
+        raise PanelError("panel summary is not passing; compact results pack not created")
     output = output or (Path.home() / "Downloads/XAUUSD_CROSS_ASSET_INTRADAY_PANEL_RESULTS.zip")
     names = [
         "cross_asset_panel_summary.json", "cross_asset_panel_quality.json",
         "cross_asset_panel_contract.json", "cross_asset_panel_decision.md",
-        "cross_asset_source_manifest.csv", "cross_asset_intraday_features.csv",
-        "cross_asset_intraday_targets.csv",
+        "cross_asset_source_manifest.csv", "cross_asset_feature_column_coverage.csv",
+        "cross_asset_target_column_coverage.csv", "cross_asset_feature_policy.csv",
+        "cross_asset_feature_samples.csv", "cross_asset_target_samples.csv",
+        "cross_asset_large_file_manifest.json",
     ]
     files = [report_dir / n for n in names]
     missing = [str(p) for p in files if not p.is_file()]
     if missing:
-        raise PanelError(f"missing panel outputs: {missing}")
+        raise PanelError(f"missing compact panel outputs: {missing}")
     manifest = {
         "program": PROGRAM,
         "generated_utc": utc_now(),
+        "artifact_scope": "COMPACT_EVIDENCE_NO_LARGE_FEATURE_TARGET_CSV",
         "files": [
             {"path": p.name, "size": p.stat().st_size, "sha256": sha256_file(p)} for p in files
         ],
@@ -487,12 +689,13 @@ def collect(root: Path, report_dir: Path | None = None, output: Path | None = No
     return {
         "program": PROGRAM,
         "generated_utc": utc_now(),
-        "decision": "PASS_CROSS_ASSET_INTRADAY_PANEL_RESULTS_PACK_CREATED",
+        "decision": "PASS_CROSS_ASSET_INTRADAY_PANEL_COMPACT_RESULTS_PACK_CREATED",
         "pass": True,
         "paper_order_allowed": False,
         "demo_order_allowed": False,
         "live_order_allowed": False,
         "output": str(output),
+        "large_feature_target_files_included": False,
     }
 
 

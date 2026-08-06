@@ -1,0 +1,56 @@
+{
+  "program": "XAUUSD_CROSS_ASSET_INTRADAY_PANEL_V1_2_SESSION_ELIGIBILITY_CONTRACT_REPAIR",
+  "generated_utc": "2026-08-06T17:33:17.657487Z",
+  "decision": "PASS_CROSS_ASSET_PANEL_PREFLIGHT_EXPORT_REQUIRED",
+  "pass": true,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false,
+  "mt5_export_directory": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/XAUUSD_CROSS_ASSET_HISTORY",
+  "macro_causal_features_ready": true,
+  "static_execution_violations": [],
+  "required_next_action": "RUN_MT5_EXPORT_SCRIPT_ONCE_THEN_BUILD"
+}
+/Users/vahid/Desktop/xauusd-trader/app/xauusd_cross_asset_intraday_panel.py:371: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  features["decision_date_utc"] = features["decision_time_utc"].dt.strftime("%Y-%m-%d")
+{
+  "program": "XAUUSD_CROSS_ASSET_INTRADAY_PANEL_V1_2_SESSION_ELIGIBILITY_CONTRACT_REPAIR",
+  "generated_utc": "2026-08-06T17:34:39.643435Z",
+  "decision": "PASS_CROSS_ASSET_INTRADAY_CAUSAL_PANEL_READY_FOR_FIXED_SCAN",
+  "pass": true,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false,
+  "feature_rows": 61823,
+  "target_rows": 61823,
+  "reference_rows_2016_2024": 52393,
+  "diagnostic_rows_2025_plus": 9430,
+  "xau_exact_4h_history_share_of_reference": 0.7787490695321894,
+  "core_history_ready_rows": 40709,
+  "trade_ready_4h_rows": 37334,
+  "peer_coverage_on_xau_anchor": {
+    "XAGUSD": 0.9980392637435357,
+    "EURUSD": 0.999632361951913,
+    "USDJPY": 1.0
+  },
+  "optional_symbol_unconditional_coverage": {
+    "S&P500": 0.7755234477888268,
+    "WTI": 0.7020594354207623,
+    "BRENT": 0.2116122382761056,
+    "DXY": 0.38675013837726413
+  },
+  "daily_real_yield_coverage_on_trade_ready_4h": 1.0,
+  "failed_gates": [],
+  "required_next_action": "FIXED_CROSS_ASSET_INTRADAY_THESIS_SCAN"
+}
+{
+  "program": "XAUUSD_CROSS_ASSET_INTRADAY_PANEL_V1_2_SESSION_ELIGIBILITY_CONTRACT_REPAIR",
+  "generated_utc": "2026-08-06T17:35:12.362323Z",
+  "decision": "PASS_CROSS_ASSET_INTRADAY_PANEL_COMPACT_RESULTS_PACK_CREATED",
+  "pass": true,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false,
+  "output": "/Users/vahid/Downloads/XAUUSD_CROSS_ASSET_INTRADAY_PANEL_RESULTS.zip",
+  "large_feature_target_files_included": false
+}

@@ -1,0 +1,34 @@
+===== RUNTIME =====
+Python 3.14.2
+pandas=3.0.3
+numpy=2.4.0
+===== COMPILE =====
+===== TESTS =====
+test_bootstrap_is_deterministic (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_bootstrap_is_deterministic) ... ok
+test_collect_excludes_large_panel_inputs (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_collect_excludes_large_panel_inputs) ... ok
+test_diagnostic_mutation_does_not_change_reference_metrics (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_diagnostic_mutation_does_not_change_reference_metrics) ... ok
+test_empty_candidate_fold_rows_keep_candidate_identity (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_empty_candidate_fold_rows_keep_candidate_identity) ... ok
+test_event_and_hour_filter (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_event_and_hour_filter) ... ok
+test_failure_payload_contains_stage_candidate_and_traceback (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_failure_payload_contains_stage_candidate_and_traceback) ... ok
+test_hash_mismatch_fails (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_hash_mismatch_fails) ... ok
+test_load_panel_data_never_uses_one_shot_usecols_reader (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_load_panel_data_never_uses_one_shot_usecols_reader) ... ok
+test_no_reference_survivor_does_not_evaluate_diagnostic (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_no_reference_survivor_does_not_evaluate_diagnostic) ... ok
+test_non_overlapping_trades (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_non_overlapping_trades) ... ok
+test_packaged_registry_avoids_excluded_24h_features (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_packaged_registry_avoids_excluded_24h_features) ... ok
+test_packaged_registry_conditions_execute_without_missing_columns (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_packaged_registry_conditions_execute_without_missing_columns) ... ok
+test_packaged_registry_empty_trades_have_stable_union_schema (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_packaged_registry_empty_trades_have_stable_union_schema) ... ok
+test_packaged_registry_full_zero_signal_run_completes_fail_closed (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_packaged_registry_full_zero_signal_run_completes_fail_closed) ... ok
+test_packaged_registry_is_fixed_and_unique (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_packaged_registry_is_fixed_and_unique) ... ok
+test_past_only_zscore_does_not_change_earlier_values (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_past_only_zscore_does_not_change_earlier_values) ... ok
+test_preflight_verifies_panel_and_no_orders (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_preflight_verifies_panel_and_no_orders) ... ok
+test_projected_reader_rejects_duplicate_header (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_projected_reader_rejects_duplicate_header) ... ok
+test_reference_survivor_freezes_before_diagnostic (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_reference_survivor_freezes_before_diagnostic) ... ok
+test_static_scan_has_no_execution_behavior (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_static_scan_has_no_execution_behavior) ... ok
+test_streaming_projected_reader_handles_mixed_types_without_one_shot_concat (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_streaming_projected_reader_handles_mixed_types_without_one_shot_concat) ... ok
+test_write_csv_gz_rejects_schema_less_frame (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_write_csv_gz_rejects_schema_less_frame) ... ok
+test_zero_trade_registry_writes_headered_empty_trade_artifact (tests.test_xauusd_cross_asset_fixed_scan.FixedScanTests.test_zero_trade_registry_writes_headered_empty_trade_artifact) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 2.030s
+
+OK

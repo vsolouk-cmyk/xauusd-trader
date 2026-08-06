@@ -132,23 +132,39 @@ class CrossAssetPanelTests(unittest.TestCase):
         root = MODULE_PATH.parents[1]
         self.assertEqual(panel.static_execution_violations(root), [])
 
-    def test_collect_creates_manifested_zip(self):
+    def test_collect_creates_compact_manifested_zip_without_large_csvs(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             report = root / panel.REPORT_REL
             report.mkdir(parents=True)
-            names = [
-                "cross_asset_panel_summary.json", "cross_asset_panel_quality.json",
-                "cross_asset_panel_contract.json", "cross_asset_panel_decision.md",
-                "cross_asset_source_manifest.csv", "cross_asset_intraday_features.csv",
-                "cross_asset_intraday_targets.csv",
+            json_names = [
+                "cross_asset_panel_quality.json", "cross_asset_panel_contract.json",
+                "cross_asset_large_file_manifest.json",
             ]
-            for name in names:
-                (report / name).write_text("{}" if name.endswith(".json") else "x\n")
+            for name in json_names:
+                (report / name).write_text("{}")
+            (report / "cross_asset_panel_summary.json").write_text(json.dumps({"pass": True}))
+            text_names = [
+                "cross_asset_panel_decision.md", "cross_asset_source_manifest.csv",
+                "cross_asset_feature_column_coverage.csv", "cross_asset_target_column_coverage.csv",
+                "cross_asset_feature_policy.csv", "cross_asset_feature_samples.csv",
+                "cross_asset_target_samples.csv",
+            ]
+            for name in text_names:
+                (report / name).write_text("x\n")
+            # Large local model inputs exist but must not enter the evidence ZIP.
+            (report / "cross_asset_intraday_features.csv").write_text("large-feature\n")
+            (report / "cross_asset_intraday_targets.csv").write_text("large-target\n")
             output = root / "result.zip"
             result = panel.collect(root, output=output)
             self.assertTrue(result["pass"])
             self.assertTrue(output.is_file())
+            import zipfile
+            with zipfile.ZipFile(output) as z:
+                names = set(z.namelist())
+            self.assertNotIn("cross_asset_intraday_features.csv", names)
+            self.assertNotIn("cross_asset_intraday_targets.csv", names)
+            self.assertIn("cross_asset_large_file_manifest.json", names)
 
     def test_preflight_requires_macro_panel(self):
         with tempfile.TemporaryDirectory() as td:
@@ -184,6 +200,34 @@ class CrossAssetPanelTests(unittest.TestCase):
             self.assertEqual(sum(quality["availability_leakage_counts"].values()), 0)
             self.assertNotIn("entry_open", features.columns)
             self.assertIn("real_yield_10y", features.columns)
+
+    def test_session_eligibility_uses_xau_exact_gap_denominator(self):
+        rows = 100
+        features = pd.DataFrame({
+            "xauusd_h1_ret_4": [1.0] * 78 + [np.nan] * 22,
+            "xagusd_h1_ret_4": [1.0] * 77 + [np.nan] + [np.nan] * 22,
+            "eurusd_h1_ret_4": [1.0] * 100,
+            "usdjpy_h1_ret_4": [1.0] * 100,
+            "sandp500_h1_ret_4": [1.0] * 60 + [np.nan] * 40,
+            "wti_h1_ret_4": [1.0] * 50 + [np.nan] * 50,
+            "brent_h1_ret_4": [1.0] * 30 + [np.nan] * 70,
+            "dxy_h1_ret_4": [1.0] * 40 + [np.nan] * 60,
+        })
+        targets = pd.DataFrame({
+            "forward_return_4h_bps": [1.0] * 74 + [np.nan] * 26,
+            "forward_return_12h_bps": [1.0] * 70 + [np.nan] * 30,
+            "forward_return_24h_bps": [1.0] * 65 + [np.nan] * 35,
+        })
+        ref = pd.Series([True] * rows)
+        got = panel.evaluate_session_eligibility(features, targets, ref)
+        self.assertAlmostEqual(got["xau_anchor_share"], 0.78)
+        self.assertAlmostEqual(got["peer_coverage"]["XAGUSD"], 77 / 78)
+        self.assertEqual(got["core_history_rows"], 77)
+        self.assertEqual(got["trade_ready_rows"], 74)
+
+    def test_export_program_v1_remains_accepted_after_python_repair(self):
+        self.assertIn("XAUUSD_CROSS_ASSET_INTRADAY_PANEL_V1", panel.EXPORT_PROGRAMS)
+        self.assertIn(panel.PROGRAM, panel.EXPORT_PROGRAMS)
 
     def test_safe_symbol_filename(self):
         self.assertEqual(panel.safe_symbol_name("S&P500"), "sandp500")

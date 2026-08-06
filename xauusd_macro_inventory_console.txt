@@ -1,0 +1,4209 @@
+{
+  "program": "XAUUSD_MACRO_DATA_READINESS_INVENTORY_V1_LOCAL_ONLY",
+  "generated_utc": "2026-08-06T06:37:36.377062Z",
+  "decision": "PASS_MACRO_DATA_INVENTORY_PREFLIGHT_LOCAL_ONLY",
+  "pass": true,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false,
+  "config": "/Users/vahid/Desktop/xauusd-trader/config/xauusd_macro_data_inventory_v1.json",
+  "out": "/Users/vahid/Desktop/xauusd-trader/reports/xauusd_macro_data_readiness"
+}
+{
+  "program": "XAUUSD_MACRO_DATA_READINESS_INVENTORY_V1_LOCAL_ONLY",
+  "generated_utc": "2026-08-06T06:38:39.135849Z",
+  "decision": "PARTIAL_CORE_MACRO_DATA_REQUIRES_DOWNLOADS",
+  "pass": false,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false,
+  "search_roots": [
+    "/Users/vahid/Downloads/xauusd_fundamental_event_inbox",
+    "/Users/vahid/Desktop/xauusd-trader/data",
+    "/Users/vahid/Desktop/xauusd-trader/reports"
+  ],
+  "files_inspected": 1445,
+  "files_skipped_size": 0,
+  "inspection_errors": 183,
+  "required_missing": [
+    "gvz_daily"
+  ],
+  "readiness": {
+    "usd_broad_daily": {
+      "required": true,
+      "present": true,
+      "candidate_count": 102,
+      "strong_candidate_count": 7,
+      "quality_note": "Prefer Federal Reserve broad trade-weighted USD index. ICE DXY is not required.",
+      "top_candidates": [
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/0e410a21a9ac__DTWEXBGS.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:DTWEXBGS",
+            "filename:dtwexbgs"
+          ],
+          "size": 103153,
+          "sha256": "0e410a21a9acd1e7c44bf31bd8bc9557f4a49eaf9603886513cb3469c9ee33bb",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "DTWEXBGS"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/bc030d67dbcb__DTWEXBGS.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:DTWEXBGS",
+            "filename:dtwexbgs"
+          ],
+          "size": 103041,
+          "sha256": "bc030d67dbcb7d9a19bb11a0a2df00525207ab97fe0c9d6c19ab7a20704df51d",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "DTWEXBGS"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/da58a46fa5ae__DTWEXBGS.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:DTWEXBGS",
+            "filename:dtwexbgs"
+          ],
+          "size": 103233,
+          "sha256": "da58a46fa5aeabce8e905a72de684f068447cf98dea82f7b996396eadf321f7c",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "DTWEXBGS"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/_repair_backups/force_macro_refresh_20260708T141243Z/fred_macro/DTWEXBGS.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:DTWEXBGS",
+            "filename:dtwexbgs"
+          ],
+          "size": 103153,
+          "sha256": "0e410a21a9acd1e7c44bf31bd8bc9557f4a49eaf9603886513cb3469c9ee33bb",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "DTWEXBGS"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/fred_macro/DTWEXBGS.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:DTWEXBGS",
+            "filename:dtwexbgs"
+          ],
+          "size": 103233,
+          "sha256": "da58a46fa5aeabce8e905a72de684f068447cf98dea82f7b996396eadf321f7c",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "DTWEXBGS"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/stage125_market_open_shadow_telemetry_and_frontier_discovery/stage125_data_alternative_route_plan.csv",
+          "confidence": 0.5,
+          "evidence": [
+            "content:DTWEXBGS",
+            "content:broad dollar"
+          ],
+          "size": 1529,
+          "sha256": "ecb3d372051c802a0d7bb195a31e60c9eefc563e683e77b0f5661e6722661794",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "data_gap",
+              "operational_replacement",
+              "status",
+              "hard_feature_allowed",
+              "next_action"
+            ],
+            "sample_row_count": 5,
+            "date_columns": []
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/stage128_market_open_forward_shadow_and_frontier_megascan/stage128_data_route_plan.csv",
+          "confidence": 0.5,
+          "evidence": [
+            "content:DTWEXBGS",
+            "content:broad dollar"
+          ],
+          "size": 870,
+          "sha256": "85ef4fb5695d91224cef5539ae8cf2e6d947e44ade28dd49828d559a0c043287",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "data_need",
+              "current_status",
+              "operational_route",
+              "blocking_for_current_megascan",
+              "priority"
+            ],
+            "sample_row_count": 4,
+            "date_columns": []
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/exogenous/fred_download_manifest.csv",
+          "confidence": 0.25,
+          "evidence": [
+            "content:DTWEXBGS"
+          ],
+          "size": 1552,
+          "sha256": "e4fa51e6eb9687819776271a00c02c5ce1c554f47b976465b54ba82860ed5e61",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "alias",
+              "filename",
+              "series_id",
+              "status",
+              "rows",
+              "existing_rows",
+              "endpoint",
+              "url",
+              "output_path",
+              "artifact_success_path",
+              "error"
+            ],
+            "sample_row_count": 6,
+            "date_columns": []
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/features/stage115_daily_macro_feature_panel.csv",
+          "confidence": 0.25,
+          "evidence": [
+            "content:DTWEXBGS"
+          ],
+          "size": 13209813,
+          "sha256": "6d2116000a696a8cacb082815c21b9aca7442271cb61f92bf5ed64d46a71b923",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "date",
+              "real_yield_10y",
+              "nominal_yield_10y",
+              "nominal_yield_2y",
+              "curve_10y_2y",
+              "breakeven_10y",
+              "breakeven_5y",
+              "fed_funds_effective",
+              "fed_balance_sheet_walcl",
+              "vix",
+              "hy_oas",
+              "broad_dollar_dtwexbgs",
+              "dxy_close_direct",
+              "dollar_pressure_index",
+              "dollar_pressure_source",
+              "lag_safety_status",
+              "real_yield_10y_chg_1d",
+              "real_yield_10y_chg_5d",
+              "real_yield_10y_chg_20d",
+              "real_yield_10y_chg_60d",
+              "real_yield_10y_chg_120d",
+              "real_yield_10y_z252",
+              "nominal_yield_10y_chg_1d",
+              "nominal_yield_10y_chg_5d",
+              "nominal_yield_10y_chg_20d",
+              "nominal_yield_10y_chg_60d",
+              "nominal_yield_10y_chg_120d",
+              "nominal_yield_10y_z252",
+              "nominal_yield_2y_chg_1d",
+              "nominal_yield_2y_chg_5d",
+              "nominal_yield_2y_chg_20d",
+              "nominal_yield_2y_chg_60d",
+              "nominal_yield_2y_chg_120d",
+              "nominal_yield_2y_z252",
+              "curve_10y_2y_chg_1d",
+              "curve_10y_2y_chg_5d",
+              "curve_10y_2y_chg_20d",
+              "curve_10y_2y_chg_60d",
+              "curve_10y_2y_chg_120d",
+              "curve_10y_2y_z252",
+              "breakeven_10y_chg_1d",
+              "breakeven_10y_chg_5d",
+              "breakeven_10y_chg_20d",
+              "breakeven_10y_chg_60d",
+              "breakeven_10y_chg_120d",
+              "breakeven_10y_z252",
+              "fed_funds_effective_chg_1d",
+              "fed_funds_effective_chg_5d",
+              "fed_funds_effective_chg_20d",
+              "fed_funds_effective_chg_60d",
+              "fed_funds_effective_chg_120d",
+              "fed_funds_effective_z252",
+              "fed_balance_sheet_walcl_chg_1d",
+              "fed_balance_sheet_walcl_pct_1d",
+              "fed_balance_sheet_walcl_chg_5d",
+              "fed_balance_sheet_walcl_pct_5d",
+              "fed_balance_sheet_walcl_chg_20d",
+              "fed_balance_sheet_walcl_pct_20d",
+              "fed_balance_sheet_walcl_chg_60d",
+              "fed_balance_sheet_walcl_pct_60d",
+              "fed_balance_sheet_walcl_chg_120d",
+              "fed_balance_sheet_walcl_pct_120d",
+              "fed_balance_sheet_walcl_z252",
+              "vix_chg_1d",
+              "vix_pct_1d",
+              "vix_chg_5d",
+              "vix_pct_5d",
+              "vix_chg_20d",
+              "vix_pct_20d",
+              "vix_chg_60d",
+              "vix_pct_60d",
+              "vix_chg_120d",
+              "vix_pct_120d",
+              "vix_z252",
+              "hy_oas_chg_1d",
+              "hy_oas_chg_5d",
+              "hy_oas_chg_20d",
+              "hy_oas_chg_60d",
+              "hy_oas_chg_120d",
+              "hy_oas_z252",
+              "dollar_pressure_index_chg_1d",
+              "dollar_pressure_index_pct_1d",
+              "dollar_pressure_index_chg_5d",
+              "dollar_pressure_index_pct_5d",
+              "dollar_pressure_index_chg_20d",
+              "dollar_pressure_index_pct_20d",
+              "dollar_pressure_index_chg_60d",
+              "dollar_pressure_index_pct_60d",
+              "dollar_pressure_index_chg_120d",
+              "dollar_pressure_index_pct_120d",
+              "dollar_pressure_index_z252"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/features/stage115_feature_inventory.csv",
+          "confidence": 0.25,
+          "evidence": [
+            "content:DTWEXBGS"
+          ],
+          "size": 6679,
+          "sha256": "348df5fcb496a29579e630f9bed7b82006dbf749bcc6c29e72846ada3c8c93e2",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "artifact_key",
+              "path",
+              "row_count",
+              "column_count",
+              "columns_preview"
+            ],
+            "sample_row_count": 15,
+            "date_columns": []
+          }
+        }
+      ]
+    },
+    "real_yield_10y_daily": {
+      "required": true,
+      "present": true,
+      "candidate_count": 118,
+      "strong_candidate_count": 16,
+      "quality_note": "Prefer 10-year real Treasury yield with publication-safe availability.",
+      "top_candidates": [
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/macro_regime/raw/real_yield_or_proxy_daily_2011_present.csv",
+          "confidence": 1.0,
+          "evidence": [
+            "content:DFII10",
+            "content:TIPS",
+            "filename:real_yield"
+          ],
+          "size": 399415,
+          "sha256": "2d0e18baba5724984e965e4f676db86d61087b1c92aa7c542515cad25634a8a7",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "date_utc",
+              "value",
+              "source",
+              "available_after_utc",
+              "proxy_method"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "date_utc",
+              "available_after_utc"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/148364a82be6__DFII10.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:DFII10",
+            "filename:dfii10"
+          ],
+          "size": 97987,
+          "sha256": "148364a82be6d3f69e79d4e9daf741da77a2c187028708dde3558bcb4e912105",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "DFII10"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/d46f93278b3d__DFII10.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:DFII10",
+            "filename:dfii10"
+          ],
+          "size": 98095,
+          "sha256": "d46f93278b3d407083eff94214e77b54749cf37ad86d337f4384213f87d8394d",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "DFII10"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/dd126dd80c82__DFII10.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:DFII10",
+            "filename:dfii10"
+          ],
+          "size": 98003,
+          "sha256": "dd126dd80c827d5e57b60b0186c7d77c47e83ad51d55083080de96f31c3f0802",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "DFII10"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/_repair_backups/force_macro_refresh_20260708T141243Z/fred_macro/DFII10.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:DFII10",
+            "filename:dfii10"
+          ],
+          "size": 98003,
+          "sha256": "dd126dd80c827d5e57b60b0186c7d77c47e83ad51d55083080de96f31c3f0802",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "DFII10"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/fred_macro/DFII10.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:DFII10",
+            "filename:dfii10"
+          ],
+          "size": 98095,
+          "sha256": "d46f93278b3d407083eff94214e77b54749cf37ad86d337f4384213f87d8394d",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "DFII10"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/exogenous/_repair_backups/real_yield_before_stage67d6_20260626T085214Z.csv",
+          "confidence": 0.5,
+          "evidence": [
+            "filename:real_yield"
+          ],
+          "size": 100080,
+          "sha256": "ec9e520ce520b0e50637d6c4c73a4377722a5da759389996faf1da8487cebdce",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "date_utc",
+              "value"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "date_utc"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/exogenous/_repair_backups/real_yield_before_stage67d6_20260626T085231Z.csv",
+          "confidence": 0.5,
+          "evidence": [
+            "filename:real_yield"
+          ],
+          "size": 100230,
+          "sha256": "9eaae98cd5cf595e66a67c5c26aa8f2078cda2d355d161a39c471feca684813c",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "date_utc",
+              "value"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "date_utc"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/exogenous/_repair_backups/real_yield_before_stage67d6_20260626T125935Z.csv",
+          "confidence": 0.5,
+          "evidence": [
+            "filename:real_yield"
+          ],
+          "size": 100230,
+          "sha256": "9eaae98cd5cf595e66a67c5c26aa8f2078cda2d355d161a39c471feca684813c",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "date_utc",
+              "value"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "date_utc"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/exogenous/_repair_backups/real_yield_before_stage67d6_20260626T131554Z.csv",
+          "confidence": 0.5,
+          "evidence": [
+            "filename:real_yield"
+          ],
+          "size": 100230,
+          "sha256": "9eaae98cd5cf595e66a67c5c26aa8f2078cda2d355d161a39c471feca684813c",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "date_utc",
+              "value"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "date_utc"
+            ]
+          }
+        }
+      ]
+    },
+    "nominal_yield_10y_daily": {
+      "required": true,
+      "present": true,
+      "candidate_count": 87,
+      "strong_candidate_count": 5,
+      "quality_note": "Daily 10-year nominal Treasury yield.",
+      "top_candidates": [
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/00adc073f35b__DGS10.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:DGS10",
+            "filename:dgs10"
+          ],
+          "size": 267823,
+          "sha256": "00adc073f35b40a15e8370c346ecec9b488d2cf6e39eb0dc8e2c7bd19773cb25",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "DGS10"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/bfb66e4c29fa__DGS10.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:DGS10",
+            "filename:dgs10"
+          ],
+          "size": 267807,
+          "sha256": "bfb66e4c29fa9f9484e1ef539c287e76ddf4b1726a1c8127e756844b32969719",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "DGS10"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/e5c3421f0d29__DGS10.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:DGS10",
+            "filename:dgs10"
+          ],
+          "size": 267915,
+          "sha256": "e5c3421f0d29e87ea31b43a021eadf417dd0a5fa616be0b6537843a939781dbd",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "DGS10"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/_repair_backups/force_macro_refresh_20260708T141243Z/fred_macro/DGS10.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:DGS10",
+            "filename:dgs10"
+          ],
+          "size": 267823,
+          "sha256": "00adc073f35b40a15e8370c346ecec9b488d2cf6e39eb0dc8e2c7bd19773cb25",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "DGS10"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/fred_macro/DGS10.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:DGS10",
+            "filename:dgs10"
+          ],
+          "size": 267915,
+          "sha256": "e5c3421f0d29e87ea31b43a021eadf417dd0a5fa616be0b6537843a939781dbd",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "DGS10"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/exogenous/fred_download_manifest.csv",
+          "confidence": 0.25,
+          "evidence": [
+            "content:DGS10"
+          ],
+          "size": 1552,
+          "sha256": "e4fa51e6eb9687819776271a00c02c5ce1c554f47b976465b54ba82860ed5e61",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "alias",
+              "filename",
+              "series_id",
+              "status",
+              "rows",
+              "existing_rows",
+              "endpoint",
+              "url",
+              "output_path",
+              "artifact_success_path",
+              "error"
+            ],
+            "sample_row_count": 6,
+            "date_columns": []
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/features/stage115_feature_inventory.csv",
+          "confidence": 0.25,
+          "evidence": [
+            "content:DGS10"
+          ],
+          "size": 6679,
+          "sha256": "348df5fcb496a29579e630f9bed7b82006dbf749bcc6c29e72846ada3c8c93e2",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "artifact_key",
+              "path",
+              "row_count",
+              "column_count",
+              "columns_preview"
+            ],
+            "sample_row_count": 15,
+            "date_columns": []
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/features/stage115_fred_macro_daily_wide.csv",
+          "confidence": 0.25,
+          "evidence": [
+            "content:DGS10"
+          ],
+          "size": 961758,
+          "sha256": "2661c44d9bdc253f63365083f2a1a92cb9ccbfd07eb9e5530357d3c49202857d",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "date",
+              "DFF",
+              "DGS10",
+              "DGS2",
+              "VIXCLS",
+              "WALCL",
+              "DFII10",
+              "T10YIE",
+              "T5YIE",
+              "DTWEXBGS",
+              "BAMLH0A0HYM2"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/manifests/stage113_fundamental_event_file_manifest.csv",
+          "confidence": 0.25,
+          "evidence": [
+            "content:DGS10"
+          ],
+          "size": 93789,
+          "sha256": "00e9127441a0583ab79490521c9b2819f5157a5142d72de6d57796e0e8fe0e94",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "stage",
+              "generated_utc",
+              "source_bucket",
+              "original_path",
+              "relative_inbox_path",
+              "project_raw_path",
+              "filename",
+              "suffix",
+              "size_bytes",
+              "sha256",
+              "duplicate_or_existing"
+            ],
+            "sample_row_count": 211,
+            "date_columns": [
+              "generated_utc"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/unknown_manual/0524e10cfa9d__download_xauusd_official_data_batch_latest_summary.json",
+          "confidence": 0.25,
+          "evidence": [
+            "content:DGS10"
+          ],
+          "size": 53622,
+          "sha256": "0524e10cfa9dc6c01da083e1b3597a28a49e53138e75e9dcd7a64813e2edbd26",
+          "kind": "json",
+          "summary": {
+            "kind": "json",
+            "keys": [
+              "stage",
+              "generated_utc",
+              "inbox",
+              "dry_run",
+              "from_year",
+              "to_year",
+              "include_cot_xls",
+              "skip_wgc_direct",
+              "force_refresh",
+              "refresh_stale_hours",
+              "skipped_existing_valid_count",
+              "elapsed_sec",
+              "status",
+              "ok_or_dry_run_count",
+              "warning_or_fail_count",
+              "api_key_presence",
+              "env_files_loaded",
+              "economic_events_policy",
+              "results",
+              "log_jsonl",
+              "summary_json"
+            ]
+          }
+        }
+      ]
+    },
+    "breakeven_10y_daily": {
+      "required": true,
+      "present": true,
+      "candidate_count": 84,
+      "strong_candidate_count": 7,
+      "quality_note": "Daily 10-year inflation breakeven.",
+      "top_candidates": [
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/6810bd301381__T10YIE.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:T10YIE",
+            "filename:t10yie"
+          ],
+          "size": 97156,
+          "sha256": "6810bd301381d45ecbe96cb69caa073b274cfe8cd714306e7b1b806ea83ac9d0",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "T10YIE"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/710a72303a9b__T10YIE.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:T10YIE",
+            "filename:t10yie"
+          ],
+          "size": 97064,
+          "sha256": "710a72303a9b03dc95c99bc818b35c9abab32ee8f4326252ddae4e2c5419a6f9",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "T10YIE"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/f569d7167141__T10YIE.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:T10YIE",
+            "filename:t10yie"
+          ],
+          "size": 97048,
+          "sha256": "f569d71671418e28380678793743622b9e1a3179543befbaf1f63793346c80c4",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "T10YIE"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/_repair_backups/force_macro_refresh_20260708T141243Z/fred_macro/T10YIE.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:T10YIE",
+            "filename:t10yie"
+          ],
+          "size": 97064,
+          "sha256": "710a72303a9b03dc95c99bc818b35c9abab32ee8f4326252ddae4e2c5419a6f9",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "T10YIE"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/fred_macro/T10YIE.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:T10YIE",
+            "filename:t10yie"
+          ],
+          "size": 97156,
+          "sha256": "6810bd301381d45ecbe96cb69caa073b274cfe8cd714306e7b1b806ea83ac9d0",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "T10YIE"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/features/stage115_feature_inventory.csv",
+          "confidence": 0.5,
+          "evidence": [
+            "content:T10YIE",
+            "content:breakeven"
+          ],
+          "size": 6679,
+          "sha256": "348df5fcb496a29579e630f9bed7b82006dbf749bcc6c29e72846ada3c8c93e2",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "artifact_key",
+              "path",
+              "row_count",
+              "column_count",
+              "columns_preview"
+            ],
+            "sample_row_count": 15,
+            "date_columns": []
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/stage162_macro_data_freshness_triage/stage162_macro_file_freshness.csv",
+          "confidence": 0.5,
+          "evidence": [
+            "content:T10YIE",
+            "content:breakeven"
+          ],
+          "size": 6226,
+          "sha256": "8a9b158e454f2c82602405b3e121647f9a85b79a7a5a319175599e395bb1097b",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "label",
+              "path",
+              "required",
+              "max_stale_days",
+              "exists",
+              "size_bytes",
+              "row_count",
+              "columns",
+              "selected_date_column",
+              "latest_time_utc",
+              "age_days",
+              "freshness_status",
+              "error"
+            ],
+            "sample_row_count": 15,
+            "date_columns": [
+              "selected_date_column",
+              "latest_time_utc"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/features/stage115_daily_macro_feature_panel.csv",
+          "confidence": 0.25,
+          "evidence": [
+            "content:breakeven"
+          ],
+          "size": 13209813,
+          "sha256": "6d2116000a696a8cacb082815c21b9aca7442271cb61f92bf5ed64d46a71b923",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "date",
+              "real_yield_10y",
+              "nominal_yield_10y",
+              "nominal_yield_2y",
+              "curve_10y_2y",
+              "breakeven_10y",
+              "breakeven_5y",
+              "fed_funds_effective",
+              "fed_balance_sheet_walcl",
+              "vix",
+              "hy_oas",
+              "broad_dollar_dtwexbgs",
+              "dxy_close_direct",
+              "dollar_pressure_index",
+              "dollar_pressure_source",
+              "lag_safety_status",
+              "real_yield_10y_chg_1d",
+              "real_yield_10y_chg_5d",
+              "real_yield_10y_chg_20d",
+              "real_yield_10y_chg_60d",
+              "real_yield_10y_chg_120d",
+              "real_yield_10y_z252",
+              "nominal_yield_10y_chg_1d",
+              "nominal_yield_10y_chg_5d",
+              "nominal_yield_10y_chg_20d",
+              "nominal_yield_10y_chg_60d",
+              "nominal_yield_10y_chg_120d",
+              "nominal_yield_10y_z252",
+              "nominal_yield_2y_chg_1d",
+              "nominal_yield_2y_chg_5d",
+              "nominal_yield_2y_chg_20d",
+              "nominal_yield_2y_chg_60d",
+              "nominal_yield_2y_chg_120d",
+              "nominal_yield_2y_z252",
+              "curve_10y_2y_chg_1d",
+              "curve_10y_2y_chg_5d",
+              "curve_10y_2y_chg_20d",
+              "curve_10y_2y_chg_60d",
+              "curve_10y_2y_chg_120d",
+              "curve_10y_2y_z252",
+              "breakeven_10y_chg_1d",
+              "breakeven_10y_chg_5d",
+              "breakeven_10y_chg_20d",
+              "breakeven_10y_chg_60d",
+              "breakeven_10y_chg_120d",
+              "breakeven_10y_z252",
+              "fed_funds_effective_chg_1d",
+              "fed_funds_effective_chg_5d",
+              "fed_funds_effective_chg_20d",
+              "fed_funds_effective_chg_60d",
+              "fed_funds_effective_chg_120d",
+              "fed_funds_effective_z252",
+              "fed_balance_sheet_walcl_chg_1d",
+              "fed_balance_sheet_walcl_pct_1d",
+              "fed_balance_sheet_walcl_chg_5d",
+              "fed_balance_sheet_walcl_pct_5d",
+              "fed_balance_sheet_walcl_chg_20d",
+              "fed_balance_sheet_walcl_pct_20d",
+              "fed_balance_sheet_walcl_chg_60d",
+              "fed_balance_sheet_walcl_pct_60d",
+              "fed_balance_sheet_walcl_chg_120d",
+              "fed_balance_sheet_walcl_pct_120d",
+              "fed_balance_sheet_walcl_z252",
+              "vix_chg_1d",
+              "vix_pct_1d",
+              "vix_chg_5d",
+              "vix_pct_5d",
+              "vix_chg_20d",
+              "vix_pct_20d",
+              "vix_chg_60d",
+              "vix_pct_60d",
+              "vix_chg_120d",
+              "vix_pct_120d",
+              "vix_z252",
+              "hy_oas_chg_1d",
+              "hy_oas_chg_5d",
+              "hy_oas_chg_20d",
+              "hy_oas_chg_60d",
+              "hy_oas_chg_120d",
+              "hy_oas_z252",
+              "dollar_pressure_index_chg_1d",
+              "dollar_pressure_index_pct_1d",
+              "dollar_pressure_index_chg_5d",
+              "dollar_pressure_index_pct_5d",
+              "dollar_pressure_index_chg_20d",
+              "dollar_pressure_index_pct_20d",
+              "dollar_pressure_index_chg_60d",
+              "dollar_pressure_index_pct_60d",
+              "dollar_pressure_index_chg_120d",
+              "dollar_pressure_index_pct_120d",
+              "dollar_pressure_index_z252"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/features/stage115_fred_macro_daily_wide.csv",
+          "confidence": 0.25,
+          "evidence": [
+            "content:T10YIE"
+          ],
+          "size": 961758,
+          "sha256": "2661c44d9bdc253f63365083f2a1a92cb9ccbfd07eb9e5530357d3c49202857d",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "date",
+              "DFF",
+              "DGS10",
+              "DGS2",
+              "VIXCLS",
+              "WALCL",
+              "DFII10",
+              "T10YIE",
+              "T5YIE",
+              "DTWEXBGS",
+              "BAMLH0A0HYM2"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/manifests/stage113_fundamental_event_file_manifest.csv",
+          "confidence": 0.25,
+          "evidence": [
+            "content:T10YIE"
+          ],
+          "size": 93789,
+          "sha256": "00e9127441a0583ab79490521c9b2819f5157a5142d72de6d57796e0e8fe0e94",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "stage",
+              "generated_utc",
+              "source_bucket",
+              "original_path",
+              "relative_inbox_path",
+              "project_raw_path",
+              "filename",
+              "suffix",
+              "size_bytes",
+              "sha256",
+              "duplicate_or_existing"
+            ],
+            "sample_row_count": 211,
+            "date_columns": [
+              "generated_utc"
+            ]
+          }
+        }
+      ]
+    },
+    "vix_daily": {
+      "required": true,
+      "present": true,
+      "candidate_count": 191,
+      "strong_candidate_count": 87,
+      "quality_note": "Daily VIX close; must be shifted to next-session availability.",
+      "top_candidates": [
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/41241d2a4d6c__VIXCLS.csv",
+          "confidence": 1.0,
+          "evidence": [
+            "content:VIX",
+            "content:VIXCLS",
+            "filename:vixcls"
+          ],
+          "size": 160388,
+          "sha256": "41241d2a4d6ce3465d58b176daf76125d9d220441b7dfdce33faa5dbaec348da",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "VIXCLS"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/5dc029364625__VIXCLS.csv",
+          "confidence": 1.0,
+          "evidence": [
+            "content:VIX",
+            "content:VIXCLS",
+            "filename:vixcls"
+          ],
+          "size": 160269,
+          "sha256": "5dc02936462581602135a114c912366e4eb9e40725fdd8d9dfe466d02f32c35f",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "VIXCLS"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/72b052e2d420__VIXCLS.csv",
+          "confidence": 1.0,
+          "evidence": [
+            "content:VIX",
+            "content:VIXCLS",
+            "filename:vixcls"
+          ],
+          "size": 160252,
+          "sha256": "72b052e2d420f3c75ab0db80039820f27ef8391227292236caebfb095da035c7",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "VIXCLS"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/macro_regime/raw/vix_daily_2011_present.csv",
+          "confidence": 1.0,
+          "evidence": [
+            "content:VIX",
+            "content:VIXCLS",
+            "filename:vix_daily"
+          ],
+          "size": 199955,
+          "sha256": "d536198bf6483a496194a4908ea52f7cc50fc751ae7a6353e36bd0e81b9d5be6",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "date_utc",
+              "close",
+              "source",
+              "available_after_utc"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "date_utc",
+              "available_after_utc"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/_repair_backups/force_macro_refresh_20260708T141243Z/fred_macro/VIXCLS.csv",
+          "confidence": 1.0,
+          "evidence": [
+            "content:VIX",
+            "content:VIXCLS",
+            "filename:vixcls"
+          ],
+          "size": 160269,
+          "sha256": "5dc02936462581602135a114c912366e4eb9e40725fdd8d9dfe466d02f32c35f",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "VIXCLS"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/fred_macro/VIXCLS.csv",
+          "confidence": 1.0,
+          "evidence": [
+            "content:VIX",
+            "content:VIXCLS",
+            "filename:vixcls"
+          ],
+          "size": 160388,
+          "sha256": "41241d2a4d6ce3465d58b176daf76125d9d220441b7dfdce33faa5dbaec348da",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "observation_date",
+              "VIXCLS"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "observation_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/exogenous/fred_download_manifest.csv",
+          "confidence": 0.5,
+          "evidence": [
+            "content:VIX",
+            "content:VIXCLS"
+          ],
+          "size": 1552,
+          "sha256": "e4fa51e6eb9687819776271a00c02c5ce1c554f47b976465b54ba82860ed5e61",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "alias",
+              "filename",
+              "series_id",
+              "status",
+              "rows",
+              "existing_rows",
+              "endpoint",
+              "url",
+              "output_path",
+              "artifact_success_path",
+              "error"
+            ],
+            "sample_row_count": 6,
+            "date_columns": []
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/features/stage115_feature_inventory.csv",
+          "confidence": 0.5,
+          "evidence": [
+            "content:VIX",
+            "content:VIXCLS"
+          ],
+          "size": 6679,
+          "sha256": "348df5fcb496a29579e630f9bed7b82006dbf749bcc6c29e72846ada3c8c93e2",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "artifact_key",
+              "path",
+              "row_count",
+              "column_count",
+              "columns_preview"
+            ],
+            "sample_row_count": 15,
+            "date_columns": []
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/features/stage115_fred_macro_daily_wide.csv",
+          "confidence": 0.5,
+          "evidence": [
+            "content:VIX",
+            "content:VIXCLS"
+          ],
+          "size": 961758,
+          "sha256": "2661c44d9bdc253f63365083f2a1a92cb9ccbfd07eb9e5530357d3c49202857d",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "date",
+              "DFF",
+              "DGS10",
+              "DGS2",
+              "VIXCLS",
+              "WALCL",
+              "DFII10",
+              "T10YIE",
+              "T5YIE",
+              "DTWEXBGS",
+              "BAMLH0A0HYM2"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/manifests/stage113_fundamental_event_file_manifest.csv",
+          "confidence": 0.5,
+          "evidence": [
+            "content:VIX",
+            "content:VIXCLS"
+          ],
+          "size": 93789,
+          "sha256": "00e9127441a0583ab79490521c9b2819f5157a5142d72de6d57796e0e8fe0e94",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "stage",
+              "generated_utc",
+              "source_bucket",
+              "original_path",
+              "relative_inbox_path",
+              "project_raw_path",
+              "filename",
+              "suffix",
+              "size_bytes",
+              "sha256",
+              "duplicate_or_existing"
+            ],
+            "sample_row_count": 211,
+            "date_columns": [
+              "generated_utc"
+            ]
+          }
+        }
+      ]
+    },
+    "gvz_daily": {
+      "required": true,
+      "present": false,
+      "candidate_count": 1,
+      "strong_candidate_count": 0,
+      "quality_note": "Daily Cboe Gold ETF Volatility Index.",
+      "top_candidates": [
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/fred_macro/cb259604129d__stooq_dx_f_dxy_daily.csv",
+          "confidence": 0.25,
+          "evidence": [
+            "content:GVZ"
+          ],
+          "size": 796,
+          "sha256": "cb259604129da10085a3d2b647cad7c1ebfc7e2b27840ecb087d6e7f1eab26a6",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "<!DOCTYPE html><html><head><meta charset=\"utf-8\"><meta name=\"robots\" content=\"noindex",
+              "nofollow\"></head><body><noscript>This site requires JavaScript to verify your browser. Please enable JavaScript and reload.</noscript><script nonce=\"l42wW5-e0U1IIRYZY4YKxA\">"
+            ],
+            "sample_row_count": 2,
+            "date_columns": []
+          }
+        }
+      ]
+    },
+    "cftc_gold_weekly": {
+      "required": true,
+      "present": true,
+      "candidate_count": 181,
+      "strong_candidate_count": 93,
+      "quality_note": "Weekly gold positioning; availability must use release date, not report date.",
+      "top_candidates": [
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/external_frontiers/cot_positioning_normalized.csv",
+          "confidence": 1.0,
+          "evidence": [
+            "content:CFTC",
+            "content:COMMODITY EXCHANGE INC",
+            "content:COT",
+            "content:GOLD - COMMODITY EXCHANGE INC",
+            "filename:cot"
+          ],
+          "size": 364944,
+          "sha256": "bb15f2a97f60bb8b7b20a639c181974140ae4e3e51ef868a7d4fe6a23395fc74",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "report_date_utc",
+              "available_after_utc",
+              "market",
+              "cftc_contract_market_code",
+              "open_interest",
+              "managed_money_long",
+              "managed_money_short",
+              "managed_money_spread",
+              "managed_money_net",
+              "managed_money_net_pct_oi",
+              "managed_money_long_pct_oi",
+              "managed_money_short_pct_oi",
+              "source_file",
+              "source_member",
+              "source_sha256",
+              "managed_money_net_z_156w",
+              "managed_money_net_pct_oi_z_156w",
+              "managed_money_long_pct_oi_z_156w",
+              "managed_money_short_pct_oi_z_156w",
+              "managed_money_net_change_1w",
+              "managed_money_net_change_4w",
+              "managed_money_net_pct_oi_change_4w"
+            ],
+            "sample_row_count": 568,
+            "date_columns": [
+              "report_date_utc",
+              "available_after_utc"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/features/stage115_cot_gold_weekly_features.csv",
+          "confidence": 1.0,
+          "evidence": [
+            "content:COMMODITY EXCHANGE INC",
+            "content:COT",
+            "content:GOLD - COMMODITY EXCHANGE INC",
+            "filename:cot"
+          ],
+          "size": 386952,
+          "sha256": "2cbb5fb7732a98efbd52f4e6f40cb3faf19f84239395af8e2357ec031c7d5dd6",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "report_date",
+              "market_name",
+              "open_interest_all",
+              "mm_long_all",
+              "mm_short_all",
+              "mm_spread_all",
+              "mm_net_all",
+              "mm_net_pct_oi",
+              "prod_long_all",
+              "prod_short_all",
+              "prod_net_all",
+              "prod_net_pct_oi",
+              "swap_long_all",
+              "swap_short_all",
+              "swap_net_all",
+              "other_long_all",
+              "other_short_all",
+              "other_net_all",
+              "nonrep_long_all",
+              "nonrep_short_all",
+              "nonrep_net_all",
+              "cot_source_family",
+              "source_zip",
+              "source_member",
+              "mm_net_pct_oi_z156w",
+              "prod_net_pct_oi_z156w",
+              "mm_net_all_z156w",
+              "mm_net_pct_oi_change_4w",
+              "mm_net_pct_oi_change_12w",
+              "cot_positioning_state"
+            ],
+            "sample_row_count": 571,
+            "date_columns": [
+              "report_date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/normalized/cot_cftc_zip_registry.csv",
+          "confidence": 1.0,
+          "evidence": [
+            "content:CFTC",
+            "content:COT",
+            "filename:cftc",
+            "filename:cot"
+          ],
+          "size": 22984,
+          "sha256": "cf0f3bb89df7ff0d1b2af05cdd60b22fd71217a99e18200d8d65b5c484999622",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "source_family",
+              "cot_file_family",
+              "year",
+              "logical_filename",
+              "source_file",
+              "zip_member_count",
+              "zip_members",
+              "note",
+              "error"
+            ],
+            "sample_row_count": 114,
+            "date_columns": []
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/stage105_second_order_cot_macro_thesis_discovery/stage105_second_order_cot_macro_joined_snapshot.csv",
+          "confidence": 1.0,
+          "evidence": [
+            "content:CFTC",
+            "content:COT",
+            "filename:cot"
+          ],
+          "size": 3618702,
+          "sha256": "6c92aec7c58e6d8d88f52a1cf736c4dae6895562e62d886b98d2215a58be2de5",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "feature_date_utc",
+              "sample_available_after_utc",
+              "gold_close",
+              "gold_sma20_over_50",
+              "gold_sma50_over_200",
+              "dxy_ret_20d",
+              "dxy_sma20_over_50",
+              "real_yield_change_20d",
+              "vix_change_20d",
+              "etf_flow_tonnes_3m",
+              "central_bank_demand_tonnes_3m",
+              "date_utc",
+              "open",
+              "high",
+              "low",
+              "close",
+              "volume",
+              "source",
+              "available_after_utc",
+              "spread_median",
+              "gold_sma20",
+              "gold_sma50",
+              "gold_sma200",
+              "dxy",
+              "real_yield",
+              "vix",
+              "etf_flow",
+              "dxy_sma20",
+              "dxy_sma50",
+              "central_bank_demand",
+              "gold_price_for_return",
+              "report_date_utc",
+              "available_after_utc_cotraw",
+              "market",
+              "cftc_contract_market_code",
+              "open_interest",
+              "managed_money_long",
+              "managed_money_short",
+              "managed_money_spread",
+              "managed_money_net",
+              "managed_money_net_pct_oi",
+              "managed_money_long_pct_oi",
+              "managed_money_short_pct_oi",
+              "source_file",
+              "source_member",
+              "source_sha256",
+              "managed_money_net_z_156w",
+              "managed_money_net_pct_oi_z_156w",
+              "managed_money_long_pct_oi_z_156w",
+              "managed_money_short_pct_oi_z_156w",
+              "managed_money_net_change_1w",
+              "managed_money_net_change_4w",
+              "managed_money_net_pct_oi_change_4w",
+              "cot_available_after_utc",
+              "cot_mm_net_z",
+              "cot_mm_net_z_change_4w"
+            ],
+            "sample_row_count": 322,
+            "date_columns": [
+              "feature_date_utc",
+              "sample_available_after_utc",
+              "date_utc",
+              "available_after_utc",
+              "report_date_utc",
+              "available_after_utc_cotraw",
+              "cot_available_after_utc"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/frontier_templates/stage93_cot_positioning_normalized_template.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:COT",
+            "filename:cot"
+          ],
+          "size": 332,
+          "sha256": "1bf2afe21b099cc9b662842c77405fde47c43a6024130dc85f8f83c4b461b781",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "report_date_utc",
+              "available_after_utc",
+              "market",
+              "contract",
+              "open_interest",
+              "managed_money_long",
+              "managed_money_short",
+              "managed_money_spreading",
+              "producer_merchant_long",
+              "producer_merchant_short",
+              "swap_dealer_long",
+              "swap_dealer_short",
+              "source_file",
+              "source_url",
+              "vintage_id"
+            ],
+            "sample_row_count": 1,
+            "date_columns": [
+              "report_date_utc",
+              "available_after_utc"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/frontier_templates/stage94_cot_positioning_normalized_template.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:COT",
+            "filename:cot"
+          ],
+          "size": 275,
+          "sha256": "e8d75bb244fb1f9f0fbfde916419d0214d44f255f696e7fd0690cb3305e1b3b5",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "report_date_utc",
+              "available_after_utc",
+              "managed_money_long",
+              "managed_money_short",
+              "open_interest",
+              "managed_money_net",
+              "managed_money_long_pct_oi",
+              "managed_money_short_pct_oi",
+              "managed_money_net_pct_oi",
+              "managed_money_net_z_asof",
+              "managed_money_long_z_asof",
+              "managed_money_short_z_asof",
+              "source_file"
+            ],
+            "sample_row_count": 0,
+            "date_columns": [
+              "report_date_utc",
+              "available_after_utc"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/features/stage117_joined_macro_cot_dollar_h1_research_dataset.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:COT",
+            "filename:cot"
+          ],
+          "size": 5135195,
+          "sha256": "73a767f798a77c907aac505d6690283e80aae02b6e91e86dfa2e618ca18451b4",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "utc_time",
+              "open",
+              "high",
+              "low",
+              "close",
+              "fwd_ret_bps_h120",
+              "split",
+              "dollar_pressure",
+              "dollar_pressure_chg_20d",
+              "real_yield_10y",
+              "real_yield_10y_chg_20d",
+              "vix",
+              "vix_chg_20d",
+              "cot_mm_net_z",
+              "spdr_value",
+              "spdr_value_chg_20d"
+            ],
+            "sample_row_count": 1000,
+            "date_columns": [
+              "utc_time"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/stage105_second_order_cot_macro_thesis_discovery/stage105_second_order_cot_macro_candidate_metrics.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:COT",
+            "filename:cot"
+          ],
+          "size": 7286,
+          "sha256": "92f31254010af26ddba1623a80a13a80397fa038b134a973705c052f66756f32",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "rule_id",
+              "label",
+              "bucket",
+              "horizon_trading_days",
+              "cooldown_trading_days",
+              "condition_text",
+              "missing_columns",
+              "warmup_missing_rows_ignored",
+              "missing_required_feature_rows",
+              "raw_active_days",
+              "residual_active_days",
+              "current_union_active_days",
+              "current_union_active_days_after_candidate",
+              "incremental_union_active_days",
+              "overlap_with_current_union_days",
+              "overlap_with_current_union_pct",
+              "total_entry_count",
+              "total_mean_net_bps",
+              "total_median_net_bps",
+              "total_win_rate",
+              "total_min_net_return_bps",
+              "total_max_net_return_bps",
+              "total_total_net_return_bps",
+              "train_entry_count",
+              "train_mean_net_bps",
+              "train_win_rate",
+              "validation_entry_count",
+              "validation_mean_net_bps",
+              "validation_win_rate",
+              "locked_forward_entry_count",
+              "locked_forward_mean_net_bps",
+              "locked_forward_win_rate",
+              "final_holdout_entry_count",
+              "final_holdout_mean_net_bps",
+              "final_holdout_win_rate",
+              "post_asof_entry_count",
+              "post_asof_mean_net_bps",
+              "post_asof_win_rate",
+              "max_entry_year",
+              "max_year_entry_share",
+              "pass_second_order_discovery_candidate",
+              "fail_reasons",
+              "second_order_discovery_score",
+              "lookahead_violations"
+            ],
+            "sample_row_count": 12,
+            "date_columns": [
+              "current_union_active_days_after_candidate",
+              "pass_second_order_discovery_candidate"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/stage105_second_order_cot_macro_thesis_discovery/stage105_second_order_cot_macro_entry_returns.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:COT",
+            "filename:cot"
+          ],
+          "size": 14987,
+          "sha256": "173f8656d4aa86e8df916011b2db209de436984d5fd5ab2d0576477a62aa7950",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "rule_id",
+              "entry_date_utc",
+              "exit_date_utc",
+              "entry_price",
+              "exit_price",
+              "gross_return_bps",
+              "net_return_bps",
+              "split"
+            ],
+            "sample_row_count": 117,
+            "date_columns": [
+              "entry_date_utc",
+              "exit_date_utc"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/stage105_second_order_cot_macro_thesis_discovery/stage105_second_order_cot_macro_shortlist.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "content:COT",
+            "filename:cot"
+          ],
+          "size": 1398,
+          "sha256": "b2910d46a7f8d4c63a807f94d8d153f05b9bd77b5242d654981e6903a17a13a5",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "rule_id",
+              "label",
+              "bucket",
+              "horizon_trading_days",
+              "cooldown_trading_days",
+              "condition_text",
+              "missing_columns",
+              "warmup_missing_rows_ignored",
+              "missing_required_feature_rows",
+              "raw_active_days",
+              "residual_active_days",
+              "current_union_active_days",
+              "current_union_active_days_after_candidate",
+              "incremental_union_active_days",
+              "overlap_with_current_union_days",
+              "overlap_with_current_union_pct",
+              "total_entry_count",
+              "total_mean_net_bps",
+              "total_median_net_bps",
+              "total_win_rate",
+              "total_min_net_return_bps",
+              "total_max_net_return_bps",
+              "total_total_net_return_bps",
+              "train_entry_count",
+              "train_mean_net_bps",
+              "train_win_rate",
+              "validation_entry_count",
+              "validation_mean_net_bps",
+              "validation_win_rate",
+              "locked_forward_entry_count",
+              "locked_forward_mean_net_bps",
+              "locked_forward_win_rate",
+              "final_holdout_entry_count",
+              "final_holdout_mean_net_bps",
+              "final_holdout_win_rate",
+              "post_asof_entry_count",
+              "post_asof_mean_net_bps",
+              "post_asof_win_rate",
+              "max_entry_year",
+              "max_year_entry_share",
+              "pass_second_order_discovery_candidate",
+              "fail_reasons",
+              "second_order_discovery_score",
+              "lookahead_violations"
+            ],
+            "sample_row_count": 1,
+            "date_columns": [
+              "current_union_active_days_after_candidate",
+              "pass_second_order_discovery_candidate"
+            ]
+          }
+        }
+      ]
+    },
+    "official_event_calendar": {
+      "required": true,
+      "present": true,
+      "candidate_count": 219,
+      "strong_candidate_count": 116,
+      "quality_note": "Existing official event calendar and blackout context.",
+      "top_candidates": [
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/features/stage115_feature_inventory.csv",
+          "confidence": 1.0,
+          "evidence": [
+            "content:BEA",
+            "content:BLS",
+            "content:FED",
+            "content:FOMC",
+            "content:event_time_utc"
+          ],
+          "size": 6679,
+          "sha256": "348df5fcb496a29579e630f9bed7b82006dbf749bcc6c29e72846ada3c8c93e2",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "artifact_key",
+              "path",
+              "row_count",
+              "column_count",
+              "columns_preview"
+            ],
+            "sample_row_count": 15,
+            "date_columns": []
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/features/stage115_official_core_event_timestamp_policy.json",
+          "confidence": 1.0,
+          "evidence": [
+            "content:BEA",
+            "content:BLS",
+            "content:FED",
+            "content:FOMC"
+          ],
+          "size": 588,
+          "sha256": "b047da82b2328eac5e54d4136baaa4347ff3a2bc62d4da2c346268f7db7350f5",
+          "kind": "json",
+          "summary": {
+            "kind": "json",
+            "keys": [
+              "policy_version",
+              "date_sources",
+              "timezone",
+              "times",
+              "scope"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/features/stage115_official_core_event_timestamps.csv",
+          "confidence": 1.0,
+          "evidence": [
+            "content:BEA",
+            "content:BLS",
+            "content:FED",
+            "content:FOMC",
+            "content:event_time_utc"
+          ],
+          "size": 482031,
+          "sha256": "601f587e0128d4322bc3ea5071545e53adf035b5e08fdbafa72cf16a550ec560",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "event_time_utc",
+              "source",
+              "category",
+              "title",
+              "source_url",
+              "source_file",
+              "date_source",
+              "time_source",
+              "blackout_before_minutes",
+              "blackout_after_minutes",
+              "release_id"
+            ],
+            "sample_row_count": 878,
+            "date_columns": [
+              "event_time_utc",
+              "date_source",
+              "time_source"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/unknown_manual/0524e10cfa9d__download_xauusd_official_data_batch_latest_summary.json",
+          "confidence": 1.0,
+          "evidence": [
+            "content:BEA",
+            "content:BLS",
+            "content:FED",
+            "content:FOMC"
+          ],
+          "size": 53622,
+          "sha256": "0524e10cfa9dc6c01da083e1b3597a28a49e53138e75e9dcd7a64813e2edbd26",
+          "kind": "json",
+          "summary": {
+            "kind": "json",
+            "keys": [
+              "stage",
+              "generated_utc",
+              "inbox",
+              "dry_run",
+              "from_year",
+              "to_year",
+              "include_cot_xls",
+              "skip_wgc_direct",
+              "force_refresh",
+              "refresh_stale_hours",
+              "skipped_existing_valid_count",
+              "elapsed_sec",
+              "status",
+              "ok_or_dry_run_count",
+              "warning_or_fail_count",
+              "api_key_presence",
+              "env_files_loaded",
+              "economic_events_policy",
+              "results",
+              "log_jsonl",
+              "summary_json"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/unknown_manual/053901d9195b__download_xauusd_official_data_batch_latest_summary.json",
+          "confidence": 1.0,
+          "evidence": [
+            "content:BEA",
+            "content:BLS",
+            "content:FED",
+            "content:FOMC"
+          ],
+          "size": 60626,
+          "sha256": "053901d9195bb44cdd7b6750d093d3525b048917455693d8afc047757422745e",
+          "kind": "json",
+          "summary": {
+            "kind": "json",
+            "keys": [
+              "stage",
+              "generated_utc",
+              "inbox",
+              "dry_run",
+              "from_year",
+              "to_year",
+              "include_cot_xls",
+              "skip_wgc_direct",
+              "force_refresh",
+              "refresh_stale_hours",
+              "skipped_existing_valid_count",
+              "elapsed_sec",
+              "status",
+              "ok_or_dry_run_count",
+              "warning_or_fail_count",
+              "api_key_presence",
+              "env_files_loaded",
+              "economic_events_policy",
+              "results",
+              "log_jsonl",
+              "summary_json"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/unknown_manual/0d636b25d164__download_xauusd_official_data_batch_latest_summary.json",
+          "confidence": 1.0,
+          "evidence": [
+            "content:BEA",
+            "content:BLS",
+            "content:FED",
+            "content:FOMC"
+          ],
+          "size": 65331,
+          "sha256": "0d636b25d164aba3c0a2473545b423250257b98e5013d5601166f5ea8ca2a432",
+          "kind": "json",
+          "summary": {
+            "kind": "json",
+            "keys": [
+              "stage",
+              "generated_utc",
+              "inbox",
+              "dry_run",
+              "from_year",
+              "to_year",
+              "include_cot_xls",
+              "skip_wgc_direct",
+              "force_refresh",
+              "refresh_stale_hours",
+              "skipped_existing_valid_count",
+              "elapsed_sec",
+              "status",
+              "ok_or_dry_run_count",
+              "warning_or_fail_count",
+              "api_key_presence",
+              "env_files_loaded",
+              "event_core_only",
+              "economic_events_policy",
+              "results",
+              "log_jsonl",
+              "summary_json"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/unknown_manual/0d6f14b7507d__download_xauusd_official_data_batch_latest_summary.json",
+          "confidence": 1.0,
+          "evidence": [
+            "content:BEA",
+            "content:BLS",
+            "content:FED",
+            "content:FOMC"
+          ],
+          "size": 60464,
+          "sha256": "0d6f14b7507d5b599c98178368fcb73d3e6a663609ba2eac5293b47303825633",
+          "kind": "json",
+          "summary": {
+            "kind": "json",
+            "keys": [
+              "stage",
+              "generated_utc",
+              "inbox",
+              "dry_run",
+              "from_year",
+              "to_year",
+              "include_cot_xls",
+              "skip_wgc_direct",
+              "force_refresh",
+              "refresh_stale_hours",
+              "skipped_existing_valid_count",
+              "elapsed_sec",
+              "status",
+              "ok_or_dry_run_count",
+              "warning_or_fail_count",
+              "api_key_presence",
+              "env_files_loaded",
+              "economic_events_policy",
+              "results",
+              "log_jsonl",
+              "summary_json"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/unknown_manual/127171d66726__download_xauusd_official_data_batch_latest_summary.json",
+          "confidence": 1.0,
+          "evidence": [
+            "content:BEA",
+            "content:BLS",
+            "content:FED",
+            "content:FOMC"
+          ],
+          "size": 61227,
+          "sha256": "127171d66726ba468d23ccba8fcc223a74934cd7e4c47290de4a77a4b4d81e69",
+          "kind": "json",
+          "summary": {
+            "kind": "json",
+            "keys": [
+              "stage",
+              "generated_utc",
+              "inbox",
+              "dry_run",
+              "from_year",
+              "to_year",
+              "include_cot_xls",
+              "skip_wgc_direct",
+              "force_refresh",
+              "refresh_stale_hours",
+              "skipped_existing_valid_count",
+              "elapsed_sec",
+              "status",
+              "ok_or_dry_run_count",
+              "warning_or_fail_count",
+              "api_key_presence",
+              "env_files_loaded",
+              "economic_events_policy",
+              "results",
+              "log_jsonl",
+              "summary_json"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/unknown_manual/161fb6cc452c__download_xauusd_official_data_batch_latest_summary.json",
+          "confidence": 1.0,
+          "evidence": [
+            "content:BEA",
+            "content:BLS",
+            "content:FED",
+            "content:FOMC"
+          ],
+          "size": 60541,
+          "sha256": "161fb6cc452c8f953a53ec63374c309be7b557b1a8d34e5f5a3b81ea75b7e54b",
+          "kind": "json",
+          "summary": {
+            "kind": "json",
+            "keys": [
+              "stage",
+              "generated_utc",
+              "inbox",
+              "dry_run",
+              "from_year",
+              "to_year",
+              "include_cot_xls",
+              "skip_wgc_direct",
+              "force_refresh",
+              "refresh_stale_hours",
+              "skipped_existing_valid_count",
+              "elapsed_sec",
+              "status",
+              "ok_or_dry_run_count",
+              "warning_or_fail_count",
+              "api_key_presence",
+              "env_files_loaded",
+              "economic_events_policy",
+              "results",
+              "log_jsonl",
+              "summary_json"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/unknown_manual/191e45fae937__download_xauusd_official_data_batch_latest_summary.json",
+          "confidence": 1.0,
+          "evidence": [
+            "content:BEA",
+            "content:BLS",
+            "content:FED",
+            "content:FOMC"
+          ],
+          "size": 65111,
+          "sha256": "191e45fae9376d99ffac690e732a62364995d346cfab07c117ad8f3eebc538f5",
+          "kind": "json",
+          "summary": {
+            "kind": "json",
+            "keys": [
+              "stage",
+              "generated_utc",
+              "inbox",
+              "dry_run",
+              "from_year",
+              "to_year",
+              "include_cot_xls",
+              "skip_wgc_direct",
+              "force_refresh",
+              "refresh_stale_hours",
+              "skipped_existing_valid_count",
+              "elapsed_sec",
+              "status",
+              "ok_or_dry_run_count",
+              "warning_or_fail_count",
+              "api_key_presence",
+              "env_files_loaded",
+              "event_core_only",
+              "economic_events_policy",
+              "results",
+              "log_jsonl",
+              "summary_json"
+            ]
+          }
+        }
+      ]
+    },
+    "gold_etf_holdings_or_flows": {
+      "required": false,
+      "present": true,
+      "candidate_count": 79,
+      "strong_candidate_count": 42,
+      "quality_note": "Desirable daily investment-flow proxy; source and publication timing must be documented.",
+      "top_candidates": [
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/exogenous/wgc_raw_extracted/ETF_Flows_2026-06-02_1536__All_flows_by_fund.csv",
+          "confidence": 1.0,
+          "evidence": [
+            "content:GLD",
+            "content:SPDR Gold",
+            "content:gold ETF",
+            "filename:etf_flows"
+          ],
+          "size": 21943,
+          "sha256": "22f2e93b4662deb37e6302787c02ab4bbfc6b570dff57e85e00c11a1f7c6b577",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "sample_row_count": 140,
+            "date_columns": []
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/exogenous/wgc_raw_extracted/ETF_Flows_2026-06-02_1536__All_flows_by_sub-class.csv",
+          "confidence": 1.0,
+          "evidence": [
+            "content:GLD",
+            "content:SPDR Gold",
+            "content:gold ETF",
+            "filename:etf_flows"
+          ],
+          "size": 31547,
+          "sha256": "0989b6ecec26fecc3e9535551007cb9b0cc58a8c98800617de0136d4706e9d3e",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "sample_row_count": 200,
+            "date_columns": []
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/exogenous/wgc_raw_extracted/ETF_Flows_2026-06-02_1536__Demand_by_month.csv",
+          "confidence": 1.0,
+          "evidence": [
+            "content:GLD",
+            "content:SPDR Gold",
+            "content:gold ETF",
+            "filename:etf_flows"
+          ],
+          "size": 354866,
+          "sha256": "d53509345547acb5b23b0b13648d4ba2349a4cb763d4287bc6a80f93faf269a0",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "ticker",
+              "All units in tonnes unless otherwise specified",
+              "",
+              "",
+              "",
+              "gld us equity",
+              "iau us equity",
+              "gldm us equity",
+              "phys us equity",
+              "sgol us equity",
+              "iaum us equity",
+              "ounz us equity",
+              "aaau us equity",
+              "gltr us equity",
+              "bar us equity",
+              "fgdl us equity",
+              "agol us equity",
+              "gldw us equity",
+              "sesg us equity",
+              "cef/u cn equity",
+              "cgl cn equity",
+              "zgld cn equity",
+              "mnt cn equity",
+              "cgl/c cn equity",
+              "kilo cn equity",
+              "kilo/b cn equity",
+              "valt/u cn equity",
+              "valt cn equity",
+              "bmggldba cn equity",
+              "zglh cn equity",
+              "valt/b cn equity",
+              "millbull cn equity",
+              "zgld/u cn equity",
+              "kilo/u cn equity",
+              "gtu us equity",
+              "igln ln equity",
+              "sgld ln equity",
+              "phau ln equity",
+              "sgbs ln equity",
+              "gbs ln equity",
+              "gbsp ln equity",
+              "wgld ln equity",
+              "iglg ln equity",
+              "xgdg ln equity",
+              "sgls ln equity",
+              "phpm ln equity",
+              "rmph ln equity",
+              "bars ln equity",
+              "xob1 gr equity",
+              "xob2 gr equity",
+              "tgld ln equity",
+              "4gld gr equity",
+              "xgdu gr equity",
+              "ewg2 gr equity",
+              "xad5 gr equity",
+              "xad1 gr equity",
+              "8pse gr equity",
+              "xgde gr equity",
+              "gold gr equity",
+              "igld gr equity",
+              "xgld ln equity",
+              "rm3h gr equity",
+              "tmgd gr equity",
+              "xgls ln equity",
+              "ewgc gr equity",
+              "ewgt gr equity",
+              "xgli ln equity",
+              "xgoc sw equity",
+              "gold fp equity",
+              "zgld sw equity",
+              "picpgiy sw equity",
+              "auusi sw equity",
+              "zgldus sw equity",
+              "zgldhc sw equity",
+              "auchah sw equity",
+              "picpgiu sw equity",
+              "zgldeu sw equity",
+              "csgold sw equity",
+              "zgldhe sw equity",
+              "aueuah sw equity",
+              "rgrth sw equity",
+              "csgbqbu sw equity",
+              "csgldc sw equity",
+              "rgrtu sw equity",
+              "csgqbhc sw equity",
+              "pimpgjd sw equity",
+              "picpgpu sw equity",
+              "rgldo sw equity",
+              "csgbdah sw equity",
+              "csglde sw equity",
+              "picpgpc sw equity",
+              "picpgru sw equity",
+              "picpgze sw equity",
+              "csifgbd sw equity",
+              "bkbgldi sw equity",
+              "zgldhg sw equity",
+              "picpgzu sw equity",
+              "picpgie sw equity",
+              "rgldoh sw equity",
+              "csifgea sw equity",
+              "picpgic sw equity",
+              "csimuah sw equity",
+              "bcvpgsh sw equity",
+              "rgldou sw equity",
+              "bsgiach sw equity",
+              "bcvpgdh sw equity",
+              "rgrt sw equity",
+              "csgbfbh sw equity",
+              "bcvpgsd sw equity",
+              "picpgpe sw equity",
+              "bkbgldj sw equity",
+              "csgimah sw equity",
+              "rgldsh sw equity",
+              "picpghi sw equity",
+              "picmeth sw equity",
+              "zgldgb sw equity",
+              "gldco2 sw equity",
+              "csgimac sw equity",
+              "rmch sw equity",
+              "csgimua sw equity",
+              "picpgre sw equity",
+              "picprmh sw equity",
+              "csigbqe sw equity",
+              "bsgiaus sw equity",
+              "bkbglda sw equity",
+              "rglds sw equity",
+              "csigbdh sw equity",
+              "bcvpgsf sw equity",
+              "picpghz sw equity",
+              "picpgps sw equity",
+              "bsgiahc sw equity",
+              "picpgph sw equity",
+              "picpgrc sw equity",
+              "bcvpgus sw equity",
+              "picpgpr sw equity",
+              "picpgis sw equity",
+              "auusa sw equity",
+              "jbgoua sw equity",
+              "ubgdihc sw equity",
+              "jbgoux sw equity",
+              "jbgoea sw equity",
+              "jbgoex sw equity",
+              "jbgoca sw equity",
+              "jbgoga sw equity",
+              "jbgocx sw equity",
+              "jbgogx sw equity",
+              "ubgdahu sw equity",
+              "ubgdahc sw equity",
+              "ubgdahe sw equity",
+              "ubgdihu sw equity",
+              "csgimia sw equity",
+              "csimiah sw equity",
+              "rmau ln equity",
+              "gbse im equity",
+              "sppg95p le equity",
+              "sppm95p le equity",
+              "spauagr le equity",
+              "518880 ch equity",
+              "159937 ch equity",
+              "159934 ch equity",
+              "518800 ch equity",
+              "518850 ch equity",
+              "518660 ch equity",
+              "518680 ch equity",
+              "518600 ch equity",
+              "518860 ch equity",
+              "518890 ch equity",
+              "159830 ch equity",
+              "159831 ch equity",
+              "159834 ch equity",
+              "159812 ch equity",
+              "930",
+              "929",
+              "159832 ch equity",
+              "159833 ch equity",
+              "1540 jt equity",
+              "gbees in equity",
+              "goldietf in equity",
+              "setfgold in equity",
+              "hdfgold in equity",
+              "gold1 in equity",
+              "tgoldef in equity",
+              "axgold in equity",
+              "utigol in equity",
+              "goldetf in equity",
+              "bslgold is equity",
+              "dgoletf in equity",
+              "zgldetf in equity",
+              "moslgrg in equity",
+              "edlgold in equity",
+              "licmfgld in equity",
+              "reggold in equity",
+              "qtgold in equity",
+              "hsbcgold in equity",
+              "grgldrg in equity",
+              "bbnpget in equity",
+              "ungoerg in equity",
+              "bagolrg in equity",
+              "360gerg in equity",
+              "alogdrg in equity",
+              "chogorg in equity",
+              "twcgerg in equity",
+              "crgetf in equity",
+              "mostgld in equity",
+              "regold in equity",
+              "411060 ks equity",
+              "0072r0 ks equity",
+              "3030 hk equity",
+              "3081 hk equity",
+              "3170 hk equity",
+              "83168 hk equity",
+              "2830 hk equity",
+              "goldetf mk equity",
+              "lgoldau sp equity",
+              "lgoldsa sp equity",
+              "glu sp equity",
+              "lgoldmh sp equity",
+              "lgoldaa sp equity",
+              "lgoldih sp equity",
+              "lgoldah sp equity",
+              "bchay tb equity",
+              "gold99 tb equity",
+              "kg965 tb equity",
+              "tgoldetf tb equity",
+              "gold au equity",
+              "pmgold au equity",
+              "qau au equity",
+              "gxld au equity",
+              "ghld au equity",
+              "nugg au equity",
+              "zgol au equity",
+              "gld sj equity",
+              "etfgld sj equity",
+              "gldtr ti equity",
+              "goldp ti equity",
+              "albigold ab equity",
+              "gold du equity"
+            ],
+            "sample_row_count": 235,
+            "date_columns": []
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/exogenous/wgc_raw_extracted/ETF_Flows_2026-06-02_1536__Fund_flows_by_month.csv",
+          "confidence": 1.0,
+          "evidence": [
+            "content:GLD",
+            "content:SPDR Gold",
+            "content:gold ETF",
+            "filename:etf_flows"
+          ],
+          "size": 264592,
+          "sha256": "20b29e12283f4b66288a7b8886e81d25236e94b3a10865aaf92e3987025b7989",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "ticker",
+              "All units in us$mn unless otherwise specificed",
+              "",
+              "",
+              "",
+              "gld us equity",
+              "iau us equity",
+              "gldm us equity",
+              "phys us equity",
+              "sgol us equity",
+              "iaum us equity",
+              "ounz us equity",
+              "aaau us equity",
+              "gltr us equity",
+              "bar us equity",
+              "fgdl us equity",
+              "agol us equity",
+              "gldw us equity",
+              "sesg us equity",
+              "cef/u cn equity",
+              "cgl cn equity",
+              "zgld cn equity",
+              "mnt cn equity",
+              "cgl/c cn equity",
+              "kilo cn equity",
+              "kilo/b cn equity",
+              "valt/u cn equity",
+              "valt cn equity",
+              "bmggldba cn equity",
+              "zglh cn equity",
+              "valt/b cn equity",
+              "millbull cn equity",
+              "zgld/u cn equity",
+              "kilo/u cn equity",
+              "gtu us equity",
+              "igln ln equity",
+              "sgld ln equity",
+              "phau ln equity",
+              "sgbs ln equity",
+              "gbs ln equity",
+              "gbsp ln equity",
+              "wgld ln equity",
+              "iglg ln equity",
+              "xgdg ln equity",
+              "sgls ln equity",
+              "phpm ln equity",
+              "rmph ln equity",
+              "bars ln equity",
+              "xob1 gr equity",
+              "xob2 gr equity",
+              "tgld ln equity",
+              "4gld gr equity",
+              "xgdu gr equity",
+              "ewg2 gr equity",
+              "xad5 gr equity",
+              "xad1 gr equity",
+              "8pse gr equity",
+              "xgde gr equity",
+              "gold gr equity",
+              "igld gr equity",
+              "xgld ln equity",
+              "rm3h gr equity",
+              "tmgd gr equity",
+              "xgls ln equity",
+              "ewgc gr equity",
+              "ewgt gr equity",
+              "xgli ln equity",
+              "xgoc sw equity",
+              "gold fp equity",
+              "zgld sw equity",
+              "picpgiy sw equity",
+              "auusi sw equity",
+              "zgldus sw equity",
+              "zgldhc sw equity",
+              "auchah sw equity",
+              "picpgiu sw equity",
+              "zgldeu sw equity",
+              "csgold sw equity",
+              "zgldhe sw equity",
+              "aueuah sw equity",
+              "rgrth sw equity",
+              "csgbqbu sw equity",
+              "csgldc sw equity",
+              "rgrtu sw equity",
+              "csgqbhc sw equity",
+              "pimpgjd sw equity",
+              "picpgpu sw equity",
+              "rgldo sw equity",
+              "csgbdah sw equity",
+              "csglde sw equity",
+              "picpgpc sw equity",
+              "picpgru sw equity",
+              "picpgze sw equity",
+              "csifgbd sw equity",
+              "bkbgldi sw equity",
+              "zgldhg sw equity",
+              "picpgzu sw equity",
+              "picpgie sw equity",
+              "rgldoh sw equity",
+              "csifgea sw equity",
+              "picpgic sw equity",
+              "csimuah sw equity",
+              "bcvpgsh sw equity",
+              "rgldou sw equity",
+              "bsgiach sw equity",
+              "bcvpgdh sw equity",
+              "rgrt sw equity",
+              "csgbfbh sw equity",
+              "bcvpgsd sw equity",
+              "picpgpe sw equity",
+              "bkbgldj sw equity",
+              "csgimah sw equity",
+              "rgldsh sw equity",
+              "picpghi sw equity",
+              "picmeth sw equity",
+              "zgldgb sw equity",
+              "gldco2 sw equity",
+              "csgimac sw equity",
+              "rmch sw equity",
+              "csgimua sw equity",
+              "picpgre sw equity",
+              "picprmh sw equity",
+              "csigbqe sw equity",
+              "bsgiaus sw equity",
+              "bkbglda sw equity",
+              "rglds sw equity",
+              "csigbdh sw equity",
+              "bcvpgsf sw equity",
+              "picpghz sw equity",
+              "picpgps sw equity",
+              "bsgiahc sw equity",
+              "picpgph sw equity",
+              "picpgrc sw equity",
+              "bcvpgus sw equity",
+              "picpgpr sw equity",
+              "picpgis sw equity",
+              "auusa sw equity",
+              "jbgoua sw equity",
+              "ubgdihc sw equity",
+              "jbgoux sw equity",
+              "jbgoea sw equity",
+              "jbgoex sw equity",
+              "jbgoca sw equity",
+              "jbgoga sw equity",
+              "jbgocx sw equity",
+              "jbgogx sw equity",
+              "ubgdahu sw equity",
+              "ubgdahc sw equity",
+              "ubgdahe sw equity",
+              "ubgdihu sw equity",
+              "csgimia sw equity",
+              "csimiah sw equity",
+              "rmau ln equity",
+              "gbse im equity",
+              "sppg95p le equity",
+              "sppm95p le equity",
+              "spauagr le equity",
+              "518880 ch equity",
+              "159937 ch equity",
+              "159934 ch equity",
+              "518800 ch equity",
+              "518850 ch equity",
+              "518660 ch equity",
+              "518680 ch equity",
+              "518600 ch equity",
+              "518860 ch equity",
+              "518890 ch equity",
+              "159830 ch equity",
+              "159831 ch equity",
+              "159834 ch equity",
+              "159812 ch equity",
+              "930",
+              "929",
+              "159832 ch equity",
+              "159833 ch equity",
+              "1540 jt equity",
+              "gbees in equity",
+              "goldietf in equity",
+              "setfgold in equity",
+              "hdfgold in equity",
+              "gold1 in equity",
+              "tgoldef in equity",
+              "axgold in equity",
+              "utigol in equity",
+              "goldetf in equity",
+              "bslgold is equity",
+              "dgoletf in equity",
+              "zgldetf in equity",
+              "moslgrg in equity",
+              "edlgold in equity",
+              "licmfgld in equity",
+              "reggold in equity",
+              "qtgold in equity",
+              "hsbcgold in equity",
+              "grgldrg in equity",
+              "bbnpget in equity",
+              "ungoerg in equity",
+              "bagolrg in equity",
+              "360gerg in equity",
+              "alogdrg in equity",
+              "chogorg in equity",
+              "twcgerg in equity",
+              "crgetf in equity",
+              "mostgld in equity",
+              "regold in equity",
+              "411060 ks equity",
+              "0072r0 ks equity",
+              "3030 hk equity",
+              "3081 hk equity",
+              "3170 hk equity",
+              "83168 hk equity",
+              "2830 hk equity",
+              "goldetf mk equity",
+              "lgoldau sp equity",
+              "lgoldsa sp equity",
+              "glu sp equity",
+              "lgoldmh sp equity",
+              "lgoldaa sp equity",
+              "lgoldih sp equity",
+              "lgoldah sp equity",
+              "bchay tb equity",
+              "gold99 tb equity",
+              "kg965 tb equity",
+              "tgoldetf tb equity",
+              "gold au equity",
+              "pmgold au equity",
+              "qau au equity",
+              "gxld au equity",
+              "ghld au equity",
+              "nugg au equity",
+              "zgol au equity",
+              "gld sj equity",
+              "etfgld sj equity",
+              "gldtr ti equity",
+              "goldp ti equity",
+              "albigold ab equity",
+              "gold du equity"
+            ],
+            "sample_row_count": 280,
+            "date_columns": []
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/exogenous/wgc_raw_extracted/ETF_Flows_2026-06-02_1536__Holdings_by_month.csv",
+          "confidence": 1.0,
+          "evidence": [
+            "content:GLD",
+            "content:SPDR Gold",
+            "content:gold ETF",
+            "filename:etf_flows"
+          ],
+          "size": 359934,
+          "sha256": "ff036ec15ac4a34293e75a916de7bb6182e6062db6a471259fa8b7c7d4ae4a83",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "ticker",
+              "All units in tonnes unless otherwise specified",
+              "",
+              "",
+              "",
+              "gld us equity",
+              "iau us equity",
+              "gldm us equity",
+              "phys us equity",
+              "sgol us equity",
+              "iaum us equity",
+              "ounz us equity",
+              "aaau us equity",
+              "gltr us equity",
+              "bar us equity",
+              "fgdl us equity",
+              "agol us equity",
+              "gldw us equity",
+              "sesg us equity",
+              "cef/u cn equity",
+              "cgl cn equity",
+              "zgld cn equity",
+              "mnt cn equity",
+              "cgl/c cn equity",
+              "kilo cn equity",
+              "kilo/b cn equity",
+              "valt/u cn equity",
+              "valt cn equity",
+              "bmggldba cn equity",
+              "zglh cn equity",
+              "valt/b cn equity",
+              "millbull cn equity",
+              "zgld/u cn equity",
+              "kilo/u cn equity",
+              "gtu us equity",
+              "igln ln equity",
+              "sgld ln equity",
+              "phau ln equity",
+              "sgbs ln equity",
+              "gbs ln equity",
+              "gbsp ln equity",
+              "wgld ln equity",
+              "iglg ln equity",
+              "xgdg ln equity",
+              "sgls ln equity",
+              "phpm ln equity",
+              "rmph ln equity",
+              "bars ln equity",
+              "xob1 gr equity",
+              "xob2 gr equity",
+              "tgld ln equity",
+              "4gld gr equity",
+              "xgdu gr equity",
+              "ewg2 gr equity",
+              "xad5 gr equity",
+              "xad1 gr equity",
+              "8pse gr equity",
+              "xgde gr equity",
+              "gold gr equity",
+              "igld gr equity",
+              "xgld ln equity",
+              "rm3h gr equity",
+              "tmgd gr equity",
+              "xgls ln equity",
+              "ewgc gr equity",
+              "ewgt gr equity",
+              "xgli ln equity",
+              "xgoc sw equity",
+              "gold fp equity",
+              "zgld sw equity",
+              "picpgiy sw equity",
+              "auusi sw equity",
+              "zgldus sw equity",
+              "zgldhc sw equity",
+              "auchah sw equity",
+              "picpgiu sw equity",
+              "zgldeu sw equity",
+              "csgold sw equity",
+              "zgldhe sw equity",
+              "aueuah sw equity",
+              "rgrth sw equity",
+              "csgbqbu sw equity",
+              "csgldc sw equity",
+              "rgrtu sw equity",
+              "csgqbhc sw equity",
+              "pimpgjd sw equity",
+              "picpgpu sw equity",
+              "rgldo sw equity",
+              "csgbdah sw equity",
+              "csglde sw equity",
+              "picpgpc sw equity",
+              "picpgru sw equity",
+              "picpgze sw equity",
+              "csifgbd sw equity",
+              "bkbgldi sw equity",
+              "zgldhg sw equity",
+              "picpgzu sw equity",
+              "picpgie sw equity",
+              "rgldoh sw equity",
+              "csifgea sw equity",
+              "picpgic sw equity",
+              "csimuah sw equity",
+              "bcvpgsh sw equity",
+              "rgldou sw equity",
+              "bsgiach sw equity",
+              "bcvpgdh sw equity",
+              "rgrt sw equity",
+              "csgbfbh sw equity",
+              "bcvpgsd sw equity",
+              "picpgpe sw equity",
+              "bkbgldj sw equity",
+              "csgimah sw equity",
+              "rgldsh sw equity",
+              "picpghi sw equity",
+              "picmeth sw equity",
+              "zgldgb sw equity",
+              "gldco2 sw equity",
+              "csgimac sw equity",
+              "rmch sw equity",
+              "csgimua sw equity",
+              "picpgre sw equity",
+              "picprmh sw equity",
+              "csigbqe sw equity",
+              "bsgiaus sw equity",
+              "bkbglda sw equity",
+              "rglds sw equity",
+              "csigbdh sw equity",
+              "bcvpgsf sw equity",
+              "picpghz sw equity",
+              "picpgps sw equity",
+              "bsgiahc sw equity",
+              "picpgph sw equity",
+              "picpgrc sw equity",
+              "bcvpgus sw equity",
+              "picpgpr sw equity",
+              "picpgis sw equity",
+              "auusa sw equity",
+              "jbgoua sw equity",
+              "ubgdihc sw equity",
+              "jbgoux sw equity",
+              "jbgoea sw equity",
+              "jbgoex sw equity",
+              "jbgoca sw equity",
+              "jbgoga sw equity",
+              "jbgocx sw equity",
+              "jbgogx sw equity",
+              "ubgdahu sw equity",
+              "ubgdahc sw equity",
+              "ubgdahe sw equity",
+              "ubgdihu sw equity",
+              "csgimia sw equity",
+              "csimiah sw equity",
+              "rmau ln equity",
+              "gbse im equity",
+              "sppg95p le equity",
+              "sppm95p le equity",
+              "spauagr le equity",
+              "518880 ch equity",
+              "159937 ch equity",
+              "159934 ch equity",
+              "518800 ch equity",
+              "518850 ch equity",
+              "518660 ch equity",
+              "518680 ch equity",
+              "518600 ch equity",
+              "518860 ch equity",
+              "518890 ch equity",
+              "159830 ch equity",
+              "159831 ch equity",
+              "159834 ch equity",
+              "159812 ch equity",
+              "930",
+              "929",
+              "159832 ch equity",
+              "159833 ch equity",
+              "1540 jt equity",
+              "gbees in equity",
+              "goldietf in equity",
+              "setfgold in equity",
+              "hdfgold in equity",
+              "gold1 in equity",
+              "tgoldef in equity",
+              "axgold in equity",
+              "utigol in equity",
+              "goldetf in equity",
+              "bslgold is equity",
+              "dgoletf in equity",
+              "zgldetf in equity",
+              "moslgrg in equity",
+              "edlgold in equity",
+              "licmfgld in equity",
+              "reggold in equity",
+              "qtgold in equity",
+              "hsbcgold in equity",
+              "grgldrg in equity",
+              "bbnpget in equity",
+              "ungoerg in equity",
+              "bagolrg in equity",
+              "360gerg in equity",
+              "alogdrg in equity",
+              "chogorg in equity",
+              "twcgerg in equity",
+              "crgetf in equity",
+              "mostgld in equity",
+              "regold in equity",
+              "411060 ks equity",
+              "0072r0 ks equity",
+              "3030 hk equity",
+              "3081 hk equity",
+              "3170 hk equity",
+              "83168 hk equity",
+              "2830 hk equity",
+              "goldetf mk equity",
+              "lgoldau sp equity",
+              "lgoldsa sp equity",
+              "glu sp equity",
+              "lgoldmh sp equity",
+              "lgoldaa sp equity",
+              "lgoldih sp equity",
+              "lgoldah sp equity",
+              "bchay tb equity",
+              "gold99 tb equity",
+              "kg965 tb equity",
+              "tgoldetf tb equity",
+              "gold au equity",
+              "pmgold au equity",
+              "qau au equity",
+              "gxld au equity",
+              "ghld au equity",
+              "nugg au equity",
+              "zgol au equity",
+              "gld sj equity",
+              "etfgld sj equity",
+              "gldtr ti equity",
+              "goldp ti equity",
+              "albigold ab equity",
+              "gold du equity"
+            ],
+            "sample_row_count": 233,
+            "date_columns": []
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/exogenous/wgc_raw_extracted/ETF_Flows_2026-06-02_1536__Key_Tables_by_fund.csv",
+          "confidence": 1.0,
+          "evidence": [
+            "content:SPDR Gold",
+            "content:gold ETF",
+            "filename:etf_flows"
+          ],
+          "size": 24529,
+          "sha256": "58a42764c76c011b3c19ee12c598664f878de5540470cbe505fd3cb4aebfbbdd",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "sample_row_count": 112,
+            "date_columns": []
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/exogenous/wgc_raw_extracted/ETF_Flows_2026-06-02_1536__Key_Tables_by_sub-class.csv",
+          "confidence": 1.0,
+          "evidence": [
+            "content:SPDR Gold",
+            "content:gold ETF",
+            "filename:etf_flows"
+          ],
+          "size": 24812,
+          "sha256": "cb3903b7a4a3e9a26e07c73fe6f1f4e7c8c624ea2181cddf67f0f76aedc7c64f",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "sample_row_count": 112,
+            "date_columns": []
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/raw/gold_etf_wgc/fa105666a115__ETF_Flows_2026-06-02_1536.xlsx",
+          "confidence": 1.0,
+          "evidence": [
+            "content:GLD",
+            "content:SPDR Gold",
+            "content:gold ETF",
+            "filename:etf_flows"
+          ],
+          "size": 1451859,
+          "sha256": "fa105666a115d8f7e883e6465b9f624ccb0abd3237bcbb2d84f7c13f5b82203b",
+          "kind": "xlsx",
+          "summary": {
+            "kind": "xlsx",
+            "sheets": {
+              "Disclaimer": {
+                "headers": [
+                  "",
+                  ""
+                ],
+                "sample_rows": 24
+              },
+              "Important notes & Definitions": {
+                "headers": [
+                  "",
+                  ""
+                ],
+                "sample_rows": 24
+              },
+              "Periods Legend": {
+                "headers": [
+                  "Date periods as displayed in the spreadsheets",
+                  "",
+                  "",
+                  ""
+                ],
+                "sample_rows": 10
+              },
+              "All flows by fund": {
+                "headers": [
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  ""
+                ],
+                "sample_rows": 25
+              },
+              "All flows by sub-class": {
+                "headers": [
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  ""
+                ],
+                "sample_rows": 25
+              },
+              "Key Tables by fund": {
+                "headers": [
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  ""
+                ],
+                "sample_rows": 25
+              },
+              "Key Tables by sub-class": {
+                "headers": [
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  ""
+                ],
+                "sample_rows": 25
+              },
+              "Charts Data": {
+                "headers": [
+                  "Bar chart - monthly flows in US$",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "Bar chart - monthly flows in tonnes",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "Bar chart - annual flows in US$",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "Bar chart - annual flows in tonnes",
+                  "",
+                  "",
+                  ""
+                ],
+                "sample_rows": 25
+              },
+              "Holdings by month": {
+                "headers": [
+                  "ticker",
+                  "All units in tonnes unless otherwise specified",
+                  "",
+                  "",
+                  "",
+                  "gld us equity",
+                  "iau us equity",
+                  "gldm us equity",
+                  "phys us equity",
+                  "sgol us equity",
+                  "iaum us equity",
+                  "ounz us equity",
+                  "aaau us equity",
+                  "gltr us equity",
+                  "bar us equity",
+                  "fgdl us equity",
+                  "agol us equity",
+                  "gldw us equity",
+                  "sesg us equity",
+                  "cef/u cn equity",
+                  "cgl cn equity",
+                  "zgld cn equity",
+                  "mnt cn equity",
+                  "cgl/c cn equity",
+                  "kilo cn equity",
+                  "kilo/b cn equity",
+                  "valt/u cn equity",
+                  "valt cn equity",
+                  "bmggldba cn equity",
+                  "zglh cn equity"
+                ],
+                "sample_rows": 25
+              },
+              "Demand by month": {
+                "headers": [
+                  "ticker",
+                  "All units in tonnes unless otherwise specified",
+                  "",
+                  "",
+                  "",
+                  "gld us equity",
+                  "iau us equity",
+                  "gldm us equity",
+                  "phys us equity",
+                  "sgol us equity",
+                  "iaum us equity",
+                  "ounz us equity",
+                  "aaau us equity",
+                  "gltr us equity",
+                  "bar us equity",
+                  "fgdl us equity",
+                  "agol us equity",
+                  "gldw us equity",
+                  "sesg us equity",
+                  "cef/u cn equity",
+                  "cgl cn equity",
+                  "zgld cn equity",
+                  "mnt cn equity",
+                  "cgl/c cn equity",
+                  "kilo cn equity",
+                  "kilo/b cn equity",
+                  "valt/u cn equity",
+                  "valt cn equity",
+                  "bmggldba cn equity",
+                  "zglh cn equity"
+                ],
+                "sample_rows": 25
+              },
+              "Fund flows by month": {
+                "headers": [
+                  "ticker",
+                  "All units in us$mn unless otherwise specificed",
+                  "",
+                  "",
+                  "",
+                  "gld us equity",
+                  "iau us equity",
+                  "gldm us equity",
+                  "phys us equity",
+                  "sgol us equity",
+                  "iaum us equity",
+                  "ounz us equity",
+                  "aaau us equity",
+                  "gltr us equity",
+                  "bar us equity",
+                  "fgdl us equity",
+                  "agol us equity",
+                  "gldw us equity",
+                  "sesg us equity",
+                  "cef/u cn equity",
+                  "cgl cn equity",
+                  "zgld cn equity",
+                  "mnt cn equity",
+                  "cgl/c cn equity",
+                  "kilo cn equity",
+                  "kilo/b cn equity",
+                  "valt/u cn equity",
+                  "valt cn equity",
+                  "bmggldba cn equity",
+                  "zglh cn equity"
+                ],
+                "sample_rows": 25
+              }
+            }
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/macro_regime/raw/_vendor/wgc_etf/ETF_Flows_2026-06-02_1536.xlsx",
+          "confidence": 1.0,
+          "evidence": [
+            "content:GLD",
+            "content:SPDR Gold",
+            "content:gold ETF",
+            "filename:etf_flows"
+          ],
+          "size": 1451859,
+          "sha256": "fa105666a115d8f7e883e6465b9f624ccb0abd3237bcbb2d84f7c13f5b82203b",
+          "kind": "xlsx",
+          "summary": {
+            "kind": "xlsx",
+            "sheets": {
+              "Disclaimer": {
+                "headers": [
+                  "",
+                  ""
+                ],
+                "sample_rows": 24
+              },
+              "Important notes & Definitions": {
+                "headers": [
+                  "",
+                  ""
+                ],
+                "sample_rows": 24
+              },
+              "Periods Legend": {
+                "headers": [
+                  "Date periods as displayed in the spreadsheets",
+                  "",
+                  "",
+                  ""
+                ],
+                "sample_rows": 10
+              },
+              "All flows by fund": {
+                "headers": [
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  ""
+                ],
+                "sample_rows": 25
+              },
+              "All flows by sub-class": {
+                "headers": [
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  ""
+                ],
+                "sample_rows": 25
+              },
+              "Key Tables by fund": {
+                "headers": [
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  ""
+                ],
+                "sample_rows": 25
+              },
+              "Key Tables by sub-class": {
+                "headers": [
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  ""
+                ],
+                "sample_rows": 25
+              },
+              "Charts Data": {
+                "headers": [
+                  "Bar chart - monthly flows in US$",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "Bar chart - monthly flows in tonnes",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "Bar chart - annual flows in US$",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "Bar chart - annual flows in tonnes",
+                  "",
+                  "",
+                  ""
+                ],
+                "sample_rows": 25
+              },
+              "Holdings by month": {
+                "headers": [
+                  "ticker",
+                  "All units in tonnes unless otherwise specified",
+                  "",
+                  "",
+                  "",
+                  "gld us equity",
+                  "iau us equity",
+                  "gldm us equity",
+                  "phys us equity",
+                  "sgol us equity",
+                  "iaum us equity",
+                  "ounz us equity",
+                  "aaau us equity",
+                  "gltr us equity",
+                  "bar us equity",
+                  "fgdl us equity",
+                  "agol us equity",
+                  "gldw us equity",
+                  "sesg us equity",
+                  "cef/u cn equity",
+                  "cgl cn equity",
+                  "zgld cn equity",
+                  "mnt cn equity",
+                  "cgl/c cn equity",
+                  "kilo cn equity",
+                  "kilo/b cn equity",
+                  "valt/u cn equity",
+                  "valt cn equity",
+                  "bmggldba cn equity",
+                  "zglh cn equity"
+                ],
+                "sample_rows": 25
+              },
+              "Demand by month": {
+                "headers": [
+                  "ticker",
+                  "All units in tonnes unless otherwise specified",
+                  "",
+                  "",
+                  "",
+                  "gld us equity",
+                  "iau us equity",
+                  "gldm us equity",
+                  "phys us equity",
+                  "sgol us equity",
+                  "iaum us equity",
+                  "ounz us equity",
+                  "aaau us equity",
+                  "gltr us equity",
+                  "bar us equity",
+                  "fgdl us equity",
+                  "agol us equity",
+                  "gldw us equity",
+                  "sesg us equity",
+                  "cef/u cn equity",
+                  "cgl cn equity",
+                  "zgld cn equity",
+                  "mnt cn equity",
+                  "cgl/c cn equity",
+                  "kilo cn equity",
+                  "kilo/b cn equity",
+                  "valt/u cn equity",
+                  "valt cn equity",
+                  "bmggldba cn equity",
+                  "zglh cn equity"
+                ],
+                "sample_rows": 25
+              },
+              "Fund flows by month": {
+                "headers": [
+                  "ticker",
+                  "All units in us$mn unless otherwise specificed",
+                  "",
+                  "",
+                  "",
+                  "gld us equity",
+                  "iau us equity",
+                  "gldm us equity",
+                  "phys us equity",
+                  "sgol us equity",
+                  "iaum us equity",
+                  "ounz us equity",
+                  "aaau us equity",
+                  "gltr us equity",
+                  "bar us equity",
+                  "fgdl us equity",
+                  "agol us equity",
+                  "gldw us equity",
+                  "sesg us equity",
+                  "cef/u cn equity",
+                  "cgl cn equity",
+                  "zgld cn equity",
+                  "mnt cn equity",
+                  "cgl/c cn equity",
+                  "kilo cn equity",
+                  "kilo/b cn equity",
+                  "valt/u cn equity",
+                  "valt cn equity",
+                  "bmggldba cn equity",
+                  "zglh cn equity"
+                ],
+                "sample_rows": 25
+              }
+            }
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/stage113_fundamental_event_inbox_unifier/stage113_download_guide.csv",
+          "confidence": 1.0,
+          "evidence": [
+            "content:ETF flows",
+            "content:ETF holdings",
+            "content:GLD",
+            "content:SPDR Gold",
+            "content:gold ETF"
+          ],
+          "size": 3039,
+          "sha256": "c682efd3f79ee8e47a30f6d0756817733b9bef6aafb6346f07863b8eac8de461",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "bucket",
+              "source",
+              "what_to_download",
+              "download_or_api",
+              "manual_page",
+              "notes"
+            ],
+            "sample_row_count": 10,
+            "date_columns": []
+          }
+        }
+      ]
+    },
+    "wgc_quarterly_demand": {
+      "required": false,
+      "present": true,
+      "candidate_count": 36,
+      "strong_candidate_count": 27,
+      "quality_note": "Quarterly regime prior only; use publication date, never quarter-end hindsight.",
+      "top_candidates": [
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/stage176_central_bank_allocation_falsification/stage176_wgc_extraction_candidates.csv",
+          "confidence": 1.0,
+          "evidence": [
+            "content:Gold Demand Trends",
+            "content:central bank demand",
+            "content:central banks",
+            "filename:wgc"
+          ],
+          "size": 119882,
+          "sha256": "188e402b1ab14e6f1dcf4e85c85edccc6fc55179a83b65c9fa44796b7e9648bf",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "report_url",
+              "quarter",
+              "release_timestamp_utc",
+              "rank",
+              "value_tonnes",
+              "confidence",
+              "method",
+              "context",
+              "start"
+            ],
+            "sample_row_count": 225,
+            "date_columns": [
+              "release_timestamp_utc"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/features/stage115_wgc_central_bank_gold_feature_candidates.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "filename:central_bank",
+            "filename:wgc"
+          ],
+          "size": 7,
+          "sha256": "24526432f951ea86e61db71a2c7df058d690643d1792c6525c784823544d3c03",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "empty"
+            ],
+            "sample_row_count": 0,
+            "date_columns": []
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/features/stage116_validated_wgc_central_bank_gold_long.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "filename:central_bank",
+            "filename:wgc"
+          ],
+          "size": 89,
+          "sha256": "b88ac16751e30858f2a52585353245a3c21f4257623dfea8071a0b67a608fd32",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "source_family",
+              "workbook",
+              "sheet",
+              "date",
+              "metric",
+              "metric_raw",
+              "value",
+              "entity",
+              "row_index",
+              "column_index"
+            ],
+            "sample_row_count": 0,
+            "date_columns": [
+              "date"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/fundamental_event_inbox/normalized/wgc_central_bank_gold_xlsx_rows.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "filename:central_bank",
+            "filename:wgc"
+          ],
+          "size": 30771,
+          "sha256": "32684d7868c0a7c3daa93c5ee5c26f1652e9e065e537eb863da4c64cdf32bb8c",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "source_family",
+              "source_file",
+              "sheet",
+              "row_index",
+              "raw_row_json",
+              "error"
+            ],
+            "sample_row_count": 159,
+            "date_columns": []
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/macro_regime/raw/_templates/central_bank_gold_demand_monthly_quarterly_TEMPLATE.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "filename:central_bank",
+            "filename:gold_demand"
+          ],
+          "size": 87,
+          "sha256": "39984065ae8932d98c3b943d85311033bb84b1020a76185243a6acf4f727ee36",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "period_start",
+              "period_end",
+              "demand_value",
+              "unit",
+              "source",
+              "release_date_utc",
+              "available_after_utc"
+            ],
+            "sample_row_count": 0,
+            "date_columns": [
+              "period_start",
+              "period_end",
+              "release_date_utc",
+              "available_after_utc"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/macro_regime/raw/central_bank_gold_demand_monthly_quarterly.csv",
+          "confidence": 0.75,
+          "evidence": [
+            "filename:central_bank",
+            "filename:gold_demand"
+          ],
+          "size": 92441,
+          "sha256": "3df36d9ca1ab4d3ed287e48e115d55824a42321672ace175ce8e512608c27438",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "period_start",
+              "period_end",
+              "demand_value",
+              "unit",
+              "source",
+              "release_date_utc",
+              "available_after_utc"
+            ],
+            "sample_row_count": 292,
+            "date_columns": [
+              "period_start",
+              "period_end",
+              "release_date_utc",
+              "available_after_utc"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/stage64j2_full_scope_source_acquisition_operator/stage64j2_full_scope_source_acquisition_operator_summary.json",
+          "confidence": 0.75,
+          "evidence": [
+            "content:Gold Demand Trends",
+            "content:World Gold Council",
+            "content:central bank demand"
+          ],
+          "size": 7237,
+          "sha256": "e58f8e667daf07d98a1b34e3f4639d8ac2230ca676fe4763e5d40bb039e5389e",
+          "kind": "json",
+          "summary": {
+            "kind": "json",
+            "keys": [
+              "stage",
+              "status",
+              "decision",
+              "promotion",
+              "EA",
+              "paper_order",
+              "paper_live",
+              "live",
+              "validation_allowed_for_order_or_promotion",
+              "generated_utc",
+              "root",
+              "inputs",
+              "stage64j1_state",
+              "counts",
+              "source_plan",
+              "event_calendar_forward_only_governance",
+              "hard_blocks",
+              "next_allowed_step",
+              "outputs"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/stage64j2_full_scope_source_acquisition_operator/stage64j2_source_acquisition_plan.json",
+          "confidence": 0.75,
+          "evidence": [
+            "content:Gold Demand Trends",
+            "content:World Gold Council",
+            "content:central bank demand"
+          ],
+          "size": 3521,
+          "sha256": "1166a5586e84da0a9813140528dcf70aecceb1c1b396a4ccd95087feb868aa94",
+          "kind": "json",
+          "summary": {
+            "kind": "json",
+            "keys": []
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/reports/stage64j4_wgc_etf_central_bank_mapper/stage64j4_wgc_etf_central_bank_mapper_summary.json",
+          "confidence": 0.75,
+          "evidence": [
+            "filename:central_bank",
+            "filename:wgc"
+          ],
+          "size": 4012,
+          "sha256": "509d62d7c19705e8734d4f3a4301a58224b34c154d59490262e535eb78d14594",
+          "kind": "json",
+          "summary": {
+            "kind": "json",
+            "keys": [
+              "stage",
+              "status",
+              "decision",
+              "promotion",
+              "EA",
+              "paper_order",
+              "paper_live",
+              "live",
+              "validation_allowed_for_order_or_promotion",
+              "generated_utc",
+              "root",
+              "inputs",
+              "outputs",
+              "mapping_results",
+              "remaining_blockers_expected_after_mapping",
+              "source_lag_assumptions",
+              "next_allowed_step",
+              "hard_blocks"
+            ]
+          }
+        },
+        {
+          "path": "/Users/vahid/Desktop/xauusd-trader/data/exogenous/central_bank_demand.csv",
+          "confidence": 0.5,
+          "evidence": [
+            "filename:central_bank"
+          ],
+          "size": 7667,
+          "sha256": "9c1511e7130c38ca55c6cbaed9d88b9c8e53ed251c69bddaba4dd59baed378e7",
+          "kind": "delimited",
+          "summary": {
+            "kind": "delimited",
+            "delimiter": ",",
+            "headers": [
+              "date_utc",
+              "value"
+            ],
+            "sample_row_count": 292,
+            "date_columns": [
+              "date_utc"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "required_next_action": "DOWNLOAD_ONLY_MISSING_OFFICIAL_SERIES_THEN_BUILD_CAUSAL_MACRO_PANEL"
+}
+{
+  "program": "XAUUSD_MACRO_DATA_READINESS_INVENTORY_V1_LOCAL_ONLY",
+  "generated_utc": "2026-08-06T06:39:11.905885Z",
+  "decision": "PASS_MACRO_DATA_READINESS_RESULTS_PACK_CREATED",
+  "pass": true,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false,
+  "output": "/Users/vahid/Downloads/XAUUSD_MACRO_DATA_READINESS_RESULTS.zip"
+}

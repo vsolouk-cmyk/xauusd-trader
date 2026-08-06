@@ -1,0 +1,19 @@
+{
+  "program": "XAUUSD_CROSS_ASSET_INTRADAY_READINESS_V1_2_SELF_VALIDATING_CSV_REPAIR",
+  "mt5_inventory_relative_path": "XAUUSD_CROSS_ASSET_INVENTORY/mt5_cross_asset_inventory.csv",
+  "mt5_inventory_snapshot_glob": "mt5_cross_asset_inventory_*.csv",
+  "mt5_files_directory": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files",
+  "history_start_utc": "2015-01-01T00:00:00Z",
+  "minimum_h1_bars": 5000,
+  "freshness_days": 10,
+  "required_categories": [
+    "USD_PROXY",
+    "US_RATES",
+    "SILVER"
+  ],
+  "optional_categories": [
+    "VOLATILITY",
+    "EQUITY_RISK",
+    "ENERGY"
+  ]
+}

@@ -1,0 +1,40 @@
+===== COMPILE =====
+===== TESTS =====
+test_collect_creates_manifested_zip_and_selection_report (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_collect_creates_manifested_zip_and_selection_report) ... ok
+test_core_ready_decision (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_core_ready_decision) ... ok
+test_history_download_required_decision (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_history_download_required_decision) ... ok
+test_local_scan_excludes_archive_and_symlink (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_local_scan_excludes_archive_and_symlink) ... ok
+test_missing_rates_is_partial (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_missing_rates_is_partial) ... ok
+test_mql_uses_atomic_snapshot_publish_contract (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_mql_uses_atomic_snapshot_publish_contract) ... ok
+test_preflight_header_only_inventory_requires_rerun (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_preflight_header_only_inventory_requires_rerun) ... ok
+test_preflight_no_inventory_is_non_order_pass (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_preflight_no_inventory_is_non_order_pass) ... ok
+test_read_inventory_normalizes_categories_and_times (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_read_inventory_normalizes_categories_and_times) ... ok
+test_select_valid_inventory_falls_back_from_header_only_canonical (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_select_valid_inventory_falls_back_from_header_only_canonical) ... FAIL
+test_select_valid_inventory_prefers_newest_valid_snapshot (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_select_valid_inventory_prefers_newest_valid_snapshot) ... FAIL
+test_single_fx_pair_does_not_satisfy_usd_proxy (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_single_fx_pair_does_not_satisfy_usd_proxy) ... ok
+test_static_check_has_no_execution_tokens (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_static_check_has_no_execution_tokens) ... ok
+test_two_fx_pairs_satisfy_usd_proxy (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_two_fx_pairs_satisfy_usd_proxy) ... ok
+test_usd_index_satisfies_usd_proxy (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_usd_index_satisfies_usd_proxy) ... ok
+
+======================================================================
+FAIL: test_select_valid_inventory_falls_back_from_header_only_canonical (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_select_valid_inventory_falls_back_from_header_only_canonical)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/tests/test_xauusd_cross_asset_intraday_readiness.py", line 93, in test_select_valid_inventory_falls_back_from_header_only_canonical
+    self.assertEqual(selected, snapshot)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: PosixPath('/private/var/folders/70/sq2znrwd6hgfzkl6rx[65 chars]csv') != PosixPath('/var/folders/70/sq2znrwd6hgfzkl6rx0s86c400[57 chars]csv')
+
+======================================================================
+FAIL: test_select_valid_inventory_prefers_newest_valid_snapshot (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_select_valid_inventory_prefers_newest_valid_snapshot)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/vahid/Desktop/xauusd-trader/tests/test_xauusd_cross_asset_intraday_readiness.py", line 103, in test_select_valid_inventory_prefers_newest_valid_snapshot
+    self.assertEqual(selected, snapshot)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: PosixPath('/private/var/folders/70/sq2znrwd6hgfzkl6rx[65 chars]csv') != PosixPath('/var/folders/70/sq2znrwd6hgfzkl6rx0s86c400[57 chars]csv')
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.417s
+
+FAILED (failures=2)

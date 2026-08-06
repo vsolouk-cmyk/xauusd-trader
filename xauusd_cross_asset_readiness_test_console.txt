@@ -1,0 +1,16 @@
+test_collect_creates_manifested_zip (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_collect_creates_manifested_zip) ... ok
+test_core_ready_decision (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_core_ready_decision) ... ok
+test_history_download_required_decision (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_history_download_required_decision) ... ok
+test_local_scan_excludes_archive_and_symlink (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_local_scan_excludes_archive_and_symlink) ... ok
+test_missing_rates_is_partial (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_missing_rates_is_partial) ... ok
+test_preflight_no_inventory_is_non_order_pass (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_preflight_no_inventory_is_non_order_pass) ... ok
+test_read_inventory_normalizes_categories_and_times (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_read_inventory_normalizes_categories_and_times) ... ok
+test_single_fx_pair_does_not_satisfy_usd_proxy (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_single_fx_pair_does_not_satisfy_usd_proxy) ... ok
+test_static_check_has_no_execution_tokens (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_static_check_has_no_execution_tokens) ... ok
+test_two_fx_pairs_satisfy_usd_proxy (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_two_fx_pairs_satisfy_usd_proxy) ... ok
+test_usd_index_satisfies_usd_proxy (tests.test_xauusd_cross_asset_intraday_readiness.ReadinessTests.test_usd_index_satisfies_usd_proxy) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.147s
+
+OK

@@ -1,0 +1,126 @@
+{
+  "program": "XAUUSD_CROSS_ASSET_INTRADAY_READINESS_V1_2_SELF_VALIDATING_CSV_REPAIR",
+  "generated_utc": "2026-08-06T09:07:51.623771Z",
+  "decision": "PASS_CROSS_ASSET_READINESS_PREFLIGHT_NO_ORDER",
+  "pass": true,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false,
+  "mt5_inventory_expected_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/XAUUSD_CROSS_ASSET_INVENTORY/mt5_cross_asset_inventory.csv",
+  "mt5_inventory_valid": true,
+  "mt5_inventory_selected_path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/XAUUSD_CROSS_ASSET_INVENTORY/mt5_cross_asset_inventory.csv",
+  "mt5_inventory_rows": 8,
+  "inventory_candidate_diagnostics": [
+    {
+      "path": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/XAUUSD_CROSS_ASSET_INVENTORY/mt5_cross_asset_inventory.csv",
+      "exists": true,
+      "size": 2357,
+      "line_count": 9,
+      "sha256": "4673dd84baa6512399328e595d476b49c7c36776814ec5aebd3d20ecdc739298",
+      "head_hex": "70726f6772616d2c67656e6572617465645f7365727665725f74696d652c73796d626f6c2c6465736372697074696f6e2c63617465676f726965732c73656c65637465642c74726164655f6d6f64652c6469676974732c706f696e742c626964",
+      "valid": true,
+      "rows": 8,
+      "mtime_ns": 1786007245871170119
+    }
+  ],
+  "static_execution_violations": [],
+  "required_next_action": "COLLECT"
+}
+{
+  "program": "XAUUSD_CROSS_ASSET_INTRADAY_READINESS_V1_2_SELF_VALIDATING_CSV_REPAIR",
+  "generated_utc": "2026-08-06T09:08:09.517925Z",
+  "decision": "PARTIAL_CROSS_ASSET_INTRADAY_REQUIRES_EXTERNAL_OR_BROKER_SYMBOLS",
+  "pass": true,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false,
+  "mt5_inventory_source": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/XAUUSD_CROSS_ASSET_INVENTORY/mt5_cross_asset_inventory.csv",
+  "mt5_symbol_rows": 8,
+  "local_matching_files": 109,
+  "category_status": {
+    "ENERGY": {
+      "symbol_present": true,
+      "history_ready": true,
+      "symbols": [
+        "BRENT",
+        "WTI"
+      ],
+      "history_ready_symbols": [
+        "BRENT",
+        "WTI"
+      ]
+    },
+    "EQUITY_RISK": {
+      "symbol_present": true,
+      "history_ready": true,
+      "symbols": [
+        "S&P500"
+      ],
+      "history_ready_symbols": [
+        "S&P500"
+      ]
+    },
+    "SILVER": {
+      "symbol_present": true,
+      "history_ready": true,
+      "symbols": [
+        "PAAS.US",
+        "XAGUSD"
+      ],
+      "history_ready_symbols": [
+        "PAAS.US",
+        "XAGUSD"
+      ]
+    },
+    "USD_FX_PROXY": {
+      "symbol_present": true,
+      "history_ready": true,
+      "symbols": [
+        "EURUSD",
+        "USDJPY"
+      ],
+      "history_ready_symbols": [
+        "EURUSD",
+        "USDJPY"
+      ]
+    },
+    "USD_INDEX": {
+      "symbol_present": true,
+      "history_ready": true,
+      "symbols": [
+        "DXY"
+      ],
+      "history_ready_symbols": [
+        "DXY"
+      ]
+    },
+    "USD_PROXY": {
+      "symbol_present": true,
+      "history_ready": true,
+      "symbols": [
+        "DXY"
+      ],
+      "history_ready_symbols": [
+        "DXY"
+      ]
+    },
+    "US_RATES": {
+      "symbol_present": false,
+      "history_ready": false,
+      "symbols": [],
+      "history_ready_symbols": []
+    },
+    "VOLATILITY": {
+      "symbol_present": false,
+      "history_ready": false,
+      "symbols": [],
+      "history_ready_symbols": []
+    }
+  },
+  "missing_required_categories": [
+    "US_RATES"
+  ],
+  "history_download_required_categories": [],
+  "results_zip": "/Users/vahid/Downloads/XAUUSD_CROSS_ASSET_INTRADAY_READINESS_RESULTS.zip",
+  "results_zip_sha256": "a1f7e1d8619d888f5be05f88e0e085148f0afb57d8d0716f540ee2e9172f0acd"
+}

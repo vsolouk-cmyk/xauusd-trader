@@ -1,0 +1,25 @@
+===== RUNTIME =====
+Python 3.14.2
+pandas=3.0.3
+numpy=2.4.0
+===== COMPILE =====
+===== TESTS =====
+test_asof_never_uses_future (tests.test_xauusd_macro_causal_panel.MacroPanelTests.test_asof_never_uses_future) ... ok
+test_build_end_to_end (tests.test_xauusd_macro_causal_panel.MacroPanelTests.test_build_end_to_end) ... ok
+test_collect_current_outputs (tests.test_xauusd_macro_causal_panel.MacroPanelTests.test_collect_current_outputs) ... ok
+test_datetime_resolution_safe (tests.test_xauusd_macro_causal_panel.MacroPanelTests.test_datetime_resolution_safe) ... ok
+test_event_blackout (tests.test_xauusd_macro_causal_panel.MacroPanelTests.test_event_blackout) ... ok
+test_fetch_gvz_from_local_source_file (tests.test_xauusd_macro_causal_panel.MacroPanelTests.test_fetch_gvz_from_local_source_file) ... ok
+test_fred_availability_is_next_day (tests.test_xauusd_macro_causal_panel.MacroPanelTests.test_fred_availability_is_next_day) ... ok
+test_no_order_authorization (tests.test_xauusd_macro_causal_panel.MacroPanelTests.test_no_order_authorization) ... ok
+test_optional_wgc_uses_release_time (tests.test_xauusd_macro_causal_panel.MacroPanelTests.test_optional_wgc_uses_release_time) ... ok
+test_preflight_ready (tests.test_xauusd_macro_causal_panel.MacroPanelTests.test_preflight_ready) ... ok
+test_reject_html_masquerade (tests.test_xauusd_macro_causal_panel.MacroPanelTests.test_reject_html_masquerade) ... ok
+test_select_sources_full (tests.test_xauusd_macro_causal_panel.MacroPanelTests.test_select_sources_full) ... ok
+test_targets_separate_future_only (tests.test_xauusd_macro_causal_panel.MacroPanelTests.test_targets_separate_future_only) ... ok
+test_validate_gvz_bytes (tests.test_xauusd_macro_causal_panel.MacroPanelTests.test_validate_gvz_bytes) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 11.442s
+
+OK

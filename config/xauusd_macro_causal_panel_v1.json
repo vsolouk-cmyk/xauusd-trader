@@ -1,0 +1,21 @@
+{
+  "program": "XAUUSD_MACRO_CAUSAL_PANEL_V1",
+  "reference_start": "2011-01-01",
+  "reference_end": "2024-12-31",
+  "diagnostic_start": "2025-01-01",
+  "fred_series": {
+    "usd_broad": "DTWEXBGS",
+    "real_yield_10y": "DFII10",
+    "nominal_yield_10y": "DGS10",
+    "breakeven_10y": "T10YIE",
+    "vix": "VIXCLS",
+    "gvz": "GVZCLS"
+  },
+  "daily_availability_lag_days": 1,
+  "minimum_core_start": "2012-01-01",
+  "minimum_core_end": "2024-12-31",
+  "minimum_core_completeness": 0.90,
+  "event_blackout_before_minutes": 60,
+  "event_blackout_after_minutes": 120,
+  "target_horizons_trading_days": [5, 20]
+}

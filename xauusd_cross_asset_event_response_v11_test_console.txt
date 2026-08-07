@@ -1,0 +1,31 @@
+===== RUNTIME =====
+Python 3.14.2
+pandas=3.0.3
+numpy=2.4.0
+===== COMPILE =====
+===== TESTS =====
+test_collect_excludes_large_inputs (tests.test_xauusd_cross_asset_event_response_scan.EventResponseTests.test_collect_excludes_large_inputs) ... ok
+test_event_eligibility_requires_active_event (tests.test_xauusd_cross_asset_event_response_scan.EventResponseTests.test_event_eligibility_requires_active_event) ... ok
+test_event_response_minimum_lag_excludes_too_recent_event (tests.test_xauusd_cross_asset_event_response_scan.EventResponseTests.test_event_response_minimum_lag_excludes_too_recent_event) ... ok
+test_failure_payload_contains_context_and_traceback (tests.test_xauusd_cross_asset_event_response_scan.EventResponseTests.test_failure_payload_contains_context_and_traceback) ... ok
+test_hash_mismatch_fails_preflight (tests.test_xauusd_cross_asset_event_response_scan.EventResponseTests.test_hash_mismatch_fails_preflight) ... ok
+test_no_survivor_keeps_diagnostic_closed (tests.test_xauusd_cross_asset_event_response_scan.EventResponseTests.test_no_survivor_keeps_diagnostic_closed) ... ok
+test_non_overlap (tests.test_xauusd_cross_asset_event_response_scan.EventResponseTests.test_non_overlap) ... ok
+test_packaged_conditions_execute (tests.test_xauusd_cross_asset_event_response_scan.EventResponseTests.test_packaged_conditions_execute) ... ok
+test_packaged_event_source_is_reference_locked (tests.test_xauusd_cross_asset_event_response_scan.EventResponseTests.test_packaged_event_source_is_reference_locked) ... ok
+test_packaged_registry_is_fixed (tests.test_xauusd_cross_asset_event_response_scan.EventResponseTests.test_packaged_registry_is_fixed) ... ok
+test_past_only_zscore (tests.test_xauusd_cross_asset_event_response_scan.EventResponseTests.test_past_only_zscore) ... ok
+test_preflight (tests.test_xauusd_cross_asset_event_response_scan.EventResponseTests.test_preflight) ... ok
+test_preflight_counts_raw_timestamp_windows_not_daily_flags (tests.test_xauusd_cross_asset_event_response_scan.EventResponseTests.test_preflight_counts_raw_timestamp_windows_not_daily_flags) ... ok
+test_preflight_failure_does_not_poison_run_directory (tests.test_xauusd_cross_asset_event_response_scan.EventResponseTests.test_preflight_failure_does_not_poison_run_directory) ... ok
+test_preflight_rejects_too_few_events (tests.test_xauusd_cross_asset_event_response_scan.EventResponseTests.test_preflight_rejects_too_few_events) ... ok
+test_raw_event_source_overrides_zero_legacy_panel_flags (tests.test_xauusd_cross_asset_event_response_scan.EventResponseTests.test_raw_event_source_overrides_zero_legacy_panel_flags) ... ok
+test_static_no_execution (tests.test_xauusd_cross_asset_event_response_scan.EventResponseTests.test_static_no_execution) ... ok
+test_streaming_reader_mixed_types (tests.test_xauusd_cross_asset_event_response_scan.EventResponseTests.test_streaming_reader_mixed_types) ... ok
+test_survivor_freezes_before_diagnostic (tests.test_xauusd_cross_asset_event_response_scan.EventResponseTests.test_survivor_freezes_before_diagnostic) ... ok
+test_usd_impulse_derivation (tests.test_xauusd_cross_asset_event_response_scan.EventResponseTests.test_usd_impulse_derivation) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 1.494s
+
+OK

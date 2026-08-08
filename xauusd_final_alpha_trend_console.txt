@@ -1,0 +1,172 @@
+{
+  "program": "XAUUSD_FINAL_ALPHA_CAMPAIGN_CANONICAL_LONG_HORIZON_TREND_V1",
+  "strategy_id": "MOP2012_12M_1M_VOL_SCALED_XAUUSD_BROKER_PROXY",
+  "generated_utc": "2026-08-08T12:51:13.488251+00:00",
+  "input": {
+    "path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_1h.csv",
+    "sha256": "b32088f08f8217ea7b5bf81ab66c971fc7dc4eda2cc98d2364a742aa0f33e7d2",
+    "size_bytes": 5435179,
+    "raw_rows": 91278,
+    "valid_rows": 91278,
+    "loader": "MT5_DATE_TIME_EU_DST",
+    "first_utc": "2011-01-02T22:00:00+00:00",
+    "last_utc": "2026-08-05T13:00:00+00:00",
+    "post_boundary_h1_rows_metadata_only": 9408
+  },
+  "locked_contract": {
+    "literature_anchor": "Moskowitz_Ooi_Pedersen_2012_Time_Series_Momentum",
+    "signal": "sign of trailing 12-month XAUUSD broker-price return",
+    "holding_rebalance": "one calendar month; first executable H1 open of month",
+    "volatility": "past-only EWMA daily-return variance; center of mass 60 days; annualization 261",
+    "literature_target_vol_note": "paper uses 40% per instrument; authors state scaling choice is inconsequential",
+    "broker_target_annual_volatility": 0.2,
+    "max_abs_position": 2.0,
+    "cost_normal_bps_per_1x_turnover": 3.0,
+    "cost_severe_bps_per_1x_turnover": 6.0,
+    "selection_boundary_utc": "2025-01-01T00:00:00Z",
+    "selection_used_2025_plus": false,
+    "parameter_scan": false,
+    "macro_filter": false,
+    "intraday_filter": false
+  },
+  "counts": {
+    "reference_eligible_months": 154,
+    "diagnostic_months_computed": 0
+  },
+  "authorization": {
+    "paper_order_allowed": false,
+    "demo_order_allowed": false,
+    "live_order_allowed": false
+  },
+  "decision": "PASS_FINAL_ALPHA_TREND_PREFLIGHT_REFERENCE_ONLY",
+  "pass": true,
+  "reference_only": true
+}
+{
+  "program": "XAUUSD_FINAL_ALPHA_CAMPAIGN_CANONICAL_LONG_HORIZON_TREND_V1",
+  "strategy_id": "MOP2012_12M_1M_VOL_SCALED_XAUUSD_BROKER_PROXY",
+  "generated_utc": "2026-08-08T12:51:51.917838+00:00",
+  "input": {
+    "path": "/Users/vahid/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_1h.csv",
+    "sha256": "b32088f08f8217ea7b5bf81ab66c971fc7dc4eda2cc98d2364a742aa0f33e7d2",
+    "size_bytes": 5435179,
+    "raw_rows": 91278,
+    "valid_rows": 91278,
+    "loader": "MT5_DATE_TIME_EU_DST",
+    "first_utc": "2011-01-02T22:00:00+00:00",
+    "last_utc": "2026-08-05T13:00:00+00:00",
+    "post_boundary_h1_rows_metadata_only": 9408
+  },
+  "locked_contract": {
+    "literature_anchor": "Moskowitz_Ooi_Pedersen_2012_Time_Series_Momentum",
+    "signal": "sign of trailing 12-month XAUUSD broker-price return",
+    "holding_rebalance": "one calendar month; first executable H1 open of month",
+    "volatility": "past-only EWMA daily-return variance; center of mass 60 days; annualization 261",
+    "literature_target_vol_note": "paper uses 40% per instrument; authors state scaling choice is inconsequential",
+    "broker_target_annual_volatility": 0.2,
+    "max_abs_position": 2.0,
+    "cost_normal_bps_per_1x_turnover": 3.0,
+    "cost_severe_bps_per_1x_turnover": 6.0,
+    "selection_boundary_utc": "2025-01-01T00:00:00Z",
+    "selection_used_2025_plus": false,
+    "parameter_scan": false,
+    "macro_filter": false,
+    "intraday_filter": false
+  },
+  "counts": {
+    "reference_eligible_months": 154,
+    "diagnostic_months_computed": 0
+  },
+  "authorization": {
+    "paper_order_allowed": false,
+    "demo_order_allowed": false,
+    "live_order_allowed": false
+  },
+  "reference": {
+    "strategy_severe": {
+      "months": 154,
+      "mean_monthly": 0.0007412075254248025,
+      "annualized_return": -0.015314546990017996,
+      "sharpe": 0.04017363848840932,
+      "max_drawdown": -0.6431864684653206,
+      "profit_factor": 1.0299300931858768,
+      "bootstrap_p10_monthly_mean": -0.006076020772533711,
+      "remove_best_month_annualized_return": -0.028477354517139175,
+      "best_month": 0.1856596280011775,
+      "worst_month": -0.17738591321174071
+    },
+    "strategy_normal": {
+      "normal_months": 154,
+      "normal_mean_monthly": 0.0009527984785266479,
+      "normal_annualized_return": -0.0127938550663107,
+      "normal_sharpe": 0.05165340757320457,
+      "normal_max_drawdown": -0.6345800592650805,
+      "normal_profit_factor": 1.0386414065940497,
+      "normal_bootstrap_p10_monthly_mean": -0.005888755278763783,
+      "normal_remove_best_month_annualized_return": -0.025978202495965497,
+      "normal_best_month": 0.1857235779802556,
+      "normal_worst_month": -0.17737716220622504
+    },
+    "passive_vol_scaled_severe": {
+      "passive_months": 154,
+      "passive_mean_monthly": 0.005717878496701806,
+      "passive_annualized_return": 0.045731265413827105,
+      "passive_sharpe": 0.31124714946307935,
+      "passive_max_drawdown": -0.5645666887925942,
+      "passive_profit_factor": 1.2566497786046142,
+      "passive_bootstrap_p10_monthly_mean": -0.0005242781693411286,
+      "passive_remove_best_month_annualized_return": 0.03215812275141272,
+      "passive_best_month": 0.1856596280011775,
+      "passive_worst_month": -0.15119714817582078
+    },
+    "buyhold_severe": {
+      "buyhold_months": 154,
+      "buyhold_mean_monthly": 0.003624540642099778,
+      "buyhold_annualized_return": 0.03349171944008278,
+      "buyhold_sharpe": 0.29789872635062437,
+      "buyhold_max_drawdown": -0.3984885794344909,
+      "buyhold_profit_factor": 1.244458881688827,
+      "buyhold_bootstrap_p10_monthly_mean": -0.00042228463091711183,
+      "buyhold_remove_best_month_annualized_return": 0.02509571772644681,
+      "buyhold_best_month": 0.11265409595172127,
+      "buyhold_worst_month": -0.11493334485042184
+    },
+    "paired_excess_vs_passive_severe": {
+      "mean_monthly": -0.0049766709712770005,
+      "annualized_arithmetic": -0.05972005165532401,
+      "bootstrap_p10_monthly_mean": -0.014304105492280037
+    },
+    "gates": {
+      "min_months": true,
+      "severe_annualized_return": false,
+      "severe_sharpe": false,
+      "bootstrap_p10": false,
+      "remove_best_month": false,
+      "positive_folds": false,
+      "worst_fold": true,
+      "positive_year_share": false,
+      "positive_year_concentration": true,
+      "max_drawdown": false,
+      "paired_excess_mean_vs_passive": false,
+      "paired_excess_bootstrap_p10": false,
+      "all": false,
+      "derived": {
+        "positive_years": 5,
+        "year_count": 13,
+        "positive_year_share": 0.38461538461538464,
+        "max_positive_year_concentration": 0.3016129845908049,
+        "positive_folds": 1,
+        "worst_fold_annualized_return": -0.044528341585064135
+      }
+    }
+  },
+  "diagnostic_2025_plus_evaluated": false,
+  "diagnostic_label": "SEEN_DIAGNOSTIC_NOT_PRISTINE_HOLDOUT",
+  "decision": "NO_REFERENCE_EDGE_CLOSE_LONG_HORIZON_TREND_ON_XAUUSD_CFD",
+  "pass": false
+}
+{
+  "program": "XAUUSD_FINAL_ALPHA_CAMPAIGN_CANONICAL_LONG_HORIZON_TREND_V1",
+  "decision": "COLLECT_PASS",
+  "output": "/Users/vahid/Downloads/XAUUSD_FINAL_ALPHA_TREND_RESULTS.zip"
+}

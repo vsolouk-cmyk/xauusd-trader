@@ -1,0 +1,66 @@
+{
+  "program": "XAUUSD_FINAL_ALPHA_CAMPAIGN_CANONICAL_LONG_HORIZON_TREND_V1",
+  "strategy_id": "MOP2012_12M_1M_VOL_SCALED_XAUUSD_BROKER_PROXY",
+  "reference_end_utc": "2025-01-01T00:00:00Z",
+  "diagnostic_label": "SEEN_DIAGNOSTIC_NOT_PRISTINE_HOLDOUT",
+  "lookback_months": 12,
+  "holding_months": 1,
+  "volatility": {
+    "ewma_center_of_mass_days": 60,
+    "annualization_days": 261,
+    "min_daily_returns": 120
+  },
+  "position": {
+    "target_annual_volatility": 0.20,
+    "max_abs_position": 2.0,
+    "signal_zero_position": 0.0
+  },
+  "cost_bps_per_1x_turnover": {
+    "normal": 3.0,
+    "severe": 6.0
+  },
+  "time_contract": {
+    "contract": "EU_DST_GMT_OFFSET_PAIR",
+    "standard_shift_minutes": -120,
+    "dst_shift_minutes": -180,
+    "shift_semantics": "timestamp_utc = timestamp_server_naive + shift_minutes"
+  },
+  "bootstrap": {
+    "iterations": 4000,
+    "block_months": 3,
+    "seed": 20260808,
+    "lower_quantile": 0.10
+  },
+  "reference_gates": {
+    "min_months": 120,
+    "min_severe_annualized_return": 0.02,
+    "min_severe_sharpe": 0.20,
+    "bootstrap_p10_monthly_mean_gt": 0.0,
+    "remove_best_month_annualized_return_gt": 0.0,
+    "min_positive_folds": 2,
+    "worst_fold_annualized_return_gt": -0.10,
+    "min_positive_year_share": 0.55,
+    "max_positive_year_concentration": 0.50,
+    "max_drawdown_abs": 0.50,
+    "paired_excess_mean_vs_passive_gt": 0.0,
+    "paired_excess_bootstrap_p10_gt": 0.0
+  },
+  "diagnostic_kill_gates": {
+    "min_months": 12,
+    "annualized_return_gt": 0.0,
+    "sharpe_gt": 0.0,
+    "max_drawdown_abs": 0.50,
+    "annualized_excess_vs_passive_gt": -0.05
+  },
+  "input_candidates": [
+    "~/Downloads/xauusd_fundamental_event_inbox/amarkets_xauusd_1h.csv",
+    "~/Downloads/amarkets_xauusd_1h.csv"
+  ],
+  "output_dir": "reports/xauusd_final_alpha_trend",
+  "collect_name": "XAUUSD_FINAL_ALPHA_TREND_RESULTS.zip",
+  "execution_authorization": {
+    "paper_order_allowed": false,
+    "demo_order_allowed": false,
+    "live_order_allowed": false
+  }
+}

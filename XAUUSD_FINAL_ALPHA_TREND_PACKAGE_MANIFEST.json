@@ -1,0 +1,48 @@
+{
+  "program": "XAUUSD_FINAL_ALPHA_CAMPAIGN_CANONICAL_LONG_HORIZON_TREND_V1",
+  "package_role": "single_strategy_final_alpha_campaign_no_stage_number",
+  "parameter_scan": false,
+  "execution_authorized": false,
+  "files": [
+    {
+      "path": "README_XAUUSD_FINAL_ALPHA_TREND_V1.md",
+      "size_bytes": 4608,
+      "sha256": "c947d6aff396fb36aa3b231303bbeaf7c32e75aaf359ba8eb83e56fb5a8f6569"
+    },
+    {
+      "path": "app/__init__.py",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "app/xauusd_final_alpha_trend.py",
+      "size_bytes": 28866,
+      "sha256": "b69caaaf0022e2d5956e0ebac964a06ab35e1279961c1ef04231a250962c7970"
+    },
+    {
+      "path": "configs/xauusd_final_alpha_trend.json",
+      "size_bytes": 2013,
+      "sha256": "d524066350a743d0ce239bc226dec77a98f0f399d6c9b0248a5d8dc9eae37964"
+    },
+    {
+      "path": "docs/XAUUSD_FINAL_ALPHA_TREND_LOCKED_SPEC.md",
+      "size_bytes": 1557,
+      "sha256": "b7bc9213afe76949958ff9e0e19595d3c2f9c7e22166a44a08a879163867d47f"
+    },
+    {
+      "path": "reports/xauusd_final_alpha_trend_failure.json",
+      "size_bytes": 421,
+      "sha256": "0d88c5aebe6f42856f5c8ce60bfe7b8c811c02c62a4c7f38b9bc543ba6d94d12"
+    },
+    {
+      "path": "tests/__init__.py",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/test_xauusd_final_alpha_trend.py",
+      "size_bytes": 8804,
+      "sha256": "81047270ec342c56f58e2345137b8530fbb97b913dc22c2b178dae97e2b4eb5f"
+    }
+  ]
+}

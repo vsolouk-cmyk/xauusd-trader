@@ -1,0 +1,27 @@
+===== RUNTIME =====
+Python 3.14.2
+pandas=3.0.3
+numpy=2.4.0
+===== COMPILE =====
+===== TESTS =====
+test_bootstrap_deterministic (tests.test_xauusd_final_alpha_trend.FinalAlphaTrendTests.test_bootstrap_deterministic) ... ok
+test_collect_verifies_manifest (tests.test_xauusd_final_alpha_trend.FinalAlphaTrendTests.test_collect_verifies_manifest) ... ok
+test_diagnostic_not_evaluated_if_reference_fails (tests.test_xauusd_final_alpha_trend.FinalAlphaTrendTests.test_diagnostic_not_evaluated_if_reference_fails) ... ok
+test_eu_dst_contract_summer (tests.test_xauusd_final_alpha_trend.FinalAlphaTrendTests.test_eu_dst_contract_summer) ... ok
+test_eu_dst_contract_winter (tests.test_xauusd_final_alpha_trend.FinalAlphaTrendTests.test_eu_dst_contract_winter) ... ok
+test_load_realistic_mt5_schema (tests.test_xauusd_final_alpha_trend.FinalAlphaTrendTests.test_load_realistic_mt5_schema) ... ok
+test_monthly_signal_is_past_only (tests.test_xauusd_final_alpha_trend.FinalAlphaTrendTests.test_monthly_signal_is_past_only) ... ok
+test_no_order_authorization (tests.test_xauusd_final_alpha_trend.FinalAlphaTrendTests.test_no_order_authorization) ... ok
+test_ohlc_failure_is_blocking (tests.test_xauusd_final_alpha_trend.FinalAlphaTrendTests.test_ohlc_failure_is_blocking) ... ok
+test_parameter_scan_absent (tests.test_xauusd_final_alpha_trend.FinalAlphaTrendTests.test_parameter_scan_absent) ... ok
+test_position_cap (tests.test_xauusd_final_alpha_trend.FinalAlphaTrendTests.test_position_cap) ... ok
+test_reference_boundary_excludes_crossing_month (tests.test_xauusd_final_alpha_trend.FinalAlphaTrendTests.test_reference_boundary_excludes_crossing_month) ... ok
+test_reference_gate_can_pass_strong_series (tests.test_xauusd_final_alpha_trend.FinalAlphaTrendTests.test_reference_gate_can_pass_strong_series) ... ok
+test_reference_gate_rejects_null (tests.test_xauusd_final_alpha_trend.FinalAlphaTrendTests.test_reference_gate_rejects_null) ... ok
+test_signal_uses_12_month_return_sign (tests.test_xauusd_final_alpha_trend.FinalAlphaTrendTests.test_signal_uses_12_month_return_sign) ... ok
+test_turnover_cost_flip (tests.test_xauusd_final_alpha_trend.FinalAlphaTrendTests.test_turnover_cost_flip) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 15.448s
+
+OK

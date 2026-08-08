@@ -1,0 +1,103 @@
+{
+  "program": "PRECIOUS_METALS_FINAL_RV_AND_CLUSTERED_REGIME_CALIBRATION_V1_2_DERIVED_HISTORY_CONTRACT_REPAIR",
+  "inputs": {
+    "mt5_export_directory": "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/XAUUSD_CROSS_ASSET_HISTORY",
+    "xau": {
+      "symbol": "XAUUSD",
+      "candidates": [
+        "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/XAUUSD_CROSS_ASSET_HISTORY/xauusd__h1.csv",
+        "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/XAUUSD_CROSS_ASSET_HISTORY/XAUUSD_H1.csv",
+        "data/mt5_cross_asset/xauusd__h1.csv"
+      ]
+    },
+    "xag": {
+      "symbol": "XAGUSD",
+      "candidates": [
+        "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/XAUUSD_CROSS_ASSET_HISTORY/xagusd__h1.csv",
+        "/Users/vahid/Library/Application Support/net.metaquotes.wine.metatrader5/drive_c/Program Files/MetaTrader 5/MQL5/Files/XAUUSD_CROSS_ASSET_HISTORY/XAGUSD_H1.csv",
+        "data/mt5_cross_asset/xagusd__h1.csv"
+      ]
+    }
+  },
+  "time_contract": {
+    "standard_shift_minutes": -120,
+    "dst_shift_minutes": -180,
+    "semantic": "AMarkets MT5 server time converted to UTC under locked EU DST contract"
+  },
+  "data_contract": {
+    "minimum_h1_rows": 50000,
+    "minimum_h1_overlap_fraction": 0.95,
+    "minimum_post_formation_reference_years": 6
+  },
+  "selection": {
+    "reference_start_utc": "2012-01-01T00:00:00Z",
+    "reference_end_utc": "2025-01-01T00:00:00Z",
+    "diagnostic_end_utc": "2027-01-01T00:00:00Z",
+    "diagnostic_policy": "2025_PLUS_NOT_COMPUTED_UNLESS_REFERENCE_PASS"
+  },
+  "strategy": {
+    "strategy_id": "GOLD_SILVER_252D_DYNAMIC_LOG_SPREAD_MEAN_REVERSION",
+    "formation_days": 252,
+    "entry_abs_z": 2.0,
+    "exit_z": 0.0,
+    "stop_abs_z": 4.0,
+    "maximum_holding_days": 60,
+    "hedge_ratio": "rolling OLS log(XAU)=alpha+beta*log(XAG), estimated on the 252 completed daily closes preceding the decision day",
+    "trade_weights": "gross-normalized fixed entry weights: w_xau=side/(1+abs(beta)); w_xag=-side*beta/(1+abs(beta))",
+    "entry_execution": "signal at synchronized daily close; enter at next synchronized daily open",
+    "exit_execution": "mean-cross, adverse 4-sigma stop, or 60-trading-day maximum holding detected at daily close; exit next synchronized daily open",
+    "normal_roundtrip_cost_bps": 8.0,
+    "severe_roundtrip_cost_bps": 16.0,
+    "cost_semantic": "fixed two-leg gross-notional round-trip stress; gross and normal outputs retained so failure attribution does not depend only on severe cost",
+    "parameter_scan": false,
+    "breakpoint_hindsight": false,
+    "cointegration_gate": false,
+    "cointegration_diagnostics_only": true
+  },
+  "clustered_calibration": {
+    "clusters": 4,
+    "cluster_days": 30,
+    "trials": 100,
+    "seed": 834271,
+    "empirical_resample_block_days": 5,
+    "planted_edge_sigma_fraction": 0.60,
+    "bootstrap_reps": 1000,
+    "bootstrap_block_trades": 5,
+    "minimum_positive_clusters": 3,
+    "maximum_positive_cluster_profit_share": 0.45,
+    "maximum_null_pass_rate": 0.10,
+    "minimum_edge_detection_rate": 0.80
+  },
+  "validation": {
+    "bootstrap_reps": 5000,
+    "bootstrap_block_trades": 3,
+    "bootstrap_seed": 610027,
+    "random_side_control": {
+      "reps": 5000,
+      "seed": 902117
+    },
+    "reference_gates": {
+      "minimum_trades": 25,
+      "minimum_profit_factor": 1.20,
+      "minimum_annualized_return": 0.02,
+      "maximum_drawdown_abs": 0.25,
+      "minimum_positive_folds": 2,
+      "minimum_worst_fold_annualized_return": -0.05,
+      "minimum_positive_year_share": 0.45,
+      "maximum_positive_year_profit_share": 0.50,
+      "maximum_positive_trade_profit_share": 0.25,
+      "minimum_random_side_percentile": 0.90
+    },
+    "diagnostic_gates": {
+      "minimum_trades": 3,
+      "minimum_profit_factor": 1.00,
+      "minimum_annualized_return": 0.00,
+      "maximum_drawdown_abs": 0.30
+    }
+  },
+  "outputs": {
+    "report_dir": "reports/precious_metals_final_rv",
+    "downloads_dir": "~/Downloads",
+    "results_zip": "XAUUSD_PRECIOUS_METALS_FINAL_RV_RESULTS.zip"
+  }
+}

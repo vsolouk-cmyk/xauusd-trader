@@ -1,0 +1,29 @@
+===== RUNTIME =====
+Python 3.14.2
+pandas=3.0.3
+numpy=2.4.0
+===== COMPILE =====
+===== UNIT TESTS =====
+test_ar1_half_life_positive (tests.test_precious_metals_final_rv.TestPreciousMetalsFinalRV.test_ar1_half_life_positive) ... ok
+test_build_daily_uses_common_rows (tests.test_precious_metals_final_rv.TestPreciousMetalsFinalRV.test_build_daily_uses_common_rows) ... ok
+test_cluster_mask_count (tests.test_precious_metals_final_rv.TestPreciousMetalsFinalRV.test_cluster_mask_count) ... ok
+test_clustered_calibration_detects_strong_observable_edge (tests.test_precious_metals_final_rv.TestPreciousMetalsFinalRV.test_clustered_calibration_detects_strong_observable_edge) ... ok
+test_costs_reduce_returns (tests.test_precious_metals_final_rv.TestPreciousMetalsFinalRV.test_costs_reduce_returns) ... ok
+test_dst_summer_true (tests.test_precious_metals_final_rv.TestPreciousMetalsFinalRV.test_dst_summer_true) ... ok
+test_dst_winter_false (tests.test_precious_metals_final_rv.TestPreciousMetalsFinalRV.test_dst_winter_false) ... ok
+test_formation_past_only (tests.test_precious_metals_final_rv.TestPreciousMetalsFinalRV.test_formation_past_only) ... ok
+test_loader_mt5_schema (tests.test_precious_metals_final_rv.TestPreciousMetalsFinalRV.test_loader_mt5_schema) ... ok
+test_loader_rejects_bad_ohlc (tests.test_precious_metals_final_rv.TestPreciousMetalsFinalRV.test_loader_rejects_bad_ohlc) ... ok
+test_no_trade_overlap (tests.test_precious_metals_final_rv.TestPreciousMetalsFinalRV.test_no_trade_overlap) ... ok
+test_ols_recovers_beta (tests.test_precious_metals_final_rv.TestPreciousMetalsFinalRV.test_ols_recovers_beta) ... ok
+test_pair_weights_gross_normalized (tests.test_precious_metals_final_rv.TestPreciousMetalsFinalRV.test_pair_weights_gross_normalized) ... ok
+test_reference_boundary_exits_before_end (tests.test_precious_metals_final_rv.TestPreciousMetalsFinalRV.test_reference_boundary_exits_before_end) ... ok
+test_simulation_produces_two_leg_trades (tests.test_precious_metals_final_rv.TestPreciousMetalsFinalRV.test_simulation_produces_two_leg_trades) ... ok
+test_static_no_execution_network (tests.test_precious_metals_final_rv.TestPreciousMetalsFinalRV.test_static_no_execution_network) ... ok
+test_strategy_does_not_require_cointegration_threshold (tests.test_precious_metals_final_rv.TestPreciousMetalsFinalRV.test_strategy_does_not_require_cointegration_threshold) ... ok
+test_sync_requires_overlap (tests.test_precious_metals_final_rv.TestPreciousMetalsFinalRV.test_sync_requires_overlap) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 2.789s
+
+OK

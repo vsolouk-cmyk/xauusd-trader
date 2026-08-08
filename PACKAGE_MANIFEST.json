@@ -1,49 +1,46 @@
 {
-  "program": "XAUUSD_PIPELINE_CALIBRATION_POSITIVE_CONTROL_AUDIT_V1_REFERENCE_LOCKED",
-  "artifact_role": "PIPELINE_CALIBRATION_POSITIVE_CONTROL_ONLY",
-  "files": [
-    {
-      "path": "QA_XAUUSD_PIPELINE_CALIBRATION_V1.md",
-      "size_bytes": 2428,
-      "sha256": "c32addc401763742ada6c29b5c0dc5e3d3e1766afb36ad4de802cea75748696b"
-    },
-    {
-      "path": "README_XAUUSD_PIPELINE_CALIBRATION_V1.md",
-      "size_bytes": 5261,
-      "sha256": "bcbab8bbe29c842d28f52a091b56dd1cd43fc32237a36e685340c1341b4590dd"
-    },
-    {
-      "path": "app/__init__.py",
-      "size_bytes": 17,
-      "sha256": "475e6a61a1cd90ddcc3b3c924cfe005e0d81d802cb27a1466da12f20cd74a619"
-    },
-    {
-      "path": "app/xauusd_pipeline_calibration.py",
-      "size_bytes": 36481,
-      "sha256": "fa196f53fd3f0696dd5fd0f1da46be1d0d75c46158ad476e5495c8e713053205"
-    },
-    {
-      "path": "configs/xauusd_pipeline_calibration.json",
-      "size_bytes": 1992,
-      "sha256": "3874a2122abe103218511a675d7356501bcf6fe431523fa08c4a9d5a5d8b6975"
-    },
-    {
-      "path": "requirements/xauusd_pipeline_calibration.txt",
-      "size_bytes": 24,
-      "sha256": "9a5eb9cbfb8dfa1c0d51f8a564c55b31bd25105292c40bad149ee965a0bffa48"
-    },
-    {
-      "path": "tests/__init__.py",
-      "size_bytes": 17,
-      "sha256": "475e6a61a1cd90ddcc3b3c924cfe005e0d81d802cb27a1466da12f20cd74a619"
-    },
-    {
-      "path": "tests/test_xauusd_pipeline_calibration.py",
-      "size_bytes": 8769,
-      "sha256": "d30578e7f5f186dfc732ae631a841891367d52885035ed6c83b5f257ce15bcbf"
-    }
-  ],
+  "program": "XAUUSD_PRECIOUS_METALS_FINAL_RV_V1_2_DERIVED_HISTORY_CONTRACT_REPAIR",
+  "generated_utc": "2026-08-08T20:32:32.882943Z",
+  "repair_scope": "preflight data-adequacy contract only; replaces arbitrary 2500-row threshold with 252-session formation + six post-formation evaluation years; no strategy/performance-gate/cost/selection changes",
+  "research_only": true,
   "paper_order_allowed": false,
   "demo_order_allowed": false,
-  "live_order_allowed": false
+  "live_order_allowed": false,
+  "files": [
+    {
+      "path": "README_XAUUSD_PRECIOUS_METALS_FINAL_RV_V1.md",
+      "bytes": 2871,
+      "sha256": "1c978092ecc7e36d25a4c862b51cd2c2826e8c49b6703627d9e614ce59f86ddb"
+    },
+    {
+      "path": "app/precious_metals_final_rv.py",
+      "bytes": 52490,
+      "sha256": "2e9e96becd409b6a44aab140e0c00d1e2f65d356b9e3b7f2808517a4b9ab5fa6"
+    },
+    {
+      "path": "configs/precious_metals_final_rv.json",
+      "bytes": 4327,
+      "sha256": "2b5f2a571f745a3ca39223c1a8e24415abe3b17ac9fb2062695bd44c49c49109"
+    },
+    {
+      "path": "docs/PORTFOLIO_SCOPE_DECISION_NOTE.md",
+      "bytes": 588,
+      "sha256": "f18b757583c57fc45d5a8255650621c584b5706dcd4efd0d8faa5b7fc21734a8"
+    },
+    {
+      "path": "docs/PRECIOUS_METALS_FINAL_RV_LOCKED_SPEC.md",
+      "bytes": 4719,
+      "sha256": "9f2b57e5a60858b86be616c6fa2c250d0f4ac408301c80a2f9080a1d67e49cb3"
+    },
+    {
+      "path": "docs/SOURCE_AND_DESIGN_RATIONALE.md",
+      "bytes": 2077,
+      "sha256": "edef61ceab123684455b60f82171b12071121addfa10f69a4bc19bf056044dab"
+    },
+    {
+      "path": "tests/test_precious_metals_final_rv.py",
+      "bytes": 14830,
+      "sha256": "3a0df6de4b3f1217b4b605d7f87146664e5d4a26423770cf4ffec86c7b85d581"
+    }
+  ]
 }

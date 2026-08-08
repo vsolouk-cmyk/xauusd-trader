@@ -1,0 +1,22 @@
+{
+  "program": "XAUUSD_TRUE_SURPRISE_DATA_GATE_V1_POINT_IN_TIME_CONSENSUS",
+  "reference_start_utc": "2016-01-01T00:00:00Z",
+  "reference_end_utc": "2025-01-01T00:00:00Z",
+  "country": "United States",
+  "required_event_groups": {
+    "CPI_HEADLINE_MOM": ["Inflation Rate MoM", "CPI MoM", "Consumer Price Index CPI MoM"],
+    "CPI_CORE_MOM": ["Core Inflation Rate MoM", "Core CPI MoM"],
+    "NFP": ["Non Farm Payrolls", "Nonfarm Payrolls", "Non-Farm Payrolls"]
+  },
+  "minimum_valid_rows_per_group": 80,
+  "required_columns": [
+    "CalendarId", "Date", "Country", "Event", "Actual", "Previous", "Forecast",
+    "DateSpan", "Importance", "LastUpdate", "Unit"
+  ],
+  "point_in_time_rules": {
+    "require_datespan_zero": true,
+    "require_lastupdate_not_before_release": true,
+    "require_actual_and_forecast_numeric": true,
+    "reject_teforecast_as_consensus_substitute": true
+  }
+}

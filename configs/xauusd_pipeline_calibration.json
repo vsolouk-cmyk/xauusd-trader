@@ -1,0 +1,52 @@
+{
+  "program": "XAUUSD_PIPELINE_CALIBRATION_POSITIVE_CONTROL_AUDIT_V1_REFERENCE_LOCKED",
+  "reference_start_utc": "2016-01-01T00:00:00Z",
+  "reference_end_utc": "2025-01-01T00:00:00Z",
+  "normal_cost_bps": 3.0,
+  "severe_cost_bps": 6.0,
+  "locked_notional_to_equity": 0.1570396406876166,
+  "allowed_hours_utc": [6,7,8,9,10,11,12,13,14,15,16,17,18,19],
+  "allowed_weekdays": [0,1,2,3,4],
+  "reference_folds": [
+    {"name":"2016_2018","start_utc":"2016-01-01T00:00:00Z","end_utc":"2019-01-01T00:00:00Z"},
+    {"name":"2019_2021","start_utc":"2019-01-01T00:00:00Z","end_utc":"2022-01-01T00:00:00Z"},
+    {"name":"2022_2024","start_utc":"2022-01-01T00:00:00Z","end_utc":"2025-01-01T00:00:00Z"}
+  ],
+  "reference_gates": {
+    "minimum_trades": 80,
+    "minimum_mean_severe_bps": 0.0,
+    "minimum_profit_factor": 1.2,
+    "minimum_bootstrap_p10_bps": 0.0,
+    "minimum_positive_folds": 2,
+    "minimum_worst_fold_mean_bps": -5.0,
+    "maximum_positive_year_profit_share": 0.45,
+    "minimum_locked_risk_cagr": 0.02
+  },
+  "synthetic": {
+    "sample_sizes": [100,300,600,1000],
+    "planted_severe_net_bps": [0.0,4.0,8.0,12.0,16.0,20.0],
+    "trials_per_cell": 40,
+    "bootstrap_reps": 300,
+    "bootstrap_block_trades": 10,
+    "seed": 1782401,
+    "minimum_reference_opportunities": 1500
+  },
+  "calibration_decision_thresholds": {
+    "maximum_statistical_false_positive_rate_n1000": 0.05,
+    "minimum_statistical_detection_rate_n100_alpha12": 0.70,
+    "minimum_statistical_detection_rate_n300_alpha8": 0.80,
+    "maximum_commercial_false_positive_rate_n1000": 0.05,
+    "minimum_commercial_detection_rate_n1000_alpha16": 0.80,
+    "maximum_monotonicity_drop": 0.15
+  },
+  "empirical_tsmom": {
+    "lookback_months": 12,
+    "volatility_center_of_mass_days": 60.0,
+    "annualization_days": 261.0,
+    "target_annualized_volatility": 0.40,
+    "monthly_cost_sensitivity_bps": [0.0,3.0,6.0]
+  },
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false
+}

@@ -1,0 +1,94 @@
+{
+  "program": "XAUUSD_PIPELINE_CALIBRATION_POSITIVE_CONTROL_AUDIT_V1_REFERENCE_LOCKED",
+  "generated_utc": "2026-08-08T09:02:27.298131Z",
+  "decision": "PASS_PIPELINE_CALIBRATION_PREFLIGHT_REFERENCE_ONLY",
+  "pass": true,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false,
+  "targets_contract": {
+    "targets_path": "/Users/vahid/Desktop/xauusd-trader/reports/xauusd_cross_asset_intraday_panel/cross_asset_intraday_targets.csv",
+    "targets_size_bytes": 13636228,
+    "targets_sha256": "cd81d4c32d66e9d1bd0c20621d099ef74d68ad9f0970e359d09760aee6af08f4",
+    "rows_parsed_until_stop": 60000,
+    "reference_rows_loaded": 52393,
+    "reference_end_crossed_in_parser_chunk": true,
+    "diagnostic_rows_used": 0
+  },
+  "reference_nonoverlap_opportunities": 8708,
+  "reference_first": "2016-01-04 06:00:00+00:00",
+  "reference_last": "2024-12-31 14:00:00+00:00",
+  "synthetic_cells": 24,
+  "trials_per_cell": 40,
+  "diagnostic_2025_plus_evaluated": false,
+  "static_execution_violations": [],
+  "required_next_action": "RUN_PIPELINE_CALIBRATION_ONCE"
+}
+{
+  "program": "XAUUSD_PIPELINE_CALIBRATION_POSITIVE_CONTROL_AUDIT_V1_REFERENCE_LOCKED",
+  "generated_utc": "2026-08-08T09:02:36.347401Z",
+  "decision": "PIPELINE_CALIBRATED_PASS",
+  "pass": true,
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false,
+  "reference_rows_loaded": 52393,
+  "reference_nonoverlap_opportunities": 8708,
+  "synthetic_cells": 24,
+  "synthetic_trials_total": 960,
+  "calibration_details": {
+    "checks": {
+      "statistical_false_positive_n1000": true,
+      "statistical_power_n100_alpha12": true,
+      "statistical_power_n300_alpha8": true,
+      "commercial_false_positive_n1000": true,
+      "commercial_power_n1000_alpha16": true,
+      "statistical_monotonicity": true,
+      "commercial_monotonicity": true
+    },
+    "observed": {
+      "statistical_false_positive_rate_n1000": 0.0,
+      "statistical_detection_rate_n100_alpha12": 1.0,
+      "statistical_detection_rate_n300_alpha8": 0.95,
+      "commercial_false_positive_rate_n1000": 0.0,
+      "commercial_detection_rate_n1000_alpha16": 1.0,
+      "maximum_statistical_monotonicity_drop": 0.0,
+      "maximum_commercial_monotonicity_drop": 0.0
+    },
+    "interpretation_contract": {
+      "statistical_detection": "all locked robustness gates except CAGR",
+      "commercial_promotion": "all locked robustness gates including 2pct CAGR",
+      "important": "A statistical edge can be detected while failing commercial promotion; that is not a validator defect."
+    }
+  },
+  "empirical_tsmom": {
+    "role": "EMPIRICAL_SANITY_BENCHMARK_NOT_CALIBRATION_DECIDER",
+    "instrument": "XAUUSD_CFD_PROXY_FROM_EXISTING_PANEL",
+    "literature_specification": "sign(past_12m_return) * 40pct/exante_vol * next_month_return",
+    "deviation_from_paper": "single XAUUSD CFD proxy; not 58 futures/forwards; no roll/excess-return reconstruction",
+    "months": 95,
+    "first_formation_month": "2017-01-31 00:00:00+00:00",
+    "last_formation_month": "2024-11-30 00:00:00+00:00",
+    "gross_annualized_mean_return": 0.06376269906503415,
+    "gross_annualized_volatility": 0.43841014407577555,
+    "gross_sharpe_zero_rf": 0.1454407474978802,
+    "gross_positive_month_share": 0.4842105263157895,
+    "gross_max_drawdown": -0.8380352842282723,
+    "passive_vol_scaled_annualized_mean_return": 0.35930071553301557,
+    "max_position_scale": 5.18182158653096,
+    "directionally_positive": true,
+    "calibration_decision_dependency": "NONE",
+    "net_0bps_annualized_mean_return": 0.06376269906503415,
+    "net_3bps_annualized_mean_return": 0.06016269906503412,
+    "net_6bps_annualized_mean_return": 0.05656269906503412
+  },
+  "diagnostic_2025_plus_evaluated": false,
+  "archived_previous_report": null,
+  "required_next_action": "TRUST_PIPELINE_KILL_PASS_DISTINCTION_AND_REASSESS_STRATEGIC_OPTIONS"
+}
+{
+  "program": "XAUUSD_PIPELINE_CALIBRATION_POSITIVE_CONTROL_AUDIT_V1_REFERENCE_LOCKED",
+  "decision": "COLLECT_PASS",
+  "artifact": "/Users/vahid/Downloads/XAUUSD_PIPELINE_CALIBRATION_RESULTS.zip",
+  "sha256": "c3d5e7ba800b665a5a00a783bd434710527e23d0c0141ca6f2dc273cfb891b85"
+}

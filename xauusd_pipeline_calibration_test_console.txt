@@ -1,0 +1,27 @@
+===== RUNTIME =====
+Python 3.14.2
+pandas=3.0.3
+numpy=2.4.0
+===== COMPILE =====
+===== TESTS =====
+test_centering_removes_year_hour_drift (tests.test_xauusd_pipeline_calibration.CalibrationTests.test_centering_removes_year_hour_drift) ... ok
+test_collect_excludes_large_input (tests.test_xauusd_pipeline_calibration.CalibrationTests.test_collect_excludes_large_input) ... ok
+test_config_order_permissions_false (tests.test_xauusd_pipeline_calibration.CalibrationTests.test_config_order_permissions_false) ... ok
+test_decision_inconclusive_when_false_positive_high (tests.test_xauusd_pipeline_calibration.CalibrationTests.test_decision_inconclusive_when_false_positive_high) ... ok
+test_decision_overconservative (tests.test_xauusd_pipeline_calibration.CalibrationTests.test_decision_overconservative) ... ok
+test_decision_pass (tests.test_xauusd_pipeline_calibration.CalibrationTests.test_decision_pass) ... ok
+test_locked_reference_gates_match_fixed_scan_contract (tests.test_xauusd_pipeline_calibration.CalibrationTests.test_locked_reference_gates_match_fixed_scan_contract) ... ok
+test_metric_detects_strong_low_variance_edge_statistically (tests.test_xauusd_pipeline_calibration.CalibrationTests.test_metric_detects_strong_low_variance_edge_statistically) ... ok
+test_nonoverlap_opportunities_are_at_least_4h_apart (tests.test_xauusd_pipeline_calibration.CalibrationTests.test_nonoverlap_opportunities_are_at_least_4h_apart) ... ok
+test_null_zero_mean_does_not_pass_bootstrap (tests.test_xauusd_pipeline_calibration.CalibrationTests.test_null_zero_mean_does_not_pass_bootstrap) ... ok
+test_preflight_on_synthetic_file (tests.test_xauusd_pipeline_calibration.CalibrationTests.test_preflight_on_synthetic_file) ... ok
+test_reference_reader_excludes_2025_from_returned_frame (tests.test_xauusd_pipeline_calibration.CalibrationTests.test_reference_reader_excludes_2025_from_returned_frame) ... ok
+test_static_no_execution_contract (tests.test_xauusd_pipeline_calibration.CalibrationTests.test_static_no_execution_contract) ... ok
+test_statistical_pass_can_differ_from_commercial_cagr_pass (tests.test_xauusd_pipeline_calibration.CalibrationTests.test_statistical_pass_can_differ_from_commercial_cagr_pass) ... ok
+test_tsmom_future_mutation_does_not_change_past_rows (tests.test_xauusd_pipeline_calibration.CalibrationTests.test_tsmom_future_mutation_does_not_change_past_rows) ... ok
+test_tsmom_summary_is_explicitly_non_decisive (tests.test_xauusd_pipeline_calibration.CalibrationTests.test_tsmom_summary_is_explicitly_non_decisive) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 9.924s
+
+OK

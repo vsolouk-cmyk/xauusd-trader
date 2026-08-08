@@ -1,12 +1,49 @@
 {
-  "program": "XAUUSD_MACRO_CAUSAL_PANEL_V1_1_GOLD_ASOF_EXECUTION_REPAIR",
-  "purpose": "Repair gold-side causal timing: use only previous completed D1 bar, enter at current trading-day open, and keep exact future targets separate.",
-  "execution_allowed": false,
-  "changes": [
-    "Remove same-day gold OHLC from feature panel",
-    "Add prior-bar gold observation and availability timestamps",
-    "Align entry to current trading-day open",
-    "Compute 5/20 trading-day exits from executable entry open",
-    "Audit gold causality and feature-target row identity"
-  ]
+  "program": "XAUUSD_PIPELINE_CALIBRATION_POSITIVE_CONTROL_AUDIT_V1_REFERENCE_LOCKED",
+  "artifact_role": "PIPELINE_CALIBRATION_POSITIVE_CONTROL_ONLY",
+  "files": [
+    {
+      "path": "QA_XAUUSD_PIPELINE_CALIBRATION_V1.md",
+      "size_bytes": 2428,
+      "sha256": "c32addc401763742ada6c29b5c0dc5e3d3e1766afb36ad4de802cea75748696b"
+    },
+    {
+      "path": "README_XAUUSD_PIPELINE_CALIBRATION_V1.md",
+      "size_bytes": 5261,
+      "sha256": "bcbab8bbe29c842d28f52a091b56dd1cd43fc32237a36e685340c1341b4590dd"
+    },
+    {
+      "path": "app/__init__.py",
+      "size_bytes": 17,
+      "sha256": "475e6a61a1cd90ddcc3b3c924cfe005e0d81d802cb27a1466da12f20cd74a619"
+    },
+    {
+      "path": "app/xauusd_pipeline_calibration.py",
+      "size_bytes": 36481,
+      "sha256": "fa196f53fd3f0696dd5fd0f1da46be1d0d75c46158ad476e5495c8e713053205"
+    },
+    {
+      "path": "configs/xauusd_pipeline_calibration.json",
+      "size_bytes": 1992,
+      "sha256": "3874a2122abe103218511a675d7356501bcf6fe431523fa08c4a9d5a5d8b6975"
+    },
+    {
+      "path": "requirements/xauusd_pipeline_calibration.txt",
+      "size_bytes": 24,
+      "sha256": "9a5eb9cbfb8dfa1c0d51f8a564c55b31bd25105292c40bad149ee965a0bffa48"
+    },
+    {
+      "path": "tests/__init__.py",
+      "size_bytes": 17,
+      "sha256": "475e6a61a1cd90ddcc3b3c924cfe005e0d81d802cb27a1466da12f20cd74a619"
+    },
+    {
+      "path": "tests/test_xauusd_pipeline_calibration.py",
+      "size_bytes": 8769,
+      "sha256": "d30578e7f5f186dfc732ae631a841891367d52885035ed6c83b5f257ce15bcbf"
+    }
+  ],
+  "paper_order_allowed": false,
+  "demo_order_allowed": false,
+  "live_order_allowed": false
 }

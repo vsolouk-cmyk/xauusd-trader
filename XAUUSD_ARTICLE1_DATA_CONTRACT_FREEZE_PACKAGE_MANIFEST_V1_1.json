@@ -1,0 +1,45 @@
+{
+  "package": "XAUUSD_ARTICLE1_DATA_CONTRACT_FREEZE_PACKAGE_V1_1",
+  "created_utc": "2026-08-31T05:28:00Z",
+  "files": [
+    {
+      "destination": "tools/article_publication/article1_data_contract_preflight.py",
+      "sha256": "e40ab19f4d7849ab3c1c0bd24afa24cd1dd64b078ddd5304367bfff600142469",
+      "size_bytes": 25340
+    },
+    {
+      "destination": "docs/article_publication/XAUUSD_ARTICLE1_DATA_CONTRACT_PREFLIGHT_RUNBOOK.md",
+      "sha256": "0a122d29589efd88fe1b734244c206aaa04304915fb9da6408d9c19b06b03591",
+      "size_bytes": 1971
+    },
+    {
+      "destination": "docs/article_publication/XAUUSD_ARTICLE1_DATA_CONTRACT_DECISION_V1_1.json",
+      "sha256": "afdcf838d59c0e5c18ae1f744b3c63d73148de9cb230a785d5ddca2ee7402609",
+      "size_bytes": 3723
+    },
+    {
+      "destination": "docs/article_publication/XAUUSD_ARTICLE1_DATA_CONTRACT_FREEZE_V1_1.md",
+      "sha256": "c41f6ed44c0e191935fbaca9122e514d97328d76105ea1f65ece36070173ced8",
+      "size_bytes": 4744
+    }
+  ],
+  "source_real_preflight": {
+    "archive": "XAUUSD_ARTICLE1_DATA_CONTRACT_PREFLIGHT_20260831T051948Z.zip",
+    "archive_integrity": "PASS",
+    "result_manifest_integrity": "PASS",
+    "preflight_summary_sha256": "3b735e5f59eb65a0b0e12afaed70836610882ffc2e7698aa15806cd95aa65c0c"
+  },
+  "validation": {
+    "python_compile": "PASS",
+    "synthetic_clean_pass_integration": "PASS",
+    "synthetic_warning_qualified_pass_integration": "PASS",
+    "hash_mismatch_fail_closed_integration": "PASS",
+    "json_parse": "PASS"
+  },
+  "decision": "PASS_ARTICLE1_2015_2024_REFERENCE_DATA_CONTRACT_WITH_ALIGNMENT_WARNING",
+  "authorization": {
+    "paper_order_allowed": false,
+    "demo_order_allowed": false,
+    "live_order_allowed": false
+  }
+}

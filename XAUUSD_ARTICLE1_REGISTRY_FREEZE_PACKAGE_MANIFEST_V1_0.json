@@ -1,0 +1,37 @@
+{
+  "program": "XAUUSD_ARTICLE1_REGISTRY_FREEZE_PACKAGE_V1_0",
+  "generated_utc": "2026-08-31T06:30:00Z",
+  "registry_program": "XAUUSD_ARTICLE1_LOCKED_SPECIFICATION_REGISTRY_V1_0",
+  "registry_counts": {
+    "registered_specifications": 47,
+    "primary_locked_rerun_specifications": 39,
+    "historical_forensic_only_specifications": 8,
+    "primary_economic_families": 20
+  },
+  "canonical_specification_set_sha256": "475481ede19b2de800dbf83bad3336109ea3a8b7fc59b26c453cde492d0a9af3",
+  "historical_evidence_package_sha256": "3378f61717a3a16f29ee33609ce0aa826157cd48fc065aaf6ae61b129eb74b06",
+  "data_contract_decision_sha256": "afdcf838d59c0e5c18ae1f744b3c63d73148de9cb230a785d5ddca2ee7402609",
+  "files": [
+    {
+      "path": "docs/article_publication/XAUUSD_ARTICLE1_LOCKED_SPECIFICATION_REGISTRY_V1_0.json",
+      "sha256": "ae6ef7c65950c28b42a6c57bc30267c05383fee59d4160cc47c7b12c00477928"
+    },
+    {
+      "path": "docs/article_publication/XAUUSD_ARTICLE1_LOCKED_SPECIFICATION_REGISTRY_V1_0.csv",
+      "sha256": "51bfdadecbf05259fcac18f4436a74dd776b395a49b0cf622a327642366b2c99"
+    },
+    {
+      "path": "docs/article_publication/XAUUSD_ARTICLE1_REGISTRY_FREEZE_MEMO_V1_0.md",
+      "sha256": "dfcf6b98cbdad05be754eaf9883e5713f5f9f59b2a0240fe810b7d9926812a94"
+    },
+    {
+      "path": "tools/article_publication/article1_registry_preflight.py",
+      "sha256": "af71c87846dca95593aeda3849e59444e4aeb4387c5923642248f0ed58d8f9e3"
+    }
+  ],
+  "execution_policy": {
+    "paper_order_allowed": false,
+    "demo_order_allowed": false,
+    "live_order_allowed": false
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "program": "XAUUSD_ARTICLE1_EXECUTION_PACKAGE_MANIFEST_V1_1",
+  "generated_utc": "2026-09-02T05:20:00Z",
+  "purpose": "Install the amended specification registry, frozen statistical protocol, and outcome-blind unified reference runner for the first Article 1 consolidated rerun.",
+  "supersedes": "XAUUSD_ARTICLE1_LOCKED_SPECIFICATION_REGISTRY_V1_0_FOR_EXECUTION",
+  "source_registry_preflight": {
+    "archive": "XAUUSD_ARTICLE1_REGISTRY_PREFLIGHT_20260902T044556Z.zip",
+    "archive_sha256": "91380ed9a381060c69b422b056a90e6a4139b4707dd7b47aba3ad01d4613fa3e",
+    "report_sha256": "b32c3bf86818afdfb4097a85909459c93118cce2f585989c6c393cd6e5bebecb",
+    "decision": "BLOCK_ARTICLE1_REGISTRY_SOURCE_AND_INPUT_BINDINGS",
+    "passed_source_and_config_bindings": 11,
+    "total_source_and_config_bindings": 12,
+    "passed_required_input_bindings": 9,
+    "total_required_input_bindings": 9,
+    "sole_failed_binding": "app/xauusd_final_alpha_trend.py",
+    "resolution": "Registry version 1.1 binds the canonical time-series-momentum specification to the executable project source corroborated independently by the Gap Pack, the original Final Alpha package manifest, and the current repository. The three restored lines concern authorization reporting only and do not alter any strategy or performance calculation."
+  },
+  "locked_study_counts": {
+    "registered_specifications": 47,
+    "primary_reference_rerun_specifications": 39,
+    "historical_forensic_only_specifications": 8,
+    "primary_economic_families": 20,
+    "source_blocks": 6
+  },
+  "canonical_specification_set_sha256": "e20d26b5fe2fe6db25a8cdf48cf8650b1b726be0a78c500549e51e11522b8a07",
+  "validation": {
+    "registry_deterministic_rebuild": "PASS",
+    "registry_json_byte_exact": "PASS",
+    "registry_csv_byte_exact": "PASS",
+    "python_syntax_compilation": "PASS",
+    "json_parsing": "PASS",
+    "bound_source_api_signature_audit": "PASS",
+    "clean_outcome_blind_preflight_with_hash-matched_input_stubs": "PASS",
+    "synthetic_source_adapter_specification_count": 39,
+    "synthetic_family_inference_count": 20,
+    "synthetic_dsr_count": 39,
+    "warning_interval_overlap_exclusion": "PASS",
+    "cross_feed_pass_and_insufficient-match_paths": "PASS",
+    "vectorized_max_t_determinism": "PASS",
+    "frozen_manifest_tamper_detection": "PASS",
+    "historical_strategy_performance_files_read_during_package_validation": false,
+    "post_2024_outcomes_computed_during_package_validation": false
+  },
+  "files": [
+    {
+      "path": "configs/article_publication/XAUUSD_ARTICLE1_EVALUATION_PROTOCOL_V1_0.json",
+      "sha256": "6bd2de37dbef65619a949bf0e0c0e926df0dc2722373e6308fbe85fd478a5b97"
+    },
+    {
+      "path": "docs/article_publication/XAUUSD_ARTICLE1_DATA_CONTRACT_DECISION_V1_1.json",
+      "sha256": "afdcf838d59c0e5c18ae1f744b3c63d73148de9cb230a785d5ddca2ee7402609"
+    },
+    {
+      "path": "docs/article_publication/XAUUSD_ARTICLE1_LOCKED_SPECIFICATION_REGISTRY_V1_1.csv",
+      "sha256": "6db944e4684b8b2e097351cd72a86741a16145472d5b770b1f3abbc84ecb40ff"
+    },
+    {
+      "path": "docs/article_publication/XAUUSD_ARTICLE1_LOCKED_SPECIFICATION_REGISTRY_V1_1.json",
+      "sha256": "42e8f4f11ac5be5799ecc4269b8d3b8f36a9a5ccfbcbca14cddd69f9d3f68f08"
+    },
+    {
+      "path": "docs/article_publication/XAUUSD_ARTICLE1_PROTOCOL_DEVIATION_LOG_V1_0.json",
+      "sha256": "33cb4bd902b644d002edb81d47ba2c23ad7dea441c7aefdf7191f08a6298b6af"
+    },
+    {
+      "path": "docs/article_publication/XAUUSD_ARTICLE1_REGISTRY_FREEZE_MEMO_V1_1.md",
+      "sha256": "5a57b57fb7f04eeeb10b1963eff6335e21b67e532ddaafe6cb784f117cb8cde1"
+    },
+    {
+      "path": "docs/article_publication/XAUUSD_ARTICLE1_UNIFIED_REFERENCE_RUNBOOK_V1_0.md",
+      "sha256": "bf46975ea16cafc9803a24f752bbab48f6d8613d06ac0ae53313827603c91048"
+    },
+    {
+      "path": "tools/article_publication/article1_registry_preflight.py",
+      "sha256": "bdcaf12bcf17bdaafcdd2d9f7337a9bd3bef2de22be49c72dc6f714b51cec71a"
+    },
+    {
+      "path": "tools/article_publication/article1_unified_reference_runner.py",
+      "sha256": "52d2ccbabb9342f18e5d9dc404e2fd606b9102b052e60fde092bd800755fa0c2"
+    }
+  ],
+  "execution_policy": {
+    "reference_only": true,
+    "post_2024_outcome_computation_allowed": false,
+    "historical_strategy_result_files_allowed_as_inputs": false,
+    "manifest_frozen_before_outcome_computation": true,
+    "run_directory_overwrite_allowed": false,
+    "unversioned_rerun_allowed": false
+  },
+  "authorization": {
+    "paper_order_allowed": false,
+    "demo_order_allowed": false,
+    "live_order_allowed": false
+  }
+}

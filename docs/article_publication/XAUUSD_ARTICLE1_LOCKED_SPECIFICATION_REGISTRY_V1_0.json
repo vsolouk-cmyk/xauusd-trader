@@ -1,0 +1,3472 @@
+{
+  "program": "XAUUSD_ARTICLE1_LOCKED_SPECIFICATION_REGISTRY_V1_0",
+  "schema_version": "1.0",
+  "freeze_utc": "2026-08-31T06:30:00Z",
+  "freeze_status": "SPECIFICATION_REGISTRY_FROZEN; RUNNER_AND_MAIN_RUN_MANIFEST_PENDING",
+  "study_interpretation": "RETROSPECTIVE_SYSTEMATIC_AUDIT_WITH_PROSPECTIVELY_LOCKED_CONSOLIDATED_RERUN",
+  "historical_outcomes_already_seen": true,
+  "confirmatory_claim_prohibited": true,
+  "selection_rule": "INCLUDE_EVERY_EXACT_SPECIFICATION_IN_EACH_RECOVERABLE_FINAL_FIXED_REGISTRY; DO_NOT_SELECT_ON_HISTORICAL_PERFORMANCE",
+  "evidence_binding": {
+    "historical_evidence_package_sha256": "3378f61717a3a16f29ee33609ce0aa826157cd48fc065aaf6ae61b129eb74b06",
+    "repository_snapshot": "9fe0e02ce70256412080178b05972dd833212acf",
+    "data_contract_path": "docs/article_publication/XAUUSD_ARTICLE1_DATA_CONTRACT_DECISION_V1_1.json",
+    "data_contract_sha256": "afdcf838d59c0e5c18ae1f744b3c63d73148de9cb230a785d5ddca2ee7402609",
+    "data_contract_decision": "PASS_ARTICLE1_2015_2024_REFERENCE_DATA_CONTRACT_WITH_ALIGNMENT_WARNING"
+  },
+  "counts": {
+    "registry_specifications": 47,
+    "primary_locked_rerun_specifications": 39,
+    "historical_forensic_only_specifications": 8,
+    "primary_economic_families": 20,
+    "primary_parent_taxonomy_counts": {
+      "canonical_technical_rules": 16,
+      "event_and_news_response": 9,
+      "fixed_thesis_cross_asset_rules": 12,
+      "canonical_long_horizon_time_series_momentum": 1,
+      "precious_metals_relative_value_rules": 1
+    },
+    "source_blocks": 6
+  },
+  "primary_economic_families": [
+    "DXY_PRECIOUS_SHOCK",
+    "ENERGY_INFLATION_IMPULSE",
+    "EVENT_GOLD_LAG",
+    "EVENT_USD_SILVER_CONTINUATION",
+    "GOLD_SILVER_DYNAMIC_LOG_SPREAD_MEAN_REVERSION",
+    "PRECIOUS_RELATIVE_VALUE",
+    "RATES_USD_ALIGNMENT",
+    "RISK_RATES_DIVERGENCE",
+    "TIME_SERIES_MOMENTUM",
+    "USD_PRECIOUS_CONSENSUS",
+    "failed_breakout_reversion",
+    "low_vol_range_reversion",
+    "post_event_breakout",
+    "post_event_momentum",
+    "range_breakout",
+    "session_breakout",
+    "trend_continuation",
+    "trend_pullback",
+    "volatility_expansion",
+    "zscore_reversion"
+  ],
+  "source_blocks": [
+    {
+      "source_block": "successor_scan",
+      "source_binding": {
+        "script_path": "app/xauusd_successor_parallel_scan.py",
+        "script_sha256": "1957d9964e3d031075b76f20a6a4c4c15afee2954ea9bcc63ca1e6def5a48024",
+        "config_path": "configs/xauusd_successor_parallel_scan_v1.json",
+        "config_sha256": "2fbdbc2b93abff46124916d9861877a4b7aee99c4f7f98ca21dab8d71f5678fa"
+      },
+      "registry_rows": 19,
+      "primary_rows": 19
+    },
+    {
+      "source_block": "cross_asset_fixed",
+      "source_binding": {
+        "script_path": "app/xauusd_cross_asset_fixed_scan.py",
+        "script_sha256": "0ac88e74834b4510bd493930fc67ab6d1ec83295c5d80e608cd7a3691494f9e9",
+        "config_path": "configs/xauusd_cross_asset_fixed_scan.json",
+        "config_sha256": "7924616b0dea4de6678a655e0395988d5c116d97359ac390a05f5f3007730c1e"
+      },
+      "registry_rows": 12,
+      "primary_rows": 12
+    },
+    {
+      "source_block": "cross_asset_event_response",
+      "source_binding": {
+        "script_path": "app/xauusd_cross_asset_event_response_scan.py",
+        "script_sha256": "e2b28566e33aec8e9d73582d7d4376b0541a15343ada7bd53731801c37da028d",
+        "config_path": "configs/xauusd_cross_asset_event_response_scan.json",
+        "config_sha256": "f231faef32a40e4dc767f3352cbcf12b3ebfff0978ec5662ec7d624ac535b640"
+      },
+      "registry_rows": 6,
+      "primary_rows": 6
+    },
+    {
+      "source_block": "stage178_ml",
+      "source_binding": {
+        "script_path": "app/stage178_commercial_edge_decision_sprint.py",
+        "script_sha256": "3acac21c41c7285222ca8017cf3436372fd8d3c4466705932d0e69631379e2c7",
+        "config_path": "configs/stage178_commercial_edge_decision_sprint.json",
+        "config_sha256": "73c30a18eff9e2ce5b2b85ab9b63c5e374baa5d86c52fe5aa38fd2aa1f1edc1b"
+      },
+      "registry_rows": 8,
+      "primary_rows": 0
+    },
+    {
+      "source_block": "canonical_tsmom",
+      "source_binding": {
+        "script_path": "app/xauusd_final_alpha_trend.py",
+        "script_sha256": "7c97785b6fa5778efcc8327bc0cefe74a10358d72a8a25bf44ebd1e081e340f8",
+        "config_path": "configs/xauusd_final_alpha_trend.json",
+        "config_sha256": "d524066350a743d0ce239bc226dec77a98f0f399d6c9b0248a5d8dc9eae37964"
+      },
+      "registry_rows": 1,
+      "primary_rows": 1
+    },
+    {
+      "source_block": "precious_metals_rv",
+      "source_binding": {
+        "script_path": "app/precious_metals_final_rv.py",
+        "script_sha256": "2e9e96becd409b6a44aab140e0c00d1e2f65d356b9e3b7f2808517a4b9ab5fa6",
+        "config_path": "configs/precious_metals_final_rv.json",
+        "config_sha256": "2b5f2a571f745a3ca39223c1a8e24415abe3b17ac9fb2062695bd44c49c49109"
+      },
+      "registry_rows": 1,
+      "primary_rows": 1
+    }
+  ],
+  "global_temporal_policy": {
+    "primary_intraday_start_utc": "2015-01-02T07:00:00Z",
+    "primary_end_utc_exclusive": "2025-01-01T00:00:00Z",
+    "pre_2015_intraday_policy": "EXCLUDED_FROM_PRIMARY_INTRADAY_INFERENCE",
+    "post_2024_policy": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY",
+    "warned_interval_start_utc": "2019-10-07T00:00:00Z",
+    "warned_interval_end_utc_exclusive": "2019-10-14T00:00:00Z"
+  },
+  "execution_policy": {
+    "paper_order_allowed": false,
+    "demo_order_allowed": false,
+    "live_order_allowed": false
+  },
+  "specifications": [
+    {
+      "registry_order": 1,
+      "specification_id": "A1R-001",
+      "source_block": "successor_scan",
+      "source_candidate_id": "trend_continuation_12h_fast",
+      "parent_taxonomy": "canonical_technical_rules",
+      "economic_family": "trend_continuation",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "DYNAMIC_LONG_SHORT",
+      "horizon": {
+        "value": 12,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "key": "trend_continuation_12h_fast",
+        "family": "trend_continuation",
+        "horizon_hours": 12,
+        "event_policy": "blackout",
+        "parameters": {
+          "lookback_hours": 24,
+          "trend_window": 120,
+          "minimum_move": 0.003
+        }
+      },
+      "reference_contract": {
+        "start_utc": "2015-01-02T07:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "REF_2015_2016",
+            "start": "2015-01-02T07:00:00Z",
+            "end": "2017-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2017_2018",
+            "start": "2017-01-01T00:00:00Z",
+            "end": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2019_2020",
+            "start": "2019-01-01T00:00:00Z",
+            "end": "2021-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2021_2022",
+            "start": "2021-01-01T00:00:00Z",
+            "end": "2023-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2023_2024",
+            "start": "2023-01-01T00:00:00Z",
+            "end": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_successor_parallel_scan.py",
+        "script_sha256": "1957d9964e3d031075b76f20a6a4c4c15afee2954ea9bcc63ca1e6def5a48024",
+        "config_path": "configs/xauusd_successor_parallel_scan_v1.json",
+        "config_sha256": "2fbdbc2b93abff46124916d9861877a4b7aee99c4f7f98ca21dab8d71f5678fa"
+      }
+    },
+    {
+      "registry_order": 2,
+      "specification_id": "A1R-002",
+      "source_block": "successor_scan",
+      "source_candidate_id": "trend_continuation_48h_medium",
+      "parent_taxonomy": "canonical_technical_rules",
+      "economic_family": "trend_continuation",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "DYNAMIC_LONG_SHORT",
+      "horizon": {
+        "value": 48,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "key": "trend_continuation_48h_medium",
+        "family": "trend_continuation",
+        "horizon_hours": 48,
+        "event_policy": "blackout",
+        "parameters": {
+          "lookback_hours": 72,
+          "trend_window": 240,
+          "minimum_move": 0.006
+        }
+      },
+      "reference_contract": {
+        "start_utc": "2015-01-02T07:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "REF_2015_2016",
+            "start": "2015-01-02T07:00:00Z",
+            "end": "2017-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2017_2018",
+            "start": "2017-01-01T00:00:00Z",
+            "end": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2019_2020",
+            "start": "2019-01-01T00:00:00Z",
+            "end": "2021-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2021_2022",
+            "start": "2021-01-01T00:00:00Z",
+            "end": "2023-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2023_2024",
+            "start": "2023-01-01T00:00:00Z",
+            "end": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_successor_parallel_scan.py",
+        "script_sha256": "1957d9964e3d031075b76f20a6a4c4c15afee2954ea9bcc63ca1e6def5a48024",
+        "config_path": "configs/xauusd_successor_parallel_scan_v1.json",
+        "config_sha256": "2fbdbc2b93abff46124916d9861877a4b7aee99c4f7f98ca21dab8d71f5678fa"
+      }
+    },
+    {
+      "registry_order": 3,
+      "specification_id": "A1R-003",
+      "source_block": "successor_scan",
+      "source_candidate_id": "trend_continuation_72h_slow",
+      "parent_taxonomy": "canonical_technical_rules",
+      "economic_family": "trend_continuation",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "DYNAMIC_LONG_SHORT",
+      "horizon": {
+        "value": 72,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "key": "trend_continuation_72h_slow",
+        "family": "trend_continuation",
+        "horizon_hours": 72,
+        "event_policy": "blackout",
+        "parameters": {
+          "lookback_hours": 120,
+          "trend_window": 240,
+          "minimum_move": 0.008
+        }
+      },
+      "reference_contract": {
+        "start_utc": "2015-01-02T07:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "REF_2015_2016",
+            "start": "2015-01-02T07:00:00Z",
+            "end": "2017-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2017_2018",
+            "start": "2017-01-01T00:00:00Z",
+            "end": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2019_2020",
+            "start": "2019-01-01T00:00:00Z",
+            "end": "2021-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2021_2022",
+            "start": "2021-01-01T00:00:00Z",
+            "end": "2023-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2023_2024",
+            "start": "2023-01-01T00:00:00Z",
+            "end": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_successor_parallel_scan.py",
+        "script_sha256": "1957d9964e3d031075b76f20a6a4c4c15afee2954ea9bcc63ca1e6def5a48024",
+        "config_path": "configs/xauusd_successor_parallel_scan_v1.json",
+        "config_sha256": "2fbdbc2b93abff46124916d9861877a4b7aee99c4f7f98ca21dab8d71f5678fa"
+      }
+    },
+    {
+      "registry_order": 4,
+      "specification_id": "A1R-004",
+      "source_block": "successor_scan",
+      "source_candidate_id": "trend_pullback_24h",
+      "parent_taxonomy": "canonical_technical_rules",
+      "economic_family": "trend_pullback",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "DYNAMIC_LONG_SHORT",
+      "horizon": {
+        "value": 24,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "key": "trend_pullback_24h",
+        "family": "trend_pullback",
+        "horizon_hours": 24,
+        "event_policy": "blackout",
+        "parameters": {
+          "trend_window": 240,
+          "pullback_hours": 6,
+          "maximum_pullback": 0.004
+        }
+      },
+      "reference_contract": {
+        "start_utc": "2015-01-02T07:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "REF_2015_2016",
+            "start": "2015-01-02T07:00:00Z",
+            "end": "2017-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2017_2018",
+            "start": "2017-01-01T00:00:00Z",
+            "end": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2019_2020",
+            "start": "2019-01-01T00:00:00Z",
+            "end": "2021-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2021_2022",
+            "start": "2021-01-01T00:00:00Z",
+            "end": "2023-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2023_2024",
+            "start": "2023-01-01T00:00:00Z",
+            "end": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_successor_parallel_scan.py",
+        "script_sha256": "1957d9964e3d031075b76f20a6a4c4c15afee2954ea9bcc63ca1e6def5a48024",
+        "config_path": "configs/xauusd_successor_parallel_scan_v1.json",
+        "config_sha256": "2fbdbc2b93abff46124916d9861877a4b7aee99c4f7f98ca21dab8d71f5678fa"
+      }
+    },
+    {
+      "registry_order": 5,
+      "specification_id": "A1R-005",
+      "source_block": "successor_scan",
+      "source_candidate_id": "trend_pullback_48h",
+      "parent_taxonomy": "canonical_technical_rules",
+      "economic_family": "trend_pullback",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "DYNAMIC_LONG_SHORT",
+      "horizon": {
+        "value": 48,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "key": "trend_pullback_48h",
+        "family": "trend_pullback",
+        "horizon_hours": 48,
+        "event_policy": "blackout",
+        "parameters": {
+          "trend_window": 240,
+          "pullback_hours": 12,
+          "maximum_pullback": 0.006
+        }
+      },
+      "reference_contract": {
+        "start_utc": "2015-01-02T07:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "REF_2015_2016",
+            "start": "2015-01-02T07:00:00Z",
+            "end": "2017-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2017_2018",
+            "start": "2017-01-01T00:00:00Z",
+            "end": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2019_2020",
+            "start": "2019-01-01T00:00:00Z",
+            "end": "2021-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2021_2022",
+            "start": "2021-01-01T00:00:00Z",
+            "end": "2023-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2023_2024",
+            "start": "2023-01-01T00:00:00Z",
+            "end": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_successor_parallel_scan.py",
+        "script_sha256": "1957d9964e3d031075b76f20a6a4c4c15afee2954ea9bcc63ca1e6def5a48024",
+        "config_path": "configs/xauusd_successor_parallel_scan_v1.json",
+        "config_sha256": "2fbdbc2b93abff46124916d9861877a4b7aee99c4f7f98ca21dab8d71f5678fa"
+      }
+    },
+    {
+      "registry_order": 6,
+      "specification_id": "A1R-006",
+      "source_block": "successor_scan",
+      "source_candidate_id": "range_breakout_12h_24",
+      "parent_taxonomy": "canonical_technical_rules",
+      "economic_family": "range_breakout",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "DYNAMIC_LONG_SHORT",
+      "horizon": {
+        "value": 12,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "key": "range_breakout_12h_24",
+        "family": "range_breakout",
+        "horizon_hours": 12,
+        "event_policy": "blackout",
+        "parameters": {
+          "range_window": 24,
+          "buffer_atr": 0.05
+        }
+      },
+      "reference_contract": {
+        "start_utc": "2015-01-02T07:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "REF_2015_2016",
+            "start": "2015-01-02T07:00:00Z",
+            "end": "2017-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2017_2018",
+            "start": "2017-01-01T00:00:00Z",
+            "end": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2019_2020",
+            "start": "2019-01-01T00:00:00Z",
+            "end": "2021-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2021_2022",
+            "start": "2021-01-01T00:00:00Z",
+            "end": "2023-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2023_2024",
+            "start": "2023-01-01T00:00:00Z",
+            "end": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_successor_parallel_scan.py",
+        "script_sha256": "1957d9964e3d031075b76f20a6a4c4c15afee2954ea9bcc63ca1e6def5a48024",
+        "config_path": "configs/xauusd_successor_parallel_scan_v1.json",
+        "config_sha256": "2fbdbc2b93abff46124916d9861877a4b7aee99c4f7f98ca21dab8d71f5678fa"
+      }
+    },
+    {
+      "registry_order": 7,
+      "specification_id": "A1R-007",
+      "source_block": "successor_scan",
+      "source_candidate_id": "range_breakout_48h_72",
+      "parent_taxonomy": "canonical_technical_rules",
+      "economic_family": "range_breakout",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "DYNAMIC_LONG_SHORT",
+      "horizon": {
+        "value": 48,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "key": "range_breakout_48h_72",
+        "family": "range_breakout",
+        "horizon_hours": 48,
+        "event_policy": "blackout",
+        "parameters": {
+          "range_window": 72,
+          "buffer_atr": 0.1
+        }
+      },
+      "reference_contract": {
+        "start_utc": "2015-01-02T07:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "REF_2015_2016",
+            "start": "2015-01-02T07:00:00Z",
+            "end": "2017-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2017_2018",
+            "start": "2017-01-01T00:00:00Z",
+            "end": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2019_2020",
+            "start": "2019-01-01T00:00:00Z",
+            "end": "2021-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2021_2022",
+            "start": "2021-01-01T00:00:00Z",
+            "end": "2023-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2023_2024",
+            "start": "2023-01-01T00:00:00Z",
+            "end": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_successor_parallel_scan.py",
+        "script_sha256": "1957d9964e3d031075b76f20a6a4c4c15afee2954ea9bcc63ca1e6def5a48024",
+        "config_path": "configs/xauusd_successor_parallel_scan_v1.json",
+        "config_sha256": "2fbdbc2b93abff46124916d9861877a4b7aee99c4f7f98ca21dab8d71f5678fa"
+      }
+    },
+    {
+      "registry_order": 8,
+      "specification_id": "A1R-008",
+      "source_block": "successor_scan",
+      "source_candidate_id": "volatility_expansion_12h",
+      "parent_taxonomy": "canonical_technical_rules",
+      "economic_family": "volatility_expansion",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "DYNAMIC_LONG_SHORT",
+      "horizon": {
+        "value": 12,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "key": "volatility_expansion_12h",
+        "family": "volatility_expansion",
+        "horizon_hours": 12,
+        "event_policy": "blackout",
+        "parameters": {
+          "range_atr_multiple": 1.6,
+          "trend_window": 120
+        }
+      },
+      "reference_contract": {
+        "start_utc": "2015-01-02T07:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "REF_2015_2016",
+            "start": "2015-01-02T07:00:00Z",
+            "end": "2017-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2017_2018",
+            "start": "2017-01-01T00:00:00Z",
+            "end": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2019_2020",
+            "start": "2019-01-01T00:00:00Z",
+            "end": "2021-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2021_2022",
+            "start": "2021-01-01T00:00:00Z",
+            "end": "2023-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2023_2024",
+            "start": "2023-01-01T00:00:00Z",
+            "end": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_successor_parallel_scan.py",
+        "script_sha256": "1957d9964e3d031075b76f20a6a4c4c15afee2954ea9bcc63ca1e6def5a48024",
+        "config_path": "configs/xauusd_successor_parallel_scan_v1.json",
+        "config_sha256": "2fbdbc2b93abff46124916d9861877a4b7aee99c4f7f98ca21dab8d71f5678fa"
+      }
+    },
+    {
+      "registry_order": 9,
+      "specification_id": "A1R-009",
+      "source_block": "successor_scan",
+      "source_candidate_id": "volatility_expansion_48h",
+      "parent_taxonomy": "canonical_technical_rules",
+      "economic_family": "volatility_expansion",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "DYNAMIC_LONG_SHORT",
+      "horizon": {
+        "value": 48,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "key": "volatility_expansion_48h",
+        "family": "volatility_expansion",
+        "horizon_hours": 48,
+        "event_policy": "blackout",
+        "parameters": {
+          "range_atr_multiple": 1.8,
+          "trend_window": 240
+        }
+      },
+      "reference_contract": {
+        "start_utc": "2015-01-02T07:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "REF_2015_2016",
+            "start": "2015-01-02T07:00:00Z",
+            "end": "2017-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2017_2018",
+            "start": "2017-01-01T00:00:00Z",
+            "end": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2019_2020",
+            "start": "2019-01-01T00:00:00Z",
+            "end": "2021-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2021_2022",
+            "start": "2021-01-01T00:00:00Z",
+            "end": "2023-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2023_2024",
+            "start": "2023-01-01T00:00:00Z",
+            "end": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_successor_parallel_scan.py",
+        "script_sha256": "1957d9964e3d031075b76f20a6a4c4c15afee2954ea9bcc63ca1e6def5a48024",
+        "config_path": "configs/xauusd_successor_parallel_scan_v1.json",
+        "config_sha256": "2fbdbc2b93abff46124916d9861877a4b7aee99c4f7f98ca21dab8d71f5678fa"
+      }
+    },
+    {
+      "registry_order": 10,
+      "specification_id": "A1R-010",
+      "source_block": "successor_scan",
+      "source_candidate_id": "low_vol_range_reversion_12h",
+      "parent_taxonomy": "canonical_technical_rules",
+      "economic_family": "low_vol_range_reversion",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "DYNAMIC_LONG_SHORT",
+      "horizon": {
+        "value": 12,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "key": "low_vol_range_reversion_12h",
+        "family": "low_vol_range_reversion",
+        "horizon_hours": 12,
+        "event_policy": "blackout",
+        "parameters": {
+          "range_window": 72,
+          "edge_fraction": 0.1,
+          "atr_ratio": 0.8
+        }
+      },
+      "reference_contract": {
+        "start_utc": "2015-01-02T07:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "REF_2015_2016",
+            "start": "2015-01-02T07:00:00Z",
+            "end": "2017-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2017_2018",
+            "start": "2017-01-01T00:00:00Z",
+            "end": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2019_2020",
+            "start": "2019-01-01T00:00:00Z",
+            "end": "2021-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2021_2022",
+            "start": "2021-01-01T00:00:00Z",
+            "end": "2023-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2023_2024",
+            "start": "2023-01-01T00:00:00Z",
+            "end": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_successor_parallel_scan.py",
+        "script_sha256": "1957d9964e3d031075b76f20a6a4c4c15afee2954ea9bcc63ca1e6def5a48024",
+        "config_path": "configs/xauusd_successor_parallel_scan_v1.json",
+        "config_sha256": "2fbdbc2b93abff46124916d9861877a4b7aee99c4f7f98ca21dab8d71f5678fa"
+      }
+    },
+    {
+      "registry_order": 11,
+      "specification_id": "A1R-011",
+      "source_block": "successor_scan",
+      "source_candidate_id": "low_vol_range_reversion_24h",
+      "parent_taxonomy": "canonical_technical_rules",
+      "economic_family": "low_vol_range_reversion",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "DYNAMIC_LONG_SHORT",
+      "horizon": {
+        "value": 24,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "key": "low_vol_range_reversion_24h",
+        "family": "low_vol_range_reversion",
+        "horizon_hours": 24,
+        "event_policy": "blackout",
+        "parameters": {
+          "range_window": 120,
+          "edge_fraction": 0.08,
+          "atr_ratio": 0.75
+        }
+      },
+      "reference_contract": {
+        "start_utc": "2015-01-02T07:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "REF_2015_2016",
+            "start": "2015-01-02T07:00:00Z",
+            "end": "2017-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2017_2018",
+            "start": "2017-01-01T00:00:00Z",
+            "end": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2019_2020",
+            "start": "2019-01-01T00:00:00Z",
+            "end": "2021-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2021_2022",
+            "start": "2021-01-01T00:00:00Z",
+            "end": "2023-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2023_2024",
+            "start": "2023-01-01T00:00:00Z",
+            "end": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_successor_parallel_scan.py",
+        "script_sha256": "1957d9964e3d031075b76f20a6a4c4c15afee2954ea9bcc63ca1e6def5a48024",
+        "config_path": "configs/xauusd_successor_parallel_scan_v1.json",
+        "config_sha256": "2fbdbc2b93abff46124916d9861877a4b7aee99c4f7f98ca21dab8d71f5678fa"
+      }
+    },
+    {
+      "registry_order": 12,
+      "specification_id": "A1R-012",
+      "source_block": "successor_scan",
+      "source_candidate_id": "zscore_reversion_12h",
+      "parent_taxonomy": "canonical_technical_rules",
+      "economic_family": "zscore_reversion",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "DYNAMIC_LONG_SHORT",
+      "horizon": {
+        "value": 12,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "key": "zscore_reversion_12h",
+        "family": "zscore_reversion",
+        "horizon_hours": 12,
+        "event_policy": "blackout",
+        "parameters": {
+          "window": 72,
+          "z_threshold": 1.75
+        }
+      },
+      "reference_contract": {
+        "start_utc": "2015-01-02T07:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "REF_2015_2016",
+            "start": "2015-01-02T07:00:00Z",
+            "end": "2017-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2017_2018",
+            "start": "2017-01-01T00:00:00Z",
+            "end": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2019_2020",
+            "start": "2019-01-01T00:00:00Z",
+            "end": "2021-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2021_2022",
+            "start": "2021-01-01T00:00:00Z",
+            "end": "2023-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2023_2024",
+            "start": "2023-01-01T00:00:00Z",
+            "end": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_successor_parallel_scan.py",
+        "script_sha256": "1957d9964e3d031075b76f20a6a4c4c15afee2954ea9bcc63ca1e6def5a48024",
+        "config_path": "configs/xauusd_successor_parallel_scan_v1.json",
+        "config_sha256": "2fbdbc2b93abff46124916d9861877a4b7aee99c4f7f98ca21dab8d71f5678fa"
+      }
+    },
+    {
+      "registry_order": 13,
+      "specification_id": "A1R-013",
+      "source_block": "successor_scan",
+      "source_candidate_id": "zscore_reversion_24h",
+      "parent_taxonomy": "canonical_technical_rules",
+      "economic_family": "zscore_reversion",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "DYNAMIC_LONG_SHORT",
+      "horizon": {
+        "value": 24,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "key": "zscore_reversion_24h",
+        "family": "zscore_reversion",
+        "horizon_hours": 24,
+        "event_policy": "blackout",
+        "parameters": {
+          "window": 120,
+          "z_threshold": 2.0
+        }
+      },
+      "reference_contract": {
+        "start_utc": "2015-01-02T07:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "REF_2015_2016",
+            "start": "2015-01-02T07:00:00Z",
+            "end": "2017-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2017_2018",
+            "start": "2017-01-01T00:00:00Z",
+            "end": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2019_2020",
+            "start": "2019-01-01T00:00:00Z",
+            "end": "2021-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2021_2022",
+            "start": "2021-01-01T00:00:00Z",
+            "end": "2023-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2023_2024",
+            "start": "2023-01-01T00:00:00Z",
+            "end": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_successor_parallel_scan.py",
+        "script_sha256": "1957d9964e3d031075b76f20a6a4c4c15afee2954ea9bcc63ca1e6def5a48024",
+        "config_path": "configs/xauusd_successor_parallel_scan_v1.json",
+        "config_sha256": "2fbdbc2b93abff46124916d9861877a4b7aee99c4f7f98ca21dab8d71f5678fa"
+      }
+    },
+    {
+      "registry_order": 14,
+      "specification_id": "A1R-014",
+      "source_block": "successor_scan",
+      "source_candidate_id": "failed_breakout_reversion_12h",
+      "parent_taxonomy": "canonical_technical_rules",
+      "economic_family": "failed_breakout_reversion",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "DYNAMIC_LONG_SHORT",
+      "horizon": {
+        "value": 12,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "key": "failed_breakout_reversion_12h",
+        "family": "failed_breakout_reversion",
+        "horizon_hours": 12,
+        "event_policy": "blackout",
+        "parameters": {
+          "range_window": 24
+        }
+      },
+      "reference_contract": {
+        "start_utc": "2015-01-02T07:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "REF_2015_2016",
+            "start": "2015-01-02T07:00:00Z",
+            "end": "2017-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2017_2018",
+            "start": "2017-01-01T00:00:00Z",
+            "end": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2019_2020",
+            "start": "2019-01-01T00:00:00Z",
+            "end": "2021-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2021_2022",
+            "start": "2021-01-01T00:00:00Z",
+            "end": "2023-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2023_2024",
+            "start": "2023-01-01T00:00:00Z",
+            "end": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_successor_parallel_scan.py",
+        "script_sha256": "1957d9964e3d031075b76f20a6a4c4c15afee2954ea9bcc63ca1e6def5a48024",
+        "config_path": "configs/xauusd_successor_parallel_scan_v1.json",
+        "config_sha256": "2fbdbc2b93abff46124916d9861877a4b7aee99c4f7f98ca21dab8d71f5678fa"
+      }
+    },
+    {
+      "registry_order": 15,
+      "specification_id": "A1R-015",
+      "source_block": "successor_scan",
+      "source_candidate_id": "post_event_momentum_12h",
+      "parent_taxonomy": "event_and_news_response",
+      "economic_family": "post_event_momentum",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "DYNAMIC_LONG_SHORT",
+      "horizon": {
+        "value": 12,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "key": "post_event_momentum_12h",
+        "family": "post_event_momentum",
+        "horizon_hours": 12,
+        "event_policy": "require_recent",
+        "parameters": {
+          "event_window_hours": 3,
+          "minimum_atr_move": 0.6
+        }
+      },
+      "reference_contract": {
+        "start_utc": "2015-01-02T07:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "REF_2015_2016",
+            "start": "2015-01-02T07:00:00Z",
+            "end": "2017-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2017_2018",
+            "start": "2017-01-01T00:00:00Z",
+            "end": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2019_2020",
+            "start": "2019-01-01T00:00:00Z",
+            "end": "2021-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2021_2022",
+            "start": "2021-01-01T00:00:00Z",
+            "end": "2023-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2023_2024",
+            "start": "2023-01-01T00:00:00Z",
+            "end": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_successor_parallel_scan.py",
+        "script_sha256": "1957d9964e3d031075b76f20a6a4c4c15afee2954ea9bcc63ca1e6def5a48024",
+        "config_path": "configs/xauusd_successor_parallel_scan_v1.json",
+        "config_sha256": "2fbdbc2b93abff46124916d9861877a4b7aee99c4f7f98ca21dab8d71f5678fa"
+      }
+    },
+    {
+      "registry_order": 16,
+      "specification_id": "A1R-016",
+      "source_block": "successor_scan",
+      "source_candidate_id": "post_event_momentum_24h",
+      "parent_taxonomy": "event_and_news_response",
+      "economic_family": "post_event_momentum",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "DYNAMIC_LONG_SHORT",
+      "horizon": {
+        "value": 24,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "key": "post_event_momentum_24h",
+        "family": "post_event_momentum",
+        "horizon_hours": 24,
+        "event_policy": "require_recent",
+        "parameters": {
+          "event_window_hours": 6,
+          "minimum_atr_move": 0.75
+        }
+      },
+      "reference_contract": {
+        "start_utc": "2015-01-02T07:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "REF_2015_2016",
+            "start": "2015-01-02T07:00:00Z",
+            "end": "2017-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2017_2018",
+            "start": "2017-01-01T00:00:00Z",
+            "end": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2019_2020",
+            "start": "2019-01-01T00:00:00Z",
+            "end": "2021-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2021_2022",
+            "start": "2021-01-01T00:00:00Z",
+            "end": "2023-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2023_2024",
+            "start": "2023-01-01T00:00:00Z",
+            "end": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_successor_parallel_scan.py",
+        "script_sha256": "1957d9964e3d031075b76f20a6a4c4c15afee2954ea9bcc63ca1e6def5a48024",
+        "config_path": "configs/xauusd_successor_parallel_scan_v1.json",
+        "config_sha256": "2fbdbc2b93abff46124916d9861877a4b7aee99c4f7f98ca21dab8d71f5678fa"
+      }
+    },
+    {
+      "registry_order": 17,
+      "specification_id": "A1R-017",
+      "source_block": "successor_scan",
+      "source_candidate_id": "post_event_breakout_24h",
+      "parent_taxonomy": "event_and_news_response",
+      "economic_family": "post_event_breakout",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "DYNAMIC_LONG_SHORT",
+      "horizon": {
+        "value": 24,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "key": "post_event_breakout_24h",
+        "family": "post_event_breakout",
+        "horizon_hours": 24,
+        "event_policy": "require_recent",
+        "parameters": {
+          "event_window_hours": 6,
+          "range_window": 24
+        }
+      },
+      "reference_contract": {
+        "start_utc": "2015-01-02T07:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "REF_2015_2016",
+            "start": "2015-01-02T07:00:00Z",
+            "end": "2017-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2017_2018",
+            "start": "2017-01-01T00:00:00Z",
+            "end": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2019_2020",
+            "start": "2019-01-01T00:00:00Z",
+            "end": "2021-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2021_2022",
+            "start": "2021-01-01T00:00:00Z",
+            "end": "2023-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2023_2024",
+            "start": "2023-01-01T00:00:00Z",
+            "end": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_successor_parallel_scan.py",
+        "script_sha256": "1957d9964e3d031075b76f20a6a4c4c15afee2954ea9bcc63ca1e6def5a48024",
+        "config_path": "configs/xauusd_successor_parallel_scan_v1.json",
+        "config_sha256": "2fbdbc2b93abff46124916d9861877a4b7aee99c4f7f98ca21dab8d71f5678fa"
+      }
+    },
+    {
+      "registry_order": 18,
+      "specification_id": "A1R-018",
+      "source_block": "successor_scan",
+      "source_candidate_id": "london_window_breakout_12h",
+      "parent_taxonomy": "canonical_technical_rules",
+      "economic_family": "session_breakout",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "DYNAMIC_LONG_SHORT",
+      "horizon": {
+        "value": 12,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "key": "london_window_breakout_12h",
+        "family": "session_breakout",
+        "horizon_hours": 12,
+        "event_policy": "blackout",
+        "parameters": {
+          "start_hour_utc": 6,
+          "end_hour_utc": 9,
+          "range_window": 12
+        }
+      },
+      "reference_contract": {
+        "start_utc": "2015-01-02T07:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "REF_2015_2016",
+            "start": "2015-01-02T07:00:00Z",
+            "end": "2017-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2017_2018",
+            "start": "2017-01-01T00:00:00Z",
+            "end": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2019_2020",
+            "start": "2019-01-01T00:00:00Z",
+            "end": "2021-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2021_2022",
+            "start": "2021-01-01T00:00:00Z",
+            "end": "2023-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2023_2024",
+            "start": "2023-01-01T00:00:00Z",
+            "end": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_successor_parallel_scan.py",
+        "script_sha256": "1957d9964e3d031075b76f20a6a4c4c15afee2954ea9bcc63ca1e6def5a48024",
+        "config_path": "configs/xauusd_successor_parallel_scan_v1.json",
+        "config_sha256": "2fbdbc2b93abff46124916d9861877a4b7aee99c4f7f98ca21dab8d71f5678fa"
+      }
+    },
+    {
+      "registry_order": 19,
+      "specification_id": "A1R-019",
+      "source_block": "successor_scan",
+      "source_candidate_id": "new_york_window_breakout_12h",
+      "parent_taxonomy": "canonical_technical_rules",
+      "economic_family": "session_breakout",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "DYNAMIC_LONG_SHORT",
+      "horizon": {
+        "value": 12,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "key": "new_york_window_breakout_12h",
+        "family": "session_breakout",
+        "horizon_hours": 12,
+        "event_policy": "blackout",
+        "parameters": {
+          "start_hour_utc": 13,
+          "end_hour_utc": 16,
+          "range_window": 12
+        }
+      },
+      "reference_contract": {
+        "start_utc": "2015-01-02T07:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "REF_2015_2016",
+            "start": "2015-01-02T07:00:00Z",
+            "end": "2017-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2017_2018",
+            "start": "2017-01-01T00:00:00Z",
+            "end": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2019_2020",
+            "start": "2019-01-01T00:00:00Z",
+            "end": "2021-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2021_2022",
+            "start": "2021-01-01T00:00:00Z",
+            "end": "2023-01-01T00:00:00Z"
+          },
+          {
+            "name": "REF_2023_2024",
+            "start": "2023-01-01T00:00:00Z",
+            "end": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_successor_parallel_scan.py",
+        "script_sha256": "1957d9964e3d031075b76f20a6a4c4c15afee2954ea9bcc63ca1e6def5a48024",
+        "config_path": "configs/xauusd_successor_parallel_scan_v1.json",
+        "config_sha256": "2fbdbc2b93abff46124916d9861877a4b7aee99c4f7f98ca21dab8d71f5678fa"
+      }
+    },
+    {
+      "registry_order": 20,
+      "specification_id": "A1R-020",
+      "source_block": "cross_asset_fixed",
+      "source_candidate_id": "usd_silver_consensus_long_4h",
+      "parent_taxonomy": "fixed_thesis_cross_asset_rules",
+      "economic_family": "USD_PRECIOUS_CONSENSUS",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "LONG",
+      "horizon": {
+        "value": 4,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "candidate_id": "usd_silver_consensus_long_4h",
+        "family": "USD_PRECIOUS_CONSENSUS",
+        "side": "LONG",
+        "horizon_hours": 4,
+        "conditions": [
+          {
+            "column": "z_usd_fx_h1",
+            "op": "<=",
+            "value": -0.75
+          },
+          {
+            "column": "z_xag_h1_ret4",
+            "op": ">=",
+            "value": 0.75
+          },
+          {
+            "column": "z_gold_silver_relative_h1",
+            "op": "<=",
+            "value": -0.25
+          }
+        ]
+      },
+      "reference_contract": {
+        "start_utc": "2016-01-01T00:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "2016_2018",
+            "start_utc": "2016-01-01T00:00:00Z",
+            "end_utc": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "2019_2021",
+            "start_utc": "2019-01-01T00:00:00Z",
+            "end_utc": "2022-01-01T00:00:00Z"
+          },
+          {
+            "name": "2022_2024",
+            "start_utc": "2022-01-01T00:00:00Z",
+            "end_utc": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 6.0
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_cross_asset_fixed_scan.py",
+        "script_sha256": "0ac88e74834b4510bd493930fc67ab6d1ec83295c5d80e608cd7a3691494f9e9",
+        "config_path": "configs/xauusd_cross_asset_fixed_scan.json",
+        "config_sha256": "7924616b0dea4de6678a655e0395988d5c116d97359ac390a05f5f3007730c1e"
+      }
+    },
+    {
+      "registry_order": 21,
+      "specification_id": "A1R-021",
+      "source_block": "cross_asset_fixed",
+      "source_candidate_id": "usd_silver_consensus_short_4h",
+      "parent_taxonomy": "fixed_thesis_cross_asset_rules",
+      "economic_family": "USD_PRECIOUS_CONSENSUS",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "SHORT",
+      "horizon": {
+        "value": 4,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "candidate_id": "usd_silver_consensus_short_4h",
+        "family": "USD_PRECIOUS_CONSENSUS",
+        "side": "SHORT",
+        "horizon_hours": 4,
+        "conditions": [
+          {
+            "column": "z_usd_fx_h1",
+            "op": ">=",
+            "value": 0.75
+          },
+          {
+            "column": "z_xag_h1_ret4",
+            "op": "<=",
+            "value": -0.75
+          },
+          {
+            "column": "z_gold_silver_relative_h1",
+            "op": ">=",
+            "value": 0.25
+          }
+        ]
+      },
+      "reference_contract": {
+        "start_utc": "2016-01-01T00:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "2016_2018",
+            "start_utc": "2016-01-01T00:00:00Z",
+            "end_utc": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "2019_2021",
+            "start_utc": "2019-01-01T00:00:00Z",
+            "end_utc": "2022-01-01T00:00:00Z"
+          },
+          {
+            "name": "2022_2024",
+            "start_utc": "2022-01-01T00:00:00Z",
+            "end_utc": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 6.0
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_cross_asset_fixed_scan.py",
+        "script_sha256": "0ac88e74834b4510bd493930fc67ab6d1ec83295c5d80e608cd7a3691494f9e9",
+        "config_path": "configs/xauusd_cross_asset_fixed_scan.json",
+        "config_sha256": "7924616b0dea4de6678a655e0395988d5c116d97359ac390a05f5f3007730c1e"
+      }
+    },
+    {
+      "registry_order": 22,
+      "specification_id": "A1R-022",
+      "source_block": "cross_asset_fixed",
+      "source_candidate_id": "silver_lead_catchup_long_4h",
+      "parent_taxonomy": "fixed_thesis_cross_asset_rules",
+      "economic_family": "PRECIOUS_RELATIVE_VALUE",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "LONG",
+      "horizon": {
+        "value": 4,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "candidate_id": "silver_lead_catchup_long_4h",
+        "family": "PRECIOUS_RELATIVE_VALUE",
+        "side": "LONG",
+        "horizon_hours": 4,
+        "conditions": [
+          {
+            "column": "z_gold_silver_relative_h1",
+            "op": "<=",
+            "value": -1.25
+          },
+          {
+            "column": "z_xag_h1_ret4",
+            "op": ">=",
+            "value": 0.25
+          },
+          {
+            "column": "z_xau_h1_ret4",
+            "op": "<=",
+            "value": 0.5
+          }
+        ]
+      },
+      "reference_contract": {
+        "start_utc": "2016-01-01T00:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "2016_2018",
+            "start_utc": "2016-01-01T00:00:00Z",
+            "end_utc": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "2019_2021",
+            "start_utc": "2019-01-01T00:00:00Z",
+            "end_utc": "2022-01-01T00:00:00Z"
+          },
+          {
+            "name": "2022_2024",
+            "start_utc": "2022-01-01T00:00:00Z",
+            "end_utc": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 6.0
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_cross_asset_fixed_scan.py",
+        "script_sha256": "0ac88e74834b4510bd493930fc67ab6d1ec83295c5d80e608cd7a3691494f9e9",
+        "config_path": "configs/xauusd_cross_asset_fixed_scan.json",
+        "config_sha256": "7924616b0dea4de6678a655e0395988d5c116d97359ac390a05f5f3007730c1e"
+      }
+    },
+    {
+      "registry_order": 23,
+      "specification_id": "A1R-023",
+      "source_block": "cross_asset_fixed",
+      "source_candidate_id": "silver_lag_breakdown_short_4h",
+      "parent_taxonomy": "fixed_thesis_cross_asset_rules",
+      "economic_family": "PRECIOUS_RELATIVE_VALUE",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "SHORT",
+      "horizon": {
+        "value": 4,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "candidate_id": "silver_lag_breakdown_short_4h",
+        "family": "PRECIOUS_RELATIVE_VALUE",
+        "side": "SHORT",
+        "horizon_hours": 4,
+        "conditions": [
+          {
+            "column": "z_gold_silver_relative_h1",
+            "op": ">=",
+            "value": 1.25
+          },
+          {
+            "column": "z_xag_h1_ret4",
+            "op": "<=",
+            "value": -0.25
+          },
+          {
+            "column": "z_xau_h1_ret4",
+            "op": ">=",
+            "value": -0.5
+          }
+        ]
+      },
+      "reference_contract": {
+        "start_utc": "2016-01-01T00:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "2016_2018",
+            "start_utc": "2016-01-01T00:00:00Z",
+            "end_utc": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "2019_2021",
+            "start_utc": "2019-01-01T00:00:00Z",
+            "end_utc": "2022-01-01T00:00:00Z"
+          },
+          {
+            "name": "2022_2024",
+            "start_utc": "2022-01-01T00:00:00Z",
+            "end_utc": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 6.0
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_cross_asset_fixed_scan.py",
+        "script_sha256": "0ac88e74834b4510bd493930fc67ab6d1ec83295c5d80e608cd7a3691494f9e9",
+        "config_path": "configs/xauusd_cross_asset_fixed_scan.json",
+        "config_sha256": "7924616b0dea4de6678a655e0395988d5c116d97359ac390a05f5f3007730c1e"
+      }
+    },
+    {
+      "registry_order": 24,
+      "specification_id": "A1R-024",
+      "source_block": "cross_asset_fixed",
+      "source_candidate_id": "yield_usd_relief_long_12h",
+      "parent_taxonomy": "fixed_thesis_cross_asset_rules",
+      "economic_family": "RATES_USD_ALIGNMENT",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "LONG",
+      "horizon": {
+        "value": 12,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "candidate_id": "yield_usd_relief_long_12h",
+        "family": "RATES_USD_ALIGNMENT",
+        "side": "LONG",
+        "horizon_hours": 12,
+        "conditions": [
+          {
+            "column": "real_yield_10y_chg_5d",
+            "op": "<",
+            "value": 0.0
+          },
+          {
+            "column": "usd_broad_chg_5d",
+            "op": "<",
+            "value": 0.0
+          },
+          {
+            "column": "z_usd_fx_h1",
+            "op": "<=",
+            "value": -0.5
+          }
+        ]
+      },
+      "reference_contract": {
+        "start_utc": "2016-01-01T00:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "2016_2018",
+            "start_utc": "2016-01-01T00:00:00Z",
+            "end_utc": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "2019_2021",
+            "start_utc": "2019-01-01T00:00:00Z",
+            "end_utc": "2022-01-01T00:00:00Z"
+          },
+          {
+            "name": "2022_2024",
+            "start_utc": "2022-01-01T00:00:00Z",
+            "end_utc": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 6.0
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_cross_asset_fixed_scan.py",
+        "script_sha256": "0ac88e74834b4510bd493930fc67ab6d1ec83295c5d80e608cd7a3691494f9e9",
+        "config_path": "configs/xauusd_cross_asset_fixed_scan.json",
+        "config_sha256": "7924616b0dea4de6678a655e0395988d5c116d97359ac390a05f5f3007730c1e"
+      }
+    },
+    {
+      "registry_order": 25,
+      "specification_id": "A1R-025",
+      "source_block": "cross_asset_fixed",
+      "source_candidate_id": "yield_usd_pressure_short_12h",
+      "parent_taxonomy": "fixed_thesis_cross_asset_rules",
+      "economic_family": "RATES_USD_ALIGNMENT",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "SHORT",
+      "horizon": {
+        "value": 12,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "candidate_id": "yield_usd_pressure_short_12h",
+        "family": "RATES_USD_ALIGNMENT",
+        "side": "SHORT",
+        "horizon_hours": 12,
+        "conditions": [
+          {
+            "column": "real_yield_10y_chg_5d",
+            "op": ">",
+            "value": 0.0
+          },
+          {
+            "column": "usd_broad_chg_5d",
+            "op": ">",
+            "value": 0.0
+          },
+          {
+            "column": "z_usd_fx_h1",
+            "op": ">=",
+            "value": 0.5
+          }
+        ]
+      },
+      "reference_contract": {
+        "start_utc": "2016-01-01T00:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "2016_2018",
+            "start_utc": "2016-01-01T00:00:00Z",
+            "end_utc": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "2019_2021",
+            "start_utc": "2019-01-01T00:00:00Z",
+            "end_utc": "2022-01-01T00:00:00Z"
+          },
+          {
+            "name": "2022_2024",
+            "start_utc": "2022-01-01T00:00:00Z",
+            "end_utc": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 6.0
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_cross_asset_fixed_scan.py",
+        "script_sha256": "0ac88e74834b4510bd493930fc67ab6d1ec83295c5d80e608cd7a3691494f9e9",
+        "config_path": "configs/xauusd_cross_asset_fixed_scan.json",
+        "config_sha256": "7924616b0dea4de6678a655e0395988d5c116d97359ac390a05f5f3007730c1e"
+      }
+    },
+    {
+      "registry_order": 26,
+      "specification_id": "A1R-026",
+      "source_block": "cross_asset_fixed",
+      "source_candidate_id": "riskoff_rates_relief_long_12h",
+      "parent_taxonomy": "fixed_thesis_cross_asset_rules",
+      "economic_family": "RISK_RATES_DIVERGENCE",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "LONG",
+      "horizon": {
+        "value": 12,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "candidate_id": "riskoff_rates_relief_long_12h",
+        "family": "RISK_RATES_DIVERGENCE",
+        "side": "LONG",
+        "horizon_hours": 12,
+        "conditions": [
+          {
+            "column": "z_spx_h1_ret4",
+            "op": "<=",
+            "value": -0.75
+          },
+          {
+            "column": "real_yield_10y_chg_5d",
+            "op": "<",
+            "value": 0.0
+          },
+          {
+            "column": "z_xag_h1_ret4",
+            "op": ">=",
+            "value": 0.0
+          }
+        ]
+      },
+      "reference_contract": {
+        "start_utc": "2016-01-01T00:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "2016_2018",
+            "start_utc": "2016-01-01T00:00:00Z",
+            "end_utc": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "2019_2021",
+            "start_utc": "2019-01-01T00:00:00Z",
+            "end_utc": "2022-01-01T00:00:00Z"
+          },
+          {
+            "name": "2022_2024",
+            "start_utc": "2022-01-01T00:00:00Z",
+            "end_utc": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 6.0
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_cross_asset_fixed_scan.py",
+        "script_sha256": "0ac88e74834b4510bd493930fc67ab6d1ec83295c5d80e608cd7a3691494f9e9",
+        "config_path": "configs/xauusd_cross_asset_fixed_scan.json",
+        "config_sha256": "7924616b0dea4de6678a655e0395988d5c116d97359ac390a05f5f3007730c1e"
+      }
+    },
+    {
+      "registry_order": 27,
+      "specification_id": "A1R-027",
+      "source_block": "cross_asset_fixed",
+      "source_candidate_id": "riskon_rates_pressure_short_12h",
+      "parent_taxonomy": "fixed_thesis_cross_asset_rules",
+      "economic_family": "RISK_RATES_DIVERGENCE",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "SHORT",
+      "horizon": {
+        "value": 12,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "candidate_id": "riskon_rates_pressure_short_12h",
+        "family": "RISK_RATES_DIVERGENCE",
+        "side": "SHORT",
+        "horizon_hours": 12,
+        "conditions": [
+          {
+            "column": "z_spx_h1_ret4",
+            "op": ">=",
+            "value": 0.75
+          },
+          {
+            "column": "real_yield_10y_chg_5d",
+            "op": ">",
+            "value": 0.0
+          },
+          {
+            "column": "z_xag_h1_ret4",
+            "op": "<=",
+            "value": 0.0
+          }
+        ]
+      },
+      "reference_contract": {
+        "start_utc": "2016-01-01T00:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "2016_2018",
+            "start_utc": "2016-01-01T00:00:00Z",
+            "end_utc": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "2019_2021",
+            "start_utc": "2019-01-01T00:00:00Z",
+            "end_utc": "2022-01-01T00:00:00Z"
+          },
+          {
+            "name": "2022_2024",
+            "start_utc": "2022-01-01T00:00:00Z",
+            "end_utc": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 6.0
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_cross_asset_fixed_scan.py",
+        "script_sha256": "0ac88e74834b4510bd493930fc67ab6d1ec83295c5d80e608cd7a3691494f9e9",
+        "config_path": "configs/xauusd_cross_asset_fixed_scan.json",
+        "config_sha256": "7924616b0dea4de6678a655e0395988d5c116d97359ac390a05f5f3007730c1e"
+      }
+    },
+    {
+      "registry_order": 28,
+      "specification_id": "A1R-028",
+      "source_block": "cross_asset_fixed",
+      "source_candidate_id": "energy_inflation_long_12h",
+      "parent_taxonomy": "fixed_thesis_cross_asset_rules",
+      "economic_family": "ENERGY_INFLATION_IMPULSE",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "LONG",
+      "horizon": {
+        "value": 12,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "candidate_id": "energy_inflation_long_12h",
+        "family": "ENERGY_INFLATION_IMPULSE",
+        "side": "LONG",
+        "horizon_hours": 12,
+        "conditions": [
+          {
+            "column": "z_risk_energy_h1",
+            "op": ">=",
+            "value": 0.75
+          },
+          {
+            "column": "breakeven_10y_chg_5d",
+            "op": ">",
+            "value": 0.0
+          },
+          {
+            "column": "real_yield_10y_chg_5d",
+            "op": "<=",
+            "value": 0.0
+          }
+        ]
+      },
+      "reference_contract": {
+        "start_utc": "2016-01-01T00:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "2016_2018",
+            "start_utc": "2016-01-01T00:00:00Z",
+            "end_utc": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "2019_2021",
+            "start_utc": "2019-01-01T00:00:00Z",
+            "end_utc": "2022-01-01T00:00:00Z"
+          },
+          {
+            "name": "2022_2024",
+            "start_utc": "2022-01-01T00:00:00Z",
+            "end_utc": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 6.0
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_cross_asset_fixed_scan.py",
+        "script_sha256": "0ac88e74834b4510bd493930fc67ab6d1ec83295c5d80e608cd7a3691494f9e9",
+        "config_path": "configs/xauusd_cross_asset_fixed_scan.json",
+        "config_sha256": "7924616b0dea4de6678a655e0395988d5c116d97359ac390a05f5f3007730c1e"
+      }
+    },
+    {
+      "registry_order": 29,
+      "specification_id": "A1R-029",
+      "source_block": "cross_asset_fixed",
+      "source_candidate_id": "energy_disinflation_short_12h",
+      "parent_taxonomy": "fixed_thesis_cross_asset_rules",
+      "economic_family": "ENERGY_INFLATION_IMPULSE",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "SHORT",
+      "horizon": {
+        "value": 12,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "candidate_id": "energy_disinflation_short_12h",
+        "family": "ENERGY_INFLATION_IMPULSE",
+        "side": "SHORT",
+        "horizon_hours": 12,
+        "conditions": [
+          {
+            "column": "z_risk_energy_h1",
+            "op": "<=",
+            "value": -0.75
+          },
+          {
+            "column": "breakeven_10y_chg_5d",
+            "op": "<",
+            "value": 0.0
+          },
+          {
+            "column": "real_yield_10y_chg_5d",
+            "op": ">=",
+            "value": 0.0
+          }
+        ]
+      },
+      "reference_contract": {
+        "start_utc": "2016-01-01T00:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "2016_2018",
+            "start_utc": "2016-01-01T00:00:00Z",
+            "end_utc": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "2019_2021",
+            "start_utc": "2019-01-01T00:00:00Z",
+            "end_utc": "2022-01-01T00:00:00Z"
+          },
+          {
+            "name": "2022_2024",
+            "start_utc": "2022-01-01T00:00:00Z",
+            "end_utc": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 6.0
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_cross_asset_fixed_scan.py",
+        "script_sha256": "0ac88e74834b4510bd493930fc67ab6d1ec83295c5d80e608cd7a3691494f9e9",
+        "config_path": "configs/xauusd_cross_asset_fixed_scan.json",
+        "config_sha256": "7924616b0dea4de6678a655e0395988d5c116d97359ac390a05f5f3007730c1e"
+      }
+    },
+    {
+      "registry_order": 30,
+      "specification_id": "A1R-030",
+      "source_block": "cross_asset_fixed",
+      "source_candidate_id": "dxy_silver_shock_long_4h",
+      "parent_taxonomy": "fixed_thesis_cross_asset_rules",
+      "economic_family": "DXY_PRECIOUS_SHOCK",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "LONG",
+      "horizon": {
+        "value": 4,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "candidate_id": "dxy_silver_shock_long_4h",
+        "family": "DXY_PRECIOUS_SHOCK",
+        "side": "LONG",
+        "horizon_hours": 4,
+        "conditions": [
+          {
+            "column": "dxy_h1_ret4_available",
+            "op": "==",
+            "value": 1.0
+          },
+          {
+            "column": "z_dxy_h1_ret4",
+            "op": "<=",
+            "value": -1.0
+          },
+          {
+            "column": "z_xag_h1_ret4",
+            "op": ">=",
+            "value": 0.5
+          }
+        ]
+      },
+      "reference_contract": {
+        "start_utc": "2016-01-01T00:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "2016_2018",
+            "start_utc": "2016-01-01T00:00:00Z",
+            "end_utc": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "2019_2021",
+            "start_utc": "2019-01-01T00:00:00Z",
+            "end_utc": "2022-01-01T00:00:00Z"
+          },
+          {
+            "name": "2022_2024",
+            "start_utc": "2022-01-01T00:00:00Z",
+            "end_utc": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 6.0
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_cross_asset_fixed_scan.py",
+        "script_sha256": "0ac88e74834b4510bd493930fc67ab6d1ec83295c5d80e608cd7a3691494f9e9",
+        "config_path": "configs/xauusd_cross_asset_fixed_scan.json",
+        "config_sha256": "7924616b0dea4de6678a655e0395988d5c116d97359ac390a05f5f3007730c1e"
+      }
+    },
+    {
+      "registry_order": 31,
+      "specification_id": "A1R-031",
+      "source_block": "cross_asset_fixed",
+      "source_candidate_id": "dxy_silver_shock_short_4h",
+      "parent_taxonomy": "fixed_thesis_cross_asset_rules",
+      "economic_family": "DXY_PRECIOUS_SHOCK",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "SHORT",
+      "horizon": {
+        "value": 4,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "candidate_id": "dxy_silver_shock_short_4h",
+        "family": "DXY_PRECIOUS_SHOCK",
+        "side": "SHORT",
+        "horizon_hours": 4,
+        "conditions": [
+          {
+            "column": "dxy_h1_ret4_available",
+            "op": "==",
+            "value": 1.0
+          },
+          {
+            "column": "z_dxy_h1_ret4",
+            "op": ">=",
+            "value": 1.0
+          },
+          {
+            "column": "z_xag_h1_ret4",
+            "op": "<=",
+            "value": -0.5
+          }
+        ]
+      },
+      "reference_contract": {
+        "start_utc": "2016-01-01T00:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "2016_2018",
+            "start_utc": "2016-01-01T00:00:00Z",
+            "end_utc": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "2019_2021",
+            "start_utc": "2019-01-01T00:00:00Z",
+            "end_utc": "2022-01-01T00:00:00Z"
+          },
+          {
+            "name": "2022_2024",
+            "start_utc": "2022-01-01T00:00:00Z",
+            "end_utc": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 6.0
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_cross_asset_fixed_scan.py",
+        "script_sha256": "0ac88e74834b4510bd493930fc67ab6d1ec83295c5d80e608cd7a3691494f9e9",
+        "config_path": "configs/xauusd_cross_asset_fixed_scan.json",
+        "config_sha256": "7924616b0dea4de6678a655e0395988d5c116d97359ac390a05f5f3007730c1e"
+      }
+    },
+    {
+      "registry_order": 32,
+      "specification_id": "A1R-032",
+      "source_block": "cross_asset_event_response",
+      "source_candidate_id": "event_usd_silver_continuation_short_4h",
+      "parent_taxonomy": "event_and_news_response",
+      "economic_family": "EVENT_USD_SILVER_CONTINUATION",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "SHORT",
+      "horizon": {
+        "value": 4,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "candidate_id": "event_usd_silver_continuation_short_4h",
+        "family": "EVENT_USD_SILVER_CONTINUATION",
+        "side": "SHORT",
+        "horizon_hours": 4,
+        "conditions": [
+          {
+            "column": "z_usd_m15_impulse",
+            "op": ">=",
+            "value": 0.75
+          },
+          {
+            "column": "z_xag_m15_impulse",
+            "op": "<=",
+            "value": -0.75
+          }
+        ],
+        "event_response_min_lag_minutes": 15,
+        "event_response_max_lag_minutes": 120
+      },
+      "reference_contract": {
+        "start_utc": "2016-01-01T00:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "2016_2018",
+            "start_utc": "2016-01-01T00:00:00Z",
+            "end_utc": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "2019_2021",
+            "start_utc": "2019-01-01T00:00:00Z",
+            "end_utc": "2022-01-01T00:00:00Z"
+          },
+          {
+            "name": "2022_2024",
+            "start_utc": "2022-01-01T00:00:00Z",
+            "end_utc": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 6.0
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_cross_asset_event_response_scan.py",
+        "script_sha256": "e2b28566e33aec8e9d73582d7d4376b0541a15343ada7bd53731801c37da028d",
+        "config_path": "configs/xauusd_cross_asset_event_response_scan.json",
+        "config_sha256": "f231faef32a40e4dc767f3352cbcf12b3ebfff0978ec5662ec7d624ac535b640"
+      }
+    },
+    {
+      "registry_order": 33,
+      "specification_id": "A1R-033",
+      "source_block": "cross_asset_event_response",
+      "source_candidate_id": "event_usd_silver_continuation_short_12h",
+      "parent_taxonomy": "event_and_news_response",
+      "economic_family": "EVENT_USD_SILVER_CONTINUATION",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "SHORT",
+      "horizon": {
+        "value": 12,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "candidate_id": "event_usd_silver_continuation_short_12h",
+        "family": "EVENT_USD_SILVER_CONTINUATION",
+        "side": "SHORT",
+        "horizon_hours": 12,
+        "conditions": [
+          {
+            "column": "z_usd_m15_impulse",
+            "op": ">=",
+            "value": 0.75
+          },
+          {
+            "column": "z_xag_m15_impulse",
+            "op": "<=",
+            "value": -0.75
+          }
+        ],
+        "event_response_min_lag_minutes": 15,
+        "event_response_max_lag_minutes": 120
+      },
+      "reference_contract": {
+        "start_utc": "2016-01-01T00:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "2016_2018",
+            "start_utc": "2016-01-01T00:00:00Z",
+            "end_utc": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "2019_2021",
+            "start_utc": "2019-01-01T00:00:00Z",
+            "end_utc": "2022-01-01T00:00:00Z"
+          },
+          {
+            "name": "2022_2024",
+            "start_utc": "2022-01-01T00:00:00Z",
+            "end_utc": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 6.0
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_cross_asset_event_response_scan.py",
+        "script_sha256": "e2b28566e33aec8e9d73582d7d4376b0541a15343ada7bd53731801c37da028d",
+        "config_path": "configs/xauusd_cross_asset_event_response_scan.json",
+        "config_sha256": "f231faef32a40e4dc767f3352cbcf12b3ebfff0978ec5662ec7d624ac535b640"
+      }
+    },
+    {
+      "registry_order": 34,
+      "specification_id": "A1R-034",
+      "source_block": "cross_asset_event_response",
+      "source_candidate_id": "event_usd_silver_continuation_long_4h",
+      "parent_taxonomy": "event_and_news_response",
+      "economic_family": "EVENT_USD_SILVER_CONTINUATION",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "LONG",
+      "horizon": {
+        "value": 4,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "candidate_id": "event_usd_silver_continuation_long_4h",
+        "family": "EVENT_USD_SILVER_CONTINUATION",
+        "side": "LONG",
+        "horizon_hours": 4,
+        "conditions": [
+          {
+            "column": "z_usd_m15_impulse",
+            "op": "<=",
+            "value": -0.75
+          },
+          {
+            "column": "z_xag_m15_impulse",
+            "op": ">=",
+            "value": 0.75
+          }
+        ],
+        "event_response_min_lag_minutes": 15,
+        "event_response_max_lag_minutes": 120
+      },
+      "reference_contract": {
+        "start_utc": "2016-01-01T00:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "2016_2018",
+            "start_utc": "2016-01-01T00:00:00Z",
+            "end_utc": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "2019_2021",
+            "start_utc": "2019-01-01T00:00:00Z",
+            "end_utc": "2022-01-01T00:00:00Z"
+          },
+          {
+            "name": "2022_2024",
+            "start_utc": "2022-01-01T00:00:00Z",
+            "end_utc": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 6.0
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_cross_asset_event_response_scan.py",
+        "script_sha256": "e2b28566e33aec8e9d73582d7d4376b0541a15343ada7bd53731801c37da028d",
+        "config_path": "configs/xauusd_cross_asset_event_response_scan.json",
+        "config_sha256": "f231faef32a40e4dc767f3352cbcf12b3ebfff0978ec5662ec7d624ac535b640"
+      }
+    },
+    {
+      "registry_order": 35,
+      "specification_id": "A1R-035",
+      "source_block": "cross_asset_event_response",
+      "source_candidate_id": "event_usd_silver_continuation_long_12h",
+      "parent_taxonomy": "event_and_news_response",
+      "economic_family": "EVENT_USD_SILVER_CONTINUATION",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "LONG",
+      "horizon": {
+        "value": 12,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "candidate_id": "event_usd_silver_continuation_long_12h",
+        "family": "EVENT_USD_SILVER_CONTINUATION",
+        "side": "LONG",
+        "horizon_hours": 12,
+        "conditions": [
+          {
+            "column": "z_usd_m15_impulse",
+            "op": "<=",
+            "value": -0.75
+          },
+          {
+            "column": "z_xag_m15_impulse",
+            "op": ">=",
+            "value": 0.75
+          }
+        ],
+        "event_response_min_lag_minutes": 15,
+        "event_response_max_lag_minutes": 120
+      },
+      "reference_contract": {
+        "start_utc": "2016-01-01T00:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "2016_2018",
+            "start_utc": "2016-01-01T00:00:00Z",
+            "end_utc": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "2019_2021",
+            "start_utc": "2019-01-01T00:00:00Z",
+            "end_utc": "2022-01-01T00:00:00Z"
+          },
+          {
+            "name": "2022_2024",
+            "start_utc": "2022-01-01T00:00:00Z",
+            "end_utc": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 6.0
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_cross_asset_event_response_scan.py",
+        "script_sha256": "e2b28566e33aec8e9d73582d7d4376b0541a15343ada7bd53731801c37da028d",
+        "config_path": "configs/xauusd_cross_asset_event_response_scan.json",
+        "config_sha256": "f231faef32a40e4dc767f3352cbcf12b3ebfff0978ec5662ec7d624ac535b640"
+      }
+    },
+    {
+      "registry_order": 36,
+      "specification_id": "A1R-036",
+      "source_block": "cross_asset_event_response",
+      "source_candidate_id": "event_gold_lag_short_4h",
+      "parent_taxonomy": "event_and_news_response",
+      "economic_family": "EVENT_GOLD_LAG",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "SHORT",
+      "horizon": {
+        "value": 4,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "candidate_id": "event_gold_lag_short_4h",
+        "family": "EVENT_GOLD_LAG",
+        "side": "SHORT",
+        "horizon_hours": 4,
+        "conditions": [
+          {
+            "column": "z_usd_m15_impulse",
+            "op": ">=",
+            "value": 0.75
+          },
+          {
+            "column": "z_xag_m15_impulse",
+            "op": "<=",
+            "value": -0.5
+          },
+          {
+            "column": "z_xau_m15_impulse",
+            "op": ">=",
+            "value": -0.25
+          }
+        ],
+        "event_response_min_lag_minutes": 15,
+        "event_response_max_lag_minutes": 120
+      },
+      "reference_contract": {
+        "start_utc": "2016-01-01T00:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "2016_2018",
+            "start_utc": "2016-01-01T00:00:00Z",
+            "end_utc": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "2019_2021",
+            "start_utc": "2019-01-01T00:00:00Z",
+            "end_utc": "2022-01-01T00:00:00Z"
+          },
+          {
+            "name": "2022_2024",
+            "start_utc": "2022-01-01T00:00:00Z",
+            "end_utc": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 6.0
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_cross_asset_event_response_scan.py",
+        "script_sha256": "e2b28566e33aec8e9d73582d7d4376b0541a15343ada7bd53731801c37da028d",
+        "config_path": "configs/xauusd_cross_asset_event_response_scan.json",
+        "config_sha256": "f231faef32a40e4dc767f3352cbcf12b3ebfff0978ec5662ec7d624ac535b640"
+      }
+    },
+    {
+      "registry_order": 37,
+      "specification_id": "A1R-037",
+      "source_block": "cross_asset_event_response",
+      "source_candidate_id": "event_gold_lag_long_4h",
+      "parent_taxonomy": "event_and_news_response",
+      "economic_family": "EVENT_GOLD_LAG",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "LONG",
+      "horizon": {
+        "value": 4,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "candidate_id": "event_gold_lag_long_4h",
+        "family": "EVENT_GOLD_LAG",
+        "side": "LONG",
+        "horizon_hours": 4,
+        "conditions": [
+          {
+            "column": "z_usd_m15_impulse",
+            "op": "<=",
+            "value": -0.75
+          },
+          {
+            "column": "z_xag_m15_impulse",
+            "op": ">=",
+            "value": 0.5
+          },
+          {
+            "column": "z_xau_m15_impulse",
+            "op": "<=",
+            "value": 0.25
+          }
+        ],
+        "event_response_min_lag_minutes": 15,
+        "event_response_max_lag_minutes": 120
+      },
+      "reference_contract": {
+        "start_utc": "2016-01-01T00:00:00Z",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "folds": [
+          {
+            "name": "2016_2018",
+            "start_utc": "2016-01-01T00:00:00Z",
+            "end_utc": "2019-01-01T00:00:00Z"
+          },
+          {
+            "name": "2019_2021",
+            "start_utc": "2019-01-01T00:00:00Z",
+            "end_utc": "2022-01-01T00:00:00Z"
+          },
+          {
+            "name": "2022_2024",
+            "start_utc": "2022-01-01T00:00:00Z",
+            "end_utc": "2025-01-01T00:00:00Z"
+          }
+        ],
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 6.0
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "REQUIRED_EXCLUDE_2019_10_07_THROUGH_2019_10_14",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_cross_asset_event_response_scan.py",
+        "script_sha256": "e2b28566e33aec8e9d73582d7d4376b0541a15343ada7bd53731801c37da028d",
+        "config_path": "configs/xauusd_cross_asset_event_response_scan.json",
+        "config_sha256": "f231faef32a40e4dc767f3352cbcf12b3ebfff0978ec5662ec7d624ac535b640"
+      }
+    },
+    {
+      "registry_order": 38,
+      "specification_id": "A1R-038",
+      "source_block": "stage178_ml",
+      "source_candidate_id": "logistic__direction_6h",
+      "parent_taxonomy": "supervised_machine_learning_meta_models",
+      "economic_family": "SUPERVISED_DIRECTIONAL_META_MODEL",
+      "analysis_role": "HISTORICAL_FORENSIC_CASE_STUDY_ONLY",
+      "primary_eligible": false,
+      "exclusion_reason": "HISTORICALLY_SELECTED_MODEL_AND_SEEN_2025_PLUS_DIAGNOSTIC; FORENSIC_CASE_STUDY_ONLY",
+      "direction": "MODEL_PROBABILITY_LONG_SHORT",
+      "horizon": {
+        "value": 6,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "model": "logistic",
+        "target": {
+          "key": "direction_6h",
+          "kind": "directional",
+          "horizon_hours": 6,
+          "barrier_atr_mult": null
+        },
+        "probability_threshold": 0.6,
+        "training_stride_hours": 2,
+        "minimum_training_rows": 20000,
+        "random_state": 178
+      },
+      "reference_contract": {
+        "historical_test_folds": [
+          {
+            "name": "WF_2014_2017",
+            "test_start": "2014-01-01T00:00:00",
+            "test_end": "2018-01-01T00:00:00"
+          },
+          {
+            "name": "WF_2018_2021",
+            "test_start": "2018-01-01T00:00:00",
+            "test_end": "2022-01-01T00:00:00"
+          },
+          {
+            "name": "WF_2022_2024",
+            "test_start": "2022-01-01T00:00:00",
+            "test_end": "2025-01-01T00:00:00"
+          }
+        ],
+        "end_utc_exclusive": "2025-01-01T00:00:00",
+        "role": "HISTORICAL_FORENSIC_ONLY_NO_ARTICLE1_PRIMARY_RERUN"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "NOT_PRIMARY_RERUN",
+      "cross_feed_replication": "NOT_APPLICABLE",
+      "source_binding": {
+        "script_path": "app/stage178_commercial_edge_decision_sprint.py",
+        "script_sha256": "3acac21c41c7285222ca8017cf3436372fd8d3c4466705932d0e69631379e2c7",
+        "config_path": "configs/stage178_commercial_edge_decision_sprint.json",
+        "config_sha256": "73c30a18eff9e2ce5b2b85ab9b63c5e374baa5d86c52fe5aa38fd2aa1f1edc1b"
+      }
+    },
+    {
+      "registry_order": 39,
+      "specification_id": "A1R-039",
+      "source_block": "stage178_ml",
+      "source_candidate_id": "logistic__direction_12h",
+      "parent_taxonomy": "supervised_machine_learning_meta_models",
+      "economic_family": "SUPERVISED_DIRECTIONAL_META_MODEL",
+      "analysis_role": "HISTORICAL_FORENSIC_CASE_STUDY_ONLY",
+      "primary_eligible": false,
+      "exclusion_reason": "HISTORICALLY_SELECTED_MODEL_AND_SEEN_2025_PLUS_DIAGNOSTIC; FORENSIC_CASE_STUDY_ONLY",
+      "direction": "MODEL_PROBABILITY_LONG_SHORT",
+      "horizon": {
+        "value": 12,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "model": "logistic",
+        "target": {
+          "key": "direction_12h",
+          "kind": "directional",
+          "horizon_hours": 12,
+          "barrier_atr_mult": null
+        },
+        "probability_threshold": 0.6,
+        "training_stride_hours": 2,
+        "minimum_training_rows": 20000,
+        "random_state": 178
+      },
+      "reference_contract": {
+        "historical_test_folds": [
+          {
+            "name": "WF_2014_2017",
+            "test_start": "2014-01-01T00:00:00",
+            "test_end": "2018-01-01T00:00:00"
+          },
+          {
+            "name": "WF_2018_2021",
+            "test_start": "2018-01-01T00:00:00",
+            "test_end": "2022-01-01T00:00:00"
+          },
+          {
+            "name": "WF_2022_2024",
+            "test_start": "2022-01-01T00:00:00",
+            "test_end": "2025-01-01T00:00:00"
+          }
+        ],
+        "end_utc_exclusive": "2025-01-01T00:00:00",
+        "role": "HISTORICAL_FORENSIC_ONLY_NO_ARTICLE1_PRIMARY_RERUN"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "NOT_PRIMARY_RERUN",
+      "cross_feed_replication": "NOT_APPLICABLE",
+      "source_binding": {
+        "script_path": "app/stage178_commercial_edge_decision_sprint.py",
+        "script_sha256": "3acac21c41c7285222ca8017cf3436372fd8d3c4466705932d0e69631379e2c7",
+        "config_path": "configs/stage178_commercial_edge_decision_sprint.json",
+        "config_sha256": "73c30a18eff9e2ce5b2b85ab9b63c5e374baa5d86c52fe5aa38fd2aa1f1edc1b"
+      }
+    },
+    {
+      "registry_order": 40,
+      "specification_id": "A1R-040",
+      "source_block": "stage178_ml",
+      "source_candidate_id": "logistic__direction_24h",
+      "parent_taxonomy": "supervised_machine_learning_meta_models",
+      "economic_family": "SUPERVISED_DIRECTIONAL_META_MODEL",
+      "analysis_role": "HISTORICAL_FORENSIC_CASE_STUDY_ONLY",
+      "primary_eligible": false,
+      "exclusion_reason": "HISTORICALLY_SELECTED_MODEL_AND_SEEN_2025_PLUS_DIAGNOSTIC; FORENSIC_CASE_STUDY_ONLY",
+      "direction": "MODEL_PROBABILITY_LONG_SHORT",
+      "horizon": {
+        "value": 24,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "model": "logistic",
+        "target": {
+          "key": "direction_24h",
+          "kind": "directional",
+          "horizon_hours": 24,
+          "barrier_atr_mult": null
+        },
+        "probability_threshold": 0.6,
+        "training_stride_hours": 2,
+        "minimum_training_rows": 20000,
+        "random_state": 178
+      },
+      "reference_contract": {
+        "historical_test_folds": [
+          {
+            "name": "WF_2014_2017",
+            "test_start": "2014-01-01T00:00:00",
+            "test_end": "2018-01-01T00:00:00"
+          },
+          {
+            "name": "WF_2018_2021",
+            "test_start": "2018-01-01T00:00:00",
+            "test_end": "2022-01-01T00:00:00"
+          },
+          {
+            "name": "WF_2022_2024",
+            "test_start": "2022-01-01T00:00:00",
+            "test_end": "2025-01-01T00:00:00"
+          }
+        ],
+        "end_utc_exclusive": "2025-01-01T00:00:00",
+        "role": "HISTORICAL_FORENSIC_ONLY_NO_ARTICLE1_PRIMARY_RERUN"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "NOT_PRIMARY_RERUN",
+      "cross_feed_replication": "NOT_APPLICABLE",
+      "source_binding": {
+        "script_path": "app/stage178_commercial_edge_decision_sprint.py",
+        "script_sha256": "3acac21c41c7285222ca8017cf3436372fd8d3c4466705932d0e69631379e2c7",
+        "config_path": "configs/stage178_commercial_edge_decision_sprint.json",
+        "config_sha256": "73c30a18eff9e2ce5b2b85ab9b63c5e374baa5d86c52fe5aa38fd2aa1f1edc1b"
+      }
+    },
+    {
+      "registry_order": 41,
+      "specification_id": "A1R-041",
+      "source_block": "stage178_ml",
+      "source_candidate_id": "logistic__triple_barrier_24h",
+      "parent_taxonomy": "supervised_machine_learning_meta_models",
+      "economic_family": "SUPERVISED_DIRECTIONAL_META_MODEL",
+      "analysis_role": "HISTORICAL_FORENSIC_CASE_STUDY_ONLY",
+      "primary_eligible": false,
+      "exclusion_reason": "HISTORICALLY_SELECTED_MODEL_AND_SEEN_2025_PLUS_DIAGNOSTIC; FORENSIC_CASE_STUDY_ONLY",
+      "direction": "MODEL_PROBABILITY_LONG_SHORT",
+      "horizon": {
+        "value": 24,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "model": "logistic",
+        "target": {
+          "key": "triple_barrier_24h",
+          "kind": "triple_barrier",
+          "horizon_hours": 24,
+          "barrier_atr_mult": 1.25
+        },
+        "probability_threshold": 0.6,
+        "training_stride_hours": 2,
+        "minimum_training_rows": 20000,
+        "random_state": 178
+      },
+      "reference_contract": {
+        "historical_test_folds": [
+          {
+            "name": "WF_2014_2017",
+            "test_start": "2014-01-01T00:00:00",
+            "test_end": "2018-01-01T00:00:00"
+          },
+          {
+            "name": "WF_2018_2021",
+            "test_start": "2018-01-01T00:00:00",
+            "test_end": "2022-01-01T00:00:00"
+          },
+          {
+            "name": "WF_2022_2024",
+            "test_start": "2022-01-01T00:00:00",
+            "test_end": "2025-01-01T00:00:00"
+          }
+        ],
+        "end_utc_exclusive": "2025-01-01T00:00:00",
+        "role": "HISTORICAL_FORENSIC_ONLY_NO_ARTICLE1_PRIMARY_RERUN"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "NOT_PRIMARY_RERUN",
+      "cross_feed_replication": "NOT_APPLICABLE",
+      "source_binding": {
+        "script_path": "app/stage178_commercial_edge_decision_sprint.py",
+        "script_sha256": "3acac21c41c7285222ca8017cf3436372fd8d3c4466705932d0e69631379e2c7",
+        "config_path": "configs/stage178_commercial_edge_decision_sprint.json",
+        "config_sha256": "73c30a18eff9e2ce5b2b85ab9b63c5e374baa5d86c52fe5aa38fd2aa1f1edc1b"
+      }
+    },
+    {
+      "registry_order": 42,
+      "specification_id": "A1R-042",
+      "source_block": "stage178_ml",
+      "source_candidate_id": "hist_gb__direction_6h",
+      "parent_taxonomy": "supervised_machine_learning_meta_models",
+      "economic_family": "SUPERVISED_DIRECTIONAL_META_MODEL",
+      "analysis_role": "HISTORICAL_FORENSIC_CASE_STUDY_ONLY",
+      "primary_eligible": false,
+      "exclusion_reason": "HISTORICALLY_SELECTED_MODEL_AND_SEEN_2025_PLUS_DIAGNOSTIC; FORENSIC_CASE_STUDY_ONLY",
+      "direction": "MODEL_PROBABILITY_LONG_SHORT",
+      "horizon": {
+        "value": 6,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "model": "hist_gb",
+        "target": {
+          "key": "direction_6h",
+          "kind": "directional",
+          "horizon_hours": 6,
+          "barrier_atr_mult": null
+        },
+        "probability_threshold": 0.6,
+        "training_stride_hours": 2,
+        "minimum_training_rows": 20000,
+        "random_state": 178
+      },
+      "reference_contract": {
+        "historical_test_folds": [
+          {
+            "name": "WF_2014_2017",
+            "test_start": "2014-01-01T00:00:00",
+            "test_end": "2018-01-01T00:00:00"
+          },
+          {
+            "name": "WF_2018_2021",
+            "test_start": "2018-01-01T00:00:00",
+            "test_end": "2022-01-01T00:00:00"
+          },
+          {
+            "name": "WF_2022_2024",
+            "test_start": "2022-01-01T00:00:00",
+            "test_end": "2025-01-01T00:00:00"
+          }
+        ],
+        "end_utc_exclusive": "2025-01-01T00:00:00",
+        "role": "HISTORICAL_FORENSIC_ONLY_NO_ARTICLE1_PRIMARY_RERUN"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "NOT_PRIMARY_RERUN",
+      "cross_feed_replication": "NOT_APPLICABLE",
+      "source_binding": {
+        "script_path": "app/stage178_commercial_edge_decision_sprint.py",
+        "script_sha256": "3acac21c41c7285222ca8017cf3436372fd8d3c4466705932d0e69631379e2c7",
+        "config_path": "configs/stage178_commercial_edge_decision_sprint.json",
+        "config_sha256": "73c30a18eff9e2ce5b2b85ab9b63c5e374baa5d86c52fe5aa38fd2aa1f1edc1b"
+      }
+    },
+    {
+      "registry_order": 43,
+      "specification_id": "A1R-043",
+      "source_block": "stage178_ml",
+      "source_candidate_id": "hist_gb__direction_12h",
+      "parent_taxonomy": "supervised_machine_learning_meta_models",
+      "economic_family": "SUPERVISED_DIRECTIONAL_META_MODEL",
+      "analysis_role": "HISTORICAL_FORENSIC_CASE_STUDY_ONLY",
+      "primary_eligible": false,
+      "exclusion_reason": "HISTORICALLY_SELECTED_MODEL_AND_SEEN_2025_PLUS_DIAGNOSTIC; FORENSIC_CASE_STUDY_ONLY",
+      "direction": "MODEL_PROBABILITY_LONG_SHORT",
+      "horizon": {
+        "value": 12,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "model": "hist_gb",
+        "target": {
+          "key": "direction_12h",
+          "kind": "directional",
+          "horizon_hours": 12,
+          "barrier_atr_mult": null
+        },
+        "probability_threshold": 0.6,
+        "training_stride_hours": 2,
+        "minimum_training_rows": 20000,
+        "random_state": 178
+      },
+      "reference_contract": {
+        "historical_test_folds": [
+          {
+            "name": "WF_2014_2017",
+            "test_start": "2014-01-01T00:00:00",
+            "test_end": "2018-01-01T00:00:00"
+          },
+          {
+            "name": "WF_2018_2021",
+            "test_start": "2018-01-01T00:00:00",
+            "test_end": "2022-01-01T00:00:00"
+          },
+          {
+            "name": "WF_2022_2024",
+            "test_start": "2022-01-01T00:00:00",
+            "test_end": "2025-01-01T00:00:00"
+          }
+        ],
+        "end_utc_exclusive": "2025-01-01T00:00:00",
+        "role": "HISTORICAL_FORENSIC_ONLY_NO_ARTICLE1_PRIMARY_RERUN"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "NOT_PRIMARY_RERUN",
+      "cross_feed_replication": "NOT_APPLICABLE",
+      "source_binding": {
+        "script_path": "app/stage178_commercial_edge_decision_sprint.py",
+        "script_sha256": "3acac21c41c7285222ca8017cf3436372fd8d3c4466705932d0e69631379e2c7",
+        "config_path": "configs/stage178_commercial_edge_decision_sprint.json",
+        "config_sha256": "73c30a18eff9e2ce5b2b85ab9b63c5e374baa5d86c52fe5aa38fd2aa1f1edc1b"
+      }
+    },
+    {
+      "registry_order": 44,
+      "specification_id": "A1R-044",
+      "source_block": "stage178_ml",
+      "source_candidate_id": "hist_gb__direction_24h",
+      "parent_taxonomy": "supervised_machine_learning_meta_models",
+      "economic_family": "SUPERVISED_DIRECTIONAL_META_MODEL",
+      "analysis_role": "HISTORICAL_FORENSIC_CASE_STUDY_ONLY",
+      "primary_eligible": false,
+      "exclusion_reason": "HISTORICALLY_SELECTED_MODEL_AND_SEEN_2025_PLUS_DIAGNOSTIC; FORENSIC_CASE_STUDY_ONLY",
+      "direction": "MODEL_PROBABILITY_LONG_SHORT",
+      "horizon": {
+        "value": 24,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "model": "hist_gb",
+        "target": {
+          "key": "direction_24h",
+          "kind": "directional",
+          "horizon_hours": 24,
+          "barrier_atr_mult": null
+        },
+        "probability_threshold": 0.6,
+        "training_stride_hours": 2,
+        "minimum_training_rows": 20000,
+        "random_state": 178
+      },
+      "reference_contract": {
+        "historical_test_folds": [
+          {
+            "name": "WF_2014_2017",
+            "test_start": "2014-01-01T00:00:00",
+            "test_end": "2018-01-01T00:00:00"
+          },
+          {
+            "name": "WF_2018_2021",
+            "test_start": "2018-01-01T00:00:00",
+            "test_end": "2022-01-01T00:00:00"
+          },
+          {
+            "name": "WF_2022_2024",
+            "test_start": "2022-01-01T00:00:00",
+            "test_end": "2025-01-01T00:00:00"
+          }
+        ],
+        "end_utc_exclusive": "2025-01-01T00:00:00",
+        "role": "HISTORICAL_FORENSIC_ONLY_NO_ARTICLE1_PRIMARY_RERUN"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "NOT_PRIMARY_RERUN",
+      "cross_feed_replication": "NOT_APPLICABLE",
+      "source_binding": {
+        "script_path": "app/stage178_commercial_edge_decision_sprint.py",
+        "script_sha256": "3acac21c41c7285222ca8017cf3436372fd8d3c4466705932d0e69631379e2c7",
+        "config_path": "configs/stage178_commercial_edge_decision_sprint.json",
+        "config_sha256": "73c30a18eff9e2ce5b2b85ab9b63c5e374baa5d86c52fe5aa38fd2aa1f1edc1b"
+      }
+    },
+    {
+      "registry_order": 45,
+      "specification_id": "A1R-045",
+      "source_block": "stage178_ml",
+      "source_candidate_id": "hist_gb__triple_barrier_24h",
+      "parent_taxonomy": "supervised_machine_learning_meta_models",
+      "economic_family": "SUPERVISED_DIRECTIONAL_META_MODEL",
+      "analysis_role": "HISTORICAL_FORENSIC_CASE_STUDY_ONLY",
+      "primary_eligible": false,
+      "exclusion_reason": "HISTORICALLY_SELECTED_MODEL_AND_SEEN_2025_PLUS_DIAGNOSTIC; FORENSIC_CASE_STUDY_ONLY",
+      "direction": "MODEL_PROBABILITY_LONG_SHORT",
+      "horizon": {
+        "value": 24,
+        "unit": "hours"
+      },
+      "signal_contract": {
+        "model": "hist_gb",
+        "target": {
+          "key": "triple_barrier_24h",
+          "kind": "triple_barrier",
+          "horizon_hours": 24,
+          "barrier_atr_mult": 1.25
+        },
+        "probability_threshold": 0.6,
+        "training_stride_hours": 2,
+        "minimum_training_rows": 20000,
+        "random_state": 178
+      },
+      "reference_contract": {
+        "historical_test_folds": [
+          {
+            "name": "WF_2014_2017",
+            "test_start": "2014-01-01T00:00:00",
+            "test_end": "2018-01-01T00:00:00"
+          },
+          {
+            "name": "WF_2018_2021",
+            "test_start": "2018-01-01T00:00:00",
+            "test_end": "2022-01-01T00:00:00"
+          },
+          {
+            "name": "WF_2022_2024",
+            "test_start": "2022-01-01T00:00:00",
+            "test_end": "2025-01-01T00:00:00"
+          }
+        ],
+        "end_utc_exclusive": "2025-01-01T00:00:00",
+        "role": "HISTORICAL_FORENSIC_ONLY_NO_ARTICLE1_PRIMARY_RERUN"
+      },
+      "historical_cost_contract": {
+        "unit": "round_trip_bps",
+        "normal": 3.0,
+        "severe": 4.5
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "NOT_PRIMARY_RERUN",
+      "cross_feed_replication": "NOT_APPLICABLE",
+      "source_binding": {
+        "script_path": "app/stage178_commercial_edge_decision_sprint.py",
+        "script_sha256": "3acac21c41c7285222ca8017cf3436372fd8d3c4466705932d0e69631379e2c7",
+        "config_path": "configs/stage178_commercial_edge_decision_sprint.json",
+        "config_sha256": "73c30a18eff9e2ce5b2b85ab9b63c5e374baa5d86c52fe5aa38fd2aa1f1edc1b"
+      }
+    },
+    {
+      "registry_order": 46,
+      "specification_id": "A1R-046",
+      "source_block": "canonical_tsmom",
+      "source_candidate_id": "MOP2012_12M_1M_VOL_SCALED_XAUUSD_BROKER_PROXY",
+      "parent_taxonomy": "canonical_long_horizon_time_series_momentum",
+      "economic_family": "TIME_SERIES_MOMENTUM",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "DYNAMIC_LONG_SHORT",
+      "horizon": {
+        "value": 1,
+        "unit": "months"
+      },
+      "signal_contract": {
+        "strategy_id": "MOP2012_12M_1M_VOL_SCALED_XAUUSD_BROKER_PROXY",
+        "lookback_months": 12,
+        "holding_months": 1,
+        "volatility": {
+          "ewma_center_of_mass_days": 60,
+          "annualization_days": 261,
+          "min_daily_returns": 120
+        },
+        "position": {
+          "target_annual_volatility": 0.2,
+          "max_abs_position": 2.0,
+          "signal_zero_position": 0.0
+        }
+      },
+      "reference_contract": {
+        "start_rule": "FIRST_ELIGIBLE_MONTH_AFTER_LOCKED_12_MONTH_LOOKBACK_AND_120_DAILY_RETURN_WARMUP",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "bps_per_1x_turnover",
+        "normal": 3.0,
+        "severe": 6.0
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "LOW_FREQUENCY_SEPARATE_DATA_CONTRACT",
+      "cross_feed_replication": "REQUIRED_ON_COMMON_WINDOW",
+      "source_binding": {
+        "script_path": "app/xauusd_final_alpha_trend.py",
+        "script_sha256": "7c97785b6fa5778efcc8327bc0cefe74a10358d72a8a25bf44ebd1e081e340f8",
+        "config_path": "configs/xauusd_final_alpha_trend.json",
+        "config_sha256": "d524066350a743d0ce239bc226dec77a98f0f399d6c9b0248a5d8dc9eae37964"
+      }
+    },
+    {
+      "registry_order": 47,
+      "specification_id": "A1R-047",
+      "source_block": "precious_metals_rv",
+      "source_candidate_id": "GOLD_SILVER_252D_DYNAMIC_LOG_SPREAD_MEAN_REVERSION",
+      "parent_taxonomy": "precious_metals_relative_value_rules",
+      "economic_family": "GOLD_SILVER_DYNAMIC_LOG_SPREAD_MEAN_REVERSION",
+      "analysis_role": "PRIMARY_LOCKED_RERUN",
+      "primary_eligible": true,
+      "exclusion_reason": null,
+      "direction": "MARKET_NEUTRAL_PAIR",
+      "horizon": {
+        "value": 60,
+        "unit": "trading_days_maximum"
+      },
+      "signal_contract": {
+        "strategy_id": "GOLD_SILVER_252D_DYNAMIC_LOG_SPREAD_MEAN_REVERSION",
+        "formation_days": 252,
+        "entry_abs_z": 2.0,
+        "exit_z": 0.0,
+        "stop_abs_z": 4.0,
+        "maximum_holding_days": 60,
+        "hedge_ratio": "rolling OLS log(XAU)=alpha+beta*log(XAG), estimated on the 252 completed daily closes preceding the decision day",
+        "trade_weights": "gross-normalized fixed entry weights: w_xau=side/(1+abs(beta)); w_xag=-side*beta/(1+abs(beta))",
+        "entry_execution": "signal at synchronized daily close; enter at next synchronized daily open",
+        "exit_execution": "mean-cross, adverse 4-sigma stop, or 60-trading-day maximum holding detected at daily close; exit next synchronized daily open",
+        "normal_roundtrip_cost_bps": 8.0,
+        "severe_roundtrip_cost_bps": 16.0,
+        "cost_semantic": "fixed two-leg gross-notional round-trip stress; gross and normal outputs retained so failure attribution does not depend only on severe cost",
+        "parameter_scan": false,
+        "breakpoint_hindsight": false,
+        "cointegration_gate": false,
+        "cointegration_diagnostics_only": true
+      },
+      "reference_contract": {
+        "start_utc": "2012-01-01T00:00:00Z",
+        "start_rule": "MAX_OF_CONFIG_START_AND_FIRST_ELIGIBLE_SIGNAL_AFTER_252_COMPLETED_DAILY_CLOSES",
+        "end_utc_exclusive": "2025-01-01T00:00:00Z",
+        "post_2024_role": "SEEN_TEMPORAL_DIAGNOSTIC_NOT_CONFIRMATORY"
+      },
+      "historical_cost_contract": {
+        "unit": "two_leg_gross_notional_round_trip_bps",
+        "normal": 8.0,
+        "severe": 16.0
+      },
+      "article1_cost_contract_status": "TO_BE_FROZEN_IN_MAIN_RUN_MANIFEST_WITH_RUNNER_HASH",
+      "alignment_warning_sensitivity": "LOW_FREQUENCY_SEPARATE_DATA_CONTRACT",
+      "cross_feed_replication": "NOT_APPLICABLE",
+      "source_binding": {
+        "script_path": "app/precious_metals_final_rv.py",
+        "script_sha256": "2e9e96becd409b6a44aab140e0c00d1e2f65d356b9e3b7f2808517a4b9ab5fa6",
+        "config_path": "configs/precious_metals_final_rv.json",
+        "config_sha256": "2b5f2a571f745a3ca39223c1a8e24415abe3b17ac9fb2062695bd44c49c49109"
+      }
+    }
+  ],
+  "canonical_specification_set_sha256": "475481ede19b2de800dbf83bad3336109ea3a8b7fc59b26c453cde492d0a9af3"
+}

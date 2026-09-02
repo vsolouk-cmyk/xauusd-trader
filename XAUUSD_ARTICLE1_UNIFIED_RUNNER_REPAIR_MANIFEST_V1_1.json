@@ -1,0 +1,73 @@
+{
+  "program": "XAUUSD_ARTICLE1_UNIFIED_RUNNER_REPAIR_MANIFEST_V1_1",
+  "generated_utc": "2026-09-02T05:34:15Z",
+  "trigger_failure": {
+    "archive": "XAUUSD_ARTICLE1_REFERENCE_RERUN_FAILURE_20260902T052656Z.zip",
+    "archive_sha256": "7fd5e6fcecb24798e245aec0181049eed5e57b157303d7bc7a8de0218b538ed8",
+    "error": "ScanError: dukascopy_h1_from_m5 missing required columns: ['close', 'high', 'low', 'open', 'timestamp']",
+    "classification": "INPUT_ROUTING_DEFECT",
+    "specification_outcomes_computed_before_failure": false
+  },
+  "repair": {
+    "deviation_id": "A1-DEV-002",
+    "scope": "CROSS_FEED_INPUT_ROUTING_AND_PREFLIGHT_SCHEMA_VALIDATION_ONLY",
+    "amarkets_route": {
+      "input_id": "amarkets_alignment_sqlite",
+      "table": "amarkets_h1_from_m5_utc"
+    },
+    "dukascopy_route": {
+      "input_id": "dukascopy_extended_history_sqlite",
+      "table": "dukascopy_h1_from_m5"
+    },
+    "applied_to": [
+      "successor_scan_cross_feed",
+      "canonical_tsmom_cross_feed"
+    ],
+    "new_run_directory": "reports/article1_locked_reference_rerun_v1_1",
+    "preserve_aborted_run_directory": "reports/article1_locked_reference_rerun_v1_0",
+    "strategy_or_statistical_parameter_changed": false
+  },
+  "validation": {
+    "reported_failure_reproduced_exactly": "PASS",
+    "correct_amarkets_route_with_source_native_loader": "PASS",
+    "correct_dukascopy_route_with_source_native_loader": "PASS",
+    "wrong_database_schema_gate": "BLOCK_AS_REQUIRED",
+    "correct_database_schema_gates": "PASS",
+    "python_syntax_compilation": "PASS",
+    "json_parsing": "PASS",
+    "all_39_synthetic_primary_adapters": "PASS",
+    "all_20_family_inference_paths": "PASS",
+    "all_39_dsr_paths": "PASS",
+    "clean_outcome_blind_preflight": "PASS",
+    "aborted_v1_0_run_directory_preservation": "PASS",
+    "new_v1_1_run_directory_availability": "PASS",
+    "frozen_manifest_verification": "PASS",
+    "post_freeze_protocol_tamper_detection": "PASS",
+    "historical_strategy_result_files_read_during_validation": false,
+    "post_2024_outcomes_computed_during_validation": false
+  },
+  "files": [
+    {
+      "path": "configs/article_publication/XAUUSD_ARTICLE1_EVALUATION_PROTOCOL_V1_1.json",
+      "sha256": "0aac5dbb448d3334d2e53cf0994defe65a41cf18acce90a62940348d3d193b64"
+    },
+    {
+      "path": "docs/article_publication/XAUUSD_ARTICLE1_PROTOCOL_DEVIATION_LOG_V1_1.json",
+      "sha256": "6e77c8c57a9fa0544a1d426f399ca21b3108b243347d7644ecc6d209911c82d9"
+    },
+    {
+      "path": "docs/article_publication/XAUUSD_ARTICLE1_UNIFIED_RUNNER_REPAIR_V1_1.md",
+      "sha256": "049041b234aac8ccda2a39375298f4bf34a16975db3acf15c3238a22e8382838"
+    },
+    {
+      "path": "tools/article_publication/article1_unified_reference_runner_v1_1.py",
+      "sha256": "838d373ce8d6910590a276cb42283ca022a12e6e12752c9c1728bd5157a6d5f1"
+    }
+  ],
+  "authorization": {
+    "reference_rerun_v1_1_allowed_once": true,
+    "paper_order_allowed": false,
+    "demo_order_allowed": false,
+    "live_order_allowed": false
+  }
+}

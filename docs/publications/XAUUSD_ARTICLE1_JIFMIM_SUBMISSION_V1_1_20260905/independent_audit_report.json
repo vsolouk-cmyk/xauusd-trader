@@ -1,0 +1,120 @@
+{
+  "program": "XAUUSD_ARTICLE1_INDEPENDENT_OUTPUT_AUDIT_V1_0",
+  "audit_date_utc": "2026-09-04",
+  "audit_decision": "PASS_WITH_EXPLICIT_SCOPE_LIMITATIONS",
+  "rerun_decision": "DO_NOT_RERUN_OR_OVERWRITE_COMPLETED_V1_1_DIRECTORY",
+  "retry_failure_classification": "EXPECTED_FAIL_CLOSED_PROTECTION_AFTER_COMPLETED_IMMUTABLE_RUN",
+  "underlying_run": {
+    "program": "XAUUSD_ARTICLE1_UNIFIED_REFERENCE_RUNNER_V1_1",
+    "manifest_frozen_utc": "2026-09-02T06:03:35Z",
+    "completed_utc": "2026-09-02T06:07:47Z",
+    "lock_status": "REFERENCE_OUTCOME_COMPUTATION_COMPLETE",
+    "main_run_manifest_sha256": "7236cddec6d7fdbd2a129343108b5ad195c1ff291e849b06f9dd3eda5d888b57",
+    "summary_sha256": "263970b73a74033d599b252f30c0a6aa533121eef53acb7581d89b08c3229553",
+    "reference_only": true,
+    "post_2024_outcomes_computed": false,
+    "historical_strategy_result_files_read": false
+  },
+  "scope": {
+    "included": [
+      "archive_path_safety_duplicate_and_crc_checks",
+      "results_manifest_coverage_size_and_sha256_verification",
+      "reference_lock_hash_verification",
+      "cross_file_identifier_and_cardinality_checks",
+      "reference_window_and_trade_timestamp_checks",
+      "independent_per_specification_trade_count_return_mean_and_profit_factor_recomputation",
+      "independent_centered_circular_moving_block_family_max_t_recomputation",
+      "independent_deflated_sharpe_ratio_recomputation"
+    ],
+    "excluded": [
+      "independent_end_to_end_signal_and_trade_regeneration_from_raw_market_databases",
+      "independent_verification_of_original_vendor_data_against_external_vendor_archives"
+    ]
+  },
+  "integrity_checks": {
+    "archive_safe_paths": true,
+    "archive_duplicate_members_absent": true,
+    "archive_crc_pass": true,
+    "run_file_count_including_results_manifest": 17,
+    "results_manifest_listed_file_count": 16,
+    "results_manifest_exact_coverage": true,
+    "listed_file_sizes_match": true,
+    "listed_file_sha256_match": true,
+    "lock_manifest_hash_match": true,
+    "lock_summary_hash_match": true,
+    "primary_registry_id_sets_match_all_output_tables": true,
+    "trade_reference_boundaries_pass": true,
+    "trade_decision_precedes_exit": true,
+    "finite_return_fields": true
+  },
+  "recomputation": {
+    "per_specification_metrics_all_39_match": true,
+    "family_max_t_all_20_match": true,
+    "deflated_sharpe_all_39_match": true,
+    "family_max_t_protocol": {
+      "method": "CENTERED_CIRCULAR_MOVING_BLOCK_MAX_T_BOOTSTRAP_ON_COMMON_DAILY_PNL",
+      "replications": 5000,
+      "block_calendar_days": 20,
+      "alpha": 0.05,
+      "seed": 2026090201
+    },
+    "deflated_sharpe_common_calendar": {
+      "start_utc": "2016-01-01T00:00:00Z",
+      "end_utc_exclusive": "2025-01-01T00:00:00Z",
+      "observations": 3288,
+      "eligible_trials": 39,
+      "expected_maximum_daily_sharpe_recomputed": 0.04773594411656541,
+      "report_probability_threshold": 0.95
+    }
+  },
+  "study_counts": {
+    "registry_specifications": 47,
+    "primary_specifications": 39,
+    "forensic_only_specifications": 8,
+    "economic_families": 20,
+    "normalized_primary_trade_records": 28685,
+    "positive_mean_gross_specifications": 24,
+    "positive_mean_normal_net_specifications": 9,
+    "positive_mean_severe_net_specifications": 5,
+    "positive_mean_fixed_stress_specifications": 1,
+    "source_native_pass_specifications": 0,
+    "supported_families": 0
+  },
+  "multiplicity": {
+    "minimum_family_adjusted_p": 0.4461107778444311,
+    "minimum_family_adjusted_p_family": "TIME_SERIES_MOMENTUM",
+    "second_smallest_family_adjusted_p": 0.47850429914017195,
+    "second_smallest_family": "range_breakout",
+    "third_smallest_family_adjusted_p": 0.5652869426114777,
+    "third_smallest_family": "volatility_expansion",
+    "families_passing_alpha_0_05": 0
+  },
+  "cross_feed": {
+    "applicable_specifications": 20,
+    "pass": 13,
+    "fail": 7,
+    "fail_signal_jaccard": 5,
+    "fail_effect_direction_reversal": 2
+  },
+  "alignment_warning_sensitivity": {
+    "excluded_start_utc": "2019-10-07T00:00:00Z",
+    "excluded_end_utc_exclusive": "2019-10-14T00:00:00Z",
+    "effect_sign_changes": 0,
+    "source_native_pass_changes": 0,
+    "family_fragility_detected": false
+  },
+  "deflated_sharpe": {
+    "passes_0_95": 0,
+    "maximum_probability": 0.011284134012404051,
+    "maximum_probability_specification_id": "A1R-007"
+  },
+  "pbo": {
+    "status": "NOT_ESTIMABLE",
+    "reason": "HETEROGENEOUS_CALENDARS_HORIZONS_AND_OBJECTIVES_DO_NOT_FORM_A_VALID_COMBINATORIALLY_SYMMETRIC_CROSS_VALIDATION_BLOCK"
+  },
+  "family_decision_counts": {
+    "NO_EDGE_UNDER_LOCKED_PROTOCOL": 20
+  },
+  "scientific_conclusion": "No robust edge was detected among the locked primary specifications and economic families under the specified data, reference periods, costs, and robustness gates.",
+  "prohibited_overgeneralization": "The result does not establish that every possible XAUUSD strategy lacks an edge."
+}

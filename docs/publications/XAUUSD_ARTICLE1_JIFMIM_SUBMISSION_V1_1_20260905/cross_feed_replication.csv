@@ -1,0 +1,40 @@
+specification_id,source_block,applicable,primary_trade_count,secondary_trade_count,matched_outcomes,signal_jaccard,matched_gross_return_correlation,primary_mean_severe_bps,secondary_mean_severe_bps,effect_direction_consistent,checks,pass,reason
+A1R-001,successor_scan,True,3476,3546,2723,0.6334031170039545,0.9993262243104484,-5.110376858596046,-5.186426526867,True,"{""effect_direction_consistency"": true, ""matched_gross_return_correlation"": true, ""minimum_matched_outcomes"": true, ""signal_jaccard"": true}",True,
+A1R-002,successor_scan,True,865,880,576,0.49272882805816937,0.9999716841477817,-1.5054830555353749,-1.926631740361605,True,"{""effect_direction_consistency"": true, ""matched_gross_return_correlation"": true, ""minimum_matched_outcomes"": true, ""signal_jaccard"": false}",False,
+A1R-003,successor_scan,True,906,917,524,0.403387220939184,0.9999687728995827,-3.224237342576283,-2.880856749723122,True,"{""effect_direction_consistency"": true, ""matched_gross_return_correlation"": true, ""minimum_matched_outcomes"": true, ""signal_jaccard"": false}",False,
+A1R-004,successor_scan,True,1859,1897,1278,0.5157384987893463,0.9997456007712823,-2.4874851420873503,-2.126903568444238,True,"{""effect_direction_consistency"": true, ""matched_gross_return_correlation"": true, ""minimum_matched_outcomes"": true, ""signal_jaccard"": false}",False,
+A1R-005,successor_scan,True,908,915,514,0.39266615737203975,0.9990582697144557,-3.69487420367797,-4.121041919091456,True,"{""effect_direction_consistency"": true, ""matched_gross_return_correlation"": true, ""minimum_matched_outcomes"": true, ""signal_jaccard"": false}",False,
+A1R-006,successor_scan,True,1702,1768,1569,0.8253550762756444,0.9998741962751982,-5.6488965790750525,-5.007653097467334,True,"{""effect_direction_consistency"": true, ""matched_gross_return_correlation"": true, ""minimum_matched_outcomes"": true, ""signal_jaccard"": true}",True,
+A1R-007,successor_scan,True,455,462,391,0.7433460076045627,0.9998371375957352,2.646125631360265,-0.5034378255120946,False,"{""effect_direction_consistency"": false, ""matched_gross_return_correlation"": true, ""minimum_matched_outcomes"": true, ""signal_jaccard"": true}",False,
+A1R-008,successor_scan,True,1932,2023,1788,0.8251038301799724,0.9998907981071192,-4.576590673722857,-4.5188204475635025,True,"{""effect_direction_consistency"": true, ""matched_gross_return_correlation"": true, ""minimum_matched_outcomes"": true, ""signal_jaccard"": true}",True,
+A1R-009,successor_scan,True,649,680,576,0.7649402390438247,0.9999353606732989,1.312865153034135,-0.4060210905273754,False,"{""effect_direction_consistency"": false, ""matched_gross_return_correlation"": true, ""minimum_matched_outcomes"": true, ""signal_jaccard"": true}",False,
+A1R-010,successor_scan,True,579,614,448,0.6013422818791946,0.9999270845759217,-6.399715497918202,-5.495150983386691,True,"{""effect_direction_consistency"": true, ""matched_gross_return_correlation"": true, ""minimum_matched_outcomes"": true, ""signal_jaccard"": true}",True,
+A1R-011,successor_scan,True,243,258,180,0.5607476635514018,0.9999014392439592,-7.1789473657698,-5.831717896447726,True,"{""effect_direction_consistency"": true, ""matched_gross_return_correlation"": true, ""minimum_matched_outcomes"": true, ""signal_jaccard"": false}",False,
+A1R-012,successor_scan,True,1706,1756,1462,0.731,0.9997402749390475,-5.222837893843144,-4.823171452101206,True,"{""effect_direction_consistency"": true, ""matched_gross_return_correlation"": true, ""minimum_matched_outcomes"": true, ""signal_jaccard"": true}",True,
+A1R-013,successor_scan,True,717,734,616,0.7377245508982035,0.9997061840163897,-5.317855849326495,-5.487600009288424,True,"{""effect_direction_consistency"": true, ""matched_gross_return_correlation"": true, ""minimum_matched_outcomes"": true, ""signal_jaccard"": true}",True,
+A1R-014,successor_scan,True,1949,2027,1650,0.709372312983663,0.9998809599013813,-7.495368922646985,-7.103068608520006,True,"{""effect_direction_consistency"": true, ""matched_gross_return_correlation"": true, ""minimum_matched_outcomes"": true, ""signal_jaccard"": true}",True,
+A1R-015,successor_scan,True,345,352,332,0.9095890410958904,0.9997913062069919,-7.133486516048038,-7.73546030706128,True,"{""effect_direction_consistency"": true, ""matched_gross_return_correlation"": true, ""minimum_matched_outcomes"": true, ""signal_jaccard"": true}",True,
+A1R-016,successor_scan,True,343,355,331,0.9019073569482289,0.999902179697308,-3.6187776607946263,-3.8485769404418404,True,"{""effect_direction_consistency"": true, ""matched_gross_return_correlation"": true, ""minimum_matched_outcomes"": true, ""signal_jaccard"": true}",True,
+A1R-017,successor_scan,True,164,174,159,0.888268156424581,0.9996058372969275,-9.574012103195953,-7.961890197319637,True,"{""effect_direction_consistency"": true, ""matched_gross_return_correlation"": true, ""minimum_matched_outcomes"": true, ""signal_jaccard"": true}",True,
+A1R-018,successor_scan,True,1230,1304,1164,0.8496350364963504,0.9995699485006869,-2.617057616628838,-1.9255741988301391,True,"{""effect_direction_consistency"": true, ""matched_gross_return_correlation"": true, ""minimum_matched_outcomes"": true, ""signal_jaccard"": true}",True,
+A1R-019,successor_scan,True,1082,1105,1060,0.940550133096717,0.999833178088722,-4.567290221179407,-4.2546218206033855,True,"{""effect_direction_consistency"": true, ""matched_gross_return_correlation"": true, ""minimum_matched_outcomes"": true, ""signal_jaccard"": true}",True,
+A1R-020,cross_asset_fixed,False,,,,,,,,,,,LOCKED_PANEL_CONTAINS_AMARKETS_DERIVED_XAU_SIGNAL_INPUTS
+A1R-021,cross_asset_fixed,False,,,,,,,,,,,LOCKED_PANEL_CONTAINS_AMARKETS_DERIVED_XAU_SIGNAL_INPUTS
+A1R-022,cross_asset_fixed,False,,,,,,,,,,,LOCKED_PANEL_CONTAINS_AMARKETS_DERIVED_XAU_SIGNAL_INPUTS
+A1R-023,cross_asset_fixed,False,,,,,,,,,,,LOCKED_PANEL_CONTAINS_AMARKETS_DERIVED_XAU_SIGNAL_INPUTS
+A1R-024,cross_asset_fixed,False,,,,,,,,,,,LOCKED_PANEL_CONTAINS_AMARKETS_DERIVED_XAU_SIGNAL_INPUTS
+A1R-025,cross_asset_fixed,False,,,,,,,,,,,LOCKED_PANEL_CONTAINS_AMARKETS_DERIVED_XAU_SIGNAL_INPUTS
+A1R-026,cross_asset_fixed,False,,,,,,,,,,,LOCKED_PANEL_CONTAINS_AMARKETS_DERIVED_XAU_SIGNAL_INPUTS
+A1R-027,cross_asset_fixed,False,,,,,,,,,,,LOCKED_PANEL_CONTAINS_AMARKETS_DERIVED_XAU_SIGNAL_INPUTS
+A1R-028,cross_asset_fixed,False,,,,,,,,,,,LOCKED_PANEL_CONTAINS_AMARKETS_DERIVED_XAU_SIGNAL_INPUTS
+A1R-029,cross_asset_fixed,False,,,,,,,,,,,LOCKED_PANEL_CONTAINS_AMARKETS_DERIVED_XAU_SIGNAL_INPUTS
+A1R-030,cross_asset_fixed,False,,,,,,,,,,,LOCKED_PANEL_CONTAINS_AMARKETS_DERIVED_XAU_SIGNAL_INPUTS
+A1R-031,cross_asset_fixed,False,,,,,,,,,,,LOCKED_PANEL_CONTAINS_AMARKETS_DERIVED_XAU_SIGNAL_INPUTS
+A1R-032,cross_asset_event_response,False,,,,,,,,,,,LOCKED_PANEL_CONTAINS_AMARKETS_DERIVED_XAU_SIGNAL_INPUTS
+A1R-033,cross_asset_event_response,False,,,,,,,,,,,LOCKED_PANEL_CONTAINS_AMARKETS_DERIVED_XAU_SIGNAL_INPUTS
+A1R-034,cross_asset_event_response,False,,,,,,,,,,,LOCKED_PANEL_CONTAINS_AMARKETS_DERIVED_XAU_SIGNAL_INPUTS
+A1R-035,cross_asset_event_response,False,,,,,,,,,,,LOCKED_PANEL_CONTAINS_AMARKETS_DERIVED_XAU_SIGNAL_INPUTS
+A1R-036,cross_asset_event_response,False,,,,,,,,,,,LOCKED_PANEL_CONTAINS_AMARKETS_DERIVED_XAU_SIGNAL_INPUTS
+A1R-037,cross_asset_event_response,False,,,,,,,,,,,LOCKED_PANEL_CONTAINS_AMARKETS_DERIVED_XAU_SIGNAL_INPUTS
+A1R-046,canonical_tsmom,True,106,106,106,1.0,0.9983395870575458,-10.7536825788227,-5.004708745789254,True,"{""effect_direction_consistency"": true, ""matched_gross_return_correlation"": true, ""minimum_matched_outcomes"": true, ""signal_jaccard"": true}",True,
+A1R-047,precious_metals_rv,False,,,,,,,,,,,NO_INDEPENDENT_XAGUSD_FEED_IN_FROZEN_DATA_CONTRACT

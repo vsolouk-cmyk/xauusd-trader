@@ -1,0 +1,7 @@
+source_block,specifications,normalized_trade_records,positive_mean_gross,positive_mean_normal_net,positive_mean_severe_net,positive_mean_fixed_stress,source_native_pass,median_severe_net_bps,best_severe_net_bps
+successor_scan,19,21110,8,2,2,0,0,-4.576591,2.646126
+cross_asset_fixed,12,6584,11,3,0,0,0,-4.143798,-2.040531
+cross_asset_event_response,6,810,4,3,2,0,0,-3.733852,2.006521
+canonical_tsmom,1,154,1,1,1,1,0,7.412075,7.412075
+precious_metals_rv,1,27,0,0,0,0,0,-18.403186,-18.403186
+TOTAL,39,28685,24,9,5,1,0,,

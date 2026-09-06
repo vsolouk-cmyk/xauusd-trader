@@ -1,0 +1,3 @@
+Data and code availability
+
+The replication package contains the frozen registry and evaluation protocol, normalized specification-level outcomes, derived tables, figure-building code, provenance manifests, and independent-audit artifacts. The project repository is available at https://github.com/vsolouk-cmyk/xauusd-trader. Versioned records in the repository and replication package identify the exact research snapshot used for the article. Raw broker and vendor files are not redistributed because their licensing and access conditions may restrict public release. A qualified researcher may request assistance in reconstructing permitted inputs, subject to the original providers' terms.

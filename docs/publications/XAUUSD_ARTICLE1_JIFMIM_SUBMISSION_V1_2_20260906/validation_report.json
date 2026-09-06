@@ -1,0 +1,56 @@
+{
+  "decision": "PASS_JIFMIM_ARTICLE1_SUBMISSION_PACKAGE_READY",
+  "technical_validation_pass": true,
+  "submission_ready": true,
+  "pending_author_metadata_markers": [],
+  "registry": {
+    "all": 47,
+    "primary": 39,
+    "forensic_only": 8
+  },
+  "primary_records": 28685,
+  "positive_means": {
+    "mean_gross_bps": 24,
+    "mean_normal_net_bps": 9,
+    "mean_severe_net_bps": 5,
+    "mean_fixed_stress_net_bps": 1
+  },
+  "native_passes": 0,
+  "supported_families": 0,
+  "cross_feed": {
+    "applicable": 20,
+    "pass": 13,
+    "fail": 7,
+    "sign_reversals": 2
+  },
+  "generated_pdfs": 5,
+  "literature": {
+    "cited_journal_articles": 42,
+    "articles_2023_2026": 15,
+    "latest_year": 2026,
+    "uncited_entries": 0
+  },
+  "revision_v1_2": {
+    "section_3_title_revised": true,
+    "software_architecture_subsection_present": true,
+    "software_architecture_table_present": true,
+    "manual_emphasis_commands_in_main_article": 0,
+    "long_hash_values_in_article_and_supplement": 0,
+    "negative_sentence_openings_in_manuscript_body": 0,
+    "code_development_mentioned_in_ai_declaration": false,
+    "research_code_disclosure_in_methods": true
+  },
+  "author_metadata": {
+    "orcid": "0000-0001-8304-6394",
+    "orcid_checksum_pass": true,
+    "repository_url": "https://github.com/vsolouk-cmyk/xauusd-trader",
+    "repository_commit": "0c24c7a47b36642e675a4de1b2f5829a40195666"
+  },
+  "editorial_attestations_not_machine_verifiable": [
+    "CRediT roles",
+    "originality and exclusive submission",
+    "third-party raw-data licensing status"
+  ],
+  "latex_content_overflow_warnings": 0,
+  "cas_class_frontmatter_warnings": 2
+}

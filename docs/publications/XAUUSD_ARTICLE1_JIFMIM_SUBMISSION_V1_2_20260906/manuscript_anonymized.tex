@@ -1,0 +1,73 @@
+\documentclass[a4paper,fleqn]{cas-sc}
+
+\usepackage[authoryear,longnamesfirst]{natbib}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{threeparttable}
+\usepackage{xurl}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{placeins}
+
+\newcommand{\bps}{\,\text{bps}}
+\newcommand{\xau}{\text{XAUUSD}}
+
+% The CAS class prints an ORCID footnote even when no ORCID is registered.
+% Suppress that empty footnote in the blinded review manuscript.
+\ExplSyntaxOn
+\RenewDocumentCommand{\printorcid}{}{}
+\ExplSyntaxOff
+
+\begin{document}
+\let\WriteBookmarks\relax
+\def\floatpagepagefraction{.8}
+\def\textpagefraction{.1}
+
+\shorttitle{From Apparent Edge to No-Go}
+\shortauthors{Anonymous}
+\title[mode=title]{From Apparent Edge to No-Go: A Point-in-Time, Cost-Aware Audit of Heterogeneous XAUUSD Trading Strategies}
+
+\author[1]{Anonymous Author}
+\affiliation[1]{organization={Affiliation withheld for anonymized review},country={}}
+
+\begin{abstract}
+Trading strategies are often reported after many specifications have been explored, leaving costs, selection, sample instability, and feed dependence only partly visible. We examine these issues in a retrospective audit of a heterogeneous XAUUSD research program, followed by a consolidated rerun specified before execution. The registry contains 47 strategies. Thirty-nine primary specifications from 20 economic families were recomputed, while eight historically selected machine-learning combinations were retained as forensic records and excluded from primary inference. The runner could not read earlier strategy results, used source-native cost schedules, and ended every reference sample in 2024. Inference combines a centered circular moving-block max-$t$ bootstrap with source-native acceptance criteria, deflated Sharpe ratios, a pre-declared timestamp sensitivity, and cross-feed replication where applicable. The primary specifications produced 28,685 normalized trade or rebalance records. Positive means fell from 24 before costs to 9 under normal costs, 5 under severe costs, and 1 under a common fixed-stress schedule. Every specification failed at least one native criterion, and adjusted evidence remained weak across all 20 families: the minimum familywise $p$-value was 0.446 and the largest deflated-Sharpe probability was 0.011. Seven of the 20 specifications eligible for cross-feed evaluation failed, including two sign reversals. These findings are confined to the registered universe. Within that boundary, apparent profitability did not survive the combined economic, statistical, temporal, and data-source requirements of a defensible trading edge.
+\end{abstract}
+
+\begin{highlights}
+\item Severe costs reduced positive strategy means from 24 to 5.
+\item All 39 strategies failed at least one source-native acceptance test.
+\item The minimum familywise adjusted $p$-value was 0.446.
+\item Seven of 20 eligible strategies failed cross-feed replication.
+\item Complete failure records show where apparent profitability was lost.
+\end{highlights}
+
+\begin{keywords}
+Gold \sep XAUUSD \sep technical trading \sep data snooping \sep transaction costs \sep multiple testing \sep reproducible finance
+\end{keywords}
+
+\maketitle
+\input{manuscript_body}
+
+\section*{Funding}
+Funding information is withheld in the anonymized manuscript and is provided on the title page.
+
+\section*{CRediT authorship contribution statement}
+The author contribution statement is provided on the separate title page.
+
+\section*{Declaration of competing interest}
+The declaration of competing interest is provided on the separate title page.
+
+\section*{Data and code availability}
+The replication package contains the frozen registry and protocol, normalized outcomes, derived tables, figure-building code, provenance manifests, and independent-audit artifacts. The public repository address and version identifier are withheld from this review copy to preserve anonymity. Raw broker and vendor files are not redistributed because provider terms may restrict public release; the replication records identify the author-held inputs.
+
+\section*{Declaration of generative AI and AI-assisted technologies in the manuscript preparation process}
+During the preparation of this article, the author used OpenAI ChatGPT to assist with manuscript organization, language editing, consistency checking, literature-source verification, and preparation of LaTeX submission files. The author reviewed and revised the resulting material, checked all reported quantities and references against the research record and original sources, and takes full responsibility for the content of the published article.
+
+\bibliographystyle{cas-model2-names}
+\bibliography{references}
+\end{document}

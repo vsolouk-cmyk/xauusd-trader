@@ -1,6 +1,0 @@
-Positive strategy means fell from 24 gross to 5 after severe costs.
-No specification passed its complete source-native acceptance gates.
-No family survived a 20-day block max-t multiplicity correction.
-Seven of 20 eligible specifications failed cross-feed replication.
-The audit retains complete negative evidence under a locked protocol.
-

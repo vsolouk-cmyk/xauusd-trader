@@ -72,3 +72,6 @@ data/fundamental_event_inbox/manifests/
 
 .xauusd_official_data.env
 **/.xauusd_official_data.env
+
+/docs/publications/
+/docs/pulications/

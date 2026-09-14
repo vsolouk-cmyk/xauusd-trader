@@ -35,6 +35,38 @@ jobs:
       - name: Run bounded Article 2 tests
         run: python -m unittest discover -s tests -p 'test_article2_fail_closed_benchmark.py' -v
 
+      - name: Build deterministic evidence ZIP
+        run: |
+          python - <<'PYCODE'
+          from pathlib import Path
+          from tools.article_publication.run_article2_evidence_suite import (
+              OUTPUT_FOLDER,
+              ZIP_NAME,
+              deterministic_zip,
+              sha256_file,
+          )
+
+          root = Path.cwd()
+          parent = root / "artifacts/article2"
+          folder = parent / OUTPUT_FOLDER
+
+          if not folder.is_dir():
+              raise SystemExit(f"expanded evidence folder missing: {folder}")
+
+          archive = parent / ZIP_NAME
+          deterministic_zip(folder, archive)
+
+          digest = sha256_file(archive)
+          sidecar = parent / f"{ZIP_NAME}.sha256"
+          sidecar.write_text(
+              f"{digest}  {ZIP_NAME}\n",
+              encoding="utf-8",
+          )
+
+          print(f"BUILT: {archive}")
+          print(f"SHA256: {digest}")
+          PYCODE
+
       - name: Verify retained folder and ZIP
         run: python tools/article_publication/verify_article2_evidence_bundle.py --root .
 

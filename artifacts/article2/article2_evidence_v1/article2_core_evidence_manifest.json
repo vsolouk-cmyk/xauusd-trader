@@ -1,0 +1,109 @@
+{
+  "all_required_files_present": true,
+  "files": [
+    {
+      "exists": true,
+      "path": "app/article2_fail_closed_benchmark.py",
+      "sha256": "a4d453e1f20f5a577f37430861cd942197301e0ba967ee6d637ee301e7035662",
+      "size_bytes": 17809
+    },
+    {
+      "exists": true,
+      "path": "app/stage170a_methodology_temporal_integrity_audit.py",
+      "sha256": "803133990ae942c986dba487e765d7d2e77ca7f09cc7b8d06b9995ebd8b7bf7e",
+      "size_bytes": 34459
+    },
+    {
+      "exists": true,
+      "path": "app/stage170b_data_asof_contract_validation_redesign.py",
+      "sha256": "3036e9017260ec5dec4b707607b5ac697e948d2554b1ff1b635547ad3d23c434",
+      "size_bytes": 29955
+    },
+    {
+      "exists": true,
+      "path": "app/stage170c_asof_join_enforcement_and_validation_framework.py",
+      "sha256": "e85e56dfbb75d916da18c4b090ee70d40266f159d689aa11a87dc0e978f75fc3",
+      "size_bytes": 26734
+    },
+    {
+      "exists": true,
+      "path": "app/xauusd_controlled_paper_historical_replay.py",
+      "sha256": "e8d233724f2ec98b6e675ed0689f915e36f87e74fba6b6e1f3596d573e20fd74",
+      "size_bytes": 60992
+    },
+    {
+      "exists": true,
+      "path": "tools/article_publication/run_article2_evidence_suite.py",
+      "sha256": "1c94f84f1cc5b6f5962925a2e945d86c322cac8b331145495d310955697e364d",
+      "size_bytes": 23765
+    },
+    {
+      "exists": true,
+      "path": "tools/article_publication/verify_article2_evidence_bundle.py",
+      "sha256": "985c67020b865e1253b26ade9d80541ca60167122f8109691b699120409b0440",
+      "size_bytes": 3007
+    },
+    {
+      "exists": true,
+      "path": "tests/test_article2_fail_closed_benchmark.py",
+      "sha256": "0b304c146860beb7f136e9fdec025e57c744a54195ec5081b290a147bb917d66",
+      "size_bytes": 4227
+    },
+    {
+      "exists": true,
+      "path": "tests/test_stage170a_methodology_temporal_integrity_audit_smoke.py",
+      "sha256": "ae2d3e13b85b1b61c0bee29f2cb44885d5ab4b30802a728aef3a7101ad31e515",
+      "size_bytes": 2800
+    },
+    {
+      "exists": true,
+      "path": "tests/test_stage170b_data_asof_contract_validation_redesign_smoke.py",
+      "sha256": "9605f6c17ad7fd7f0f924407a6d11b2d2e8befb7434febcacb9c912dc6707e22",
+      "size_bytes": 1706
+    },
+    {
+      "exists": true,
+      "path": "tests/test_stage170c_asof_join_enforcement_and_validation_framework_smoke.py",
+      "sha256": "6e19bbd05db2def268088fbbaa8abf19c54adf7f083721bc2f237e4a583a7200",
+      "size_bytes": 2307
+    },
+    {
+      "exists": true,
+      "path": "tests/test_xauusd_controlled_paper_historical_replay.py",
+      "sha256": "ea1b24cbd85abee3a2b3aeb425a297a56a1299f3aefbadcabc81ea6adfd3efb1",
+      "size_bytes": 21460
+    },
+    {
+      "exists": true,
+      "path": "configs/article2_benchmark_v1.json",
+      "sha256": "3997132fb51d412e13c8ab5dc2dd7f1fb33c5913fa47727da4632661738a6836",
+      "size_bytes": 2295
+    },
+    {
+      "exists": true,
+      "path": "docs/article2/ARTICLE2_BENCHMARK_AND_FAULT_INJECTION_PROTOCOL.md",
+      "sha256": "37b5a804fb2ab44520e78ba66ce5c8a50cc9932ef5a02f8be9a6bfb76d8b3802",
+      "size_bytes": 3472
+    },
+    {
+      "exists": true,
+      "path": ".github/workflows/xauusd_article2_evidence.yml",
+      "sha256": "4643db468b4524299259facb299e1d42fd04fc0d2d261a5dfb63144e26bac6fd",
+      "size_bytes": 1690
+    }
+  ],
+  "intake": {
+    "expanded_root": {
+      "folder_name": "XAUUSD_ARTICLE2_SOFTWARE_EVIDENCE_INTAKE_20260914T175601Z",
+      "preserved": true,
+      "source_git_head": "57a37c250ea7f1b9d6f912800040c1786d0f58ed"
+    },
+    "source_git_head": null,
+    "zip": {
+      "file_name": "XAUUSD_ARTICLE2_SOFTWARE_EVIDENCE_INTAKE_20260914T175601Z(2).zip",
+      "sha256": "0a9f529ebfc4a9f399697a7214e2a1774f64e3c99d03e7eca5b0bcb6ff89217a",
+      "size_bytes": 101996333
+    }
+  },
+  "schema_version": "article2-core-evidence-manifest-v1"
+}

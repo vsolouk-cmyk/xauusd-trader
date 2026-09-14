@@ -1,0 +1,373 @@
+\section{Introduction}\label{sec:introduction}
+
+A published trading rule is often the visible end of a much larger search. Before arriving at that rule, a researcher may have varied the signal, parameter values, holding period, filters, data transformations, and execution convention. Most of those choices disappear from the final backtest, although they still determine how surprising its return should be. Repeated use of the same price history for discovery and evaluation can consequently produce an attractive result even when the candidate mechanisms have no predictive content \citep{white2000,sullivan1999}. Costs create a related selection problem. High-turnover rules can rank well on gross returns and fall sharply once their trading intensity is priced, changing both the size of the result and the identity of the leading strategy \citep{bajgrowicz2012}.
+
+Gold provides a particularly demanding setting for this problem. It trades as a commodity and a monetary asset, is quoted internationally against the US dollar, and is frequently studied as a hedge or safe haven \citep{baur2010hedge,baur2010safe}. Those roles vary with the market, horizon, and prevailing state \citep{gurdgiev2024,ryan2024,faraj2025,xu2026}. Exchange rates, interest rates, inflation, risk sentiment, policy uncertainty, and other commodity prices may all supply a plausible basis for a gold-trading hypothesis. The same economic breadth that motivates investigation also enlarges the researcher's choice set. Price-only rules, macroeconomic-event responses, cross-asset thresholds, long-horizon trend positions, and gold--silver spreads can each be defended before they are tested. Reporting only the most attractive member of such a program understates that multiplicity.
+
+The technical-trading literature records both promising findings and repeated losses of performance under stricter evaluation. Early tests found non-random patterns for familiar moving-average and range rules \citep{brock1992}. Subsequent work brought data snooping, costs, persistence, and out-of-sample performance into the assessment \citep{hsu2010,bajgrowicz2012}. Results continue to differ across currencies, equities, and spread strategies, as well as across subperiods and cost assumptions \citep{dockery2023,psaradellis2023,rink2023,song2025}. Precious-metals evidence is similarly qualified. \citet{batten2018} find no predictive power for standard intraday technical parameters but report significance for some wider gold parameterizations. Using Chinese gold futures, \citet{jin2022} finds little evidence of persistently attractive out-of-sample performance after allowing for data snooping, trading costs, market conditions, and rebalancing frequency. Against this background, a positive backtest is best viewed as the start of an inquiry into selection, implementation, stability, and measurement rather than as evidence of an edge by itself.
+
+We examine this sequence using a heterogeneous XAUUSD research program whose earlier stages had already produced and inspected many historical results. The study is therefore a retrospective systematic audit, followed by a consolidated rerun whose contents and evaluation rules were fixed before that run began. The registry records 47 specifications together with their source and configuration bindings. Of these, 39 specifications in 20 economic families were recomputed for primary analysis. Eight machine-learning combinations had been historically selected and exposed to later diagnostic results; they remain in the record as forensic cases but do not enter primary inference. The consolidated runner had no access to historical strategy-result files and stopped each reference sample at the end of 2024.
+
+Our analysis follows apparent profitability through four cost and evidential layers. We first compare gross returns with source-native normal and severe costs and with a common fixed-stress schedule. We then assess each family under its pre-existing acceptance criteria and a within-family max-$t$ correction. Temporal stability and cross-feed replication are examined for the specifications to which those diagnostics apply. Finally, we trace the rejection of the most promising rules to specific sources: cost exposure, weak familywise evidence, small samples, temporal concentration, benchmark underperformance, or dependence on the price feed.
+
+The pattern is clear for the registered universe. Positive means fell from 24 specifications before costs to 9 under normal costs, 5 under severe costs, and 1 under fixed stress. Every specification failed at least one source-native gate. The lowest within-family max-$t$ adjusted $p$-value was 0.446, which places the familywise evidence well outside conventional significance levels even without the commercial hurdles. Cross-feed evaluation covered 20 specifications and rejected 7; two of the positive primary-feed effects changed sign. Deflated-Sharpe probabilities also remained below their required level. Removing the pre-declared week affected by a timestamp-alignment warning changed neither an effect sign nor a native decision.
+
+The paper contributes an empirical account of how evidence changes when a broad candidate set is retained through economic, statistical, temporal, and measurement checks. Failed rules remain visible rather than disappearing after selection. This design links the technical-trading debate to broader concerns about multiple testing, replication, and the publication-conditioned evidence base in finance \citep{harvey2016,mclean2016,hou2020}. It also separates two estimands that are often brought together too quickly in gold research: forecast accuracy for prices, risk premia, or volatility and repeatable net returns from a fully specified trading decision \citep{cohen2023,diaz2023,you2025}. In this setting, credibility comes from agreement among economic magnitude, search-aware inference, behavior through time, and reproduction on another price feed. The findings concern the registered strategies and do not support a general claim about the predictability of gold.
+
+Section~\ref{sec:literature} relates the study to work on technical trading, gold, and backtest validity. Section~\ref{sec:design} sets out the data, research software, cost conventions, and statistical design. Results appear in Section~\ref{sec:results}, followed by interpretation and limitations in Sections~\ref{sec:discussion} and \ref{sec:limitations}. Section~\ref{sec:conclusion} concludes.
+
+\section{Related literature and research gap}\label{sec:literature}
+
+\subsection{Technical trading and the changing burden of proof}
+
+Technical rules turn past prices, returns, volume, or related market information into trading decisions. Empirical work began with relatively small collections of familiar rules. For example, \citet{brock1992} found that moving-average and trading-range signals contained information that several standard return-generating models did not readily explain. As researchers considered more assets and many more rules, the search itself became part of the inferential problem. A conventional $t$-test applied only to the selected winner understates the relevant false-positive risk \citep{park2007}.
+
+Foreign-exchange evidence is relevant to XAUUSD because it is a dollar-denominated instrument traded across a near-continuous international market. Technical analysis remains common among practitioners despite mixed academic findings \citep{menkhoff2007}. \citet{dockery2023} report predictive content for selected moving-average, filter, breakout, and Bollinger-band rules across 14 currency pairs and several market conditions. \citet{song2025} examine a much wider collection of 41,660 rules in a Chinese-yuan-based currency universe. Such findings argue against dismissing technical information in general. Practitioner use, however, may reflect risk management, coordination, heterogeneous objectives, or beliefs as well as expected profit, so prevalence in the market cannot settle the empirical question.
+
+Search-aware tests often produce a more guarded assessment. The bootstrap reality check of \citet{sullivan1999} evaluates the best rule relative to the universe from which it emerged, and \citet{white2000} formalizes the consequences of repeatedly using one historical series. Later procedures include the superior predictive ability test of \citet{hansen2005} and the stepwise method for technical-rule comparisons proposed by \citet{hsu2010}. International equity evidence under false-discovery control also shows why profitability and persistence belong in the same evaluation \citep{sermpinis2021}. In more recent applications, \citet{psaradellis2023} study 18,410 spread-trading rules with false-discovery control and out-of-sample tests, while \citet{rink2023} documents declining technical predictability, sensitivity to moderate costs, and weak out-of-sample persistence across developed and emerging equity markets. Collectively, this work implies that the leading rule should be judged against both the alternatives available to the researcher and the conditions faced by an investor.
+
+We organize the 39 primary specifications into 20 economic families. Related parameterizations within a family share a daily profit-and-loss calendar and enter a studentized max-$t$ test. This treatment acknowledges local search without treating monthly trend positions, event-conditioned trades, intraday signals, and two-leg spreads as interchangeable observations. Multiplicity is therefore controlled within the economic family. The adjusted probabilities are large for every family, so an additional across-family adjustment would leave all decisions unchanged.
+
+\subsection{Gold forecasting and the prediction-to-trading gap}
+
+Machine learning has widened the set of questions asked in recent gold research. \citet{cohen2023} compare tree-based models for gold-price prediction using financial and macroeconomic variables, \citet{diaz2023} estimate the gold risk premium, and \citet{you2025} combine uncertainty measures with a CNN--LSTM model for price forecasting. Other studies target conditional variance: internet-search activity has been used to forecast precious-metals volatility \citep{li2024}, while \citet{simran2025} incorporate domestic and global policy uncertainty into a GARCH--MIDAS model of Indian gold-futures volatility.
+
+Forecast accuracy, risk-premium estimation, volatility prediction, and realized strategy returns are nevertheless distinct outcomes. A lower forecasting loss may still produce signals that are too small, late, unstable, or costly to trade. An economically useful rule, conversely, need not be the best point forecaster. The difficulty of converting in-sample prediction into stable out-of-sample gains has long been documented \citep{welch2008}. For that reason, the eight machine-learning combinations in our registry are retained only as forensic records after their historical selection. Primary inference addresses the more demanding outcome: reproducible net performance from a fixed decision rule under its full evaluation contract.
+
+\subsection{Costs, persistence, and negative evidence}
+
+Costs interact with signal frequency, turnover, changes in exposure, and market microstructure. \citet{bajgrowicz2012} show that the apparent success of technical rules can disappear when false discoveries, persistence, and costs are considered together; the broad cross-market evidence in \citet{rink2023} reaches a similar conclusion about the importance of moderate costs. One universal deduction would be ill suited to the present registry. An intraday round trip, a monthly volatility-scaled rebalance, and a two-leg gold--silver trade create different exposures and turnover. We retain the severe-cost convention originally defined for each source block and use a common fixed-stress schedule only for descriptive comparison.
+
+Persistence poses a separate problem. A small number of regimes, one extreme winner, or a favorable terminal segment can support an unconditional mean. The source-native gates differ by strategy class, having been designed for the original analyses, but they share several requirements: a positive severe-cost effect and bootstrap lower bound, resistance to removal of the largest winner, acceptable chronological-fold behavior, limited concentration, and adequate economic performance. The long-horizon trend rule must also outperform a passive volatility-scaled gold benchmark. Since these gates mix scientific and commercial criteria, familywise inference is reported separately from the promotion decision.
+
+Selection also occurs after a backtest has been run. Publication depends on decisions to continue, write, and submit, leaving failed candidates largely unseen. Post-publication attenuation in reported effects \citep{mclean2016} and difficulties reproducing broad anomaly libraries \citep{hou2020} illustrate the resulting evidential gap. A record containing only survivors says little about the number or character of the discarded attempts. Our archive therefore retains failed specifications, unsupported families, non-applicable diagnostics, aborted pre-outcome runs, and amendments to the data contract in machine-readable form.
+
+\subsection{Gold, commodities, and cross-asset hypotheses}
+
+Gold's hedge and safe-haven properties vary rather than remaining constant \citep{baur2010hedge,baur2010safe}. A recent bibliometric review shows that the investment literature now spans hedging, diversification, price formation, and crisis behavior \citep{pattnaik2023}. International studies give this variation a more specific form: results differ between developed and developing markets \citep{gurdgiev2024}, between macroeconomic-news-driven and other declines \citep{ryan2024}, across volatility states \citep{faraj2025}, and across inflation-hedging horizons \citep{xu2026}. Evidence for gold and the Swiss franc in European settings also questions uniform protection across developed and emerging equity markets \citep{papathanasiou2026}.
+
+Contract structure further complicates the transfer of findings to XAUUSD. Commodity returns contain components that differ from those of spot or broker-quoted contracts \citep{erb2006}. Time-series momentum in diversified futures \citep{moskowitz2012,szakmary2010,hurst2017}, for instance, includes contract and roll mechanics absent from a spot-style broker quote. A gold--silver spread can likewise have an intuitive economic basis while failing because its hedge relation changes or because costs absorb the reversion. Cross-asset narratives help define testable mechanisms, but profitable execution still depends on timing and margin after costs.
+
+Precious-metals studies already demonstrate the need to account for the breadth of a rule search. \citet{batten2018} show that conclusions for intraday moving-average rules in gold and silver depend on the parameter universe, and \citet{jin2022} finds that attractive performance in five-minute Chinese gold futures does not persist through a comprehensive set of corrections. Our audit differs in scope. It brings price-only technical rules, event responses, cross-asset signals, a canonical long-horizon trend rule, and a precious-metals relative-value strategy into one recorded evaluation. The novelty lies in their joint treatment and in retaining the negative record, rather than in any one diagnostic.
+
+\subsection{Backtest overfitting and diagnostic metrics}
+
+Sampling error, non-normality, serial dependence, and selection all affect the Sharpe ratio \citep{lo2002}. We use the deflated Sharpe ratio, which adjusts for multiple trials and higher moments, as a secondary diagnostic on a common daily calendar \citep{bailey2014}. The probability of backtest overfitting (PBO) instead relies on combinatorially symmetric cross-validation \citep{bailey2017}. Its required performance matrix cannot be formed coherently from this registry: the strategies use different calendars, holding periods, objectives, and patterns of inactive days. We therefore record PBO as ``not estimable'' rather than impose an unregistered transformation to obtain a scalar. The choice follows the principle that a backtesting protocol should define when a statistic is meaningful as well as how it is computed \citep{arnott2019}.
+
+Recent studies have expanded both rule universes and forecasting models, but forecast accuracy, technical-rule profitability, implementation costs, multiplicity, and feed replication are still often assessed in separate designs. Evidence is particularly scarce for heterogeneous programs that have already explored the historical sample, because such programs are difficult to describe without overstating their prospective status. We address that setting directly. Primary specifications are separated from historically contaminated forensic cases, source-native economics are preserved, local search is controlled within families, feed dependence is tested where possible, and the full negative result set remains part of the record.
+
+\section{Research design, data, and implementation}\label{sec:design}
+
+\subsection{Chronology and evidential status}\label{subsec:chronology}
+
+The chronology matters because the research program and the article evaluation have different evidential status. Candidate families and software were developed iteratively, with historical XAUUSD outcomes visible during that work. Before the consolidated article run, however, the specification registry, source and configuration bindings, input files, cost rules, reference boundaries, random seeds, acceptance criteria, and output policy were fixed. Historical strategy-result files were excluded from the runner's inputs, and all reference samples ended in 2024.
+
+Fixing the consolidated run removed opportunities for silent revision during the comparison and left a reproducible account of the final tests. Earlier exposure to the historical record still matters. For this reason, the paper is organized around research questions rather than confirmatory hypotheses, and the adjusted probabilities are interpreted within the registered universe. They should not be read as evidence from a pristine prospective experiment.
+
+The registry contains 47 rows. Thirty-nine constitute the primary evaluation set. The remaining eight are supervised machine-learning model--target combinations retained as historical forensic cases because their selection history included later diagnostics. Keeping these rows preserves the research trail, while excluding their outcomes from the primary counts, tests, figures, and conclusions.
+
+Two implementation repairs preceded the successful computation. A digest mismatch first arose in the redacted copy of the canonical trend script. Independent manifests traced it to malformed redaction placeholders in authorization and reporting statements, with the signal and performance calculations unchanged; the registry was then reissued as version 1.1. A subsequent attempt stopped while loading the second feed because the runner requested the Dukascopy table from the AMarkets database. The failure occurred before any specification outcome was calculated. Version 1.1 corrected the table routing and added explicit schema checks for each bound database. Strategy definitions, costs, statistical procedures, and seeds remained unchanged, and both deviations are preserved with the replication materials.
+
+The successful manifest was frozen at 06:03:35 UTC on 2 September 2026, and the run finished at 06:07:47 UTC. A new execution requires a versioned deviation rather than an unrecorded rerun. File-level digests for the manifest, summary, inputs, and executable sources are retained in the replication archive, where they can be checked without interrupting the narrative with long identifiers.
+
+\subsection{Research software and reproducibility architecture}\label{subsec:software}
+
+The research software was assembled as a set of source-specific strategy engines under a common evaluation layer. Five engines implement the price-only successor scan, cross-asset rules, event-response rules, time-series momentum, and precious-metals relative value. The consolidated runner imports these engines through explicit adapters rather than reimplementing their signals. This arrangement preserves the original rule and cost semantics while producing a common record for comparison.
+
+A registry builder reconstructs the specification set from the bound scripts and configurations and writes byte-stable JSON and CSV representations. The preflight then checks the registry counts, source and configuration bindings, required input files, database integrity, table names, and OHLC schemas. It also compiles each strategy module and verifies that the designated run directory does not already exist. Evaluation begins only after every preflight condition has passed.
+
+The execution layer converts source-specific outputs into a normalized trade or rebalance schema. Each row carries the specification and family identifiers, source block, entry and exit times, and returns under gross, normal, severe, and fixed-stress costs. Source-native diagnostics and gate decisions are retained alongside this common representation. The runner subsequently constructs family calendars, performs synchronized block-bootstrap inference, evaluates the alignment-warning exclusion, compares eligible rules across feeds, and computes the deflated Sharpe diagnostic.
+
+Provenance controls surround the computation. Immediately before outcomes are generated, the runner records the protocol, registry, executable sources, input bindings, dependency versions, and authorization state in a non-overwritable run directory. Structured CSV and JSON outputs are written for every primary specification and family, including failed and non-applicable tests. A separate audit program reads those retained outputs, recomputes the headline statistics and inferential results, and verifies the archive manifest. Table~\ref{tab:software_architecture} summarizes the division of responsibilities.
+
+\begin{table}[t]
+\centering
+\caption{Research software components and their principal controls.}\label{tab:software_architecture}
+\small
+\begin{tabular}{p{3.0cm}p{5.0cm}p{5.0cm}}
+\toprule
+Component & Function & Principal control \\
+\midrule
+Strategy engines & Construct signals and source-native outcomes for five strategy blocks & Original configurations, cost semantics, and temporal boundaries retained \\
+Registry and preflight & Rebuild the specification universe and validate executable inputs & Byte-stable registry, file bindings, database checks, and schema validation \\
+Unified runner & Normalize outcomes and apply common diagnostics & Non-overwritable execution, fixed seeds, and exclusion of historical result files \\
+Inference layer & Estimate family max-$t$, alignment, feed, and DSR results & Synchronized resampling and machine-readable decisions \\
+Audit and publication layer & Recompute reported quantities and generate tables and figures & Independent output-level checks and deterministic figure generation \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+OpenAI ChatGPT was used for portions of code drafting and review during development. The author specified the architecture and acceptance logic, executed and tested the software, inspected the outputs, and made all scientific decisions. Model identifiers and access dates are retained in the project records. The same preflight, validation, and independent-audit controls applied to code regardless of how an initial draft was produced.
+
+\subsection{Market data and point-in-time contract}\label{subsec:data}
+
+Two independently stored XAUUSD histories form the intraday core. Five-minute AMarkets broker bars are normalized to hourly observations for the primary feed, while Dukascopy provides the secondary history. The intraday contract runs from 2 January 2015 at 07:00 UTC to the start of 2025. Cross-asset and event-response families start in 2016 because their causal feature and event panels begin later. The gold--silver rule uses a 2012 start and a 252-session formation window. Time-series momentum requires a 12-month signal history and at least 120 daily returns for volatility estimation. Effective samples therefore differ even where strategies share an end date.
+
+The remaining inputs are a causal intraday cross-asset feature panel, its XAUUSD targets, official macroeconomic-event timestamps, a long-history AMarkets H1 export, and synchronized XAUUSD and XAGUSD H1 exports. Their file bindings are recorded in the run manifest. Each source keeps a specific role. AMarkets represents the primary broker-proxy execution feed; Dukascopy supports the independent-feed test for eligible price-only rules; and the panel and synchronized exports supply cross-asset or two-leg signals. We do not pool these provider files into a synthetic price series.
+
+AMarkets server time is converted to UTC using a fixed European daylight-saving rule: two hours are subtracted in standard time and three during European DST. Preflight checks found neither duplicate timestamps nor invalid OHLC rows. Among 697,424 five-minute observations, feed overlap reached 99.963\%, the median absolute close difference was 0.312 bps, and the 60-minute return correlation was 0.9967. The corresponding figures for 58,290 hourly observations were 99.913\% overlap and a one-bar return correlation of 0.9938.
+
+The week from 7 to 14 October 2019 fell below a newly proposed annual correlation threshold of 0.98, although it remained above the pre-existing hard floor of 0.90. The first preflight consequently stopped. Before any strategy outcome was computed, we reclassified the new threshold as a warning because it had not belonged to the earlier timestamp contract. Prices and timestamps were left unchanged. Instead, every applicable result was recalculated after excluding trades that overlapped the week. We report the amendment because a data-quality rule changed after its diagnostic had been observed, even though strategy returns were still unseen. Section~\ref{subsec:alignment_results} gives the sensitivity results.
+
+\begin{table}[t]
+\centering
+\caption{Locked primary strategy universe. The machine-learning block contains eight forensic-only registry rows and is excluded from all primary counts.}\label{tab:universe}
+\begin{threeparttable}
+\small
+\begin{tabular}{p{2.65cm}p{3.15cm}rrp{3.1cm}}
+\toprule
+Source block & Economic content & Specs. & Families & Reference window \\
+\midrule
+Successor scan & Price-only technical rules & 19 & 10 & 2015-01-02 to 2024-12-31 \\
+Cross-asset fixed & Dollar, metals, rates, risk, and energy thresholds & 12 & 6 & 2016-01-01 to 2024-12-31 \\
+Event response & Official-event-conditioned cross-asset reactions & 6 & 2 & 2016-01-01 to 2024-12-31 \\
+Canonical TSMOM & 12-month sign, monthly volatility-scaled position & 1 & 1 & Eligible months ending before 2025 \\
+Precious-metals RV & Dynamic gold-silver log-spread mean reversion & 1 & 1 & 2012-01-01 to 2024-12-31 \\
+\midrule
+Primary total & & 39 & 20 & Source-specific \\
+Forensic ML & Logistic and histogram-gradient-boosting meta-models & 8 & 1$^{a}$ & Excluded \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item[$^{a}$] The forensic family is not among the 20 evaluated primary families.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsection{Strategy taxonomy}\label{subsec:taxonomy}
+
+Table~\ref{tab:universe} summarizes the five primary source blocks. The successor scan covers trend continuation and pullback, range and session breakouts, volatility expansion, post-event momentum and breakout, failed-breakout reversion, low-volatility range reversion, and $z$-score reversion. Parameter values and trade directions come from the registry rather than choices made during the article run. Trades do not overlap within a candidate, and both entry and exit must fall inside the reference contract.
+
+The cross-asset fixed block contains 12 rules in six two-specification families: US-dollar/precious-metals consensus, precious-metals relative value, rates/dollar alignment, risk/rates divergence, energy/inflation impulse, and DXY/precious-metals shock. Decisions are restricted to 06:00--19:00 UTC on weekdays, official-event blackout periods are excluded, and horizons are exactly 4 or 12 hours. Inputs are standardized using past data from a rolling 1,440-row window with 480 minimum observations.
+
+The event-response block tests six rules in two families. An observation is eligible only when an official event occurred 15--120 minutes before the decision. Signals combine standardized 15-minute impulses in the dollar, silver, and gold and hold for 4 or 12 hours. This construction prevents a daily event flag from being interpreted as a precisely timed intraday event.
+
+The canonical time-series momentum specification follows the economic form of \citet{moskowitz2012}: the sign of the trailing 12 completed monthly returns determines direction, the position is rebalanced monthly, and ex ante volatility is estimated from past daily returns using an exponentially weighted variance with a 60-day center of mass. For this broker proxy, annualized target volatility is fixed at 20\% and absolute exposure is capped at 2.0. The rule is not a COMEX futures replication because the XAUUSD quote does not include futures roll mechanics. Its primary benchmark is always-long gold with the same volatility estimator, cap, and turnover costs.
+
+The precious-metals relative-value specification is a single, non-scanned rule. A rolling regression of $\log(\mathrm{XAU})$ on $\log(\mathrm{XAG})$ is estimated from the preceding 252 completed daily closes. The standardized residual triggers entry at absolute $z=2$ at the next synchronized daily open. Exit occurs at a mean crossing, an adverse $4\sigma$ stop, or 60 trading days, again at the next open. Weights are gross-normalized using the locked hedge ratio. Cointegration statistics are diagnostic rather than an ex post entry gate.
+
+\subsection{Return normalization and cost layers}\label{subsec:costs}
+
+Each retained row represents one specification-level trade or rebalance outcome. For a directional trade $i$ with side $s_i\in\{-1,1\}$, entry price $P_i^{\mathrm{in}}$, and exit price $P_i^{\mathrm{out}}$, the gross basis-point return is represented generically as
+\begin{equation}
+ r^{g}_{i}=10{,}000\,s_i\left(\frac{P_i^{\mathrm{out}}}{P_i^{\mathrm{in}}}-1\right),
+\end{equation}
+with source-specific extensions for volatility-scaled turnover and two-leg weights. Net return under cost layer $c$ is
+\begin{equation}
+ r^{(c)}_{i}=r^{g}_{i}-C^{(c)}_{i}.
+\end{equation}
+The common schema supplies a consistent record, although horizons, risks, and economic interpretations still differ across blocks. Cross-block comparisons in basis points are descriptive.
+
+The source-native costs are shown in Table~\ref{tab:costs}. Successor rules subtract 3.0 bps under normal costs and 4.5 bps under severe costs per round trip. Cross-asset fixed and event rules use 3.0 and 6.0 bps. Time-series momentum applies 3.0 or 6.0 bps per unit of position turnover, so a sign reversal is charged on the full change in exposure. The two-leg relative-value rule uses 8.0 and 16.0 bps per gross-normalized round trip. The common fixed-stress layer uses 10 bps for each one-leg intraday round trip, 10 bps per unit of trend turnover, and 20 bps for the two-leg trade. Gross, normal, severe, and fixed-stress means are all retained, but the source-native severe layer is primary.
+
+\begin{table}[t]
+\centering
+\caption{Transaction-cost conventions in basis points.}\label{tab:costs}
+\small
+\begin{tabular}{lrrrp{4.1cm}}
+\toprule
+Source block & Gross & Normal & Severe & Fixed-stress semantic \\
+\midrule
+Successor scan & 0 & 3.0 & 4.5 & 10 per round trip \\
+Cross-asset fixed & 0 & 3.0 & 6.0 & 10 per round trip \\
+Event response & 0 & 3.0 & 6.0 & 10 per round trip \\
+Canonical TSMOM & 0 & 3.0 & 6.0 & 10 per 1.0 position turnover \\
+Precious-metals RV & 0 & 8.0 & 16.0 & 20 per two-leg round trip \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Source-native acceptance gates}\label{subsec:native_gates}
+
+The native gates retain the decision standards developed for each strategy class rather than replacing them with one generic Sharpe threshold. Successor rules require at least 40 trades, a positive severe-cost mean, a profit factor of at least 1.15, a positive 10th-percentile block-bootstrap mean, a positive mean after the largest winner is removed, at least 60\% positive chronological folds, and at least 2\% locked-risk compound annual growth. Cross-asset rules raise the minimum to 80 trades and the profit factor to 1.20. They also require positive matched time-of-year/hour excess, stability across folds and years, and 2\% locked-risk growth. Event rules use similar criteria with a 40-trade minimum, a 50\% ceiling on annual concentration, and a 1\% growth requirement.
+
+The monthly trend rule requires at least 120 months; severe-cost annualized return above 2\%; Sharpe above 0.20; positive bootstrap lower bound; positive annualized return after deleting the best month; at least two of three positive folds; worst-fold annualized return above -10\%; at least 55\% positive years; positive-year concentration no greater than 50\%; maximum drawdown no greater than 50\%; and positive mean and bootstrap-lower-bound excess over passive volatility-scaled gold. The relative-value rule requires at least 25 trades, profit factor of 1.20, 2\% annualized return, maximum drawdown no greater than 25\%, fold and year stability, limited trade concentration, performance better than the inverted rule, and a random-side percentile of at least 0.90. Full definitions are in the supplement.
+
+These criteria combine statistical robustness with commercial materiality, so missing a 2\% growth hurdle alone says little about predictability. The family max-$t$ test therefore supplies a separate necessary condition. Support requires at least one specification to pass its native gates, a family-adjusted $p$-value no greater than 0.05, stable conclusions under the timestamp-warning exclusion, successful cross-feed replication where applicable, and intact provenance and point-in-time controls. Families missing any part of this conjunction receive \texttt{NO\_EDGE\_UNDER\_LOCKED\_PROTOCOL}; a broken data contract produces an untestable decision instead.
+
+\subsection{Within-family max-$t$ inference}\label{subsec:maxt}
+
+For each specification, severe-cost returns are assigned to the UTC exit date and summed within day; days without a return receive zero. This produces a common daily vector over the applicable family calendar. Let $\bar r_j$ and $\widehat{\mathrm{se}}(\bar r_j)$ denote the mean and full-sample standard error for specification $j$ in family $f$. The observed studentized statistic is
+\begin{equation}
+ t_j=\frac{\bar r_j}{\widehat{\mathrm{se}}(\bar r_j)},\qquad
+ T_f=\max_{j\in f}t_j.
+\end{equation}
+Zero-variance series map to a zero statistic.
+
+The null distribution is obtained by centering each daily return series and applying a synchronized circular moving-block bootstrap. Blocks contain 20 calendar days, 5,000 replications are used, and the fixed seed is 2026090201. Within each replication $b$, the family maximum $T_f^{*(b)}$ is recomputed. The adjusted probability for the observed family maximum is
+\begin{equation}
+ \widehat p_f=\frac{1+\sum_{b=1}^{B}\mathbf{1}\{T_f^{*(b)}\ge T_f\}}{B+1}.
+\end{equation}
+Synchronized resampling preserves dependence across specifications, while the blocks accommodate local serial dependence \citep{politis1994,romano2005}. The resulting correction applies to selection among related specifications within a family. Heterogeneous rules from different families are not treated as alternatives in one global model.
+
+\subsection{Cross-feed replication and timestamp sensitivity}\label{subsec:replication_methods}
+
+Cross-feed replication covers the 19 successor rules and the canonical trend rule. Signals and outcomes are reconstructed from Dukascopy over the common contract. Passing requires at least 30 matched outcomes, a signal-set Jaccard similarity of 0.60, a matched gross-return correlation of 0.90, and agreement in the sign of the severe-cost mean. Too few matches count as a failure. The second XAU history cannot independently reconstruct the panels or synchronized exports required by the cross-asset, event-response, and two-leg relative-value rules; these cases are recorded as non-applicable and do not contribute passes.
+
+For the timestamp warning, any trade entering before the end of the warned week and exiting after its start is removed. Applicable specifications, native pass status, and family max-$t$ decisions are recomputed. A family is fragile if any effect sign, multiplicity rejection, or support label changes.
+
+\subsection{Deflated Sharpe ratio, PBO, and audit boundary}\label{subsec:diagnostics}
+
+The deflated Sharpe ratio (DSR) is computed for all 39 primary specifications on a common daily calendar from 2016-01-01 through 2024-12-31. The expected maximum daily Sharpe under 39 eligible trials is 0.0477359. The diagnostic accounts for sample size, skewness, kurtosis, and selection; a probability of at least 0.95 is required for a pass \citep{bailey2014}. DSR is secondary because daily zero-filling and a common start answer a different question from each source's native horizon and reference span.
+
+We classify PBO as not estimable. Combinatorially symmetric cross-validation requires a comparable performance matrix over common partitions \citep{bailey2017}, whereas the registry combines 4-hour and 12-hour trades, event-only observations, monthly rebalances, and two-leg positions with different objectives. Creating a common matrix would introduce unregistered transformations and give a misleading appearance of precision.
+
+The independent audit starts from the retained normalized outcomes. It checks archive safety, manifest completeness, file digests, registry identities, reference boundaries, finite returns, and specification-level arithmetic. The audit then recomputes the 20 max-$t$ results with the registered algorithm and all 39 DSR probabilities. Its scope is output-level statistical reproduction; regenerating every signal and trade from the provider databases remains outside that boundary.
+
+\section{Results}\label{sec:results}
+
+\subsection{Profitability attrition across costs}\label{subsec:attrition}
+
+The 39 primary specifications generated 28,685 normalized trade or rebalance rows. Strategies overlap in time, respond to some of the same price movements, and sometimes differ only by related parameterizations. The row count is therefore a record of specification-level outcomes, not a sample of 28,685 independent market experiments.
+
+Figure~\ref{fig:attrition} shows the effect of successive cost assumptions. Average gross returns were positive for 24 of the 39 specifications. That number fell to 9 under normal costs, 5 under severe costs, and 1 under fixed stress. Normal costs removed 15 of the 24 positive gross means (62.5\%); severe costs removed 19 (79.2\%). Much of the apparent opportunity was therefore small relative to the implementation margin built into the original strategy designs.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.86\linewidth]{figure1_cost_attrition.pdf}
+\caption{Attrition of positive mean returns across cost assumptions. Bars count specifications, not independent experiments. Source-native normal and severe costs differ by strategy block; fixed stress is the common conservative comparison defined in Table~\ref{tab:costs}.}\label{fig:attrition}
+\end{figure}
+
+Table~\ref{tab:block_results} reveals substantial differences across source blocks. The successor scan accounts for 21,110 rows and only two positive severe-cost means. Eleven of the 12 cross-asset rules were positive before costs, while severe costs removed all of them. Two event-response rules remained positive, based on only 12 and 21 trades. Time-series momentum kept a positive arithmetic mean under every cost description, and the relative-value rule was already negative before severe costs. Each source block ultimately failed to produce a native pass.
+
+\begin{table}[t]
+\centering
+\caption{Primary results by source block. Mean basis-point comparisons across blocks are descriptive because horizons and exposure conventions differ.}\label{tab:block_results}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Block & Specs. & Rows & Gross $>$0 & Normal $>$0 & Severe $>$0 & Fixed $>$0 & Native pass & Median severe & Best severe \\
+\midrule
+Successor scan & 19 & 21,110 & 8 & 2 & 2 & 0 & 0 & -4.577 & 2.646 \\
+Cross-asset fixed & 12 & 6,584 & 11 & 3 & 0 & 0 & 0 & -4.144 & -2.041 \\
+Event response & 6 & 810 & 4 & 3 & 2 & 0 & 0 & -3.734 & 2.007 \\
+Canonical TSMOM & 1 & 154 & 1 & 1 & 1 & 1 & 0 & 7.412 & 7.412 \\
+Precious-metals RV & 1 & 27 & 0 & 0 & 0 & 0 & 0 & -18.403 & -18.403 \\
+\midrule
+Total & 39 & 28,685 & 24 & 9 & 5 & 1 & 0 & & \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\subsection{Native gates and familywise evidence}\label{subsec:family_results}
+
+All 39 primary specifications failed at least one source-native acceptance criterion, leaving every family short of the joint support rule. The multiplicity-adjusted results are also weak independently of the commercial criteria. Time-series momentum produced the smallest family-adjusted $p$-value, 0.446, followed by range breakout at 0.479 and volatility expansion at 0.565. The resulting decision for each of the 20 families is \texttt{NO\_EDGE\_UNDER\_LOCKED\_PROTOCOL}.
+
+Figure~\ref{fig:severe_p} plots each severe-cost mean against its max-$t$ adjusted probability. Five means lie above zero, yet their adjusted probabilities remain far from 0.05. A positive realized mean can thus coexist with weak evidence after within-family search and return dependence are recognized. The statistical results also show that the native rejections cannot be explained simply by demanding commercial growth thresholds.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.88\linewidth]{figure2_severe_mean_vs_family_p.pdf}
+\caption{Source-native severe-cost mean and within-family max-$t$ adjusted $p$-value for all 39 primary specifications. Labels identify the five specifications with positive severe-cost means.}\label{fig:severe_p}
+\end{figure}
+
+\subsection{Forensic analysis of the five positive severe-cost means}\label{subsec:positive_five}
+
+Table~\ref{tab:positive_five} examines the five specifications that remained positive under severe costs. A1R-046, the canonical monthly time-series momentum rule, has the largest mean. Across 154 monthly observations, its gross, normal-cost, and severe-cost means were 11.644, 9.528, and 7.412 bps, with a severe-cost profit factor of 1.030. The investment path was much less favorable: compounded annual return was -1.53\%, the Sharpe ratio was 0.040, and maximum drawdown reached 64.3\%. Relative to passive volatility-scaled gold, mean monthly paired excess was -49.77 bps. Removing the best month lowered annual return to -2.85\%; 5 of 13 calendar years and 1 of 3 chronological folds were positive. Dispersion and compounding can produce this combination of a positive arithmetic mean and a negative investment return. The adjusted $p$-value was 0.446.
+
+A1R-007 is a 48-hour range-breakout rule with 455 trades. Its severe-cost mean was 2.646 bps after a 4.5-bps deduction, but the profit factor reached only 1.058 and the 10th-percentile block-bootstrap mean was -4.457 bps. Locked-risk CAGR was 0.18\%, below the 2\% gate, and fixed stress reduced the mean to -2.854 bps. Reconstructing the rule on the secondary feed produced a severe-cost mean of -0.503 bps. The strongest intraday price-only result was consequently sensitive to both a modest increase in costs and the price source.
+
+The two positive event-response results, A1R-036 and A1R-037, are 4-hour short and long rules in the gold-lag family. They produced severe-cost means of 2.007 and 1.542 bps from only 12 and 21 trades. Both samples fall below the 40-trade minimum, have negative bootstrap lower bounds, and turn negative after their largest winner is removed. For the long rule, one year supplies 81.5\% of positive-year profit. These averages contain too little independent information to support a stable event premium.
+
+For A1R-009, the volatility-expansion rule, 649 trades produced a severe-cost mean of 1.313 bps. Its profit factor was 1.029, the bootstrap lower bound was -4.789 bps, and only 40\% of chronological folds were positive. Fixed stress lowered the mean to -4.187 bps, while the secondary-feed estimate was -0.406 bps. Cost, resampling, temporal, and feed results all point in the same unfavorable direction.
+
+\begin{table}[t]
+\centering
+\caption{The five specifications with positive severe-cost means. Returns are mean basis points per native trade or rebalance.}\label{tab:positive_five}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{llrrrrrrlp{4.4cm}}
+\toprule
+ID & Family & $N$ & Gross & Severe & Fixed & PF & Adj. $p$ & Cross-feed & Principal failure evidence \\
+\midrule
+A1R-046 & TSMOM & 154 & 11.644 & 7.412 & 4.591 & 1.030 & 0.446 & Pass & Negative compound return; weak Sharpe; drawdown; passive benchmark \\
+A1R-007 & Range breakout & 455 & 7.146 & 2.646 & -2.854 & 1.058 & 0.479 & Fail & Negative bootstrap bound; low CAGR; secondary-feed sign reversal \\
+A1R-036 & Event gold lag, short & 12 & 8.007 & 2.007 & -1.993 & 1.103 & 0.652 & N/A & Minimum sample; remove-best-winner and bootstrap failures \\
+A1R-037 & Event gold lag, long & 21 & 7.542 & 1.542 & -2.458 & 1.105 & 0.643 & N/A & Minimum sample; instability and year concentration \\
+A1R-009 & Volatility expansion & 649 & 5.813 & 1.313 & -4.187 & 1.029 & 0.565 & Fail & Weak PF; negative bootstrap bound; secondary-feed sign reversal \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\subsection{Cross-feed replication}\label{subsec:crossfeed_results}
+
+Independent-feed evaluation was possible for 20 specifications. Thirteen passed all four checks. Among the seven failures, five had a signal-set Jaccard similarity below 0.60 despite high return correlations on matched trades; A1R-007 and A1R-009 accounted for the two sign reversals. Figure~\ref{fig:crossfeed} compares the severe-cost means from the two feeds.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.77\linewidth]{figure3_cross_feed_replication.pdf}
+\caption{Primary- and secondary-feed severe-cost means for the 20 eligible specifications. A gate can fail because of insufficient signal-set overlap even when mean returns lie near the 45-degree line. A1R-007 and A1R-009 fail because the effect direction reverses.}\label{fig:crossfeed}
+\end{figure}
+
+Matched trades generally record similar price changes on the two feeds, as shown by their high return correlations. Signal overlap tells a different story. Small differences in a bar's high, low, or close can decide whether a threshold is crossed and can change the later sequence of non-overlapping trades. Agreement on outcomes conditional on a common signal therefore cannot substitute for reproducing the signal set itself.
+
+The data contract leaves 19 specifications outside the cross-feed test. Cross-asset and event rules would require an independent reconstruction of the complete feature or event panel, and the relative-value rule would require another synchronized XAU--XAG pair. The available second source supplies only an independent XAU history for price-only and long-horizon trend rules, so non-applicability carries no favorable implication.
+
+\subsection{Alignment sensitivity, DSR, and PBO}\label{subsec:alignment_results}
+
+The timestamp sensitivity covers 37 intraday price-derived, cross-asset, and event specifications. Excluding trades that overlapped 7--14 October 2019 left every severe-cost sign, native pass status, family max-$t$ rejection, and support label unchanged. Each family therefore retained its original classification under this exclusion. The warning remains part of the data record, while the sensitivity shows that the diagnosed week did not determine the article's conclusions.
+
+Deflated-Sharpe probabilities remained below the 0.95 threshold for every specification. A1R-007 had the largest value, 0.011284, based on a common-calendar annualized daily Sharpe of 0.155. Before adjustment for higher moments and sample size, the expected maximum daily Sharpe over 39 eligible trials was 0.047736. DSR reinforces the native and max-$t$ findings but serves only as a secondary diagnostic.
+
+PBO remains not estimable. Obtaining a scalar after seeing the results would require a newly defined common matrix across incompatible horizons and observation sets, outside the registered analysis.
+
+\subsection{Independent audit result}\label{subsec:audit_result}
+
+The output-level audit found all 16 manifest-listed files and no additional run artifact apart from the manifest itself. File sizes and digests agreed with the archive, and the checks of specification IDs, family IDs, trade counts, date bounds, and finite returns passed. Starting from the 28,685 retained rows, the audit reproduced each specification's mean returns and profit factor, all family max-$t$ statistics and adjusted probabilities, and every DSR output. The completed run is internally consistent and statistically reproducible from the normalized outcomes that it retains.
+
+An end-to-end reconstruction from raw vendor data lies beyond this audit because it would require provider access and independent regeneration of every loader, signal, and execution rule. The replication package distinguishes that broader task from the output-level reproduction completed here.
+
+\section{Discussion}\label{sec:discussion}
+
+\subsection{Where apparent profitability was lost}
+
+Economic attrition occurs early. Gross means were positive for 24 of the 39 specifications, but normal costs removed 15 and severe costs removed another 4. Many of the apparent opportunities were therefore small relative to plausible implementation frictions. The conclusion is not an artifact of imposing one institutional cost on unlike strategies, since the normal and severe schedules retain each source block's original semantics. Under the common fixed-stress comparison, only the monthly trend mean stayed positive.
+
+Statistical evidence weakened the remaining results further. Five severe-cost averages were positive, while the smallest max-$t$ adjusted $p$-value was 0.446. This is well beyond a near-miss at conventional significance levels. Removing the native 1--2\% growth requirements would consequently leave every family short of the statistical condition.
+
+Temporal and structural checks explain why a positive average was insufficient. The two event results rely on 12 and 21 trades. The trend rule combines unfavorable compounding with weak fold, year, drawdown, and benchmark performance. Positive intraday rules have negative bootstrap lower bounds and poor fold behavior. Across these cases, resamples, subperiods, and compounded investment paths give a less favorable account than the arithmetic mean.
+
+Measurement adds one more source of fragility. Five price-only rules generated materially different signal sets across feeds, and two positive effects changed sign. Threshold rules respond discontinuously to their inputs: a small difference in a high, low, or close may cross a condition and alter the later sequence of non-overlapping trades. Cross-feed testing must therefore reproduce the decision rule rather than compare price correlations alone.
+
+\subsection{Implications for gold and international-market research}
+
+Our results sit within a mixed precious-metals and technical-trading literature. The intraday attrition resembles the findings of \citet{jin2022}, while the broader parameter results in \citet{batten2018} show why multiplicity and persistence matter when the rule universe expands. Outside precious metals, selected currency rules can retain predictive content \citep{dockery2023}; broad equity-market studies instead report declining predictability, cost sensitivity, and weak persistence among selected rules \citep{rink2023}. The evidence reported here belongs to a particular market proxy, sample, and evaluation design. It cannot resolve the technical-analysis debate in general.
+
+Recent machine-learning studies of gold prices, risk premia, and uncertainty-conditioned forecasts address different estimands \citep{cohen2023,diaz2023,you2025}. This audit follows a fully specified decision rule through costs, local multiplicity, temporal diagnostics, and a second feed. A no-go result for those rules says little about whether a forecast can be statistically useful. By the same token, forecast accuracy alone provides incomplete evidence about executable profitability, especially after extensive feature, architecture, and tuning choices.
+
+The broker proxy also sets a clear boundary on interpretation. Studies of time-series momentum usually examine diversified futures, whose returns contain components absent from a spot-style CFD quote \citep{moskowitz2012,hurst2017}. A1R-046 evaluates one 12-month signal with monthly, volatility-scaled positions in XAUUSD. Its failure after costs and relative to passive volatility-scaled gold cannot be carried over to futures momentum generally. The same applies to the gold--silver result: it concerns a 252-day, $z=2$, next-open implementation rather than the wider class of cointegration or relative-value models.
+
+The cross-asset block is informative for international-market research even though it produced no severe-cost survivor. Eleven of its 12 gross means were positive, suggesting that the signals capture some co-movement among gold, the dollar, rates, risk assets, energy, and silver. Their disappearance after costs shows that plausible contemporaneous relations need not supply a tradable lead--lag margin. This interpretation is consistent with recent evidence that gold's defensive role varies by market, state, and horizon \citep{gurdgiev2024,ryan2024,faraj2025,xu2026}. An economic narrative becomes a trading result only when its point-in-time timing advantage exceeds implementation frictions.
+
+\subsection{Research governance and commercially meaningful no-go decisions}
+
+A defensible stopping rule is essential in a systematic research program. Otherwise each failure invites another parameter, filter, asset, or model, and the effective trial count soon becomes unknowable. The label \texttt{NO\_EDGE\_UNDER\_LOCKED\_PROTOCOL} serves as both a statistical description and a governance decision for the registered implementation. Reopening a family should require genuinely new information, such as future observations, an independently motivated mechanism, another venue, or a materially different asset universe. Small adjustments on the same historical period provide no such evidence.
+
+For a strategy-audit service, rejection is an informative output rather than a product failure. Its value comes from identifying cost sensitivity, search multiplicity, temporal concentration, benchmark dependence, and feed fragility before capital is exposed. This requires a firm distinction between descriptive backtest statistics and promotion criteria, together with an auditable record of rejected candidates.
+
+The evaluation follows a fail-closed rule. Too few cross-feed matches fail the applicable gate, non-applicable tests keep that status, a broken data contract makes the family untestable, and an aborted run remains separate from an economic rejection. Operational failures are thereby kept out of the market findings.
+
+\section{Limitations and scope of inference}\label{sec:limitations}
+
+Historical outcomes were visible during the broader project before the final registry was fixed. The consolidated rerun sharply reduces flexibility and prevents reuse of result files, yet it cannot create a pristine holdout retrospectively. The reported probabilities belong to this registered audit, and the main finding is systematic negative evidence rather than classical prospective confirmation.
+
+The independent audit begins with normalized specification-level outcomes. It verifies identities, boundaries, arithmetic, multiplicity, and DSR calculations, while leaving the original provider-to-signal pipeline outside its scope. End-to-end replication would require licensed access to those files. Digests retained in the replication archive permit exact comparisons when authorized copies are available.
+
+Dependence across strategies and time prevents the 28,685 rows from being pooled as independent observations. Synchronized resampling preserves within-family dependence on a common daily calendar, although the 20-day block length and full-sample studentization remain design choices. A future, separately registered extension could examine alternative block lengths. The gap between the minimum adjusted $p$-value of 0.446 and 0.05 suggests that modest changes are unlikely to reverse the conclusion, but that inference is not a substitute for a registered sensitivity analysis.
+
+Source blocks differ in horizon, exposure, cost meaning, and objective. A mean return for a 4-hour event trade is not directly comparable to that of a monthly volatility-scaled rebalance. Cross-block tables are descriptive; inference remains attached to the economic family under its native contract.
+
+Cross-feed replication covers 20 specifications. A fuller measurement audit would independently reconstruct the cross-asset feature panel, official-event pipeline, and XAU--XAG pair. For the remaining families, the unavailable feed test contributes neither support nor rejection; their decisions rest on costs, native gates, and multiplicity evidence.
+
+XAUUSD is a broker-price proxy rather than an exchange-traded gold future. Venue, financing, roll, liquidity, and execution therefore differ. The cost schedules are stress assumptions instead of realized production fills, and the results make no claim about executable capacity or readiness for paper, demo, or live trading.
+
+PBO is unavailable under the registered design. Forcing heterogeneous strategies into one combinatorial matrix would create false precision, although the absence of this diagnostic remains a limitation. DSR is likewise secondary because its common daily calendar differs from each source's native evaluation.
+
+The scope ends with the registered specifications, source files, reference periods, parameterizations, and gates. Within that boundary, the study detected no robust edge. Universal gold-market efficiency, failure of every technical method, and the absence of future predictability are beyond what these data can establish.
+
+\section{Conclusion}\label{sec:conclusion}
+
+We audited the distance between a positive backtest and a defensible trading edge. The registry preserves 47 XAUUSD specifications, of which 39 in 20 economic families were recomputed for primary analysis without access to historical result files and with reference samples ending in 2024. Positive means fell from 24 before costs to 9 under normal costs, 5 under severe costs, and 1 under fixed stress. Every specification failed at least one source-native gate, and family-adjusted evidence remained far from conventional significance levels. Of the 20 rules eligible for independent-feed evaluation, 7 failed and 2 changed sign. The timestamp-warning exclusion left all decisions unchanged, while deflated-Sharpe probabilities remained below their threshold.
+
+The conclusion is deliberately bounded to the registered universe: the combined evidence did not identify a robust edge. This finding is narrower than a claim that gold is unpredictable and more informative than reporting losses for a few selected rules. It draws on complete candidate retention, source-appropriate cost layers, search-aware inference, temporal checks, feed replication where feasible, and an explicit provenance record.
+
+Strategy research benefits from treating evidence as cumulative rather than allowing one attractive metric to dominate. Gross profitability starts the evaluation. Advancement requires a coherent account from economic margin, multiplicity-adjusted evidence, temporal behavior, benchmark comparison, and measurement reproducibility. When that account breaks down, a documented no-go decision is a legitimate outcome. Further work on these families should begin with new data or independently motivated mechanisms instead of reopening the same historical period after observing the result.

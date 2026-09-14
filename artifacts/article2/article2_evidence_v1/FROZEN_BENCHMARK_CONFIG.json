@@ -1,0 +1,70 @@
+{
+  "schema_version": "article2-benchmark-contract-v1",
+  "frozen": true,
+  "scientific_question": "Does a point-in-time, provenance-bound, fail-closed audit architecture reduce unsafe acceptance of controlled research-pipeline corruption while preserving clean inputs and deterministic reproduction?",
+  "article_boundary": {
+    "article1_role": "real-world empirical case study and source of verified reusable components",
+    "article2_role": "software and methodological architecture evaluated by controlled fault injection",
+    "trading_alpha_reestimation_allowed": false,
+    "new_strategy_discovery_allowed": false
+  },
+  "arms": [
+    "NAIVE_LATEST_STATE",
+    "POINT_IN_TIME_FAIL_OPEN",
+    "POINT_IN_TIME_PROVENANCE_FAIL_CLOSED"
+  ],
+  "fault_ids": [
+    "FUTURE_DATA_LEAKAGE",
+    "COT_PREPUBLICATION",
+    "TIMEZONE_SHIFT",
+    "SCHEMA_DRIFT",
+    "MANIFEST_TAMPER",
+    "CONFIG_TAMPER",
+    "STALE_ARTIFACT",
+    "MISSING_EVENT_CONTEXT",
+    "DUPLICATE_BAR",
+    "OFF_GRID_BAR",
+    "COST_CONTRACT_CORRUPTION",
+    "REVISION_WITHOUT_VINTAGE"
+  ],
+  "controls": {
+    "clean_control_count": 3,
+    "one_fault_per_case": true,
+    "deterministic_fixture": true,
+    "runtime_repeats": 100
+  },
+  "metrics": [
+    "fault_detection_rate",
+    "unsafe_acceptance_rate",
+    "silent_acceptance_rate",
+    "false_blocking_rate",
+    "deterministic_reproduction",
+    "runtime_overhead_ratio_vs_naive",
+    "scoped_line_coverage",
+    "semantic_branch_coverage"
+  ],
+  "gates": {
+    "full_arm_fault_detection_rate_min": 1.0,
+    "full_arm_unsafe_acceptance_rate_max": 0.0,
+    "full_arm_false_blocking_rate_max": 0.0,
+    "deterministic_reproduction_required": true,
+    "semantic_branch_coverage_min": 1.0,
+    "scoped_line_coverage_min": 0.8,
+    "core_adapters_required": true,
+    "unit_tests_required": true,
+    "manifest_hash_binding_required": true
+  },
+  "selected_existing_core": [
+    {
+      "path": "app/stage170c_asof_join_enforcement_and_validation_framework.py",
+      "functions": ["norm_text", "enforce_contract"],
+      "role": "source-level as-of contract enforcement"
+    },
+    {
+      "path": "app/xauusd_controlled_paper_historical_replay.py",
+      "functions": ["source_proven_stress_contract"],
+      "role": "source-proven execution-cost parity"
+    }
+  ]
+}
+

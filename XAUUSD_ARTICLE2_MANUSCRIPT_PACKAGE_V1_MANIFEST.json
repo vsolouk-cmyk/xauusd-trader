@@ -1,0 +1,121 @@
+{
+  "file_count": 22,
+  "files": [
+    {
+      "bytes": 1340,
+      "path": ".github/workflows/xauusd_article2_manuscript_qa.yml",
+      "sha256": "c5f5e1c19dba962f76a2414bc838f9927ca3c8ad5996546c55cd4f71aa5da37e"
+    },
+    {
+      "bytes": 3187,
+      "path": "README_ARTICLE2_MANUSCRIPT_PACKAGE_V1.md",
+      "sha256": "46980fe097a442c8acf94cf010fad9578f28cacffa33c99bf6d71d3939cdb8e2"
+    },
+    {
+      "bytes": 8851,
+      "path": "artifacts/article2/XAUUSD_ARTICLE2_MANUSCRIPT_INPUTS_V1.zip",
+      "sha256": "aceaf185e1e3a10e55d9f8eb6352feef52fda010c4f74bf6834e4077bd4600e1"
+    },
+    {
+      "bytes": 107,
+      "path": "artifacts/article2/XAUUSD_ARTICLE2_MANUSCRIPT_INPUTS_V1.zip.sha256",
+      "sha256": "4056b3e486e8c0f42f24823ad8637dc82e68fad918b30f698bb464cb928e42c2"
+    },
+    {
+      "bytes": 1607,
+      "path": "artifacts/article2/article2_manuscript_v1/ARTICLE2_RESULTS_PROSE.md",
+      "sha256": "0840b7acf222cd7efcc10f3b36922308958dd36c12517f03e87b756de84d679b"
+    },
+    {
+      "bytes": 1360,
+      "path": "artifacts/article2/article2_manuscript_v1/SHA256SUMS.txt",
+      "sha256": "64fd7ab2f20b30c0eb5ba7311490998902e2b8b871d1979689ff37b48ac3b8b7"
+    },
+    {
+      "bytes": 4106,
+      "path": "artifacts/article2/article2_manuscript_v1/article2_results_snapshot.json",
+      "sha256": "0977107e9c4c2df005ec59c246aba900c5fc1d1f561faeb05e768003ac1cc9bb"
+    },
+    {
+      "bytes": 2326,
+      "path": "artifacts/article2/article2_manuscript_v1/figure_1_arm_safety_comparison.svg",
+      "sha256": "32e8878f917d5fc7a903c4298fe6084650879b02faea89e3c2ca88cdb8021fef"
+    },
+    {
+      "bytes": 2149,
+      "path": "artifacts/article2/article2_manuscript_v1/package_manifest.json",
+      "sha256": "c1025f58ba167bc895218dcae681c01f6b1e670f189a6872f675cc072f362296"
+    },
+    {
+      "bytes": 407,
+      "path": "artifacts/article2/article2_manuscript_v1/table_1_arm_metrics.csv",
+      "sha256": "b268b690be9e43868512fbbf64e5a1df638ab83173f25836efc607e01a164cd7"
+    },
+    {
+      "bytes": 356,
+      "path": "artifacts/article2/article2_manuscript_v1/table_1_arm_metrics.md",
+      "sha256": "dced1279be7ee366f4a5fdcc6d2906c643fb3db5bb627ac95fb6bd2e3ca48d16"
+    },
+    {
+      "bytes": 511,
+      "path": "artifacts/article2/article2_manuscript_v1/table_1_arm_metrics.tex",
+      "sha256": "22b56fd143e7de6b2bae060ba143989b3118e240c6845dffa9bcd9df2223e43f"
+    },
+    {
+      "bytes": 470,
+      "path": "artifacts/article2/article2_manuscript_v1/table_2_validation_evidence.csv",
+      "sha256": "5731ee535ac98ff57763351e7138f5deedb6ccc57420c5386cfcceacae83fd34"
+    },
+    {
+      "bytes": 586,
+      "path": "artifacts/article2/article2_manuscript_v1/table_2_validation_evidence.md",
+      "sha256": "1a5a4800bd3b2a0961c4395bc1862310ae981dc9a02a75d0f783a65af868bd7e"
+    },
+    {
+      "bytes": 721,
+      "path": "artifacts/article2/article2_manuscript_v1/table_2_validation_evidence.tex",
+      "sha256": "08ed863c1945b61dd80f98559d2ff4f95df6e79eb985ab165874bfee1b625890"
+    },
+    {
+      "bytes": 3031,
+      "path": "docs/article2/manuscript/ARTICLE2_CLAIM_EVIDENCE_MATRIX_V1.csv",
+      "sha256": "1f173ab4ef014f04924574ca6a4495e5c0bd0051375a26bfb1b556c52d9312d6"
+    },
+    {
+      "bytes": 2060,
+      "path": "docs/article2/manuscript/ARTICLE2_JOURNAL_FIT_V1.md",
+      "sha256": "9e819b07d66e9004daad21f3e22e50b9d08982c57c5dada52ae0e71e038d6438"
+    },
+    {
+      "bytes": 15006,
+      "path": "docs/article2/manuscript/ARTICLE2_MANUSCRIPT_DRAFT_V1.md",
+      "sha256": "5fc549e716d1e443044b0f2ddffbbe1637e65f41de44a5a994b27342dd065e9a"
+    },
+    {
+      "bytes": 2469,
+      "path": "docs/article2/manuscript/ARTICLE2_REFERENCES_V1.bib",
+      "sha256": "f1235672680050df80c18c8236a87e3047594bf21bf570c359fc4f3ff32a6360"
+    },
+    {
+      "bytes": 2452,
+      "path": "docs/article2/manuscript/ARTICLE2_REVIEWER_RISK_REGISTER_V1.md",
+      "sha256": "b2e13ced18c2a6cce19327b872185eecdcd690cd7249c505be11fe633697f8f1"
+    },
+    {
+      "bytes": 3421,
+      "path": "tests/test_article2_manuscript_inputs.py",
+      "sha256": "0ce26d9e886b3acfa33674b083cab128a9c39dec9fadea15b2932a9881ff1b73"
+    },
+    {
+      "bytes": 18186,
+      "path": "tools/article_publication/build_article2_manuscript_inputs.py",
+      "sha256": "7bfc61bf58cfacecdd0b4231b0d7d2d33b0902d1e987bbbc9eff611e1a593737"
+    }
+  ],
+  "schema_version": "xauusd-article2-manuscript-install-package-v1",
+  "scientific_boundary": {
+    "article1_reestimated": false,
+    "collector_rerun": false,
+    "order_execution_enabled": false
+  }
+}

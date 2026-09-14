@@ -1,0 +1,1 @@
+git@github.com:vsolouk-cmyk/xauusd-trader.git

@@ -1,0 +1,25 @@
+{
+  "article1_reestimated": false,
+  "blocking_reasons": [],
+  "broker_order_allowed": false,
+  "collector_rerun": false,
+  "decision": "ARTICLE2_EVIDENCE_SUFFICIENT",
+  "demo_order_allowed": false,
+  "expanded_intake_preserved": true,
+  "gates": {
+    "article_boundary_frozen": true,
+    "benchmark": true,
+    "core_adapters": true,
+    "core_manifest_complete": true,
+    "existing_core_regressions": true,
+    "intake_provenance_bound": true,
+    "no_execution_connector": true,
+    "scoped_line_coverage": true,
+    "semantic_branch_coverage": true,
+    "unit_tests": true
+  },
+  "generated_utc": "2026-09-14T19:49:59.955574Z",
+  "live_order_allowed": false,
+  "pass": true,
+  "program": "XAUUSD_ARTICLE2_BENCHMARK_FAULT_INJECTION_SUITE_V1"
+}

@@ -1,0 +1,1332 @@
+{
+  "arms": [
+    "NAIVE_LATEST_STATE",
+    "POINT_IN_TIME_FAIL_OPEN",
+    "POINT_IN_TIME_PROVENANCE_FAIL_CLOSED"
+  ],
+  "deterministic_digest_sha256": "25f8420eaf39296e38f9d9a9416cb7aa3aba6baad16781ca157d921d1e8d6410",
+  "deterministic_reproduction": true,
+  "fault_specs": [
+    {
+      "description": "A feature becomes available after the decision timestamp.",
+      "expected_check": "AVAILABLE_NOT_AFTER_DECISION",
+      "family": "temporal",
+      "fault_id": "FUTURE_DATA_LEAKAGE"
+    },
+    {
+      "description": "Tuesday COT state is used before Friday publication.",
+      "expected_check": "AVAILABLE_NOT_AFTER_DECISION",
+      "family": "temporal",
+      "fault_id": "COT_PREPUBLICATION"
+    },
+    {
+      "description": "An availability timestamp loses its UTC offset.",
+      "expected_check": "TIMESTAMPS_AWARE_UTC",
+      "family": "temporal",
+      "fault_id": "TIMEZONE_SHIFT"
+    },
+    {
+      "description": "A required availability field disappears.",
+      "expected_check": "REQUIRED_SCHEMA_FIELDS",
+      "family": "schema",
+      "fault_id": "SCHEMA_DRIFT"
+    },
+    {
+      "description": "Feature bytes change without a manifest update.",
+      "expected_check": "DATA_HASH_BINDING",
+      "family": "provenance",
+      "fault_id": "MANIFEST_TAMPER"
+    },
+    {
+      "description": "The frozen configuration changes without a manifest update.",
+      "expected_check": "CONFIG_HASH_BINDING",
+      "family": "provenance",
+      "fault_id": "CONFIG_TAMPER"
+    },
+    {
+      "description": "An artifact predates the decision beyond the frozen age limit.",
+      "expected_check": "ARTIFACT_FRESHNESS",
+      "family": "freshness",
+      "fault_id": "STALE_ARTIFACT"
+    },
+    {
+      "description": "A required event-guard source is absent.",
+      "expected_check": "REQUIRED_SOURCE_COMPLETENESS",
+      "family": "completeness",
+      "fault_id": "MISSING_EVENT_CONTEXT"
+    },
+    {
+      "description": "A market-bar timestamp is duplicated.",
+      "expected_check": "BAR_TIMESTAMP_UNIQUENESS",
+      "family": "market_data",
+      "fault_id": "DUPLICATE_BAR"
+    },
+    {
+      "description": "A bar timestamp falls outside the five-minute grid.",
+      "expected_check": "BAR_GRID_ALIGNMENT",
+      "family": "market_data",
+      "fault_id": "OFF_GRID_BAR"
+    },
+    {
+      "description": "Net return no longer equals gross return minus cost.",
+      "expected_check": "COST_IDENTITY",
+      "family": "economics",
+      "fault_id": "COST_CONTRACT_CORRUPTION"
+    },
+    {
+      "description": "A revised macro value lacks a point-in-time vintage identifier.",
+      "expected_check": "REVISION_VINTAGE_BINDING",
+      "family": "temporal",
+      "fault_id": "REVISION_WITHOUT_VINTAGE"
+    }
+  ],
+  "metrics": {
+    "NAIVE_LATEST_STATE": {
+      "control_count": 3,
+      "false_blocking_rate": 0.0,
+      "fault_count": 12,
+      "fault_detection_rate": 0.0,
+      "runtime": {
+        "case_count": 15,
+        "median_ns_per_case": 590.8666666666667,
+        "median_total_ns": 8863,
+        "overhead_ratio_vs_naive": 1.0,
+        "p95_total_ns": 9404,
+        "repeats": 100
+      },
+      "silent_acceptance_rate": 1.0,
+      "unsafe_acceptance_rate": 1.0
+    },
+    "POINT_IN_TIME_FAIL_OPEN": {
+      "control_count": 3,
+      "false_blocking_rate": 0.0,
+      "fault_count": 12,
+      "fault_detection_rate": 0.5,
+      "runtime": {
+        "case_count": 15,
+        "median_ns_per_case": 3421.133333333333,
+        "median_total_ns": 51317,
+        "overhead_ratio_vs_naive": 5.790025950581067,
+        "p95_total_ns": 91517,
+        "repeats": 100
+      },
+      "silent_acceptance_rate": 0.5,
+      "unsafe_acceptance_rate": 1.0
+    },
+    "POINT_IN_TIME_PROVENANCE_FAIL_CLOSED": {
+      "control_count": 3,
+      "false_blocking_rate": 0.0,
+      "fault_count": 12,
+      "fault_detection_rate": 1.0,
+      "runtime": {
+        "case_count": 15,
+        "median_ns_per_case": 25668.566666666666,
+        "median_total_ns": 385028,
+        "overhead_ratio_vs_naive": 43.44223174997179,
+        "p95_total_ns": 582416,
+        "repeats": 100
+      },
+      "silent_acceptance_rate": 0.0,
+      "unsafe_acceptance_rate": 0.0
+    }
+  },
+  "outcomes": [
+    {
+      "accepted": true,
+      "arm": "NAIVE_LATEST_STATE",
+      "case_id": "CLEAN_CONTROL_01",
+      "checks": [],
+      "detected": false,
+      "is_fault": false,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "NAIVE_LATEST_STATE",
+      "case_id": "CLEAN_CONTROL_02",
+      "checks": [],
+      "detected": false,
+      "is_fault": false,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "NAIVE_LATEST_STATE",
+      "case_id": "CLEAN_CONTROL_03",
+      "checks": [],
+      "detected": false,
+      "is_fault": false,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "NAIVE_LATEST_STATE",
+      "case_id": "FUTURE_DATA_LEAKAGE",
+      "checks": [],
+      "detected": false,
+      "is_fault": true,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "NAIVE_LATEST_STATE",
+      "case_id": "COT_PREPUBLICATION",
+      "checks": [],
+      "detected": false,
+      "is_fault": true,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "NAIVE_LATEST_STATE",
+      "case_id": "TIMEZONE_SHIFT",
+      "checks": [],
+      "detected": false,
+      "is_fault": true,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "NAIVE_LATEST_STATE",
+      "case_id": "SCHEMA_DRIFT",
+      "checks": [],
+      "detected": false,
+      "is_fault": true,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "NAIVE_LATEST_STATE",
+      "case_id": "MANIFEST_TAMPER",
+      "checks": [],
+      "detected": false,
+      "is_fault": true,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "NAIVE_LATEST_STATE",
+      "case_id": "CONFIG_TAMPER",
+      "checks": [],
+      "detected": false,
+      "is_fault": true,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "NAIVE_LATEST_STATE",
+      "case_id": "STALE_ARTIFACT",
+      "checks": [],
+      "detected": false,
+      "is_fault": true,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "NAIVE_LATEST_STATE",
+      "case_id": "MISSING_EVENT_CONTEXT",
+      "checks": [],
+      "detected": false,
+      "is_fault": true,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "NAIVE_LATEST_STATE",
+      "case_id": "DUPLICATE_BAR",
+      "checks": [],
+      "detected": false,
+      "is_fault": true,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "NAIVE_LATEST_STATE",
+      "case_id": "OFF_GRID_BAR",
+      "checks": [],
+      "detected": false,
+      "is_fault": true,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "NAIVE_LATEST_STATE",
+      "case_id": "COST_CONTRACT_CORRUPTION",
+      "checks": [],
+      "detected": false,
+      "is_fault": true,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "NAIVE_LATEST_STATE",
+      "case_id": "REVISION_WITHOUT_VINTAGE",
+      "checks": [],
+      "detected": false,
+      "is_fault": true,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "POINT_IN_TIME_FAIL_OPEN",
+      "case_id": "CLEAN_CONTROL_01",
+      "checks": [],
+      "detected": false,
+      "is_fault": false,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "POINT_IN_TIME_FAIL_OPEN",
+      "case_id": "CLEAN_CONTROL_02",
+      "checks": [],
+      "detected": false,
+      "is_fault": false,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "POINT_IN_TIME_FAIL_OPEN",
+      "case_id": "CLEAN_CONTROL_03",
+      "checks": [],
+      "detected": false,
+      "is_fault": false,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "POINT_IN_TIME_FAIL_OPEN",
+      "case_id": "FUTURE_DATA_LEAKAGE",
+      "checks": [],
+      "detected": true,
+      "is_fault": true,
+      "reasons": [
+        "AVAILABLE_NOT_AFTER_DECISION"
+      ]
+    },
+    {
+      "accepted": true,
+      "arm": "POINT_IN_TIME_FAIL_OPEN",
+      "case_id": "COT_PREPUBLICATION",
+      "checks": [],
+      "detected": true,
+      "is_fault": true,
+      "reasons": [
+        "AVAILABLE_NOT_AFTER_DECISION"
+      ]
+    },
+    {
+      "accepted": true,
+      "arm": "POINT_IN_TIME_FAIL_OPEN",
+      "case_id": "TIMEZONE_SHIFT",
+      "checks": [],
+      "detected": true,
+      "is_fault": true,
+      "reasons": [
+        "TEMPORAL_PARSE_WARNING"
+      ]
+    },
+    {
+      "accepted": true,
+      "arm": "POINT_IN_TIME_FAIL_OPEN",
+      "case_id": "SCHEMA_DRIFT",
+      "checks": [],
+      "detected": true,
+      "is_fault": true,
+      "reasons": [
+        "TEMPORAL_PARSE_WARNING"
+      ]
+    },
+    {
+      "accepted": true,
+      "arm": "POINT_IN_TIME_FAIL_OPEN",
+      "case_id": "MANIFEST_TAMPER",
+      "checks": [],
+      "detected": false,
+      "is_fault": true,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "POINT_IN_TIME_FAIL_OPEN",
+      "case_id": "CONFIG_TAMPER",
+      "checks": [],
+      "detected": false,
+      "is_fault": true,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "POINT_IN_TIME_FAIL_OPEN",
+      "case_id": "STALE_ARTIFACT",
+      "checks": [],
+      "detected": false,
+      "is_fault": true,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "POINT_IN_TIME_FAIL_OPEN",
+      "case_id": "MISSING_EVENT_CONTEXT",
+      "checks": [],
+      "detected": false,
+      "is_fault": true,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "POINT_IN_TIME_FAIL_OPEN",
+      "case_id": "DUPLICATE_BAR",
+      "checks": [],
+      "detected": true,
+      "is_fault": true,
+      "reasons": [
+        "BAR_TIMESTAMP_UNIQUENESS"
+      ]
+    },
+    {
+      "accepted": true,
+      "arm": "POINT_IN_TIME_FAIL_OPEN",
+      "case_id": "OFF_GRID_BAR",
+      "checks": [],
+      "detected": false,
+      "is_fault": true,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "POINT_IN_TIME_FAIL_OPEN",
+      "case_id": "COST_CONTRACT_CORRUPTION",
+      "checks": [],
+      "detected": true,
+      "is_fault": true,
+      "reasons": [
+        "COST_IDENTITY"
+      ]
+    },
+    {
+      "accepted": true,
+      "arm": "POINT_IN_TIME_FAIL_OPEN",
+      "case_id": "REVISION_WITHOUT_VINTAGE",
+      "checks": [],
+      "detected": false,
+      "is_fault": true,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "POINT_IN_TIME_PROVENANCE_FAIL_CLOSED",
+      "case_id": "CLEAN_CONTROL_01",
+      "checks": [
+        {
+          "check_id": "REQUIRED_SCHEMA_FIELDS",
+          "pass": true
+        },
+        {
+          "check_id": "TIMESTAMPS_AWARE_UTC",
+          "pass": true
+        },
+        {
+          "check_id": "AVAILABLE_NOT_AFTER_DECISION",
+          "pass": true
+        },
+        {
+          "check_id": "REVISION_VINTAGE_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "DATA_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "CONFIG_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "ARTIFACT_FRESHNESS",
+          "pass": true
+        },
+        {
+          "check_id": "REQUIRED_SOURCE_COMPLETENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_TIMESTAMP_UNIQUENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_GRID_ALIGNMENT",
+          "pass": true
+        },
+        {
+          "check_id": "COST_IDENTITY",
+          "pass": true
+        }
+      ],
+      "detected": false,
+      "is_fault": false,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "POINT_IN_TIME_PROVENANCE_FAIL_CLOSED",
+      "case_id": "CLEAN_CONTROL_02",
+      "checks": [
+        {
+          "check_id": "REQUIRED_SCHEMA_FIELDS",
+          "pass": true
+        },
+        {
+          "check_id": "TIMESTAMPS_AWARE_UTC",
+          "pass": true
+        },
+        {
+          "check_id": "AVAILABLE_NOT_AFTER_DECISION",
+          "pass": true
+        },
+        {
+          "check_id": "REVISION_VINTAGE_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "DATA_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "CONFIG_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "ARTIFACT_FRESHNESS",
+          "pass": true
+        },
+        {
+          "check_id": "REQUIRED_SOURCE_COMPLETENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_TIMESTAMP_UNIQUENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_GRID_ALIGNMENT",
+          "pass": true
+        },
+        {
+          "check_id": "COST_IDENTITY",
+          "pass": true
+        }
+      ],
+      "detected": false,
+      "is_fault": false,
+      "reasons": []
+    },
+    {
+      "accepted": true,
+      "arm": "POINT_IN_TIME_PROVENANCE_FAIL_CLOSED",
+      "case_id": "CLEAN_CONTROL_03",
+      "checks": [
+        {
+          "check_id": "REQUIRED_SCHEMA_FIELDS",
+          "pass": true
+        },
+        {
+          "check_id": "TIMESTAMPS_AWARE_UTC",
+          "pass": true
+        },
+        {
+          "check_id": "AVAILABLE_NOT_AFTER_DECISION",
+          "pass": true
+        },
+        {
+          "check_id": "REVISION_VINTAGE_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "DATA_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "CONFIG_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "ARTIFACT_FRESHNESS",
+          "pass": true
+        },
+        {
+          "check_id": "REQUIRED_SOURCE_COMPLETENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_TIMESTAMP_UNIQUENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_GRID_ALIGNMENT",
+          "pass": true
+        },
+        {
+          "check_id": "COST_IDENTITY",
+          "pass": true
+        }
+      ],
+      "detected": false,
+      "is_fault": false,
+      "reasons": []
+    },
+    {
+      "accepted": false,
+      "arm": "POINT_IN_TIME_PROVENANCE_FAIL_CLOSED",
+      "case_id": "FUTURE_DATA_LEAKAGE",
+      "checks": [
+        {
+          "check_id": "REQUIRED_SCHEMA_FIELDS",
+          "pass": true
+        },
+        {
+          "check_id": "TIMESTAMPS_AWARE_UTC",
+          "pass": true
+        },
+        {
+          "check_id": "AVAILABLE_NOT_AFTER_DECISION",
+          "pass": false
+        },
+        {
+          "check_id": "REVISION_VINTAGE_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "DATA_HASH_BINDING",
+          "pass": false
+        },
+        {
+          "check_id": "CONFIG_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "ARTIFACT_FRESHNESS",
+          "pass": true
+        },
+        {
+          "check_id": "REQUIRED_SOURCE_COMPLETENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_TIMESTAMP_UNIQUENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_GRID_ALIGNMENT",
+          "pass": true
+        },
+        {
+          "check_id": "COST_IDENTITY",
+          "pass": true
+        }
+      ],
+      "detected": true,
+      "is_fault": true,
+      "reasons": [
+        "AVAILABLE_NOT_AFTER_DECISION",
+        "DATA_HASH_BINDING"
+      ]
+    },
+    {
+      "accepted": false,
+      "arm": "POINT_IN_TIME_PROVENANCE_FAIL_CLOSED",
+      "case_id": "COT_PREPUBLICATION",
+      "checks": [
+        {
+          "check_id": "REQUIRED_SCHEMA_FIELDS",
+          "pass": true
+        },
+        {
+          "check_id": "TIMESTAMPS_AWARE_UTC",
+          "pass": true
+        },
+        {
+          "check_id": "AVAILABLE_NOT_AFTER_DECISION",
+          "pass": false
+        },
+        {
+          "check_id": "REVISION_VINTAGE_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "DATA_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "CONFIG_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "ARTIFACT_FRESHNESS",
+          "pass": false
+        },
+        {
+          "check_id": "REQUIRED_SOURCE_COMPLETENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_TIMESTAMP_UNIQUENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_GRID_ALIGNMENT",
+          "pass": true
+        },
+        {
+          "check_id": "COST_IDENTITY",
+          "pass": true
+        }
+      ],
+      "detected": true,
+      "is_fault": true,
+      "reasons": [
+        "AVAILABLE_NOT_AFTER_DECISION",
+        "ARTIFACT_FRESHNESS"
+      ]
+    },
+    {
+      "accepted": false,
+      "arm": "POINT_IN_TIME_PROVENANCE_FAIL_CLOSED",
+      "case_id": "TIMEZONE_SHIFT",
+      "checks": [
+        {
+          "check_id": "REQUIRED_SCHEMA_FIELDS",
+          "pass": true
+        },
+        {
+          "check_id": "TIMESTAMPS_AWARE_UTC",
+          "pass": false
+        },
+        {
+          "check_id": "AVAILABLE_NOT_AFTER_DECISION",
+          "pass": false
+        },
+        {
+          "check_id": "REVISION_VINTAGE_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "DATA_HASH_BINDING",
+          "pass": false
+        },
+        {
+          "check_id": "CONFIG_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "ARTIFACT_FRESHNESS",
+          "pass": true
+        },
+        {
+          "check_id": "REQUIRED_SOURCE_COMPLETENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_TIMESTAMP_UNIQUENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_GRID_ALIGNMENT",
+          "pass": true
+        },
+        {
+          "check_id": "COST_IDENTITY",
+          "pass": true
+        }
+      ],
+      "detected": true,
+      "is_fault": true,
+      "reasons": [
+        "TIMESTAMPS_AWARE_UTC",
+        "AVAILABLE_NOT_AFTER_DECISION",
+        "DATA_HASH_BINDING"
+      ]
+    },
+    {
+      "accepted": false,
+      "arm": "POINT_IN_TIME_PROVENANCE_FAIL_CLOSED",
+      "case_id": "SCHEMA_DRIFT",
+      "checks": [
+        {
+          "check_id": "REQUIRED_SCHEMA_FIELDS",
+          "pass": false
+        },
+        {
+          "check_id": "TIMESTAMPS_AWARE_UTC",
+          "pass": false
+        },
+        {
+          "check_id": "AVAILABLE_NOT_AFTER_DECISION",
+          "pass": false
+        },
+        {
+          "check_id": "REVISION_VINTAGE_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "DATA_HASH_BINDING",
+          "pass": false
+        },
+        {
+          "check_id": "CONFIG_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "ARTIFACT_FRESHNESS",
+          "pass": true
+        },
+        {
+          "check_id": "REQUIRED_SOURCE_COMPLETENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_TIMESTAMP_UNIQUENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_GRID_ALIGNMENT",
+          "pass": true
+        },
+        {
+          "check_id": "COST_IDENTITY",
+          "pass": true
+        }
+      ],
+      "detected": true,
+      "is_fault": true,
+      "reasons": [
+        "REQUIRED_SCHEMA_FIELDS",
+        "TIMESTAMPS_AWARE_UTC",
+        "AVAILABLE_NOT_AFTER_DECISION",
+        "DATA_HASH_BINDING"
+      ]
+    },
+    {
+      "accepted": false,
+      "arm": "POINT_IN_TIME_PROVENANCE_FAIL_CLOSED",
+      "case_id": "MANIFEST_TAMPER",
+      "checks": [
+        {
+          "check_id": "REQUIRED_SCHEMA_FIELDS",
+          "pass": true
+        },
+        {
+          "check_id": "TIMESTAMPS_AWARE_UTC",
+          "pass": true
+        },
+        {
+          "check_id": "AVAILABLE_NOT_AFTER_DECISION",
+          "pass": true
+        },
+        {
+          "check_id": "REVISION_VINTAGE_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "DATA_HASH_BINDING",
+          "pass": false
+        },
+        {
+          "check_id": "CONFIG_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "ARTIFACT_FRESHNESS",
+          "pass": true
+        },
+        {
+          "check_id": "REQUIRED_SOURCE_COMPLETENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_TIMESTAMP_UNIQUENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_GRID_ALIGNMENT",
+          "pass": true
+        },
+        {
+          "check_id": "COST_IDENTITY",
+          "pass": true
+        }
+      ],
+      "detected": true,
+      "is_fault": true,
+      "reasons": [
+        "DATA_HASH_BINDING"
+      ]
+    },
+    {
+      "accepted": false,
+      "arm": "POINT_IN_TIME_PROVENANCE_FAIL_CLOSED",
+      "case_id": "CONFIG_TAMPER",
+      "checks": [
+        {
+          "check_id": "REQUIRED_SCHEMA_FIELDS",
+          "pass": true
+        },
+        {
+          "check_id": "TIMESTAMPS_AWARE_UTC",
+          "pass": true
+        },
+        {
+          "check_id": "AVAILABLE_NOT_AFTER_DECISION",
+          "pass": true
+        },
+        {
+          "check_id": "REVISION_VINTAGE_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "DATA_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "CONFIG_HASH_BINDING",
+          "pass": false
+        },
+        {
+          "check_id": "ARTIFACT_FRESHNESS",
+          "pass": true
+        },
+        {
+          "check_id": "REQUIRED_SOURCE_COMPLETENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_TIMESTAMP_UNIQUENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_GRID_ALIGNMENT",
+          "pass": true
+        },
+        {
+          "check_id": "COST_IDENTITY",
+          "pass": true
+        }
+      ],
+      "detected": true,
+      "is_fault": true,
+      "reasons": [
+        "CONFIG_HASH_BINDING"
+      ]
+    },
+    {
+      "accepted": false,
+      "arm": "POINT_IN_TIME_PROVENANCE_FAIL_CLOSED",
+      "case_id": "STALE_ARTIFACT",
+      "checks": [
+        {
+          "check_id": "REQUIRED_SCHEMA_FIELDS",
+          "pass": true
+        },
+        {
+          "check_id": "TIMESTAMPS_AWARE_UTC",
+          "pass": true
+        },
+        {
+          "check_id": "AVAILABLE_NOT_AFTER_DECISION",
+          "pass": true
+        },
+        {
+          "check_id": "REVISION_VINTAGE_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "DATA_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "CONFIG_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "ARTIFACT_FRESHNESS",
+          "pass": false
+        },
+        {
+          "check_id": "REQUIRED_SOURCE_COMPLETENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_TIMESTAMP_UNIQUENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_GRID_ALIGNMENT",
+          "pass": true
+        },
+        {
+          "check_id": "COST_IDENTITY",
+          "pass": true
+        }
+      ],
+      "detected": true,
+      "is_fault": true,
+      "reasons": [
+        "ARTIFACT_FRESHNESS"
+      ]
+    },
+    {
+      "accepted": false,
+      "arm": "POINT_IN_TIME_PROVENANCE_FAIL_CLOSED",
+      "case_id": "MISSING_EVENT_CONTEXT",
+      "checks": [
+        {
+          "check_id": "REQUIRED_SCHEMA_FIELDS",
+          "pass": true
+        },
+        {
+          "check_id": "TIMESTAMPS_AWARE_UTC",
+          "pass": true
+        },
+        {
+          "check_id": "AVAILABLE_NOT_AFTER_DECISION",
+          "pass": true
+        },
+        {
+          "check_id": "REVISION_VINTAGE_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "DATA_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "CONFIG_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "ARTIFACT_FRESHNESS",
+          "pass": true
+        },
+        {
+          "check_id": "REQUIRED_SOURCE_COMPLETENESS",
+          "pass": false
+        },
+        {
+          "check_id": "BAR_TIMESTAMP_UNIQUENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_GRID_ALIGNMENT",
+          "pass": true
+        },
+        {
+          "check_id": "COST_IDENTITY",
+          "pass": true
+        }
+      ],
+      "detected": true,
+      "is_fault": true,
+      "reasons": [
+        "REQUIRED_SOURCE_COMPLETENESS"
+      ]
+    },
+    {
+      "accepted": false,
+      "arm": "POINT_IN_TIME_PROVENANCE_FAIL_CLOSED",
+      "case_id": "DUPLICATE_BAR",
+      "checks": [
+        {
+          "check_id": "REQUIRED_SCHEMA_FIELDS",
+          "pass": true
+        },
+        {
+          "check_id": "TIMESTAMPS_AWARE_UTC",
+          "pass": true
+        },
+        {
+          "check_id": "AVAILABLE_NOT_AFTER_DECISION",
+          "pass": true
+        },
+        {
+          "check_id": "REVISION_VINTAGE_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "DATA_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "CONFIG_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "ARTIFACT_FRESHNESS",
+          "pass": true
+        },
+        {
+          "check_id": "REQUIRED_SOURCE_COMPLETENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_TIMESTAMP_UNIQUENESS",
+          "pass": false
+        },
+        {
+          "check_id": "BAR_GRID_ALIGNMENT",
+          "pass": true
+        },
+        {
+          "check_id": "COST_IDENTITY",
+          "pass": true
+        }
+      ],
+      "detected": true,
+      "is_fault": true,
+      "reasons": [
+        "BAR_TIMESTAMP_UNIQUENESS"
+      ]
+    },
+    {
+      "accepted": false,
+      "arm": "POINT_IN_TIME_PROVENANCE_FAIL_CLOSED",
+      "case_id": "OFF_GRID_BAR",
+      "checks": [
+        {
+          "check_id": "REQUIRED_SCHEMA_FIELDS",
+          "pass": true
+        },
+        {
+          "check_id": "TIMESTAMPS_AWARE_UTC",
+          "pass": true
+        },
+        {
+          "check_id": "AVAILABLE_NOT_AFTER_DECISION",
+          "pass": true
+        },
+        {
+          "check_id": "REVISION_VINTAGE_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "DATA_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "CONFIG_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "ARTIFACT_FRESHNESS",
+          "pass": true
+        },
+        {
+          "check_id": "REQUIRED_SOURCE_COMPLETENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_TIMESTAMP_UNIQUENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_GRID_ALIGNMENT",
+          "pass": false
+        },
+        {
+          "check_id": "COST_IDENTITY",
+          "pass": true
+        }
+      ],
+      "detected": true,
+      "is_fault": true,
+      "reasons": [
+        "BAR_GRID_ALIGNMENT"
+      ]
+    },
+    {
+      "accepted": false,
+      "arm": "POINT_IN_TIME_PROVENANCE_FAIL_CLOSED",
+      "case_id": "COST_CONTRACT_CORRUPTION",
+      "checks": [
+        {
+          "check_id": "REQUIRED_SCHEMA_FIELDS",
+          "pass": true
+        },
+        {
+          "check_id": "TIMESTAMPS_AWARE_UTC",
+          "pass": true
+        },
+        {
+          "check_id": "AVAILABLE_NOT_AFTER_DECISION",
+          "pass": true
+        },
+        {
+          "check_id": "REVISION_VINTAGE_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "DATA_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "CONFIG_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "ARTIFACT_FRESHNESS",
+          "pass": true
+        },
+        {
+          "check_id": "REQUIRED_SOURCE_COMPLETENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_TIMESTAMP_UNIQUENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_GRID_ALIGNMENT",
+          "pass": true
+        },
+        {
+          "check_id": "COST_IDENTITY",
+          "pass": false
+        }
+      ],
+      "detected": true,
+      "is_fault": true,
+      "reasons": [
+        "COST_IDENTITY"
+      ]
+    },
+    {
+      "accepted": false,
+      "arm": "POINT_IN_TIME_PROVENANCE_FAIL_CLOSED",
+      "case_id": "REVISION_WITHOUT_VINTAGE",
+      "checks": [
+        {
+          "check_id": "REQUIRED_SCHEMA_FIELDS",
+          "pass": true
+        },
+        {
+          "check_id": "TIMESTAMPS_AWARE_UTC",
+          "pass": true
+        },
+        {
+          "check_id": "AVAILABLE_NOT_AFTER_DECISION",
+          "pass": true
+        },
+        {
+          "check_id": "REVISION_VINTAGE_BINDING",
+          "pass": false
+        },
+        {
+          "check_id": "DATA_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "CONFIG_HASH_BINDING",
+          "pass": true
+        },
+        {
+          "check_id": "ARTIFACT_FRESHNESS",
+          "pass": true
+        },
+        {
+          "check_id": "REQUIRED_SOURCE_COMPLETENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_TIMESTAMP_UNIQUENESS",
+          "pass": true
+        },
+        {
+          "check_id": "BAR_GRID_ALIGNMENT",
+          "pass": true
+        },
+        {
+          "check_id": "COST_IDENTITY",
+          "pass": true
+        }
+      ],
+      "detected": true,
+      "is_fault": true,
+      "reasons": [
+        "REVISION_VINTAGE_BINDING"
+      ]
+    }
+  ],
+  "schema_version": "article2-benchmark-v1",
+  "semantic_branch_coverage": {
+    "branches": [
+      {
+        "both_outcomes_covered": true,
+        "check_id": "ARTIFACT_FRESHNESS",
+        "observed_fail": true,
+        "observed_pass": true
+      },
+      {
+        "both_outcomes_covered": true,
+        "check_id": "AVAILABLE_NOT_AFTER_DECISION",
+        "observed_fail": true,
+        "observed_pass": true
+      },
+      {
+        "both_outcomes_covered": true,
+        "check_id": "BAR_GRID_ALIGNMENT",
+        "observed_fail": true,
+        "observed_pass": true
+      },
+      {
+        "both_outcomes_covered": true,
+        "check_id": "BAR_TIMESTAMP_UNIQUENESS",
+        "observed_fail": true,
+        "observed_pass": true
+      },
+      {
+        "both_outcomes_covered": true,
+        "check_id": "CONFIG_HASH_BINDING",
+        "observed_fail": true,
+        "observed_pass": true
+      },
+      {
+        "both_outcomes_covered": true,
+        "check_id": "COST_IDENTITY",
+        "observed_fail": true,
+        "observed_pass": true
+      },
+      {
+        "both_outcomes_covered": true,
+        "check_id": "DATA_HASH_BINDING",
+        "observed_fail": true,
+        "observed_pass": true
+      },
+      {
+        "both_outcomes_covered": true,
+        "check_id": "REQUIRED_SCHEMA_FIELDS",
+        "observed_fail": true,
+        "observed_pass": true
+      },
+      {
+        "both_outcomes_covered": true,
+        "check_id": "REQUIRED_SOURCE_COMPLETENESS",
+        "observed_fail": true,
+        "observed_pass": true
+      },
+      {
+        "both_outcomes_covered": true,
+        "check_id": "REVISION_VINTAGE_BINDING",
+        "observed_fail": true,
+        "observed_pass": true
+      },
+      {
+        "both_outcomes_covered": true,
+        "check_id": "TIMESTAMPS_AWARE_UTC",
+        "observed_fail": true,
+        "observed_pass": true
+      }
+    ],
+    "covered": 11,
+    "rate": 1.0,
+    "total": 11
+  }
+}

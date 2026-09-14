@@ -75,3 +75,18 @@ data/fundamental_event_inbox/manifests/
 
 /docs/publications/
 /docs/pulications/
+
+# Local confidential Article 1/2 manuscript files
+/docs/article2/manuscript/
+/artifacts/article1/manuscript/
+/artifacts/article1/manuscripts/
+/artifacts/article1/submission/
+/artifacts/article1/submissions/
+/artifacts/article2/article2_manuscript_v1/
+/artifacts/article2/XAUUSD_ARTICLE2_MANUSCRIPT_INPUTS_V1.zip
+/artifacts/article2/XAUUSD_ARTICLE2_MANUSCRIPT_INPUTS_V1.zip.sha256
+/tools/article_publication/build_article2_manuscript_inputs.py
+/tests/test_article2_manuscript_inputs.py
+/.github/workflows/xauusd_article2_manuscript_qa.yml
+/README_ARTICLE2_MANUSCRIPT_PACKAGE_V1.md
+/XAUUSD_ARTICLE2_MANUSCRIPT_PACKAGE_V1_MANIFEST.json

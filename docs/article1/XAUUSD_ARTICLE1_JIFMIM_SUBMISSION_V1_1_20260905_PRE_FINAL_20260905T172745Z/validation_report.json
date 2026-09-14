@@ -1,0 +1,40 @@
+{
+  "decision": "PASS_TECHNICAL_VALIDATION_BLOCKED_PENDING_AUTHOR_METADATA",
+  "technical_validation_pass": true,
+  "submission_ready": false,
+  "pending_author_metadata_markers": [
+    "FundingStatement: TO BE CONFIRMED",
+    "InterestStatement: TO BE CONFIRMED",
+    "RepositoryCommit: EMPTY",
+    "RepositoryURL: EMPTY"
+  ],
+  "registry": {
+    "all": 47,
+    "primary": 39,
+    "forensic_only": 8
+  },
+  "primary_records": 28685,
+  "positive_means": {
+    "mean_gross_bps": 24,
+    "mean_normal_net_bps": 9,
+    "mean_severe_net_bps": 5,
+    "mean_fixed_stress_net_bps": 1
+  },
+  "native_passes": 0,
+  "supported_families": 0,
+  "cross_feed": {
+    "applicable": 20,
+    "pass": 13,
+    "fail": 7,
+    "sign_reversals": 2
+  },
+  "generated_pdfs": 5,
+  "literature": {
+    "cited_journal_articles": 42,
+    "articles_2023_2026": 15,
+    "latest_year": 2026,
+    "uncited_entries": 0
+  },
+  "latex_content_overflow_warnings": 0,
+  "cas_class_frontmatter_warnings": 3
+}

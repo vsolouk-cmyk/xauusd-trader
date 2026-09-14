@@ -1,0 +1,135 @@
+{
+  "covered_statements": 189,
+  "functions": [
+    {
+      "covered": 5,
+      "function": "parse_aware_utc",
+      "missing_lines": [],
+      "path": "app/article2_fail_closed_benchmark.py",
+      "rate": 1.0,
+      "statements": 5
+    },
+    {
+      "covered": 5,
+      "function": "base_fixture",
+      "missing_lines": [],
+      "path": "app/article2_fail_closed_benchmark.py",
+      "rate": 1.0,
+      "statements": 5
+    },
+    {
+      "covered": 32,
+      "function": "apply_fault",
+      "missing_lines": [
+        179
+      ],
+      "path": "app/article2_fail_closed_benchmark.py",
+      "rate": 0.9696969696969697,
+      "statements": 33
+    },
+    {
+      "covered": 43,
+      "function": "_full_checks",
+      "missing_lines": [
+        217,
+        228,
+        238
+      ],
+      "path": "app/article2_fail_closed_benchmark.py",
+      "rate": 0.9347826086956522,
+      "statements": 46
+    },
+    {
+      "covered": 16,
+      "function": "_pit_fail_open_warnings",
+      "missing_lines": [
+        273
+      ],
+      "path": "app/article2_fail_closed_benchmark.py",
+      "rate": 0.9411764705882353,
+      "statements": 17
+    },
+    {
+      "covered": 9,
+      "function": "evaluate_arm",
+      "missing_lines": [
+        287
+      ],
+      "path": "app/article2_fail_closed_benchmark.py",
+      "rate": 0.9,
+      "statements": 10
+    },
+    {
+      "covered": 4,
+      "function": "build_cases",
+      "missing_lines": [],
+      "path": "app/article2_fail_closed_benchmark.py",
+      "rate": 1.0,
+      "statements": 4
+    },
+    {
+      "covered": 1,
+      "function": "outcome_digest",
+      "missing_lines": [],
+      "path": "app/article2_fail_closed_benchmark.py",
+      "rate": 1.0,
+      "statements": 1
+    },
+    {
+      "covered": 9,
+      "function": "_runtime_profile",
+      "missing_lines": [],
+      "path": "app/article2_fail_closed_benchmark.py",
+      "rate": 1.0,
+      "statements": 9
+    },
+    {
+      "covered": 22,
+      "function": "run_benchmark",
+      "missing_lines": [
+        321
+      ],
+      "path": "app/article2_fail_closed_benchmark.py",
+      "rate": 0.9565217391304348,
+      "statements": 23
+    },
+    {
+      "covered": 17,
+      "function": "article2_gate",
+      "missing_lines": [],
+      "path": "app/article2_fail_closed_benchmark.py",
+      "rate": 1.0,
+      "statements": 17
+    },
+    {
+      "covered": 1,
+      "function": "norm_text",
+      "missing_lines": [],
+      "path": "app/stage170c_asof_join_enforcement_and_validation_framework.py",
+      "rate": 1.0,
+      "statements": 1
+    },
+    {
+      "covered": 20,
+      "function": "enforce_contract",
+      "missing_lines": [],
+      "path": "app/stage170c_asof_join_enforcement_and_validation_framework.py",
+      "rate": 1.0,
+      "statements": 20
+    },
+    {
+      "covered": 5,
+      "function": "source_proven_stress_contract",
+      "missing_lines": [
+        525
+      ],
+      "path": "app/xauusd_controlled_paper_historical_replay.py",
+      "rate": 0.8333333333333334,
+      "statements": 6
+    }
+  ],
+  "method": "CPYTHON_STDLIB_TRACE_OVER_FROZEN_FUNCTION_SCOPES",
+  "rate": 0.9593908629441624,
+  "scope_rule": "AST statement lines inside pre-registered functions; imported dependencies and unrelated historical stages excluded",
+  "total_statements": 197
+}

@@ -1,0 +1,120 @@
+{
+  "program": "XAUUSD_ARTICLE1_UNIFIED_REFERENCE_EVALUATION_V1_1",
+  "registry_path": "docs/article_publication/XAUUSD_ARTICLE1_LOCKED_SPECIFICATION_REGISTRY_V1_1.json",
+  "registry_specification_set_sha256": "e20d26b5fe2fe6db25a8cdf48cf8650b1b726be0a78c500549e51e11522b8a07",
+  "run_directory": "reports/article1_locked_reference_rerun_v1_1",
+  "versioned_repair": {
+    "deviation_id": "A1-DEV-002",
+    "scope": "CROSS_FEED_INPUT_ROUTING_AND_PREFLIGHT_SCHEMA_VALIDATION_ONLY",
+    "superseded_run_directory": "reports/article1_locked_reference_rerun_v1_0",
+    "superseded_run_status": "ABORTED_BEFORE_SPECIFICATION_OUTCOME_COMPUTATION",
+    "strategy_or_statistical_parameter_changed": false
+  },
+  "reference_only": true,
+  "post_2024_outcome_computation_allowed": false,
+  "historical_strategy_result_files_allowed_as_inputs": false,
+  "reference_trade_inclusion": "ENTRY_AT_OR_AFTER_BLOCK_REFERENCE_START_AND_EXIT_STRICTLY_BEFORE_BLOCK_REFERENCE_END",
+  "primary_cost_policy": "SOURCE_NATIVE_SEVERE_COST",
+  "secondary_costs": {
+    "source_native_normal": true,
+    "gross_before_cost": true,
+    "fixed_stress": {
+      "successor_scan_round_trip_bps": 10.0,
+      "cross_asset_fixed_round_trip_bps": 10.0,
+      "cross_asset_event_response_round_trip_bps": 10.0,
+      "canonical_tsmom_bps_per_1x_turnover": 10.0,
+      "precious_metals_rv_two_leg_round_trip_bps": 20.0
+    }
+  },
+  "alignment_warning_sensitivity": {
+    "start_utc": "2019-10-07T00:00:00Z",
+    "end_utc_exclusive": "2019-10-14T00:00:00Z",
+    "eligible_source_blocks": [
+      "successor_scan",
+      "cross_asset_fixed",
+      "cross_asset_event_response"
+    ],
+    "trade_exclusion_rule": "EXCLUDE_ANY_TRADE_WITH_ENTRY_BEFORE_WARNING_END_AND_EXIT_AFTER_WARNING_START",
+    "family_fragility_rule": "FRAGILE_IF_ANY_SPECIFICATION_EFFECT_SIGN_OR_FAMILY_MULTIPLICITY_REJECTION_OR_FAMILY_SUPPORT_LABEL_CHANGES"
+  },
+  "cross_feed_replication": {
+    "eligible_source_blocks": [
+      "successor_scan",
+      "canonical_tsmom"
+    ],
+    "amarkets_h1_table": "amarkets_h1_from_m5_utc",
+    "dukascopy_h1_table": "dukascopy_h1_from_m5",
+    "input_routing": {
+      "amarkets_h1_input_id": "amarkets_alignment_sqlite",
+      "dukascopy_h1_input_id": "dukascopy_extended_history_sqlite"
+    },
+    "required_h1_columns": [
+      "timestamp",
+      "open",
+      "high",
+      "low",
+      "close",
+      "m5_bar_count"
+    ],
+    "minimum_signal_jaccard": 0.6,
+    "minimum_matched_outcomes": 30,
+    "minimum_matched_gross_return_correlation": 0.9,
+    "require_effect_direction_consistency": true,
+    "insufficient_matches_policy": "FAIL_CROSS_FEED_SUPPORT_GATE"
+  },
+  "family_multiplicity": {
+    "method": "CENTERED_CIRCULAR_MOVING_BLOCK_MAX_T_BOOTSTRAP_ON_COMMON_DAILY_PNL",
+    "replications": 5000,
+    "block_calendar_days": 20,
+    "seed": 2026090201,
+    "alpha": 0.05,
+    "daily_return_assignment": "SUM_NATIVE_SEVERE_NET_RETURN_ON_TRADE_OR_REBALANCE_EXIT_DATE; ZERO_WHEN_INACTIVE",
+    "studentization": "FULL_SAMPLE_STANDARD_ERROR_WITH_ZERO_VARIANCE_MAPPED_TO_ZERO_STATISTIC"
+  },
+  "deflated_sharpe_ratio": {
+    "enabled": true,
+    "eligible_specifications": 39,
+    "return_frequency": "COMMON_CALENDAR_DAILY",
+    "common_calendar_start_utc": "2016-01-01T00:00:00Z",
+    "common_calendar_end_utc_exclusive": "2025-01-01T00:00:00Z",
+    "annualization_days": 365,
+    "minimum_observations": 365,
+    "report_probability_threshold": 0.95,
+    "interpretation": "SECONDARY_DIAGNOSTIC_NOT_A_SUBSTITUTE_FOR_FAMILY_MULTIPLICITY_AND_STABILITY_GATES"
+  },
+  "probability_of_backtest_overfitting": {
+    "status": "NOT_ESTIMABLE",
+    "reason": "THE_LOCKED_UNIVERSE_COMBINES_HETEROGENEOUS_CALENDARS, HORIZONS, AND NONCOMPARABLE OBJECTIVES AND DOES_NOT_FORM_A_VALID_COMBINATORIALLY_SYMMETRIC_CROSS_VALIDATION_BLOCK"
+  },
+  "family_support_rule": {
+    "required_conditions": [
+      "AT_LEAST_ONE_SPECIFICATION_PASSES_ITS_SOURCE_NATIVE_REFERENCE_GATES",
+      "FAMILY_MAX_T_ADJUSTED_P_VALUE_LE_0_05",
+      "NO_ALIGNMENT_WARNING_FRAGILITY_WHERE_APPLICABLE",
+      "CROSS_FEED_GATE_PASSES_WHERE_APPLICABLE",
+      "NO_PROVENANCE_OR_POINT_IN_TIME_FAILURE"
+    ],
+    "supported_label": "SUPPORTED_UNDER_LOCKED_PROTOCOL",
+    "unsupported_label": "NO_EDGE_UNDER_LOCKED_PROTOCOL",
+    "insufficient_label": "INCONCLUSIVE_INSUFFICIENT_INFORMATION",
+    "untestable_label": "UNTESTABLE_POINT_IN_TIME_CONTRACT_FAILURE"
+  },
+  "random_seeds": {
+    "family_max_t": 2026090201,
+    "deflated_sharpe_tie_break": 2026090202
+  },
+  "output_policy": {
+    "retain_zero_trade_specifications": true,
+    "retain_failed_specifications": true,
+    "write_raw_reference_trades": true,
+    "write_reference_metrics": true,
+    "write_family_decisions": true,
+    "write_machine_readable_deviation_log": true,
+    "do_not_overwrite_existing_run_directory": true
+  },
+  "authorization": {
+    "paper_order_allowed": false,
+    "demo_order_allowed": false,
+    "live_order_allowed": false
+  }
+}

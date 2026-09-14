@@ -1,0 +1,10 @@
+| item | result | gate | status |
+| --- | --- | --- | --- |
+| Controlled fault cases | 12 | Frozen count | PASS |
+| Clean controls per arm | 3 | No false blocking | PASS |
+| Semantic contract branches | 11/11 | 100% | PASS |
+| Scoped executable statements | 189/197 (95.94%) | >=80% | PASS |
+| Article 2 unit tests | 13/13 | No failures or skips | PASS |
+| Existing core regressions | 31/31 | No failures or skips | PASS |
+| Core adapters | 2/2 | All pass | PASS |
+| Deterministic reproduction | 25f8420eaf39296e38f9d9a9416cb7aa3aba6baad16781ca157d921d1e8d6410 | Stable digest | PASS |

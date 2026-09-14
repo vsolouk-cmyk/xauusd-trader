@@ -1,0 +1,20 @@
+{
+  "adapters": [
+    {
+      "adapter_id": "STAGE170C_CONTRACT_ENFORCEMENT",
+      "clean_allowed": true,
+      "fault_blocked": true,
+      "pass": true,
+      "source_path": "app/stage170c_asof_join_enforcement_and_validation_framework.py"
+    },
+    {
+      "adapter_id": "HISTORICAL_REPLAY_COST_PARITY",
+      "corrupted_contract_blocked": true,
+      "pass": true,
+      "source_path": "app/xauusd_controlled_paper_historical_replay.py",
+      "valid_contract_pass": true
+    }
+  ],
+  "missing_files": [],
+  "pass": true
+}

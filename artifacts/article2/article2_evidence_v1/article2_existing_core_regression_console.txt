@@ -1,0 +1,52 @@
+test_bidirectional_146_rows_are_valid (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_bidirectional_146_rows_are_valid) ... ok
+test_bidirectional_forward_policy_would_match_side_scope (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_bidirectional_forward_policy_would_match_side_scope) ... ok
+test_canonical_rank_prefers_non_invalid (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_canonical_rank_prefers_non_invalid) ... ok
+test_commercial_reference_metric_mismatch_fails (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_commercial_reference_metric_mismatch_fails) ... ok
+test_commercial_reference_metric_parity (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_commercial_reference_metric_parity) ... ok
+test_concurrency_blocks_before_exit_and_no_early_pnl (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_concurrency_blocks_before_exit_and_no_early_pnl) ... ok
+test_current_long_only_policy_is_not_reference_parity (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_current_long_only_policy_is_not_reference_parity) ... ok
+test_daily_cap (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_daily_cap) ... ok
+test_direction_metadata_does_not_control_execution_side (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_direction_metadata_does_not_control_execution_side) ... ok
+test_entry_mismatch_fails (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_entry_mismatch_fails) ... ok
+test_event_absent_strict_blocks_core_does_not (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_event_absent_strict_blocks_core_does_not) ... ok
+test_exact_93_metadata_conflicts_are_diagnostic_only (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_exact_93_metadata_conflicts_are_diagnostic_only) ... ok
+test_exact_four_rows_activate_spread_plus_slippage_branch (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_exact_four_rows_activate_spread_plus_slippage_branch) ... ok
+test_hard_kill_blocks (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_hard_kill_blocks) ... ok
+test_long_row_flipped_to_short_probability_fails_gross_parity (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_long_row_flipped_to_short_probability_fails_gross_parity) ... ok
+test_naive_fixed_stress_on_one_high_spread_row_fails_closed (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_naive_fixed_stress_on_one_high_spread_row_fails_closed) ... ok
+test_neutral_band_evaluated_row_fails (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_neutral_band_evaluated_row_fails) ... ok
+test_no_execution_connector_tokens (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_no_execution_connector_tokens) ... ok
+test_original_91_short_regression_no_long_only_failure (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_original_91_short_regression_no_long_only_failure) ... ok
+test_profit_factor (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_profit_factor) ... ok
+test_real_commercial_artifacts_tie_out_when_present (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_real_commercial_artifacts_tie_out_when_present) ... ok
+test_research_gross_basis_fails_closed (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_research_gross_basis_fails_closed) ... ok
+test_short_row_flipped_to_long_probability_fails_gross_parity (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_short_row_flipped_to_long_probability_fails_gross_parity) ... ok
+test_spread_guard (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_spread_guard) ... ok
+test_spread_only_floor_without_slippage_addon_fails_closed (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_spread_only_floor_without_slippage_addon_fails_closed) ... ok
+test_unevaluated_is_missing_not_evaluated (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_unevaluated_is_missing_not_evaluated) ... ok
+test_unrecognized_stress_values_fail_closed (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_unrecognized_stress_values_fail_closed) ... ok
+test_weekly_pause (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_weekly_pause) ... ok
+
+----------------------------------------------------------------------
+Ran 28 tests in 0.312s
+
+OK
+{
+  "status": "STAGE170B_COMPLETE_DATA_ASOF_CONTRACT_READY",
+  "decision": "STAGE170B_DATA_CONTRACT_REQUIRED_BEFORE_NEW_DISCOVERY",
+  "outputs": {
+    "summary_json": "/tmp/article2-smoke-2-wmuo5ei5/reports/stage170b_data_asof_contract_validation_redesign/stage170b_data_asof_contract_summary.json",
+    "decision_md": "/tmp/article2-smoke-2-wmuo5ei5/reports/stage170b_data_asof_contract_validation_redesign/stage170b_decision.md",
+    "data_asof_contract_csv": "/tmp/article2-smoke-2-wmuo5ei5/reports/stage170b_data_asof_contract_validation_redesign/stage170b_data_asof_contract.csv",
+    "validation_redesign_matrix_csv": "/tmp/article2-smoke-2-wmuo5ei5/reports/stage170b_data_asof_contract_validation_redesign/stage170b_validation_redesign_matrix.csv",
+    "multiple_testing_control_plan_csv": "/tmp/article2-smoke-2-wmuo5ei5/reports/stage170b_data_asof_contract_validation_redesign/stage170b_multiple_testing_control_plan.csv",
+    "purged_walk_forward_plan_csv": "/tmp/article2-smoke-2-wmuo5ei5/reports/stage170b_data_asof_contract_validation_redesign/stage170b_purged_walk_forward_plan.csv"
+  }
+}
+{
+  "status": "STAGE170C_COMPLETE_ASOF_ENFORCEMENT_FRAMEWORK_READY",
+  "decision": "STAGE170C_ASOF_ENFORCEMENT_BLOCKS_NEW_DISCOVERY",
+  "blocking_new_discovery_rows": 1,
+  "walk_forward_folds": 5,
+  "summary_json": "/tmp/article2-smoke-3-cgq8omd9/reports/stage170c_asof_join_enforcement_and_validation_framework/stage170c_asof_enforcement_summary.json"
+}

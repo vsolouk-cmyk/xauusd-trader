@@ -1,0 +1,50 @@
+0c24c7a (HEAD -> main, origin/main, origin/HEAD) Repair Article 1 cross-feed input routing v1.1
+9afb475 Lock Article 1 unified reference protocol v1.1
+ffcfd33 article1: freeze 2015-2024 reference data contract v1.1
+9fe0e02 Repair precious metals RV derived history preflight contract
+64580af Add final canonical long-horizon XAUUSD trend campaign
+8624f73 Add XAUUSD pipeline positive-control calibration audit
+cbd357b Repair event-response scan using locked raw official timestamps
+0ad3e6d Repair pandas 3 streaming CSV reader in fixed cross-asset scan
+2e3ae72 Add compact diagnostics for cross-asset panel coverage failure
+8221d21 Repair self-validating MT5 cross-asset CSV inventory
+863e1e9 Repair gold as-of timing in macro causal panel
+f7ce9b5 Build causal XAUUSD macro panel with GVZ
+398068c Close price-only H1 path and inventory macro data readiness
+19d9523 Add reference-only long-side edge attribution audit
+a5da43d Fix pre-arm data refresh and demo permit orchestration
+ceba91f Repair complete AMarkets ingestion and pass fresh demo dry cycle
+dd4ea76 Add login-bound MT5 dry review for demo account 7907958
+6428e11 Add MT5 volume diagnostics and runtime logging
+da153fb Fix bounded demo spread guard source provenance
+2331780 Fix Stage116C FRED core historical release dates
+a287cc2 Close bidirectional controlled-paper historical parity
+4a9bf28 Close XAUUSD bidirectional controlled-paper direction parity
+7a569f6 Fix replay with source-proven Commercial Closure cost contract
+38e2a67 Activate freshness-guarded XAUUSD controlled paper logger
+fc43b52 Activate freshness-guarded XAUUSD controlled paper logger
+2388efb Add controlled-paper operational freshness guard
+d920801 Activate XAUUSD controlled paper logging
+76f15fb Repair controlled-paper execution ledger parser
+c618287 Repair controlled-paper contract validation and test isolation
+92a19dd Add integrated XAUUSD controlled-paper logger
+9ca42ee Audit Stage178 survivor and define controlled shadow contract
+64436d0 Fix Stage177C epoch timestamp resolution portability
+3e996fe Repair Stage177B AMarkets cross-feed loader and alignment audit
+fa1d08e Integrate extended Dukascopy history and add AMarkets cross-feed audit
+4927da6 Archive completed Stage177A storage purge workflow
+06b2cbd Reset Actions storage and add Dukascopy history acquisition
+289f97c Skip permanent WGC 404s and pre-2010 reports
+438abef Add Stage176 progress checkpoints and collector circuit breakers
+e6abb58 Repair Stage175 dual-source T1 parity
+db7d305 Close H64L rescue and refresh locked T1 holdout
+88ed5a3 Fix Stage174 MT5 H1 schema compatibility
+bfbcf15 Resolve H64L contracts and run final Track A audit
+bed01d6 Reconcile H64L sources and enforce prior thesis delta gate
+2767c64 Fix Stage166G empty manifest recovery and workflow timeout
+7254cbd Add persistent exact DXY refresh for H64L forward shadow
+cc62364 Add persistent exact DXY refresh for H64L forward shadow
+50206a3 Fix Stage171H active DXY and real-yield source selection
+a762be3 Add Stage171H forward H64L features and GDELT HTTPS fallback
+6c8fe4e Add persistent GDELT store and unblock Stage64K weekend ops
+f94f00e Fix Stage171F macro rebuild and GDELT snapshot publication

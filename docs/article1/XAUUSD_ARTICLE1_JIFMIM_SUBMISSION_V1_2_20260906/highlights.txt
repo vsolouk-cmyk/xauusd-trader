@@ -1,0 +1,5 @@
+Severe costs reduced positive strategy means from 24 to 5.
+All 39 strategies failed at least one source-native acceptance test.
+The minimum familywise adjusted p-value was 0.446.
+Seven of 20 eligible strategies failed cross-feed replication.
+Complete failure records show where apparent profitability was lost.

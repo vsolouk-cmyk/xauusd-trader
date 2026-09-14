@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="520" viewBox="0 0 940 520">
+<rect width="100%" height="100%" fill="white"/>
+<style>text{font-family:Arial,sans-serif;fill:#17212b}.title{font-size:22px;font-weight:700}.label{font-size:14px}.value{font-size:14px;font-weight:700}.axis{stroke:#53606d;stroke-width:1}</style>
+<text class="title" x="470" y="38" text-anchor="middle">Controlled fault-injection benchmark</text>
+<text class="label" x="290" y="78" text-anchor="middle">Detection rate</text>
+<line class="axis" x1="130" y1="410" x2="450" y2="410"/>
+<rect x="150" y="410.00" width="90" height="0.00" fill="#8c96a0"/>
+<text class="value" x="195.0" y="402.00" text-anchor="middle">0%</text>
+<text class="label" x="195.0" y="435" text-anchor="middle">Arm 1</text>
+<rect x="255" y="260.00" width="90" height="150.00" fill="#d98e04"/>
+<text class="value" x="300.0" y="252.00" text-anchor="middle">50%</text>
+<text class="label" x="300.0" y="435" text-anchor="middle">Arm 2</text>
+<rect x="360" y="110.00" width="90" height="300.00" fill="#167d5a"/>
+<text class="value" x="405.0" y="102.00" text-anchor="middle">100%</text>
+<text class="label" x="405.0" y="435" text-anchor="middle">Arm 3</text>
+<text class="label" x="685" y="78" text-anchor="middle">Unsafe acceptance</text>
+<line class="axis" x1="525" y1="410" x2="845" y2="410"/>
+<rect x="545" y="110.00" width="90" height="300.00" fill="#8c96a0"/>
+<text class="value" x="590.0" y="102.00" text-anchor="middle">100%</text>
+<text class="label" x="590.0" y="435" text-anchor="middle">Arm 1</text>
+<rect x="650" y="110.00" width="90" height="300.00" fill="#d98e04"/>
+<text class="value" x="695.0" y="102.00" text-anchor="middle">100%</text>
+<text class="label" x="695.0" y="435" text-anchor="middle">Arm 2</text>
+<rect x="755" y="410.00" width="90" height="0.00" fill="#167d5a"/>
+<text class="value" x="800.0" y="402.00" text-anchor="middle">0%</text>
+<text class="label" x="800.0" y="435" text-anchor="middle">Arm 3</text>
+<rect x="80" y="462" width="16" height="16" fill="#8c96a0"/>
+<text class="label" x="104" y="475">Arm 1</text>
+<rect x="370" y="462" width="16" height="16" fill="#d98e04"/>
+<text class="label" x="394" y="475">Arm 2</text>
+<rect x="660" y="462" width="16" height="16" fill="#167d5a"/>
+<text class="label" x="684" y="475">Arm 3</text>
+</svg>

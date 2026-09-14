@@ -1,0 +1,4 @@
+Data and code availability
+
+The frozen registry, evaluation protocol, source hashes, normalized specification-level outcomes, derived tables, figure-building code, and independent audit artifacts are supplied with the replication package. Subject to repository synchronization and archival release, the public code and derived evidence will be available at GITHUB URL TO BE COMPLETED AFTER SYNCHRONIZATION, commit COMMIT SHA TO BE COMPLETED AFTER SYNCHRONIZATION. Raw broker and vendor files are not redistributed because their licensing and access conditions may restrict public release. The manuscript reports the immutable SHA-256 bindings needed to verify author-held source files. A qualified researcher may request assistance in reconstructing the permitted inputs, but access to third-party data remains governed by the original providers.
+

@@ -1,0 +1,26 @@
+{
+  "errors": 0,
+  "failures": 0,
+  "pass": true,
+  "replay_tests_run": 28,
+  "skipped": 0,
+  "smoke": [
+    {
+      "error": null,
+      "pass": true,
+      "test": "test_stage170a_smoke"
+    },
+    {
+      "error": null,
+      "pass": true,
+      "test": "test_stage170b_smoke"
+    },
+    {
+      "error": null,
+      "pass": true,
+      "test": "test_stage170c_smoke"
+    }
+  ],
+  "smoke_tests_run": 3,
+  "tests_run": 31
+}

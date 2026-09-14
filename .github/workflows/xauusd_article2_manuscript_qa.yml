@@ -1,0 +1,41 @@
+name: XAUUSD Article 2 Manuscript QA
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-manuscript-inputs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Compile generator and tests
+        run: |
+          python -m py_compile \
+            tools/article_publication/build_article2_manuscript_inputs.py \
+            tests/test_article2_manuscript_inputs.py
+
+      - name: Run bounded manuscript-input tests
+        run: python -m unittest -v tests/test_article2_manuscript_inputs.py
+
+      - name: Rebuild manuscript inputs
+        run: python tools/article_publication/build_article2_manuscript_inputs.py --root .
+
+      - name: Verify retained outputs are current
+        run: |
+          (cd artifacts/article2 && sha256sum -c XAUUSD_ARTICLE2_MANUSCRIPT_INPUTS_V1.zip.sha256)
+          unzip -t artifacts/article2/XAUUSD_ARTICLE2_MANUSCRIPT_INPUTS_V1.zip
+          git diff --exit-code -- \
+            artifacts/article2/article2_manuscript_v1 \
+            artifacts/article2/XAUUSD_ARTICLE2_MANUSCRIPT_INPUTS_V1.zip \
+            artifacts/article2/XAUUSD_ARTICLE2_MANUSCRIPT_INPUTS_V1.zip.sha256

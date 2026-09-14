@@ -1,0 +1,18 @@
+test_benchmark_is_deterministic (test_article2_fail_closed_benchmark.Article2BenchmarkTests.test_benchmark_is_deterministic) ... ok
+test_clean_fixture_is_accepted_by_every_arm (test_article2_fail_closed_benchmark.Article2BenchmarkTests.test_clean_fixture_is_accepted_by_every_arm) ... ok
+test_config_tamper_is_hash_detected (test_article2_fail_closed_benchmark.Article2BenchmarkTests.test_config_tamper_is_hash_detected) ... ok
+test_cost_corruption_is_economic_not_hash_failure (test_article2_fail_closed_benchmark.Article2BenchmarkTests.test_cost_corruption_is_economic_not_hash_failure) ... ok
+test_duplicate_and_off_grid_faults_have_distinct_reasons (test_article2_fail_closed_benchmark.Article2BenchmarkTests.test_duplicate_and_off_grid_faults_have_distinct_reasons) ... ok
+test_each_fault_is_isolated_and_full_arm_blocks_it (test_article2_fail_closed_benchmark.Article2BenchmarkTests.test_each_fault_is_isolated_and_full_arm_blocks_it) ... ok
+test_fault_matrix_is_bounded_and_unique (test_article2_fail_closed_benchmark.Article2BenchmarkTests.test_fault_matrix_is_bounded_and_unique) ... ok
+test_full_arm_meets_frozen_gate (test_article2_fail_closed_benchmark.Article2BenchmarkTests.test_full_arm_meets_frozen_gate) ... ok
+test_manifest_tamper_is_hash_detected (test_article2_fail_closed_benchmark.Article2BenchmarkTests.test_manifest_tamper_is_hash_detected) ... ok
+test_naive_arm_silently_accepts_faults (test_article2_fail_closed_benchmark.Article2BenchmarkTests.test_naive_arm_silently_accepts_faults) ... ok
+test_no_execution_connector (test_article2_fail_closed_benchmark.Article2BenchmarkTests.test_no_execution_connector) ... ok
+test_point_in_time_fail_open_never_blocks (test_article2_fail_closed_benchmark.Article2BenchmarkTests.test_point_in_time_fail_open_never_blocks) ... ok
+test_three_arms_are_frozen (test_article2_fail_closed_benchmark.Article2BenchmarkTests.test_three_arms_are_frozen) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.027s
+
+OK

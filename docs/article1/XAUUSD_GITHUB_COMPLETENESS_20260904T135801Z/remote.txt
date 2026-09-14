@@ -1,0 +1,2 @@
+origin	git@github.com:vsolouk-cmyk/xauusd-trader.git (fetch)
+origin	git@github.com:vsolouk-cmyk/xauusd-trader.git (push)

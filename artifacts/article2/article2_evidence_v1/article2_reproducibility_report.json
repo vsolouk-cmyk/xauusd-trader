@@ -1,0 +1,6 @@
+{
+  "deterministic": true,
+  "digest_sha256": "25f8420eaf39296e38f9d9a9416cb7aa3aba6baad16781ca157d921d1e8d6410",
+  "fixture_generation": "deterministic; no random state; one isolated mutation per fault case",
+  "runtime_values_excluded_from_digest": true
+}

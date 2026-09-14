@@ -1,0 +1,2 @@
+ ...ARTICLE1_MANUSCRIPT_FOUNDATION_V1_0_20260904.md | 317 +++++++++++++++++++++
+ 1 file changed, 317 insertions(+)

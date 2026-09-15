@@ -8,13 +8,13 @@
     },
     {
       "path": "article2_benchmark_outcomes.csv",
-      "sha256": "857dff5e6b1c62851e39f3b136f64ab6ee5678e62e68f7fe65a7099f6169f5ee",
-      "size_bytes": 3395
+      "sha256": "0874a1502b77a5d1acea0aa967d2767fa06b12a3e11280408c39489835f9eb2e",
+      "size_bytes": 3349
     },
     {
       "path": "article2_benchmark_summary.json",
-      "sha256": "b71e357a9a6f5d1b27435abe7420c961b0ff4d31202ba0ea351d6e352039f169",
-      "size_bytes": 31502
+      "sha256": "90a3b79a0c63791767b47383fbf2c6121485c3a5a312ccafa367287bb326e344",
+      "size_bytes": 31499
     },
     {
       "path": "article2_core_adapter_results.json",
@@ -23,8 +23,8 @@
     },
     {
       "path": "article2_core_evidence_manifest.json",
-      "sha256": "f7a98de2bce908a6e88c2f3f744a5b63d4cb9026ecd34eb0f32127c5165c23d8",
-      "size_bytes": 3851
+      "sha256": "26a5fef0e817b586e9f097a705143298bdea6dd4353b951076255453c9170c6e",
+      "size_bytes": 3886
     },
     {
       "path": "article2_coverage_summary.json",
@@ -33,7 +33,7 @@
     },
     {
       "path": "article2_decision.json",
-      "sha256": "8cfa9a9515177402acdba84eddeb2ded9f710b1765a8cf4cbfb817b54d308973",
+      "sha256": "9685ae4ce7515477e682fc1b95308a63439e5a145727c8eae47c696a1e519394",
       "size_bytes": 749
     },
     {
@@ -43,13 +43,13 @@
     },
     {
       "path": "article2_environment.json",
-      "sha256": "778ab140a5d0df0df20d158f0283f32f8a8785477f2227188ac47292082de9c6",
-      "size_bytes": 268
+      "sha256": "fd2b509aed3de3314ddb0eb480a63ce50d856b9c4f1a639b80f8e26afead6dec",
+      "size_bytes": 293
     },
     {
       "path": "article2_existing_core_regression_console.txt",
-      "sha256": "e0f4233d05e5f53f358c40cb68f50c611b8d72d0f5fb41090c013d57bc0585c9",
-      "size_bytes": 5879
+      "sha256": "5afacdb9272a0bfd93ab472966a406cc02fd68abfdd374909dfcc7fda4ae4dca",
+      "size_bytes": 6187
     },
     {
       "path": "article2_existing_core_regression_summary.json",
@@ -58,8 +58,8 @@
     },
     {
       "path": "article2_fault_injection_matrix.csv",
-      "sha256": "cd930f59c141987cf527cd614b4bc8c7b0a0b9b78c31f376b991075e49aa1f38",
-      "size_bytes": 1280
+      "sha256": "0a0b2bf402616a50194a255de4caf702e5154a100382eddaf074002dc2c152fe",
+      "size_bytes": 1267
     },
     {
       "path": "article2_reproducibility_report.json",
@@ -68,7 +68,7 @@
     },
     {
       "path": "article2_unit_test_console.txt",
-      "sha256": "44bd6a73777a800df22ef5e6c811d4676394ee935c95b3eb7afcf2e1450257bb",
+      "sha256": "e0e71e944f6e9e64cf7c31f3d873ffcfa8051e5eb9e5c8fc14a06948c8f50ef2",
       "size_bytes": 2015
     },
     {

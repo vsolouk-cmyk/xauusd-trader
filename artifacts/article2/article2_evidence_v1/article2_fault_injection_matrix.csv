@@ -1,0 +1,13 @@
+fault_id,family,expected_check,description
+FUTURE_DATA_LEAKAGE,temporal,AVAILABLE_NOT_AFTER_DECISION,A feature becomes available after the decision timestamp.
+COT_PREPUBLICATION,temporal,AVAILABLE_NOT_AFTER_DECISION,Tuesday COT state is used before Friday publication.
+TIMEZONE_SHIFT,temporal,TIMESTAMPS_AWARE_UTC,An availability timestamp loses its UTC offset.
+SCHEMA_DRIFT,schema,REQUIRED_SCHEMA_FIELDS,A required availability field disappears.
+MANIFEST_TAMPER,provenance,DATA_HASH_BINDING,Feature bytes change without a manifest update.
+CONFIG_TAMPER,provenance,CONFIG_HASH_BINDING,The frozen configuration changes without a manifest update.
+STALE_ARTIFACT,freshness,ARTIFACT_FRESHNESS,An artifact predates the decision beyond the frozen age limit.
+MISSING_EVENT_CONTEXT,completeness,REQUIRED_SOURCE_COMPLETENESS,A required event-guard source is absent.
+DUPLICATE_BAR,market_data,BAR_TIMESTAMP_UNIQUENESS,A market-bar timestamp is duplicated.
+OFF_GRID_BAR,market_data,BAR_GRID_ALIGNMENT,A bar timestamp falls outside the five-minute grid.
+COST_CONTRACT_CORRUPTION,economics,COST_IDENTITY,Net return no longer equals gross return minus cost.
+REVISION_WITHOUT_VINTAGE,temporal,REVISION_VINTAGE_BINDING,A revised macro value lacks a point-in-time vintage identifier.

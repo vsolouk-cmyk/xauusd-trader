@@ -34,8 +34,8 @@
     {
       "exists": true,
       "path": "tools/article_publication/run_article2_evidence_suite.py",
-      "sha256": "1c94f84f1cc5b6f5962925a2e945d86c322cac8b331145495d310955697e364d",
-      "size_bytes": 23765
+      "sha256": "89915eece68742a3ee63c127f0bdf3d159e84e1f12bd837a5deb57bcafeff021",
+      "size_bytes": 23786
     },
     {
       "exists": true,
@@ -88,8 +88,8 @@
     {
       "exists": true,
       "path": ".github/workflows/xauusd_article2_evidence.yml",
-      "sha256": "4643db468b4524299259facb299e1d42fd04fc0d2d261a5dfb63144e26bac6fd",
-      "size_bytes": 1690
+      "sha256": "ced9bcdcd140b7f1202b3b8876a01efecfcd1ff2abea717b634c69df0d9beeb8",
+      "size_bytes": 2634
     }
   ],
   "intake": {
@@ -98,9 +98,9 @@
       "preserved": true,
       "source_git_head": "57a37c250ea7f1b9d6f912800040c1786d0f58ed"
     },
-    "source_git_head": null,
+    "source_git_head": "c507650a1fdc5895f185133385e55d9ab0a9c3c3",
     "zip": {
-      "file_name": "XAUUSD_ARTICLE2_SOFTWARE_EVIDENCE_INTAKE_20260914T175601Z(2).zip",
+      "file_name": "XAUUSD_ARTICLE2_SOFTWARE_EVIDENCE_INTAKE_20260914T175601Z.zip",
       "sha256": "0a9f529ebfc4a9f399697a7214e2a1774f64e3c99d03e7eca5b0bcb6ff89217a",
       "size_bytes": 101996333
     }

@@ -88,10 +88,10 @@
       "fault_detection_rate": 0.0,
       "runtime": {
         "case_count": 15,
-        "median_ns_per_case": 1119.3666666666666,
-        "median_total_ns": 16790,
+        "median_ns_per_case": 1131.3333333333333,
+        "median_total_ns": 16970,
         "overhead_ratio_vs_naive": 1.0,
-        "p95_total_ns": 16990,
+        "p95_total_ns": 17466,
         "repeats": 100
       },
       "silent_acceptance_rate": 1.0,
@@ -104,10 +104,10 @@
       "fault_detection_rate": 0.5,
       "runtime": {
         "case_count": 15,
-        "median_ns_per_case": 6824.433333333333,
-        "median_total_ns": 102366,
-        "overhead_ratio_vs_naive": 6.0966915815490905,
-        "p95_total_ns": 105371,
+        "median_ns_per_case": 13253.533333333333,
+        "median_total_ns": 198803,
+        "overhead_ratio_vs_naive": 11.714967589864466,
+        "p95_total_ns": 355784,
         "repeats": 100
       },
       "silent_acceptance_rate": 0.5,
@@ -120,10 +120,10 @@
       "fault_detection_rate": 1.0,
       "runtime": {
         "case_count": 15,
-        "median_ns_per_case": 84193.4,
-        "median_total_ns": 1262901,
-        "overhead_ratio_vs_naive": 75.21521098240076,
-        "p95_total_ns": 1642044,
+        "median_ns_per_case": 84797.8,
+        "median_total_ns": 1271967,
+        "overhead_ratio_vs_naive": 74.95385975250443,
+        "p95_total_ns": 2827339,
         "repeats": 100
       },
       "silent_acceptance_rate": 0.0,

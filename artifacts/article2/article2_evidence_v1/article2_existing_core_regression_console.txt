@@ -28,19 +28,19 @@ test_unrecognized_stress_values_fail_closed (test_xauusd_controlled_paper_histor
 test_weekly_pause (test_xauusd_controlled_paper_historical_replay.ReplayTests.test_weekly_pause) ... ok
 
 ----------------------------------------------------------------------
-Ran 28 tests in 0.681s
+Ran 28 tests in 0.732s
 
 OK
 {
   "status": "STAGE170B_COMPLETE_DATA_ASOF_CONTRACT_READY",
   "decision": "STAGE170B_DATA_CONTRACT_REQUIRED_BEFORE_NEW_DISCOVERY",
   "outputs": {
-    "summary_json": "/var/folders/q3/y8xyp7050hbdhhc4_lj1tyd40000gp/T/article2-smoke-2-sxuskz_q/reports/stage170b_data_asof_contract_validation_redesign/stage170b_data_asof_contract_summary.json",
-    "decision_md": "/var/folders/q3/y8xyp7050hbdhhc4_lj1tyd40000gp/T/article2-smoke-2-sxuskz_q/reports/stage170b_data_asof_contract_validation_redesign/stage170b_decision.md",
-    "data_asof_contract_csv": "/var/folders/q3/y8xyp7050hbdhhc4_lj1tyd40000gp/T/article2-smoke-2-sxuskz_q/reports/stage170b_data_asof_contract_validation_redesign/stage170b_data_asof_contract.csv",
-    "validation_redesign_matrix_csv": "/var/folders/q3/y8xyp7050hbdhhc4_lj1tyd40000gp/T/article2-smoke-2-sxuskz_q/reports/stage170b_data_asof_contract_validation_redesign/stage170b_validation_redesign_matrix.csv",
-    "multiple_testing_control_plan_csv": "/var/folders/q3/y8xyp7050hbdhhc4_lj1tyd40000gp/T/article2-smoke-2-sxuskz_q/reports/stage170b_data_asof_contract_validation_redesign/stage170b_multiple_testing_control_plan.csv",
-    "purged_walk_forward_plan_csv": "/var/folders/q3/y8xyp7050hbdhhc4_lj1tyd40000gp/T/article2-smoke-2-sxuskz_q/reports/stage170b_data_asof_contract_validation_redesign/stage170b_purged_walk_forward_plan.csv"
+    "summary_json": "/var/folders/q3/y8xyp7050hbdhhc4_lj1tyd40000gp/T/article2-smoke-2-rrth3zac/reports/stage170b_data_asof_contract_validation_redesign/stage170b_data_asof_contract_summary.json",
+    "decision_md": "/var/folders/q3/y8xyp7050hbdhhc4_lj1tyd40000gp/T/article2-smoke-2-rrth3zac/reports/stage170b_data_asof_contract_validation_redesign/stage170b_decision.md",
+    "data_asof_contract_csv": "/var/folders/q3/y8xyp7050hbdhhc4_lj1tyd40000gp/T/article2-smoke-2-rrth3zac/reports/stage170b_data_asof_contract_validation_redesign/stage170b_data_asof_contract.csv",
+    "validation_redesign_matrix_csv": "/var/folders/q3/y8xyp7050hbdhhc4_lj1tyd40000gp/T/article2-smoke-2-rrth3zac/reports/stage170b_data_asof_contract_validation_redesign/stage170b_validation_redesign_matrix.csv",
+    "multiple_testing_control_plan_csv": "/var/folders/q3/y8xyp7050hbdhhc4_lj1tyd40000gp/T/article2-smoke-2-rrth3zac/reports/stage170b_data_asof_contract_validation_redesign/stage170b_multiple_testing_control_plan.csv",
+    "purged_walk_forward_plan_csv": "/var/folders/q3/y8xyp7050hbdhhc4_lj1tyd40000gp/T/article2-smoke-2-rrth3zac/reports/stage170b_data_asof_contract_validation_redesign/stage170b_purged_walk_forward_plan.csv"
   }
 }
 {
@@ -48,5 +48,5 @@ OK
   "decision": "STAGE170C_ASOF_ENFORCEMENT_BLOCKS_NEW_DISCOVERY",
   "blocking_new_discovery_rows": 1,
   "walk_forward_folds": 5,
-  "summary_json": "/var/folders/q3/y8xyp7050hbdhhc4_lj1tyd40000gp/T/article2-smoke-3-q322xjq5/reports/stage170c_asof_join_enforcement_and_validation_framework/stage170c_asof_enforcement_summary.json"
+  "summary_json": "/var/folders/q3/y8xyp7050hbdhhc4_lj1tyd40000gp/T/article2-smoke-3-lr__p6rg/reports/stage170c_asof_join_enforcement_and_validation_framework/stage170c_asof_enforcement_summary.json"
 }
